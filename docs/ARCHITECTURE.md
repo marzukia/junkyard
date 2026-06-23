@@ -6,8 +6,8 @@ Each tool declares itself in a single file: `apps/<slug>/junkyard.ts`. This file
 
 `scripts/gen-catalogue.ts` reads all 44 of these files, validates them, and emits two artifacts:
 
-- `hub/src/catalogue.generated.ts` — a typed `TOOLS` array imported by the hub React app
-- `hub/public/catalogue.json` — the full catalogue served at `/catalogue.json`, consumed by the AppSwitcher nav component at runtime
+- `hub/src/catalogue.generated.ts` - a typed `TOOLS` array imported by the hub React app
+- `hub/public/catalogue.json` - the full catalogue served at `/catalogue.json`, consumed by the AppSwitcher nav component at runtime
 
 This means adding a tool is a single-file declaration. The hub, the nav switcher, and the MCP server all derive their knowledge of the fleet from the same source. CI enforces that the generated artifacts are never stale.
 
@@ -27,11 +27,11 @@ Each app is built independently with Vite's `--base` flag set to `/<slug>/`, so 
 
 `kit/` holds the canonical copies of shared UI components and config:
 
-- `theme.ts` — Mantine theme (Inter + JetBrains Mono, teal primary `#2f9d8d`)
-- `styles.css` — design-system CSS variables for light and dark modes
-- `components/AppSwitcher.tsx` + `AppSwitcher.css` — nav switcher, fetches `/catalogue.json` at runtime and renders a tool picker
-- `components/MobileWarning.tsx` + `MobileWarning.css` — mobile warning overlay for heavy AI apps
-- `components/BrandMark.tsx`, `Header.tsx`, `Footer.tsx`, `ThemeToggle.tsx` — shared UI shells
+- `theme.ts` - Mantine theme (Inter + JetBrains Mono, teal primary `#2f9d8d`)
+- `styles.css` - design-system CSS variables for light and dark modes
+- `components/AppSwitcher.tsx` + `AppSwitcher.css` - nav switcher, fetches `/catalogue.json` at runtime and renders a tool picker
+- `components/MobileWarning.tsx` + `MobileWarning.css` - mobile warning overlay for heavy AI apps
+- `components/BrandMark.tsx`, `Header.tsx`, `Footer.tsx`, `ThemeToggle.tsx` - shared UI shells
 
 The kit is **vendored** rather than published to npm. `scripts/vendor-switcher.mjs` copies `AppSwitcher.*` into every app's `src/` tree. `scripts/vendor-mobilewarn.mjs` copies `MobileWarning.*` into the 9 heavy-AI apps. CI checks that vendored copies match the canonical source, preventing drift.
 

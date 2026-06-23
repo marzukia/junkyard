@@ -10,8 +10,8 @@ junkyard/
   kit/                # shared design-system kit (vendored into each app)
   hub/                # landing page (Vite + React 18 + TS, built to dist root)
   packages/
-    core/             # @junkyard/core — 17 pure-logic headless tools (Node/vitest)
-    mcp-server/       # @junkyard/mcp-server — MCP stdio server over @junkyard/core
+    core/             # @junkyard/core - 17 pure-logic headless tools (Node/vitest)
+    mcp-server/       # @junkyard/mcp-server - MCP stdio server over @junkyard/core
   scripts/
     build-site.sh       # consolidated CI build
     gen-catalogue.ts    # reads apps/*/junkyard.ts, emits catalogue artifacts
@@ -85,7 +85,7 @@ apps/<slug>/
     robots.txt
     sitemap.xml
   index.html
-  junkyard.ts      # REQUIRED — the self-describing app manifest
+  junkyard.ts      # REQUIRED - the self-describing app manifest
   package.json
   tsconfig.json
   vite.config.ts
@@ -138,8 +138,8 @@ npx tsx ../scripts/gen-catalogue.ts
 ```
 
 This writes:
-- `hub/src/catalogue.generated.ts` — typed `TOOLS` array consumed by the hub React app
-- `hub/public/catalogue.json` — full catalogue JSON served at `/catalogue.json` and read by AppSwitcher
+- `hub/src/catalogue.generated.ts` - typed `TOOLS` array consumed by the hub React app
+- `hub/public/catalogue.json` - full catalogue JSON served at `/catalogue.json` and read by AppSwitcher
 
 CI runs this and fails with `git diff --exit-code` if the artifacts are stale. There is no way to bypass this gate.
 
