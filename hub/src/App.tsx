@@ -15,7 +15,14 @@ export function App() {
   // '/' key focuses search (matching prototype behaviour)
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "/" && document.activeElement !== searchRef.current) {
+      const active = document.activeElement;
+      const tag = active instanceof HTMLElement ? active.tagName : "";
+      const isEditable =
+        active === searchRef.current ||
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        (active instanceof HTMLElement && active.isContentEditable);
+      if (e.key === "/" && !isEditable) {
         e.preventDefault();
         searchRef.current?.focus();
       }
