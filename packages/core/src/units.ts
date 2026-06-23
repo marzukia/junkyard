@@ -35,6 +35,9 @@ const mass: Category = { id: "mass", label: "Mass", baseUnit: "kg", units: [
   { id: "ton", label: "US short ton", symbol: "ton", toBase: 907.18474 },
 ]};
 
+// WARNING: toBase is NOT used for temperature conversion. Temperature is an affine
+// (offset+scale) system, not linear. convert() special-cases cat.id === "temperature"
+// and routes through tempToKelvin/kelvinToUnit. Never apply toBase linearly to temps.
 const TEMP_UNITS = [
   { id: "C", label: "Celsius", symbol: "C", toBase: 1 },
   { id: "F", label: "Fahrenheit", symbol: "F", toBase: 1 },

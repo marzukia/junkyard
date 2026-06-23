@@ -6,7 +6,7 @@ export default defineConfig({
     baseURL: "http://localhost:4173",
   },
   webServer: {
-    command: "npm run preview",
+    command: "bun run preview",
     url: "http://localhost:4173",
     reuseExistingServer: false,
     timeout: 15000,
