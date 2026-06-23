@@ -19,7 +19,16 @@ const { host } = config;
 
 // Parse umami-ids.txt
 // Format: <slug> <uuid>  (one per line; blank lines and # comments ignored)
-const idsRaw = readFileSync(join(ROOT, "umami-ids.txt"), "utf8");
+const idsPath = join(ROOT, "umami-ids.txt");
+if (!existsSync(idsPath)) {
+  console.error(
+    "[umami] ERROR: umami-ids.txt not found at repo root.\n" +
+    "  Create it with one line per app: <slug> <uuid>\n" +
+    "  Run `bun scripts/check-umami-present.mjs` to validate coverage."
+  );
+  process.exit(1);
+}
+const idsRaw = readFileSync(idsPath, "utf8");
 const slugMap = new Map();
 for (const line of idsRaw.split("\n")) {
   const trimmed = line.trim();

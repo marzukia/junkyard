@@ -23,13 +23,34 @@ echo "==> Generating catalogue from apps/*/junkyard.ts"
 bun "$ROOT/scripts/gen-catalogue.ts"
 bunx vite build --outDir "$DIST" --emptyOutDir
 
+echo "==> Installing app deps (parallel, max 4 jobs)"
+# Run bun install for all apps concurrently (bounded at 4) before the serial
+# vite build loop. This is safe because installs are independent; builds must
+# remain serial to avoid I/O contention on the dist/ tree.
+pids=()
+running=0
+for d in "$ROOT"/apps/*/; do
+  (cd "$d" && bun install --frozen-lockfile 2>&1 | sed "s|^|  [install $(basename "$d")] |") &
+  pids+=($!)
+  running=$((running + 1))
+  if [ "$running" -ge 4 ]; then
+    wait "${pids[0]}"
+    pids=("${pids[@]:1}")
+    running=$((running - 1))
+  fi
+done
+# Wait for remaining installs
+for pid in "${pids[@]}"; do
+  wait "$pid"
+done
+echo "  App deps installed."
+
 echo "==> Building apps"
 built=0
 for d in "$ROOT"/apps/*/; do
   slug="$(basename "$d")"
   echo "  -> $slug"
   cd "$d"
-  bun install
   bunx vite build --base="/$slug/" --outDir "$DIST/$slug" --emptyOutDir
   built=$((built + 1))
 done
