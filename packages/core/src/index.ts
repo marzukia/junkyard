@@ -1,42 +1,64 @@
 export type { ToolOp, ToolDef } from "./types.js";
 
-export * from "./json.js";
-export * from "./csv.js";
-export * from "./hash.js";
-export * from "./base64.js";
-export * from "./jwt.js";
-export * from "./regex.js";
-export * from "./cron.js";
-export * from "./uuid.js";
-export * from "./timestamp.js";
-export * from "./diff.js";
-export * from "./units.js";
-export * from "./colours.js";
-export * from "./password.js";
-export * from "./lorem.js";
-export * from "./markdown.js";
-export * from "./qr.js";
-export * from "./barcode.js";
-
-import { jsonTool } from "./json.js";
-import { csvTool } from "./csv.js";
-import { hashTool } from "./hash.js";
-import { base64Tool } from "./base64.js";
-import { jwtTool } from "./jwt.js";
-import { regexTool } from "./regex.js";
+// Each module is imported once. The export block below re-exports the full
+// public surface. The TOOLS array is built from the same local bindings —
+// no symbol is imported from the same source twice.
+import { type IndentOption, type ParseError, type JsonParseOutcome, parseJson, formatJson, minifyJson, validateJson, jsonTool } from "./json.js";
+import { type Delimiter, type CsvParseOptions, type ParsedCsv, detectDelimiter, parseCsv, csvToJsonString, jsonToCsvString, csvTool } from "./csv.js";
+import { type HashAlgo, hash, hmac, hashTool } from "./hash.js";
+import { encodeBase64, decodeBase64, encodeBase64Url, decodeBase64Url, base64Tool } from "./base64.js";
+import { type JwtHeader, type JwtPayload, type DecodedJwt, decodeJwt, verifyHmac, jwtTool } from "./jwt.js";
+import { type MatchSpan, type RegexTestResult, testRegex, regexTool } from "./regex.js";
 import { cronTool } from "./cron.js";
-import { uuidTool } from "./uuid.js";
-import { timestampTool } from "./timestamp.js";
-import { diffTool } from "./diff.js";
-import { unitsTool } from "./units.js";
-import { coloursTool } from "./colours.js";
-import { passwordTool } from "./password.js";
-import { loremTool } from "./lorem.js";
-import { markdownTool } from "./markdown.js";
-import { qrTool } from "./qr.js";
-import { barcodeTool } from "./barcode.js";
+import { type UuidVersion, uuidV4, uuidV7, generateUuids, uuidTool } from "./uuid.js";
+import { type ConversionResult, convertTimestamp, nowTimestamp, timestampTool } from "./timestamp.js";
+import { type ChangeKind, type WordChange, type SideBySideLine, type DiffResult, computeDiff, diffTool } from "./diff.js";
+import { type CategoryId, type UnitDef, type Category, CATEGORIES, findUnit, convert, unitsTool } from "./units.js";
+import { normalizeHex, type RgbColor, type HslColor, hexToRgb, rgbToHex, hexToHsl, contrastRatio, generateGradient, type ConvertTarget, convertColor, coloursTool } from "./colours.js";
+import { type PasswordOptions, generatePassword, passwordEntropy, passwordTool } from "./password.js";
+import { makeRng, generateWords, generateSentences, generateParagraphs, loremTool } from "./lorem.js";
+import { toHtml, markdownTool } from "./markdown.js";
+import { type ErrorCorrectionLevel, validateSvgColor, type QrOptions, generateSvgString, qrTool } from "./qr.js";
+import { type BarcodeFormat, ean13CheckDigit, upcaCheckDigit, ean8CheckDigit, generateBarcodeSvg, barcodeTool } from "./barcode.js";
 
 import type { ToolDef } from "./types.js";
+
+export {
+  // json
+  type IndentOption, type ParseError, type JsonParseOutcome, parseJson, formatJson, minifyJson, validateJson, jsonTool,
+  // csv
+  type Delimiter, type CsvParseOptions, type ParsedCsv, detectDelimiter, parseCsv, csvToJsonString, jsonToCsvString, csvTool,
+  // hash
+  type HashAlgo, hash, hmac, hashTool,
+  // base64
+  encodeBase64, decodeBase64, encodeBase64Url, decodeBase64Url, base64Tool,
+  // jwt
+  type JwtHeader, type JwtPayload, type DecodedJwt, decodeJwt, verifyHmac, jwtTool,
+  // regex
+  type MatchSpan, type RegexTestResult, testRegex, regexTool,
+  // cron
+  cronTool,
+  // uuid
+  type UuidVersion, uuidV4, uuidV7, generateUuids, uuidTool,
+  // timestamp
+  type ConversionResult, convertTimestamp, nowTimestamp, timestampTool,
+  // diff
+  type ChangeKind, type WordChange, type SideBySideLine, type DiffResult, computeDiff, diffTool,
+  // units
+  type CategoryId, type UnitDef, type Category, CATEGORIES, findUnit, convert, unitsTool,
+  // colours
+  normalizeHex, type RgbColor, type HslColor, hexToRgb, rgbToHex, hexToHsl, contrastRatio, generateGradient, type ConvertTarget, convertColor, coloursTool,
+  // password
+  type PasswordOptions, generatePassword, passwordEntropy, passwordTool,
+  // lorem
+  makeRng, generateWords, generateSentences, generateParagraphs, loremTool,
+  // markdown
+  toHtml, markdownTool,
+  // qr
+  type ErrorCorrectionLevel, validateSvgColor, type QrOptions, generateSvgString, qrTool,
+  // barcode
+  type BarcodeFormat, ean13CheckDigit, upcaCheckDigit, ean8CheckDigit, generateBarcodeSvg, barcodeTool,
+};
 
 export const TOOLS: ToolDef[] = [
   jsonTool,
