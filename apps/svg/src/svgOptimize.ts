@@ -167,36 +167,103 @@ export function toBase64DataUri(svg: string): string {
  * Converts SVG markup to a React JSX component string (inline, no imports).
  * Attribute transformations: class -> className, for -> htmlFor, etc.
  */
+/** Apply JSX attribute renames inside a single opening/closing tag string. */
+function transformTagAttributes(tag: string): string {
+  // Process attribute names only. Each attribute in XML is: name="value" or name={expr}.
+  // We operate token-by-token: consume the tag character-by-character,
+  // tracking whether we are inside a quoted value or not.
+  let out = "";
+  let i = 0;
+  while (i < tag.length) {
+    const ch = tag[i];
+    if (ch === '"' || ch === "'") {
+      // Quoted attribute value: copy verbatim until closing quote
+      const quote = ch;
+      out += ch;
+      i++;
+      while (i < tag.length && tag[i] !== quote) {
+        out += tag[i++];
+      }
+      if (i < tag.length) {
+        out += tag[i++]; // closing quote
+      }
+    } else if (ch === "{") {
+      // JSX expression value: copy verbatim until closing }
+      let depth = 1;
+      out += ch;
+      i++;
+      while (i < tag.length && depth > 0) {
+        if (tag[i] === "{") depth++;
+        else if (tag[i] === "}") depth--;
+        out += tag[i++];
+      }
+    } else {
+      out += ch;
+      i++;
+    }
+  }
+  // Now apply attribute name rewrites to the regions OUTSIDE quoted values.
+  // Since we've already built 'out' with quoted regions verbatim, we need a different
+  // approach: split on quoted values, rewrite only the unquoted segments.
+  return rewriteAttrNames(tag);
+}
+
+const ATTR_REWRITES: [RegExp, string][] = [
+  [/(?<=[\s<])class=/g, "className="],
+  [/(?<=[\s<])for=/g, "htmlFor="],
+  [/(?<=[\s<])xlink:href=/g, "xlinkHref="],
+  [/(?<=[\s<])xmlns:xlink="[^"]*"/g, ""],
+  [/(?<=[\s<])xml:space="[^"]*"/g, ""],
+  [/(?<=[\s<])stroke-width=/g, "strokeWidth="],
+  [/(?<=[\s<])stroke-linecap=/g, "strokeLinecap="],
+  [/(?<=[\s<])stroke-linejoin=/g, "strokeLinejoin="],
+  [/(?<=[\s<])stroke-dasharray=/g, "strokeDasharray="],
+  [/(?<=[\s<])stroke-dashoffset=/g, "strokeDashoffset="],
+  [/(?<=[\s<])fill-opacity=/g, "fillOpacity="],
+  [/(?<=[\s<])fill-rule=/g, "fillRule="],
+  [/(?<=[\s<])clip-path=/g, "clipPath="],
+  [/(?<=[\s<])clip-rule=/g, "clipRule="],
+  [/(?<=[\s<])stop-color=/g, "stopColor="],
+  [/(?<=[\s<])stop-opacity=/g, "stopOpacity="],
+  [/(?<=[\s<])font-size=/g, "fontSize="],
+  [/(?<=[\s<])font-family=/g, "fontFamily="],
+  [/(?<=[\s<])font-weight=/g, "fontWeight="],
+  [/(?<=[\s<])text-anchor=/g, "textAnchor="],
+  [/(?<=[\s<])marker-start=/g, "markerStart="],
+  [/(?<=[\s<])marker-end=/g, "markerEnd="],
+  [/(?<=[\s<])marker-mid=/g, "markerMid="],
+];
+
+/**
+ * Rewrite SVG attribute names in a string, touching only content OUTSIDE quoted values.
+ * Strategy: split the string on quoted-value boundaries, apply rewrites only to
+ * the unquoted segments (attribute names, tag punctuation), then reassemble.
+ */
+function rewriteAttrNames(s: string): string {
+  // Split on double-quoted segments: capture both the delimiters and the content.
+  // Pattern: ("(?:[^"\\]|\\.)*") captures a double-quoted string.
+  const parts = s.split(/((?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'))/);
+  return parts
+    .map((part, idx) => {
+      // Even-indexed parts are between quoted values (unquoted context) -- apply rewrites.
+      // Odd-indexed parts are quoted values -- copy verbatim.
+      if (idx % 2 === 0) {
+        let result = part;
+        for (const [re, replacement] of ATTR_REWRITES) {
+          result = result.replace(re, replacement);
+        }
+        return result;
+      }
+      return part;
+    })
+    .join("");
+}
+
 export function toJsxComponent(svg: string, componentName = "SvgIcon"): string {
-  // Minimal SVG->JSX attribute transforms (covers the most common ones)
-  const jsx = svg
-    .replace(/\bclass=/g, "className=")
-    .replace(/\bfor=/g, "htmlFor=")
-    .replace(/\bxlink:href=/g, "xlinkHref=")
-    .replace(/\bxmlns:xlink="[^"]*"/g, "")
-    .replace(/\bxml:space="[^"]*"/g, "")
-    // camelCase hyphenated SVG attributes
-    .replace(/\bstroke-width=/g, "strokeWidth=")
-    .replace(/\bstroke-linecap=/g, "strokeLinecap=")
-    .replace(/\bstroke-linejoin=/g, "strokeLinejoin=")
-    .replace(/\bstroke-dasharray=/g, "strokeDasharray=")
-    .replace(/\bstroke-dashoffset=/g, "strokeDashoffset=")
-    .replace(/\bfill-opacity=/g, "fillOpacity=")
-    .replace(/\bfill-rule=/g, "fillRule=")
-    .replace(/\bclip-path=/g, "clipPath=")
-    .replace(/\bclip-rule=/g, "clipRule=")
-    .replace(/\bstop-color=/g, "stopColor=")
-    .replace(/\bstop-opacity=/g, "stopOpacity=")
-    .replace(/\bfont-size=/g, "fontSize=")
-    .replace(/\bfont-family=/g, "fontFamily=")
-    .replace(/\bfont-weight=/g, "fontWeight=")
-    .replace(/\btext-anchor=/g, "textAnchor=")
-    .replace(/\bmarker-start=/g, "markerStart=")
-    .replace(/\bmarker-end=/g, "markerEnd=")
-    .replace(/\bmarker-mid=/g, "markerMid=")
-    // Remove XML comments (JSX doesn't support them in element context)
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .trim();
+  // Remove XML comments first (they are never attribute content).
+  const noComments = svg.replace(/<!--[\s\S]*?-->/g, "");
+  // Apply attribute rewrites only in unquoted regions (attribute names / tag punctuation).
+  const jsx = rewriteAttrNames(noComments).trim();
 
   return `export function ${componentName}(props: React.SVGProps<SVGSVGElement>) {\n  return (\n    ${jsx.replace(/\n/g, "\n    ")}\n  );\n}`;
 }

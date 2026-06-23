@@ -196,6 +196,12 @@ export const useColoursStore = create<ColoursStore>((set, get) => ({
   setPaletteCount: (count) => {
     const clamped = clampCount(count);
     set((s) => {
+      const snap: PaletteSnapshot = {
+        colors: s.palette.colors,
+        locked: s.palette.locked,
+        count: s.palette.count,
+        harmonyMode: s.palette.harmonyMode,
+      };
       const prev = s.palette;
       const nextSeed = s._seedCounter + 1;
       let newColors: string[];
@@ -226,6 +232,8 @@ export const useColoursStore = create<ColoursStore>((set, get) => ({
       savePalette(nextPalette);
       return {
         _seedCounter: clamped > prev.count ? nextSeed : s._seedCounter,
+        _undoStack: pushUndo(s._undoStack, snap),
+        canUndo: true,
         palette: nextPalette,
       };
     });
@@ -250,26 +258,44 @@ export const useColoursStore = create<ColoursStore>((set, get) => ({
   },
 
   togglePaletteLock: (index) => {
-    // Get the fresh palette state at call time (not stale closure)
-    const { palette } = get();
-    const newLocked = palette.locked.map((v, i) => (i === index ? !v : v));
     set((s) => {
+      const snap: PaletteSnapshot = {
+        colors: s.palette.colors,
+        locked: s.palette.locked,
+        count: s.palette.count,
+        harmonyMode: s.palette.harmonyMode,
+      };
+      const newLocked = s.palette.locked.map((v, i) => (i === index ? !v : v));
       const nextPalette = { ...s.palette, locked: newLocked };
       savePalette(nextPalette);
-      return { palette: nextPalette };
+      return {
+        _undoStack: pushUndo(s._undoStack, snap),
+        canUndo: true,
+        palette: nextPalette,
+      };
     });
   },
 
   // Manually set a swatch's colour. Locks the slot so the next regenerate preserves it.
   setPaletteColor: (index, hex) => {
     set((s) => {
+      const snap: PaletteSnapshot = {
+        colors: s.palette.colors,
+        locked: s.palette.locked,
+        count: s.palette.count,
+        harmonyMode: s.palette.harmonyMode,
+      };
       const nextPalette: PaletteState = {
         ...s.palette,
         colors: s.palette.colors.map((c, i) => (i === index ? hex : c)),
         locked: s.palette.locked.map((v, i) => (i === index ? true : v)),
       };
       savePalette(nextPalette);
-      return { palette: nextPalette };
+      return {
+        _undoStack: pushUndo(s._undoStack, snap),
+        canUndo: true,
+        palette: nextPalette,
+      };
     });
   },
 
