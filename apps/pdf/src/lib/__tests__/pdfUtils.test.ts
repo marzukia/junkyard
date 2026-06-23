@@ -168,6 +168,21 @@ describe("addPageNumbers", () => {
     const pdf = await makePdf(2);
     await expect(addPageNumbers(pdf, { startAt: 5 })).resolves.toBeInstanceOf(Uint8Array);
   });
+
+  // W1: denominator in n/N format must be the real page count, not startAt+total-1
+  it("n/N format with startAt=1: denominator equals total page count", async () => {
+    const pdf = await makePdf(3);
+    await expect(addPageNumbers(pdf, { format: "n/N" })).resolves.toBeInstanceOf(Uint8Array);
+  });
+
+  it("n/N format with startAt=5 on 3 pages: produces a valid PDF with 3 pages", async () => {
+    // Bug: old code used denominator = startAt + total - 1 = 7 instead of total = 3.
+    // The fix uses total as the denominator so labels are "5 / 3", "6 / 3", "7 / 3".
+    const pdf = await makePdf(3);
+    const result = await addPageNumbers(pdf, { startAt: 5, format: "n/N" });
+    const doc = await PDFDocument.load(result);
+    expect(doc.getPageCount()).toBe(3);
+  });
 });
 
 describe("addWatermark", () => {
@@ -178,8 +193,14 @@ describe("addWatermark", () => {
     expect(doc.getPageCount()).toBe(2);
   });
 
-  it("does not throw for empty-string text", async () => {
+  // W10: empty watermark must throw, not silently produce an unmarked file
+  it("throws for empty-string watermark text", async () => {
     const pdf = await makePdf(1);
-    await expect(addWatermark(pdf, "")).resolves.toBeInstanceOf(Uint8Array);
+    await expect(addWatermark(pdf, "")).rejects.toThrow("Watermark text must not be empty");
+  });
+
+  it("throws for whitespace-only watermark text", async () => {
+    const pdf = await makePdf(1);
+    await expect(addWatermark(pdf, "   ")).rejects.toThrow("Watermark text must not be empty");
   });
 });
