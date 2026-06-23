@@ -87,8 +87,11 @@ const volume: Category = { id: "volume", label: "Volume", baseUnit: "l", units: 
   { id: "gal", label: "Gallon (US)", symbol: "gal", toBase: 3.785412 },
 ]};
 
-const speed: Category = { id: "speed", label: "Speed", baseUnit: "ms", units: [
-  { id: "ms", label: "Metre/second", symbol: "m/s", toBase: 1 },
+// Speed base unit is "mps" (metre/second). Previously "ms" was used, which
+// collided with the time category's "ms" (millisecond). "ms" now unambiguously
+// means millisecond; the speed unit is "mps".
+const speed: Category = { id: "speed", label: "Speed", baseUnit: "mps", units: [
+  { id: "mps", label: "Metre/second", symbol: "m/s", toBase: 1 },
   { id: "kmh", label: "Kilometre/hour", symbol: "km/h", toBase: 1 / 3.6 },
   { id: "mph", label: "Mile/hour", symbol: "mph", toBase: 0.44704 },
   { id: "kn", label: "Knot", symbol: "kn", toBase: 0.514444 },
@@ -236,7 +239,7 @@ export const unitsTool: ToolDef = {
   ops: [
     {
       name: "convert",
-      description: "Convert a value between units (length, mass, temperature, area, volume, speed, data, time, pressure, energy, angle, power, force, fuel)",
+      description: "Convert a value between units (length, mass, temperature, area, volume, speed, data, time, pressure, energy, angle, power, force, fuel). Speed uses 'mps' for metre/second (not 'ms', which is millisecond in the time category).",
       inputSchema: z.object({
         value: z.number(),
         from: z.string(),
