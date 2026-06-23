@@ -465,9 +465,27 @@ export function App() {
   const handleFile = useCallback(
     async (file: File) => {
       if (!isSupportedImage(file)) {
-        setError(`Unsupported file type "${file.type}". Please upload a PNG, JPG, WebP or GIF.`);
+        setError(
+          file.type
+            ? `Unsupported file type "${file.type}". Please upload a PNG, JPG, WebP or GIF.`
+            : "Could not recognise this file as an image. Please upload a PNG, JPG, WebP or GIF."
+        );
         return;
       }
+
+      // Verify the file actually decodes as an image before kicking off the model.
+      // A file renamed to .jpg but containing garbage will pass the MIME check but
+      // fail here, producing a clear message rather than a silent hang or blank error.
+      try {
+        const bmp = await createImageBitmap(file);
+        bmp.close();
+      } catch {
+        setError(
+          "This file could not be decoded as an image. Please check the file and try again."
+        );
+        return;
+      }
+
       const url = URL.createObjectURL(file);
       setInputFile(file, url);
 
@@ -482,7 +500,9 @@ export function App() {
         const { resultUrl: outUrl, cache } = await estimateDepth(file, colourMap, invert);
         setResult(outUrl, cache);
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "Unknown error during processing.";
+        const raw = err instanceof Error ? err.message : "";
+        const msg =
+          raw || "An error occurred while generating the depth map. Please try another image.";
         setError(msg);
       }
     },

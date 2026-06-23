@@ -112,6 +112,22 @@ describe("mergePdfs", () => {
       [2, 2],
     ]);
   });
+
+  it("throws a human-readable error when a corrupt file is included", async () => {
+    const good = await makePdf(1);
+    const corrupt = new Uint8Array([0x00, 0x01, 0x02, 0x03]);
+    await expect(mergePdfs([good, corrupt])).rejects.toThrow(
+      '"file 2" is not a valid PDF or is corrupted'
+    );
+  });
+
+  it("includes the filename in the error when names are provided", async () => {
+    const good = await makePdf(1);
+    const corrupt = new Uint8Array([0x00, 0x01, 0x02, 0x03]);
+    await expect(mergePdfs([good, corrupt], undefined, ["good.pdf", "broken.pdf"])).rejects.toThrow(
+      '"broken.pdf" is not a valid PDF or is corrupted'
+    );
+  });
 });
 
 describe("rotatePages", () => {

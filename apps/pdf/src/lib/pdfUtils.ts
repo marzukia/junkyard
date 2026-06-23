@@ -28,12 +28,19 @@ export function parsePageRange(rangeStr: string, totalPages: number): number[] {
 /** Merge multiple PDF Uint8Arrays into one, reporting progress per document. */
 export async function mergePdfs(
   pdfBytes: Uint8Array[],
-  onProgress?: (done: number, total: number) => void
+  onProgress?: (done: number, total: number) => void,
+  names?: string[]
 ): Promise<Uint8Array> {
   const merged = await PDFDocument.create();
   for (let i = 0; i < pdfBytes.length; i++) {
     const bytes = pdfBytes[i]!;
-    const doc = await PDFDocument.load(bytes);
+    let doc: PDFDocument;
+    try {
+      doc = await PDFDocument.load(bytes);
+    } catch {
+      const label = names?.[i] ?? `file ${i + 1}`;
+      throw new Error(`"${label}" is not a valid PDF or is corrupted and cannot be read.`);
+    }
     const pageIndices = doc.getPageIndices();
     const copied = await merged.copyPages(doc, pageIndices);
     for (const page of copied) {

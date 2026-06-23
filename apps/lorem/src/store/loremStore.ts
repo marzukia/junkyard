@@ -95,6 +95,10 @@ export const useLoremStore = create<LoremStore>()(
     }),
     {
       name: "lorem-tool-settings",
+      // Version 0 is explicit so Zustand's version-mismatch guard never fires
+      // against state written by this same schema. Bump version + add migrate()
+      // if a field rename or removal ever changes the stored shape.
+      version: 0,
       // Persist user choices; exclude ephemeral output/seed (regenerated on load)
       partialize: (state) => ({
         mode: state.mode,

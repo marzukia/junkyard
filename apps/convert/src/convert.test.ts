@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  bitmapToBlob,
   buildZip,
   computeOutputDimensions,
   formatBytes,
@@ -8,6 +9,7 @@ import {
   outputFilename,
   validateImageFile,
 } from "./convert";
+import type { ConvertOptions } from "./convert";
 
 describe("isHeic", () => {
   it("returns true for image/heic MIME type", () => {
@@ -193,6 +195,84 @@ describe("computeOutputDimensions", () => {
   it("scalePct takes priority over maxDimension", () => {
     const d = computeOutputDimensions(1000, 500, { ...base, scalePct: 10, maxDimension: 800 });
     expect(d).toEqual({ w: 100, h: 50 });
+  });
+});
+
+describe("bitmapToBlob - AVIF fallback detection", () => {
+  // These tests verify that bitmapToBlob rejects when the browser silently returns
+  // a non-AVIF blob for a requested "image/avif" encode (the silent-PNG-fallback bug).
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const baseOpts: ConvertOptions = {
+    format: "avif",
+    quality: 80,
+    maxDimension: 0,
+    exactWidth: 0,
+    exactHeight: 0,
+    scalePct: 0,
+  };
+
+  function makeFakeBitmap(w = 4, h = 4): ImageBitmap {
+    // jsdom ImageBitmap stub with width/height
+    return { width: w, height: h, close: () => {} } as unknown as ImageBitmap;
+  }
+
+  it("rejects when canvas.toBlob returns a PNG blob instead of AVIF (silent fallback)", async () => {
+    // Simulate a browser that returns image/png when asked for image/avif
+    const pngBlob = new Blob(["fake-png-data"], { type: "image/png" });
+    const fakeCanvas = {
+      width: 0,
+      height: 0,
+      getContext: () => ({ drawImage: () => {} }),
+      toBlob: (_cb: (b: Blob | null) => void, _mime: string, _q: number) => {
+        // Invoke with a PNG blob regardless of the requested mime
+        setTimeout(() => _cb(pngBlob), 0);
+      },
+    };
+    vi.spyOn(document, "createElement").mockReturnValueOnce(
+      fakeCanvas as unknown as HTMLCanvasElement
+    );
+
+    await expect(bitmapToBlob(makeFakeBitmap(), baseOpts)).rejects.toThrow(/AVIF encode failed/);
+  });
+
+  it("rejects when canvas.toBlob returns null (canvas not implemented in env)", async () => {
+    const fakeCanvas = {
+      width: 0,
+      height: 0,
+      getContext: () => ({ drawImage: () => {} }),
+      toBlob: (_cb: (b: Blob | null) => void) => {
+        setTimeout(() => _cb(null), 0);
+      },
+    };
+    vi.spyOn(document, "createElement").mockReturnValueOnce(
+      fakeCanvas as unknown as HTMLCanvasElement
+    );
+
+    await expect(bitmapToBlob(makeFakeBitmap(), baseOpts)).rejects.toThrow(
+      /canvas\.toBlob returned null/
+    );
+  });
+
+  it("resolves when canvas.toBlob returns a blob with the correct MIME type", async () => {
+    const avifBlob = new Blob(["fake-avif-data"], { type: "image/avif" });
+    const fakeCanvas = {
+      width: 0,
+      height: 0,
+      getContext: () => ({ drawImage: () => {} }),
+      toBlob: (_cb: (b: Blob | null) => void) => {
+        setTimeout(() => _cb(avifBlob), 0);
+      },
+    };
+    vi.spyOn(document, "createElement").mockReturnValueOnce(
+      fakeCanvas as unknown as HTMLCanvasElement
+    );
+
+    const result = await bitmapToBlob(makeFakeBitmap(), baseOpts);
+    expect(result).toBe(avifBlob);
+    expect(result.type).toBe("image/avif");
   });
 });
 

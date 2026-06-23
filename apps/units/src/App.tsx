@@ -281,15 +281,20 @@ function ConverterCard() {
               title={copied ? "Copied!" : "Copy result"}
             >
               {copied ? (
-                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                  <path
-                    d="M2.5 7.5L6 11L12.5 4"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <>
+                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                    <path
+                      d="M2.5 7.5L6 11L12.5 4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className="units-copy-label" aria-hidden="true">
+                    Copied!
+                  </span>
+                </>
               ) : (
                 <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
                   <rect
