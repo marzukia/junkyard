@@ -42,7 +42,7 @@ function MoonIcon() {
   );
 }
 
-/** System / Light / Dark pill toggle. */
+/** System / Light / Dark pill toggle. Drop into the .utility-bar. */
 export function ThemeToggle() {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 

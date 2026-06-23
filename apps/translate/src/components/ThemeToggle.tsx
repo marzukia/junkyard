@@ -42,24 +42,13 @@ function MoonIcon() {
   );
 }
 
+/** System / Light / Dark pill toggle. Drop into the .utility-bar. */
 export function ThemeToggle() {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   return (
     <div className="space-toggle-wrapper">
-      <fieldset className="space-toggle" style={{ border: "none", padding: 0, margin: 0 }}>
-        <legend
-          style={{
-            position: "absolute",
-            width: 1,
-            height: 1,
-            overflow: "hidden",
-            clip: "rect(0,0,0,0)",
-            whiteSpace: "nowrap",
-          }}
-        >
-          Colour scheme
-        </legend>
+      <div className="space-toggle" aria-label="Colour scheme">
         <button
           type="button"
           className={`space-btn${colorScheme === "auto" ? " space-btn--active" : ""}`}
@@ -90,7 +79,7 @@ export function ThemeToggle() {
           <MoonIcon />
           <span>Dark</span>
         </button>
-      </fieldset>
+      </div>
     </div>
   );
 }

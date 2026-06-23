@@ -44,6 +44,12 @@ jobs:
           bun scripts/vendor-switcher.mjs
           git diff --exit-code
 
+      - name: Check vendored ThemeToggle copies are up to date
+        # Fails if kit/ThemeToggle.tsx was changed without running vendor-themetoggle.mjs
+        run: |
+          node scripts/vendor-themetoggle.mjs
+          git diff --exit-code
+
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).
@@ -59,6 +65,29 @@ jobs:
             exit 1
           fi
           echo "SEO domain guard: OK"
+
+      - name: Sitemap and robots existence guard
+        # Fails if any apps/<slug>/public/sitemap.xml or robots.txt is missing,
+        # or if hub/public/sitemap.xml is missing.
+        run: bun scripts/check-sitemap-exists.mjs
+
+      - name: Umami analytics id guard
+        # Fails if any app slug (except the known-excluded video and cleanup)
+        # is absent from umami-ids.txt or has an invalid UUID.
+        run: bun scripts/check-umami-present.mjs
+
+      - name: Hub sitemap vs catalogue drift guard
+        # Fails if hub/public/sitemap.xml and hub/public/catalogue.json diverge:
+        # every catalogue slug must appear in the sitemap and vice-versa.
+        run: bun scripts/check-hub-sitemap-from-catalogue.mjs
+
+      - name: Core TOOLS vs exposed apps guard
+        # Fails if the set of apps with mcp.exposed:true diverges from the
+        # slugs registered in @junkyard/core TOOLS (must stay at 17).
+        # Installs core deps first so the import succeeds in CI.
+        run: |
+          cd packages/core && bun install --frozen-lockfile && cd ..
+          bun ./scripts/check-core-vs-exposed.mjs
 
   build:
     needs: verify
