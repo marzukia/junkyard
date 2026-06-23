@@ -3,6 +3,8 @@ import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { captionImage, fetchImageFromUrl, isModelLoaded, loadModel } from "./lib/captioner";
+import type { CaptionResult } from "./lib/captioner";
+import { useWorkerTask } from "./lib/workerTask";
 import {
   type BatchCaptionRow,
   batchToCsv,
@@ -596,24 +598,38 @@ export function App() {
   const [uiMode, setUiMode] = useState<"file" | "url" | "batch">("file");
   const busy = phase === "model-loading" || phase === "processing";
 
+  const { run: runWorker, cancel: cancelWorker } = useWorkerTask<
+    { file: File; numCaptions: number },
+    CaptionResult
+  >();
+
+  const handleCancel = useCallback(() => {
+    cancelWorker();
+    setPhase("idle");
+  }, [cancelWorker, setPhase]);
+
   const runCaptionPipeline = useCallback(
     async (file: File) => {
-      try {
-        if (!isModelLoaded()) {
-          setPhase("model-loading");
-          await loadModel((loaded, total, status) => {
+      setPhase("model-loading");
+      await runWorker(
+        new URL("./infer.worker.ts", import.meta.url),
+        { file, numCaptions },
+        {
+          onProgress: (loaded, total, status) => {
             setModelProgress(loaded, total, status);
-          });
+            setPhase("model-loading");
+          },
+          onResult: ({ caption: raw, candidates: rawCandidates }) => {
+            setPhase("processing");
+            setCaption(formatCaption(raw), rawCandidates.map(formatCaption));
+          },
+          onError: (message) => {
+            setError(message);
+          },
         }
-        setPhase("processing");
-        const { caption: raw, candidates: rawCandidates } = await captionImage(file, numCaptions);
-        setCaption(formatCaption(raw), rawCandidates.map(formatCaption));
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : "Unknown error during processing.";
-        setError(msg);
-      }
+      );
     },
-    [setPhase, setModelProgress, setCaption, setError, numCaptions]
+    [setPhase, setModelProgress, setCaption, setError, numCaptions, runWorker]
   );
 
   const handleFile = useCallback(
@@ -792,6 +808,9 @@ export function App() {
               <p className="cap-status-sub">
                 One-time download (~90 MB). Saved in your browser cache.
               </p>
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           </div>
         )}
@@ -809,6 +828,9 @@ export function App() {
                   className="cap-thumb-preview"
                 />
               )}
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           </div>
         )}

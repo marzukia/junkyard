@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
-import { isModelLoaded, loadModel, summarize } from "./lib/summarizer";
+import type { SummaryResult } from "./lib/summarizer";
+import { useWorkerTask } from "./lib/workerTask";
 import {
   MODEL_MAX_WORDS,
   SAMPLE_TEXT,
@@ -162,27 +163,40 @@ export function App() {
     [setInputText]
   );
 
+  const { run: runWorker, cancel: cancelWorker } = useWorkerTask<
+    { inputText: string; minWords: number; maxWords: number },
+    SummaryResult
+  >();
+
+  const handleCancel = useCallback(() => {
+    cancelWorker();
+    setPhase("idle");
+  }, [cancelWorker, setPhase]);
+
   const handleSummarize = useCallback(async () => {
     if (!inputText.trim() || busy || inputWords < MIN_INPUT_WORDS) return;
-    try {
-      if (!isModelLoaded()) {
-        setPhase("model-loading");
-        await loadModel((loaded, total, status) => {
+    setPhase("model-loading");
+    setChunkProgress(0, 1);
+    await runWorker(
+      new URL("./infer.worker.ts", import.meta.url),
+      { inputText, minWords, maxWords },
+      {
+        onProgress: (loaded, total, status) => {
           setModelProgress(loaded, total, status);
-        });
+          setPhase("model-loading");
+        },
+        onChunkProgress: (done, total) => {
+          setPhase("processing");
+          setChunkProgress(done, total);
+        },
+        onResult: (result) => {
+          setResult(result.summary, result.inputWords, result.outputWords, result.chunks);
+        },
+        onError: (message) => {
+          setError(message);
+        },
       }
-      setPhase("processing");
-      setChunkProgress(0, 1);
-      const result = await summarize(inputText, {
-        minWords,
-        maxWords,
-        onChunkProgress: (done, total) => setChunkProgress(done, total),
-      });
-      setResult(result.summary, result.inputWords, result.outputWords, result.chunks);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Unknown error during summarization.";
-      setError(msg);
-    }
+    );
   }, [
     inputText,
     busy,
@@ -194,6 +208,7 @@ export function App() {
     setChunkProgress,
     setResult,
     setError,
+    runWorker,
   ]);
 
   // Cmd/Ctrl+Enter triggers summarize
@@ -687,6 +702,16 @@ export function App() {
               >
                 {busy ? "Working..." : "Summarize"}
               </button>
+              {busy && (
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={handleCancel}
+                  aria-label="Cancel summarization"
+                >
+                  Cancel
+                </button>
+              )}
               {inputWords > 0 && inputWords < MIN_INPUT_WORDS && (
                 <span className="sum-submit-hint" aria-live="polite">
                   {MIN_INPUT_WORDS - inputWords} more word

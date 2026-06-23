@@ -2,7 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
-import { isModelLoaded, loadModel, removeBackground, revokeResult } from "./lib/bgRemoval";
+import { revokeResult } from "./lib/bgRemoval";
+import { useWorkerTask } from "./lib/workerTask";
+
+type BgWorkerResult = { imageBytes: ArrayBuffer; width: number; height: number };
 import {
   clamp,
   computeCoverFit,
@@ -852,6 +855,16 @@ export function App() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [phase]);
 
+  const { run: runWorker, cancel: cancelWorker } = useWorkerTask<
+    { file: File },
+    BgWorkerResult
+  >();
+
+  const handleCancel = useCallback(() => {
+    cancelWorker();
+    setPhase("idle");
+  }, [cancelWorker, setPhase]);
+
   const handleFile = useCallback(
     async (file: File) => {
       if (!isSupportedImage(file)) {
@@ -861,22 +874,27 @@ export function App() {
       const url = URL.createObjectURL(file);
       setInputFile(file, url);
 
-      try {
-        if (!isModelLoaded()) {
-          setPhase("model-loading");
-          await loadModel((loaded, total, status) => {
+      setPhase("model-loading");
+      await runWorker(
+        new URL("./infer.worker.ts", import.meta.url),
+        { file },
+        {
+          onProgress: (loaded, total, status) => {
             setModelProgress(loaded, total, status);
-          });
+            setPhase("model-loading");
+          },
+          onResult: ({ imageBytes, width, height }) => {
+            const blob = new Blob([imageBytes], { type: "image/png" });
+            const outUrl = URL.createObjectURL(blob);
+            setResult(outUrl, width, height);
+          },
+          onError: (message) => {
+            setError(message);
+          },
         }
-        setPhase("processing");
-        const { resultUrl: outUrl, width, height } = await removeBackground(file);
-        setResult(outUrl, width, height);
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : "Unknown error during processing.";
-        setError(msg);
-      }
+      );
     },
-    [setInputFile, setPhase, setModelProgress, setResult, setError]
+    [setInputFile, setPhase, setModelProgress, setResult, setError, runWorker]
   );
 
   const handleSample = useCallback(() => {
@@ -1032,6 +1050,9 @@ export function App() {
               <p className="bg-status-sub">
                 One-time download (~40 MB). Saved in your browser cache.
               </p>
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           )}
 
@@ -1041,6 +1062,9 @@ export function App() {
               <ProgressBar loaded={0} total={1} label="Removing background" indeterminate={true} />
               <p className="bg-status-sub">Processing your image...</p>
               {inputUrl && <img src={inputUrl} alt="Source" className="bg-thumb-preview" />}
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           )}
 
