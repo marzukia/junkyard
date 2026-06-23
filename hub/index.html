@@ -7,11 +7,17 @@
     <!-- Prevent FOUC: apply stored colour scheme before React hydration -->
     <script>
       try {
-        var _s = window.localStorage.getItem("jy-scheme");
-        var mode = _s === "light" || _s === "dark" || _s === "system" ? _s : "system";
+        var _v = window.localStorage.getItem("mantine-color-scheme-value");
+        var mode = (_v === "light" || _v === "dark" || _v === "auto") ? _v : null;
+        if (!mode) {
+          var _l = window.localStorage.getItem("jy-scheme");
+          if (_l === "system") mode = "auto";
+          else if (_l === "light" || _l === "dark") mode = _l;
+          else mode = "auto";
+        }
         var dark =
           mode === "dark" ||
-          (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          ((mode === "auto" || !mode) && window.matchMedia("(prefers-color-scheme: dark)").matches);
         document.documentElement.setAttribute("data-scheme", dark ? "dark" : "light");
       } catch (e) {}
     </script>
