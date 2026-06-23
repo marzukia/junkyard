@@ -104,10 +104,14 @@ const FONT_CDN_URLS: Record<FontVariant, string> = {
  * Lazily fetch font bytes from CDN.
  * Returns null on any network failure (caller degrades gracefully).
  */
+const FETCH_TIMEOUT_MS = 30_000;
+
 async function fetchFontBytes(variant: FontVariant): Promise<Uint8Array | null> {
   const url = FONT_CDN_URLS[variant];
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
-    const resp = await fetch(url);
+    const resp = await fetch(url, { signal: controller.signal });
     if (!resp.ok) {
       console.warn(`[ocr-pdf] Font fetch failed (${resp.status}): ${url}`);
       return null;
@@ -117,6 +121,8 @@ async function fetchFontBytes(variant: FontVariant): Promise<Uint8Array | null> 
   } catch (err) {
     console.warn("[ocr-pdf] Font fetch error:", err);
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -175,9 +181,15 @@ async function fetchImageBytes(imageUrl: string): Promise<Uint8Array> {
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
     return bytes;
   }
-  const resp = await fetch(imageUrl);
-  const buf = await resp.arrayBuffer();
-  return new Uint8Array(buf);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const resp = await fetch(imageUrl, { signal: controller.signal });
+    const buf = await resp.arrayBuffer();
+    return new Uint8Array(buf);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 // ── Text-draw helper (font-aware) ─────────────────────────────────────────────
