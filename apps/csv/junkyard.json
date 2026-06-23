@@ -1,0 +1,16 @@
+{
+  "slug": "csv",
+  "name": "CSV / JSON",
+  "category": "text",
+  "order": 20,
+  "tagline": "Convert CSV to JSON and back",
+  "description": "Free CSV to JSON converter and JSON to CSV converter. Paste or upload, auto-detects delimiter (comma, tab, semicolon, pipe), sortable table preview, download result. No upload, no signup, runs entirely in your browser. A free csvjson.com and convertcsv.com alternative.",
+  "incumbent": "convertcsv",
+  "path": "/csv/",
+  "runtime": "client",
+  "mcp": {
+    "exposed": true,
+    "lib": "src/lib/csv.ts",
+    "tools": []
+  }
+}
