@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://junkyard.mrzk.io/markdown/sitemap.xml
+Sitemap: https://junkyard.sh/markdown/sitemap.xml
