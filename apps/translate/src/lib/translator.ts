@@ -10,15 +10,10 @@
  * any SharedArrayBuffer requirement. WebGPU is preferred when available
  * (no isolation required); single-thread WASM is the fallback.
  */
-import { env, pipeline } from "@huggingface/transformers";
+import { pipeline } from "@huggingface/transformers";
+import { configureTransformersEnv } from "./transformersEnv";
 import { DETECT_CODE, splitIntoChunks } from "./languages";
 
-// ── Disable multi-threaded WASM (requires SharedArrayBuffer / COOP+COEP) ──────
-// Must be set BEFORE any InferenceSession is created.
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-
-// Use browser cache so subsequent visits skip the download.
-env.useBrowserCache = true;
 
 const MODEL_ID = "Xenova/nllb-200-distilled-600M";
 
@@ -46,6 +41,7 @@ let translator: TranslationPipeline | null = null;
 /** Load (or return cached) the translation pipeline. */
 export async function loadTranslator(onProgress?: ProgressCallback): Promise<void> {
   if (translator) return;
+  configureTransformersEnv();
 
   const progressCb = (event: TransformersProgressEvent) => {
     if (!onProgress) return;
