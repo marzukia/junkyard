@@ -1,3 +1,5 @@
+import { TOOLS } from "../tools";
+
 export function Hero() {
   return (
     <section className="hero">
@@ -32,7 +34,7 @@ export function Hero() {
         </div>
         <div className="statline">
           <span className="pill">
-            <b>42</b> tools
+            <b>{TOOLS.length}</b> tools
           </span>
           <span className="pill warn">
             <b>$0</b> forever

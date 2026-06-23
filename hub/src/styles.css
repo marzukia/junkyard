@@ -98,46 +98,28 @@ header {
   color: var(--ink);
 }
 .logo .mk {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 2px;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   flex: none;
-  margin-top: -1px;
-}
-.logo .mk i {
-  border-radius: 3px;
-}
-.logo .mk i:nth-child(1) {
-  background: var(--accent);
-}
-.logo .mk i:nth-child(2) {
-  background: var(--amber);
-}
-.logo .mk i:nth-child(3) {
-  background: var(--coral);
-}
-.logo .mk i:nth-child(4) {
-  background: transparent;
-  border: 1.5px solid var(--rule);
 }
 .logo .wm {
   display: inline-flex;
   align-items: baseline;
-  font-weight: 800;
-  font-size: 17px;
-  letter-spacing: -.03em;
+  font-family: "JetBrains Mono", monospace;
   line-height: 1;
 }
+.logo .wm .wm-j {
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -.04em;
+  color: var(--ink);
+}
 .logo .wm .sh {
-  font-family: "JetBrains Mono", monospace;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -.04em;
   color: var(--accent);
-  font-weight: 700;
-  font-size: 1em;
-  letter-spacing: -.01em;
-  margin-left: -.04em;
+  margin-left: -.1em;
 }
 .toggle {
   display: flex;
@@ -431,7 +413,8 @@ header {
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 .hero h1 {
-  font-size: clamp(42px, 7vw, 72px);
+  font-family: "JetBrains Mono", monospace;
+  font-size: clamp(40px, 6.6vw, 68px);
   font-weight: 800;
   letter-spacing: -.045em;
   line-height: 1;
@@ -442,11 +425,11 @@ header {
 }
 .hero h1 .sh {
   font-family: "JetBrains Mono", monospace;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--accent);
-  letter-spacing: -.03em;
+  letter-spacing: -.045em;
   font-size: 1em;
-  margin-left: -.05em;
+  margin-left: -.1em;
 }
 .hero p.lead {
   margin-top: 22px;
@@ -903,7 +886,8 @@ footer {
   .toggle button .sm {
     display: inline;
   }
-  .logo .wm {
+  .logo .wm .wm-j,
+  .logo .wm .sh {
     font-size: 16px;
   }
   .hero {
