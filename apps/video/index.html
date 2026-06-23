@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>Video Toolkit, Free In-Browser Video Editor. Trim, Convert, Compress, GIF. No Upload</title>
+    <meta
+      name="description"
+      content="Free in-browser video toolkit: trim clips, convert between mp4/webm/gif, compress to smaller sizes, and turn video into GIF. Runs entirely client-side with ffmpeg.wasm - no upload, no signup, no watermark."
+    />
+    <meta
+      name="keywords"
+      content="video trimmer, video converter, video compressor, video to gif, mp4 to webm, webm to mp4, compress video online, trim video online, no upload video editor, browser video editor, ffmpeg wasm, Veed alternative, Kapwing alternative, ezgif alternative"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://junkyard.mrzk.io/video/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Theme colour (light + dark) -->
+    <meta name="theme-color" content="#FAF9F5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1814" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Video Toolkit" />
+    <meta property="og:title" content="Video Toolkit, Free In-Browser Video Editor. Trim, Convert, Compress, GIF. No Upload" />
+    <meta
+      property="og:description"
+      content="Free in-browser video toolkit: trim clips, convert between mp4/webm/gif, compress to smaller sizes, and turn video into GIF. Runs entirely client-side - no upload, no signup, no watermark."
+    />
+    <meta property="og:url" content="https://junkyard.mrzk.io/video/" />
+    <meta property="og:image" content="https://junkyard.mrzk.io/video/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Video Toolkit app running entirely in the browser, trim convert compress"
+    />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Video Toolkit, Free In-Browser Video Editor. No Upload" />
+    <meta
+      name="twitter:description"
+      content="Trim, convert, compress and GIF your videos in the browser. Powered by ffmpeg.wasm - no upload, no signup."
+    />
+    <meta name="twitter:image" content="https://junkyard.mrzk.io/video/og.png" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Video Toolkit",
+            "url": "https://junkyard.mrzk.io/video/",
+            "description": "Free in-browser video toolkit: trim, convert (mp4/webm/gif), compress, and turn video into GIF. Powered by ffmpeg.wasm - no upload, no signup, no watermark.",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Trim video clips with start/end time controls",
+              "Convert between mp4, webm, mov, gif formats",
+              "Compress video by resolution and quality",
+              "Convert video to animated GIF with fps and width controls",
+              "Before/after file size comparison",
+              "Runs entirely in browser, no upload"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- No-flash dark-mode script -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
