@@ -421,7 +421,7 @@
     "category": "ai",
     "order": 27,
     "tagline": "AI super-resolution 2x and 4x",
-    "description": "Upscale and sharpen images 2x or 4x in your browser, free, private, no upload. A Let",
+    "description": "Upscale and sharpen images 2x or 4x in your browser, free, private, no upload. A Let's Enhance and Upscayl alternative that runs entirely client-side with AI super-resolution. No signup, no watermark, no data leaves your device.",
     "incumbent": "Upscayl",
     "path": "/upscale/",
     "runtime": "client-ai",
