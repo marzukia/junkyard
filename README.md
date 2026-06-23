@@ -1,6 +1,6 @@
 # junkyard
 
-A scrapyard of **44 free, client-side web tools** — salvaged from behind paywalls, dumped out for anyone to grab. Everything runs entirely in your browser: no server, no upload, no account.
+A scrapyard of **44 free, client-side web tools** salvaged from behind paywalls, dumped out for anyone to grab. Everything runs entirely in your browser: no server, no upload, no account.
 
 Consolidated home for the fleet. Each tool lives in `apps/<slug>/`, the shared design kit in `kit/`, the `junkyard.sh` landing in `hub/`.
 
