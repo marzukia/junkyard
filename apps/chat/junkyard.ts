@@ -15,4 +15,5 @@ export const app: JunkyardApp = {
     lib: "src/lib/llmEngine.ts",
     tools: [],
   },
+  tags: ["webgpu", "large-download"],
 };

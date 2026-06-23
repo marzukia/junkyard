@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/screenshot/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/beautifier.ts",
     tools: [],
   },

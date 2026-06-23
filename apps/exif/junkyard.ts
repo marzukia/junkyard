@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/exif/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/exif-utils.ts",
     tools: [],
   },

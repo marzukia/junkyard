@@ -1,5 +1,6 @@
 export type Category = "image" | "text" | "ai" | "docs";
 export type Runtime = "client" | "client-ai";
+export type AppTag = "webgpu" | "on-device-ai" | "large-download" | "beta";
 
 export interface McpTool {
   name: string;
@@ -17,4 +18,5 @@ export interface JunkyardApp {
   path: string;
   runtime: Runtime;
   mcp: { exposed: boolean; lib: string; tools: McpTool[] };
+  tags?: AppTag[];
 }
