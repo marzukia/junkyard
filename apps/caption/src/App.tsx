@@ -15,6 +15,7 @@ import {
 } from "./lib/imageHelpers";
 import { useCaptionStore } from "./store/captionStore";
 import "./styles/caption.css";
+import { MobileWarning } from "./components/MobileWarning";
 
 // ── Brand mark glyph ──────────────────────────────────────────────────────────
 // Speech bubble with an eye inside, "describe what you see"
@@ -728,6 +729,7 @@ export function App() {
       />
 
       <main className="site-main">
+        <MobileWarning />
         <p className="cap-beta-note">
           <strong>Beta</strong>, first run downloads the model (~90 MB), then it is instant &amp;
           offline. Your images never leave your device.

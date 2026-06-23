@@ -18,6 +18,7 @@ import {
 } from "./lib/textHelpers";
 import { useSummarizeStore } from "./store/summarizeStore";
 import "./styles/summarize.css";
+import { MobileWarning } from "./components/MobileWarning";
 
 const MIN_INPUT_WORDS = 30;
 
@@ -387,6 +388,7 @@ export function App() {
       />
 
       <main className="site-main">
+        <MobileWarning />
         {/* Beta notice */}
         <p className="sum-beta-note">
           <strong>Beta</strong>, first run downloads a model (~80 MB), then it is instant &amp;
