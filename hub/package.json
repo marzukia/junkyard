@@ -32,5 +32,13 @@
     "@biomejs/biome@1.9.4": true,
     "esbuild@0.25.12": true,
     "esbuild@0.28.1": true
+  },
+  "description": "junkyard.sh landing page: tool grid, search, and catalogue browser",
+  "license": "MIT",
+  "author": "Andryo Marzuki",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marzukia/junkyard.git",
+    "directory": "hub"
   }
 }
