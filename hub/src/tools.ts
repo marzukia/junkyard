@@ -1,6 +1,8 @@
-export type Yard = "image" | "text" | "ai" | "docs";
-// keep in sync with scripts/catalogue-schema.ts AppTag
-export type AppTag = "webgpu" | "on-device-ai" | "large-download" | "beta";
+import type { AppTag as _AppTag, Category } from "../../scripts/catalogue-schema.ts";
+
+// Yard is the hub-internal name for catalogue Category.
+export type Yard = Category;
+export type AppTag = _AppTag;
 
 export interface Tool {
   name: string;
