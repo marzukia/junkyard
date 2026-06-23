@@ -5,6 +5,8 @@ set -euo pipefail
 # translate, upscale) pull onnxruntime-node, whose postinstall tries to
 # download CUDA GPU binaries and 403s on CI. These are browser apps that only
 # use onnxruntime-web in the bundle, so skip the Node CUDA EP download.
+# Belt-and-suspenders: bun also blocks lifecycle scripts by default, so these
+# would not run under bun anyway. Keep both vars for any npm fallback context.
 export npm_config_onnxruntime_node_install_cuda=skip
 export ONNXRUNTIME_NODE_INSTALL_CUDA=skip
 
@@ -13,13 +15,13 @@ DIST="$ROOT/dist"
 
 echo "==> Building hub into $DIST"
 cd "$ROOT/hub"
-npm ci
-# Generate the catalogue after hub deps install so tsx resolves from hub/node_modules
-# (pinned devDep), not an unpinned npx auto-download. We invoke vite directly below
-# rather than `npm run build`, so the prebuild hook does not fire - generate explicitly.
+bun install
+# Generate the catalogue - bun runs the script directly with no deps needed.
+# We invoke vite directly below rather than `bun run build`, so the prebuild
+# hook does not fire - generate explicitly.
 echo "==> Generating catalogue from apps/*/junkyard.ts"
-npx tsx "$ROOT/scripts/gen-catalogue.ts"
-npx vite build --outDir "$DIST" --emptyOutDir
+bun "$ROOT/scripts/gen-catalogue.ts"
+bunx vite build --outDir "$DIST" --emptyOutDir
 
 echo "==> Building apps"
 built=0
@@ -27,13 +29,13 @@ for d in "$ROOT"/apps/*/; do
   slug="$(basename "$d")"
   echo "  -> $slug"
   cd "$d"
-  npm ci
-  npx vite build --base="/$slug/" --outDir "$DIST/$slug" --emptyOutDir
+  bun install
+  bunx vite build --base="/$slug/" --outDir "$DIST/$slug" --emptyOutDir
   built=$((built + 1))
 done
 
 echo "==> Injecting Umami analytics into dist/"
-node "$ROOT/scripts/inject-umami.mjs"
+bun "$ROOT/scripts/inject-umami.mjs"
 
 # Ensure CNAME is correct at root - defensive re-write in case an app build
 # somehow touched the dist root (it won't since each app uses --outDir to a
