@@ -1,0 +1,36 @@
+{
+  "name": "@junkyard/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "culori": "^4.0.2",
+    "diff": "^7.0.0",
+    "jsbarcode": "^3.11.6",
+    "marked": "^15.0.0",
+    "qrcode": "^1.5.4",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/culori": "^4.0.1",
+    "@types/diff": "^6.0.0",
+    "@types/jsbarcode": "^3.11.4",
+    "@types/node": "^20.0.0",
+    "@types/qrcode": "^1.5.5",
+    "typescript": "^5.8.3",
+    "vitest": "^2.0.0"
+  }
+}
