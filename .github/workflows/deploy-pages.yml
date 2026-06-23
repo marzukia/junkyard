@@ -38,7 +38,7 @@ jobs:
         # catalogue artifacts. The generator also validates description quality
         # and mcp.tools shape.
         run: |
-          npx tsx scripts/gen-catalogue.ts
+          (cd hub && npx tsx ../scripts/gen-catalogue.ts)
           git diff --exit-code hub/src/catalogue.generated.ts hub/public/catalogue.json
 
       - name: Check vendored AppSwitcher copies are up to date
