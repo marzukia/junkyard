@@ -1,8 +1,9 @@
 /**
  * fix-app-seo.mjs
  *
- * Rewrites per-app SEO metadata from the retired <slug>.mrzk.io subdomain pattern
- * to the canonical path-based URL at https://junkyard.mrzk.io/<slug>/.
+ * Rewrites per-app SEO metadata:
+ *   1. Retired <slug>.mrzk.io subdomain pattern -> canonical path-based URL at https://junkyard.sh/<slug>
+ *   2. Current junkyard.mrzk.io references -> https://junkyard.sh
  *
  * Files touched per app:
  *   apps/<slug>/index.html          - canonical, og:url, og:image, twitter:image, JSON-LD url
@@ -11,7 +12,7 @@
  *
  * Footer "more tools" links (three inline apps embed footer in App.tsx, rest use Footer.tsx):
  *   apps/<slug>/src/components/Footer.tsx  OR  apps/<slug>/src/App.tsx
- *   https://mrzk.io/apps/ -> https://junkyard.mrzk.io/
+ *   https://mrzk.io/apps/ -> https://junkyard.sh/
  *
  * Run: node scripts/fix-app-seo.mjs
  */
@@ -23,7 +24,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const APPS_DIR = resolve(__dirname, "../apps");
-const HUB_URL = "https://junkyard.mrzk.io";
+const HUB_URL = "https://junkyard.sh";
 
 // These three apps embed the footer inline in App.tsx instead of using Footer.tsx
 const INLINE_FOOTER_APPS = new Set(["colours", "favicon", "subs"]);
@@ -62,15 +63,22 @@ for (const slug of slugs) {
   const appDir = join(APPS_DIR, slug);
   const oldBase = `https://${slug}.mrzk.io`;
   const newBase = `${HUB_URL}/${slug}`;
+  const oldHub = "https://junkyard.mrzk.io";
 
   // ── index.html ───────────────────────────────────────────────────────────────
   const indexPath = join(appDir, "index.html");
   patchFile(indexPath, (src) => {
     let out = src;
-    // Replace every occurrence of https://<slug>.mrzk.io/ (with trailing slash)
+    // Replace retired <slug>.mrzk.io pattern
     out = out.replaceAll(`${oldBase}/`, `${newBase}/`);
-    // Replace bare https://<slug>.mrzk.io (without trailing slash, unlikely but safe)
     out = out.replaceAll(oldBase, newBase);
+    // Replace current junkyard.mrzk.io/<slug> pattern
+    out = out.replaceAll(`${oldHub}/${slug}/`, `${newBase}/`);
+    out = out.replaceAll(`${oldHub}/${slug}`, newBase);
+    // Replace bare junkyard.mrzk.io (hub root references)
+    out = out.replaceAll(oldHub, HUB_URL);
+    // Also catch bare hostname without https:// prefix (e.g. og:image:alt text)
+    out = out.replaceAll("junkyard.mrzk.io", "junkyard.sh");
     return out;
   });
 
@@ -80,6 +88,9 @@ for (const slug of slugs) {
     let out = src;
     out = out.replaceAll(`${oldBase}/`, `${newBase}/`);
     out = out.replaceAll(oldBase, newBase);
+    out = out.replaceAll(`${oldHub}/${slug}/`, `${newBase}/`);
+    out = out.replaceAll(`${oldHub}/${slug}`, newBase);
+    out = out.replaceAll(oldHub, HUB_URL);
     return out;
   });
 
@@ -89,6 +100,9 @@ for (const slug of slugs) {
     let out = src;
     out = out.replaceAll(`${oldBase}/`, `${newBase}/`);
     out = out.replaceAll(oldBase, newBase);
+    out = out.replaceAll(`${oldHub}/${slug}/`, `${newBase}/`);
+    out = out.replaceAll(`${oldHub}/${slug}`, newBase);
+    out = out.replaceAll(oldHub, HUB_URL);
     return out;
   });
 
@@ -116,10 +130,10 @@ try {
   );
   const lines = result.trim().split("\n").filter(Boolean);
   const residual = lines.filter(
-    (l) => !l.includes("junkyard.mrzk.io") && !l.includes("charted.mrzk.io") && !l.match(/https:\/\/mrzk\.io(?:[^.]|$)/)
+    (l) => !l.includes("charted.mrzk.io") && !l.match(/https:\/\/mrzk\.io(?:[^.]|$)/)
   );
   if (residual.length === 0) {
-    console.log("PASS: zero residual subdomain occurrences.");
+    console.log("PASS: zero residual mrzk.io subdomain occurrences in app SEO files.");
   } else {
     console.error(`FAIL: ${residual.length} residual lines found:`);
     residual.forEach((l) => console.error(" ", l));
