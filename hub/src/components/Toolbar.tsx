@@ -26,7 +26,7 @@ export function Toolbar({ query, onQuery, active, onFilter, searchRef }: Toolbar
         <input
           ref={searchRef}
           type="text"
-          placeholder="search the yard...  try 'qr', 'pdf', 'image'"
+          placeholder="search the yard…  try 'qr', 'pdf', 'image'"
           autoComplete="off"
           spellCheck={false}
           value={query}
