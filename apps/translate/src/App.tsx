@@ -11,7 +11,8 @@ import {
   findLanguage,
   validateLanguagePair,
 } from "./lib/languages";
-import { isTranslatorLoaded, loadTranslator, translateText } from "./lib/translator";
+import type { TranslationResult } from "./lib/translator";
+import { useWorkerTask } from "./lib/workerTask";
 import { useTranslateStore } from "./store/translateStore";
 import "./styles/translate.css";
 import { MobileWarning } from "./components/MobileWarning";
@@ -192,6 +193,16 @@ export function App() {
 
   const busy = phase === "model-loading" || phase === "translating";
 
+  const { run: runWorker, cancel: cancelWorker } = useWorkerTask<
+    { text: string; sourceLang: string; targetLang: string },
+    TranslationResult
+  >();
+
+  const handleCancel = useCallback(() => {
+    cancelWorker();
+    setPhase("idle");
+  }, [cancelWorker, setPhase]);
+
   const handleTranslate = useCallback(async () => {
     const validationErr = validateLanguagePair(sourceLang, targetLang);
     if (validationErr) {
@@ -206,27 +217,27 @@ export function App() {
       return;
     }
 
-    try {
-      if (!isTranslatorLoaded()) {
-        setPhase("model-loading");
-        await loadTranslator((loaded, total, status) => {
+    setPhase("model-loading");
+    await runWorker(
+      new URL("./infer.worker.ts", import.meta.url),
+      { text: sourceText, sourceLang, targetLang },
+      {
+        onProgress: (loaded, total, status) => {
           setModelProgress(loaded, total, status);
-        });
-      }
-      setPhase("translating");
-      const { translatedText, resolvedSourceLang } = await translateText(
-        sourceText,
-        sourceLang,
-        targetLang,
-        (done, total) => {
+          setPhase("model-loading");
+        },
+        onChunkProgress: (done, total) => {
+          setPhase("translating");
           if (total > 1) setChunkProgress(done, total);
-        }
-      );
-      setResult(translatedText, sourceLang === DETECT_CODE ? resolvedSourceLang : undefined);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Unknown error during translation.";
-      setError(msg);
-    }
+        },
+        onResult: ({ translatedText, resolvedSourceLang }) => {
+          setResult(translatedText, sourceLang === DETECT_CODE ? resolvedSourceLang : undefined);
+        },
+        onError: (message) => {
+          setError(message);
+        },
+      }
+    );
   }, [
     sourceText,
     sourceLang,
@@ -237,6 +248,7 @@ export function App() {
     setChunkProgress,
     setResult,
     setError,
+    runWorker,
   ]);
 
   // Cmd/Ctrl+Enter triggers translation from the source textarea
@@ -315,7 +327,7 @@ export function App() {
   );
 
   // Show model-size warning only when translation has never happened yet
-  const modelNeverLoaded = !isTranslatorLoaded() && phase !== "done" && phase !== "translating";
+  const modelNeverLoaded = phase === "idle";
 
   // Detect badge: what language was detected
   const detectedLangLabel = detectedLang ? findLanguage(detectedLang)?.label : null;
@@ -546,6 +558,16 @@ export function App() {
             >
               {busy ? "Translating..." : "Translate"}
             </button>
+            {busy && (
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={handleCancel}
+                aria-label="Cancel translation"
+              >
+                Cancel
+              </button>
+            )}
           </div>
         </div>
       </main>
