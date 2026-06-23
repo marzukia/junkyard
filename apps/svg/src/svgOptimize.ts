@@ -160,9 +160,16 @@ export function toDataUri(svg: string): string {
 
 /**
  * Converts SVG markup to a base64-encoded data: URI.
+ * Uses TextEncoder for a correct UTF-8-safe base64 encode — avoids the
+ * deprecated unescape() which corrupts non-ASCII characters.
  */
 export function toBase64DataUri(svg: string): string {
-  return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+  const bytes = new TextEncoder().encode(svg);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return `data:image/svg+xml;base64,${btoa(binary)}`;
 }
 
 /**

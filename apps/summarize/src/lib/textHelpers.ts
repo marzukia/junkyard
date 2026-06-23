@@ -88,8 +88,23 @@ export function lengthLabel(maxWords: number): string {
 }
 
 /**
+ * Common abbreviations that end with a period but are NOT sentence boundaries.
+ * Checked case-insensitively against the lowercased word (including its trailing dot).
+ */
+const ABBREVS: ReadonlySet<string> = new Set([
+  "dr.", "mr.", "mrs.", "ms.", "prof.", "sr.", "jr.",
+  "e.g.", "i.e.", "etc.", "vs.", "inc.", "corp.", "ltd.", "dept.", "approx.",
+]);
+
+/** Return true if `word` is a known abbreviation that should not split a sentence. */
+function isAbbreviation(word: string): boolean {
+  return ABBREVS.has(word.toLowerCase());
+}
+
+/**
  * Split text into chunks that each fit within MODEL_MAX_WORDS.
  * Splits on sentence boundaries where possible (". ", "! ", "? ").
+ * Known abbreviations (Dr., e.g., etc.) are not treated as boundaries.
  * Returns an array of non-empty chunk strings.
  */
 export function chunkText(text: string, maxWordsPerChunk: number = MODEL_MAX_WORDS): string[] {
@@ -111,7 +126,7 @@ export function chunkText(text: string, maxWordsPerChunk: number = MODEL_MAX_WOR
       const lookback = Math.max(1, Math.floor(slice.length * 0.85));
       for (let i = slice.length - 1; i >= lookback; i--) {
         const w = slice[i];
-        if (/[.!?]$/.test(w)) {
+        if (/[.!?]$/.test(w) && !isAbbreviation(w)) {
           breakAt = i + 1;
           break;
         }

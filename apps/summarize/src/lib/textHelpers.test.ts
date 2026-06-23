@@ -314,3 +314,51 @@ describe("chunkText empty/whitespace input", () => {
     expect(chunkText("\t\n  \n")).toEqual([]);
   });
 });
+
+describe("chunkText — abbreviation guard", () => {
+  // Build text that would be chunked if the chunk size is small enough.
+  // Place an abbreviation at the sentence-boundary lookback window so that
+  // without the guard it would be chosen as a break point.
+
+  it("does not split on 'Dr.' as a sentence boundary", () => {
+    // 100 words ending with 'Dr. Smith continued.'
+    // chunk size = 90 means lookback covers the last ~14 words.
+    // 'Dr.' falls in the lookback window; without the guard it would be chosen.
+    const prefix = Array(80).fill("word").join(" ");
+    const suffix = "Dr. Smith continued the study and reported findings to the committee members.";
+    const text = `${prefix} ${suffix}`;
+    const chunks = chunkText(text, 90);
+    // 'Dr.' must NOT be a split point — it should land in the same chunk as 'Smith'
+    const firstChunk = chunks[0];
+    // If it split on 'Dr.', the first chunk would end with 'Dr.' and 'Smith' would be in chunk 2
+    expect(firstChunk).not.toMatch(/\bDr\.$/);
+  });
+
+  it("does not split on 'e.g.' as a sentence boundary", () => {
+    const prefix = Array(80).fill("word").join(" ");
+    const suffix = "e.g. using the proposed method gave better results overall.";
+    const text = `${prefix} ${suffix}`;
+    const chunks = chunkText(text, 90);
+    expect(chunks[0]).not.toMatch(/\be\.g\.$/);
+  });
+
+  it("does not split on 'etc.' as a sentence boundary", () => {
+    const prefix = Array(80).fill("word").join(" ");
+    const suffix = "etc. are all valid approaches worth considering here.";
+    const text = `${prefix} ${suffix}`;
+    const chunks = chunkText(text, 90);
+    expect(chunks[0]).not.toMatch(/\betc\.$/);
+  });
+
+  it("still splits on a real sentence boundary after an abbreviation", () => {
+    // 'Dr. Smith reported results. The next section covers analysis.' — real boundary is after 'results.'
+    const prefix = Array(78).fill("word").join(" ");
+    const mid = "Dr. Smith reported results.";
+    const rest = Array(30).fill("tail").join(" ");
+    const text = `${prefix} ${mid} ${rest}`;
+    const chunks = chunkText(text, 90);
+    // There should be at least 2 chunks and the first should end with 'results.'
+    expect(chunks.length).toBeGreaterThanOrEqual(2);
+    expect(chunks[0]).toMatch(/results\.$/);
+  });
+});
