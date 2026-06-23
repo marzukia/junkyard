@@ -2,7 +2,18 @@ import { useEffect, useState } from "react";
 
 type Scheme = "system" | "light" | "dark";
 
-const STORAGE_KEY = "jy-scheme";
+const STORAGE_KEY = "mantine-color-scheme-value";
+
+// Hub uses "system" internally; Mantine and the shared key use "auto".
+function toStored(s: Scheme): string {
+  return s === "system" ? "auto" : s;
+}
+
+function fromStored(v: string | null): Scheme {
+  if (v === "light" || v === "dark") return v;
+  if (v === "auto") return "system";
+  return "system";
+}
 
 function applyScheme(mode: Scheme): void {
   const dark =
@@ -14,7 +25,11 @@ function applyScheme(mode: Scheme): void {
 function readStored(): Scheme {
   try {
     const v = window.localStorage.getItem(STORAGE_KEY);
-    if (v === "light" || v === "dark" || v === "system") return v;
+    if (v === "light" || v === "dark" || v === "auto") return fromStored(v);
+    // One-time migration: pick up legacy jy-scheme key if present
+    const legacy = window.localStorage.getItem("jy-scheme");
+    if (legacy === "light" || legacy === "dark") return legacy;
+    if (legacy === "system") return "system";
   } catch (_e) {
     // localStorage unavailable
   }
@@ -79,7 +94,7 @@ export function ThemeToggle() {
   function pick(next: Scheme) {
     setMode(next);
     try {
-      window.localStorage.setItem(STORAGE_KEY, next);
+      window.localStorage.setItem(STORAGE_KEY, toStored(next));
     } catch (_e) {
       // ignore
     }
