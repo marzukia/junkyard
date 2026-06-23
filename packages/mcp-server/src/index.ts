@@ -17,14 +17,14 @@ import { TOOLS } from "../../core/src/index.ts";
 // MCP tool names must match [a-zA-Z0-9_-]+ (max 64 chars per spec).
 // Slugs and op names from core use only lowercase letters + digits, so only
 // camelCase op names need sanitisation (replace uppercase with _lower).
-function sanitiseName(slug: string, opName: string): string {
+export function sanitiseName(slug: string, opName: string): string {
   const safe = `junkyard_${slug}_${opName}`.replace(/[^a-zA-Z0-9_-]/g, "_");
   return safe.slice(0, 64);
 }
 
 // Format op output as MCP content. Stringify objects as pretty JSON;
 // pass strings (e.g. SVG from qr/barcode) through as-is.
-function toContent(value: unknown): { type: "text"; text: string }[] {
+export function toContent(value: unknown): { type: "text"; text: string }[] {
   if (typeof value === "string") {
     return [{ type: "text", text: value }];
   }
@@ -73,7 +73,9 @@ async function main() {
   // Keep alive - stdio transport blocks on stdin until the client closes.
 }
 
-main().catch((err) => {
-  process.stderr.write(`Fatal: ${err instanceof Error ? err.message : String(err)}\n`);
-  process.exit(1);
-});
+if (import.meta.main) {
+  main().catch((err) => {
+    process.stderr.write(`Fatal: ${err instanceof Error ? err.message : String(err)}\n`);
+    process.exit(1);
+  });
+}

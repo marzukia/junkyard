@@ -1,26 +1,32 @@
 /**
  * Markdown to HTML conversion using `marked` (Node-safe, no browser globals).
  *
- * The app uses DOMPurify for sanitization, which requires a DOM. In the core
- * package we use marked with a safe-by-default configuration instead:
- *   - mangle: false (no email obfuscation)
- *   - headerIds: false (no id attributes on headings -- avoids XSS via crafted ids)
- *   - gfm: true (GitHub Flavoured Markdown)
- *
- * This produces safe HTML for trusted input (MCP tool input is caller-controlled).
- * For untrusted input the caller should apply a server-side sanitizer. We document
- * this in the op description so the MCP server author is informed.
- *
- * DOMPurify is not imported here because it requires a DOM environment.
+ * Raw HTML blocks in the input are escaped (not passed through) so that
+ * `<script>` tags and other injected markup cannot survive as executable
+ * HTML in the output. This is safe for MCP tool use where the caller
+ * controls the input and the output is typically rendered client-side.
  */
-import { marked } from "marked";
+import { marked, Renderer } from "marked";
 import { z } from "zod";
 import type { ToolDef } from "./types.js";
+
+// Override the renderer so that raw HTML blocks and inline HTML are escaped
+// rather than passed through verbatim. This prevents <script> injection.
+const safeRenderer = new Renderer();
+
+safeRenderer.html = ({ text }: { text: string }) => {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+};
 
 marked.setOptions({ gfm: true, breaks: false });
 
 export function toHtml(md: string): string {
-  return marked.parse(md) as string;
+  return marked.parse(md, { renderer: safeRenderer }) as string;
 }
 
 // ── ToolDef ──────────────────────────────────────────────────────────────────
@@ -31,7 +37,7 @@ export const markdownTool: ToolDef = {
   ops: [
     {
       name: "toHtml",
-      description: "Convert Markdown to HTML using marked (GFM enabled). Output is not DOM-sanitized; apply a server-side sanitizer for untrusted input.",
+      description: "Convert Markdown to HTML using marked (GFM enabled). Raw HTML in the input is escaped, so embedded <script> tags are neutralised.",
       inputSchema: z.object({ markdown: z.string() }),
       run({ markdown }) {
         return { html: toHtml(markdown) };
