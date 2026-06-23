@@ -86,9 +86,14 @@ export function MergeTool() {
       const buffers = await Promise.all(
         entries.map(async (e) => new Uint8Array(await e.file.arrayBuffer()))
       );
-      const result = await mergePdfs(buffers, (done, total) => {
-        setProgress({ done, total });
-      });
+      const names = entries.map((e) => e.file.name);
+      const result = await mergePdfs(
+        buffers,
+        (done, total) => {
+          setProgress({ done, total });
+        },
+        names
+      );
       downloadBytes(result, "merged.pdf");
       setDone(true);
     } catch (err) {

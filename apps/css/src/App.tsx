@@ -242,15 +242,22 @@ const RADIAL_PRESETS: RadialPreset[] = [
 // ── Copy button ───────────────────────────────────────────────────────────────
 
 function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
+  const [state, setState] = useState<"idle" | "copied" | "error">("idle");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleCopy = useCallback(() => {
-    void navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      if (timer.current) clearTimeout(timer.current);
-      timer.current = setTimeout(() => setCopied(false), 1800);
-    });
+    navigator.clipboard.writeText(text).then(
+      () => {
+        setState("copied");
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => setState("idle"), 1800);
+      },
+      () => {
+        setState("error");
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => setState("idle"), 2500);
+      }
+    );
   }, [text]);
 
   return (
@@ -261,7 +268,7 @@ function CopyButton({ text }: { text: string }) {
       aria-label="Copy CSS to clipboard"
       disabled={!text}
     >
-      {copied ? "Copied!" : "Copy CSS"}
+      {state === "copied" ? "Copied!" : state === "error" ? "Copy failed" : "Copy CSS"}
     </button>
   );
 }
@@ -1907,7 +1914,7 @@ export function App() {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
         e.preventDefault();
-        if (activeTabCss) void navigator.clipboard.writeText(activeTabCss);
+        if (activeTabCss) navigator.clipboard.writeText(activeTabCss).catch(() => {});
       }
     };
     window.addEventListener("keydown", handler);

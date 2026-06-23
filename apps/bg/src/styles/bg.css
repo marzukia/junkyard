@@ -460,7 +460,6 @@
 .bg-compare-slider {
   position: relative;
   width: 100%;
-  aspect-ratio: auto;
   border-radius: var(--radius-sm);
   overflow: hidden;
   cursor: ew-resize;
@@ -469,14 +468,24 @@
   touch-action: none;
   border: 1px solid var(--rule);
   outline: none;
-  max-height: 480px;
-  display: flex;
-  align-items: stretch;
+  /* height is established by .bg-cs-sizer flowing normally */
 }
 
 .bg-compare-slider:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* Invisible sizer: flows normally so the container gets intrinsic height.
+   The visible images are layered absolutely on top of it. */
+.bg-cs-sizer {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  object-fit: contain;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* Before layer: sits beneath everything, full width */
@@ -582,7 +591,7 @@
 }
 
 @media (max-width: 480px) {
-  .bg-compare-slider {
+  .bg-cs-sizer {
     max-height: 320px;
   }
 }

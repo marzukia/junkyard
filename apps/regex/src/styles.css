@@ -244,6 +244,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  /* Prevent child elements from forcing horizontal scroll */
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .site-main {
+    padding: 1rem 1rem 2.5rem;
+  }
 }
 
 /* ─── Card shell ────────────────────────────────────────────────────────── */
@@ -254,6 +262,9 @@ body {
   border-radius: var(--radius);
   box-shadow: var(--shadow-card);
   padding: 1.25rem 1.5rem;
+  /* Prevent content from widening card past its grid column */
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* ─── Primary button ────────────────────────────────────────────────────── */
@@ -519,6 +530,7 @@ body {
   flex-direction: column;
   gap: 0.75rem;
   padding: 1.25rem 1.25rem 1rem;
+  min-width: 0;
 }
 
 .rx-panel-label {
@@ -537,6 +549,7 @@ body {
   gap: 0.75rem;
   flex-wrap: wrap;
   min-height: 1.8rem;
+  min-width: 0;
 }
 
 .rx-stat {
@@ -656,11 +669,13 @@ body {
 /* Tabs */
 .rx-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 2px;
   padding: 3px;
   background: var(--surface-sunken);
-  border-radius: 999px;
-  width: fit-content;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Match list */
@@ -977,6 +992,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* Panel header row: label + action buttons */

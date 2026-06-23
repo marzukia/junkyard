@@ -311,8 +311,21 @@ export function bitmapToBlob(bitmap: ImageBitmap, opts: ConvertOptions): Promise
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
       (blob) => {
-        if (blob) resolve(blob);
-        else reject(new Error("canvas.toBlob returned null"));
+        if (!blob) {
+          reject(new Error("canvas.toBlob returned null"));
+          return;
+        }
+        // Detect silent format fallback: browsers that lack AVIF encode return a PNG blob
+        // with type "image/png" instead of rejecting or returning null.
+        if (blob.type !== mime) {
+          reject(
+            new Error(
+              `AVIF encode failed: browser returned ${blob.type} instead of ${mime} -- try Chrome 94+ or Firefox 113+`
+            )
+          );
+          return;
+        }
+        resolve(blob);
       },
       mime,
       q

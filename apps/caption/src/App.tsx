@@ -354,11 +354,23 @@ function BatchPanel({ onStart, disabled, onSample }: BatchPanelProps) {
   const [items, setItems] = useState<BatchItem[]>([]);
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(false);
+  const [batchError, setBatchError] = useState<string | null>(null);
   const cancelRef = useRef(false);
 
   const handleFiles = useCallback((files: File[]) => {
     const valid = files.filter(isSupportedImage);
-    if (valid.length === 0) return;
+    if (valid.length === 0) {
+      const names = Array.from(files)
+        .slice(0, 3)
+        .map((f) => `"${f.name}"`)
+        .join(", ");
+      const suffix = files.length > 3 ? ` and ${files.length - 3} more` : "";
+      setBatchError(
+        `No supported images found (${names}${suffix}). Please upload PNG, JPG, WebP or GIF files.`
+      );
+      return;
+    }
+    setBatchError(null);
     setDone(false);
     setItems(
       valid.map((f) => ({
@@ -416,14 +428,35 @@ function BatchPanel({ onStart, disabled, onSample }: BatchPanelProps) {
   return (
     <div className="cap-batch-wrap">
       {items.length === 0 ? (
-        <DropZone
-          onFile={(f) => handleFiles([f])}
-          onFiles={handleFiles}
-          disabled={disabled}
-          multipleAllowed
-          showSample={!!onSample}
-          onSample={onSample}
-        />
+        <>
+          <DropZone
+            onFile={(f) => handleFiles([f])}
+            onFiles={handleFiles}
+            disabled={disabled}
+            multipleAllowed
+            showSample={!!onSample}
+            onSample={onSample}
+          />
+          {batchError && (
+            <div className="cap-error-inline" role="alert">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#d9594c"
+                strokeWidth="2"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <p className="cap-error-msg">{batchError}</p>
+            </div>
+          )}
+        </>
       ) : (
         <>
           <div className="cap-batch-list">
@@ -485,6 +518,7 @@ function BatchPanel({ onStart, disabled, onSample }: BatchPanelProps) {
                 setItems([]);
                 setRunning(false);
                 setDone(false);
+                setBatchError(null);
               }}
             >
               Clear

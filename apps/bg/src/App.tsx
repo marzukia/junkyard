@@ -402,6 +402,10 @@ function CompareSlider({ beforeUrl, afterUrl, bgFill, customColor }: CompareSlid
       aria-valuemin={0}
       aria-valuemax={100}
     >
+      {/* Invisible sizer: flows normally to give the container its natural height.
+          The visible before/after images are absolutely layered on top. */}
+      <img src={beforeUrl} alt="" className="bg-cs-sizer" aria-hidden="true" draggable={false} />
+
       {/* Before layer (full width, clipped on right) */}
       <div className="bg-cs-before">
         <img src={beforeUrl} alt="Original" className="bg-cs-img" draggable={false} />

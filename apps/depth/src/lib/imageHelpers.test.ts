@@ -43,6 +43,16 @@ describe("isSupportedImage", () => {
     expect(isSupportedImage(file)).toBe(false);
   });
 
+  it("accepts a garbage file with a valid image extension (MIME check passes; binary decode check happens downstream)", () => {
+    // A file with non-image bytes but a .jpg extension gets type=image/jpeg from the browser.
+    // isSupportedImage returns true — the early createImageBitmap validation in the UI
+    // is what gates this from silently failing with no user feedback.
+    const garbage = new File([new Uint8Array([0x00, 0x01, 0x02, 0xff])], "not-an-image.jpg", {
+      type: "image/jpeg",
+    });
+    expect(isSupportedImage(garbage)).toBe(true);
+  });
+
   it("covers all ACCEPTED_TYPES", () => {
     for (const mime of ACCEPTED_TYPES) {
       const file = new File([""], `test.${mime.split("/")[1]}`, { type: mime });

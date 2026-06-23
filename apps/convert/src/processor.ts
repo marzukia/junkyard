@@ -75,8 +75,25 @@ export async function processFile(
     }
   } else if (format === "avif") {
     // AVIF encode must go through canvas (browser-image-compression doesn't support AVIF)
-    // First decode the source file to an ImageBitmap
+    // First check that the browser actually supports AVIF canvas encoding. canvas.toBlob
+    // silently falls back to PNG on browsers that lack AVIF encode support, which would
+    // produce a PNG file saved under a .avif filename. We detect the fallback by verifying
+    // the returned blob's MIME type matches what was requested.
     onProgress?.(10);
+
+    // Quick 1x1 capability probe (async, reliable -- no UA sniffing)
+    const canAvif = await new Promise<boolean>((resolve) => {
+      const probe = document.createElement("canvas");
+      probe.width = 1;
+      probe.height = 1;
+      probe.toBlob((b) => resolve(b !== null && b.type === "image/avif"), "image/avif", 0.5);
+    });
+    if (!canAvif) {
+      throw new Error(
+        "AVIF encode failed: browser does not support AVIF canvas output -- try Chrome 94+ or Firefox 113+"
+      );
+    }
+
     let sourceBitmap: ImageBitmap;
     try {
       sourceBitmap = await createImageBitmap(file);
@@ -100,8 +117,18 @@ export async function processFile(
     blob = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
         (b) => {
-          if (b) resolve(b);
-          else reject(new Error("AVIF encode failed: browser may not support AVIF output"));
+          if (!b) {
+            reject(new Error("AVIF encode failed: canvas.toBlob returned null"));
+            return;
+          }
+          // Double-check the browser didn't silently fall back to another format
+          if (b.type !== "image/avif") {
+            reject(
+              new Error(`AVIF encode failed: browser returned a non-AVIF blob (type: ${b.type})`)
+            );
+            return;
+          }
+          resolve(b);
         },
         "image/avif",
         quality / 100
