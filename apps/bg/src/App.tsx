@@ -5,6 +5,7 @@ import { Header } from "./components/Header";
 import { isModelLoaded, loadModel, removeBackground, revokeResult } from "./lib/bgRemoval";
 import {
   clamp,
+  computeCoverFit,
   formatBytes,
   formatProgress,
   isSupportedImage,
@@ -211,7 +212,41 @@ function ProgressBar({ loaded, total, label, indeterminate = false }: ProgressBa
 
 // ── Background fill type ──────────────────────────────────────────────────────
 
-export type BgFill = "transparent" | "white" | "black" | "blur" | "custom";
+export type BgFill = "transparent" | "white" | "black" | "blur" | "custom" | "gradient" | "image";
+
+// ── Gradient fill state ───────────────────────────────────────────────────────
+
+export interface GradientConfig {
+  colorA: string;
+  colorB: string;
+  angle: number;
+}
+
+const GRADIENT_PRESETS: { label: string; colorA: string; colorB: string; angle: number }[] = [
+  { label: "Teal dusk", colorA: "#2f9d8d", colorB: "#1a2530", angle: 135 },
+  { label: "Amber sky", colorA: "#e8b04b", colorB: "#d9594c", angle: 120 },
+  { label: "Mist", colorA: "#d4eef0", colorB: "#c8e0d8", angle: 180 },
+  { label: "Slate", colorA: "#e9eef1", colorB: "#9aa6b0", angle: 160 },
+  { label: "Midnight", colorA: "#13171a", colorB: "#283037", angle: 145 },
+  { label: "Rose", colorA: "#fde8e8", colorB: "#d9594c", angle: 130 },
+];
+
+/** Produce a CSS linear-gradient string from a GradientConfig. */
+function gradientCss(g: GradientConfig): string {
+  return `linear-gradient(${g.angle}deg, ${g.colorA}, ${g.colorB})`;
+}
+
+/** True when the fill leaves zero transparent pixels (safe for JPG output). */
+export function isOpaqueFill(fill: BgFill, bgImageFile: File | null): boolean {
+  if (fill === "transparent") return false;
+  if (fill === "blur") return true;
+  if (fill === "white") return true;
+  if (fill === "black") return true;
+  if (fill === "custom") return true;
+  if (fill === "gradient") return true;
+  if (fill === "image") return bgImageFile !== null;
+  return false;
+}
 
 // ── Background color / fill picker ───────────────────────────────────────────
 
@@ -248,6 +283,8 @@ function BgPicker({ value, customColor, onChange, onCustomColor }: BgPickerProps
     { id: "white", label: "White" },
     { id: "black", label: "Black" },
     { id: "blur", label: "Blur original" },
+    { id: "gradient", label: "Gradient" },
+    { id: "image", label: "Image" },
   ];
 
   return (
@@ -306,6 +343,158 @@ function BgPicker({ value, customColor, onChange, onCustomColor }: BgPickerProps
   );
 }
 
+// ── Background replacement picker (gradient + image) ─────────────────────────
+
+interface BgReplacePickerProps {
+  bgFill: BgFill;
+  gradient: GradientConfig;
+  bgImageFile: File | null;
+  bgImageUrl: string | null;
+  onGradient: (g: GradientConfig) => void;
+  onBgImage: (file: File, url: string) => void;
+  onClearBgImage: () => void;
+}
+
+function BgReplacePicker({
+  bgFill,
+  gradient,
+  bgImageFile,
+  bgImageUrl,
+  onGradient,
+  onBgImage,
+  onClearBgImage,
+}: BgReplacePickerProps) {
+  const bgImageInputRef = useRef<HTMLInputElement>(null);
+
+  const handleBgImageFile = (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+    onClearBgImage();
+    const url = URL.createObjectURL(file);
+    onBgImage(file, url);
+  };
+
+  if (bgFill !== "gradient" && bgFill !== "image") return null;
+
+  return (
+    <div className="bg-replace-panel">
+      {bgFill === "gradient" && (
+        <div className="bg-gradient-editor">
+          <span className="bg-bg-picker-label">Gradient presets</span>
+          <div className="bg-gradient-presets">
+            {GRADIENT_PRESETS.map((p) => (
+              <button
+                key={p.label}
+                type="button"
+                className="bg-gradient-swatch"
+                title={p.label}
+                aria-label={p.label}
+                style={{ background: `linear-gradient(${p.angle}deg, ${p.colorA}, ${p.colorB})` }}
+                onClick={() => onGradient({ colorA: p.colorA, colorB: p.colorB, angle: p.angle })}
+              />
+            ))}
+          </div>
+          <div className="bg-gradient-custom">
+            <label className="bg-gradient-field">
+              <span className="bg-bg-picker-label">From</span>
+              <input
+                type="color"
+                className="bg-color-native"
+                value={gradient.colorA}
+                onChange={(e) => onGradient({ ...gradient, colorA: e.target.value })}
+              />
+            </label>
+            <label className="bg-gradient-field">
+              <span className="bg-bg-picker-label">To</span>
+              <input
+                type="color"
+                className="bg-color-native"
+                value={gradient.colorB}
+                onChange={(e) => onGradient({ ...gradient, colorB: e.target.value })}
+              />
+            </label>
+            <label className="bg-gradient-field bg-gradient-field--wide">
+              <span className="bg-bg-picker-label">Angle {gradient.angle}&deg;</span>
+              <input
+                type="range"
+                className="bg-angle-range"
+                min={0}
+                max={359}
+                value={gradient.angle}
+                onChange={(e) => onGradient({ ...gradient, angle: Number(e.target.value) })}
+              />
+            </label>
+          </div>
+          <div
+            className="bg-gradient-preview"
+            style={{ background: gradientCss(gradient) }}
+            aria-hidden="true"
+          />
+        </div>
+      )}
+
+      {bgFill === "image" && (
+        <div className="bg-image-editor">
+          <input
+            ref={bgImageInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            style={{ display: "none" }}
+            onChange={(e) => handleBgImageFile(e.target.files)}
+            aria-hidden="true"
+            tabIndex={-1}
+          />
+          {bgImageUrl ? (
+            <div className="bg-image-thumb-wrap">
+              <img
+                src={bgImageUrl}
+                alt={bgImageFile?.name ?? "Background image"}
+                className="bg-image-thumb"
+              />
+              <div className="bg-image-thumb-meta">
+                <span className="bg-bg-picker-label">{bgImageFile?.name}</span>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => {
+                    onClearBgImage();
+                    if (bgImageInputRef.current) bgImageInputRef.current.value = "";
+                  }}
+                >
+                  Change
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="bg-image-upload-btn"
+              onClick={() => bgImageInputRef.current?.click()}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              Upload background image
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Draggable before/after compare slider ─────────────────────────────────────
 
 interface CompareSliderProps {
@@ -313,9 +502,18 @@ interface CompareSliderProps {
   afterUrl: string;
   bgFill: BgFill;
   customColor: string;
+  gradient: GradientConfig;
+  bgImageUrl: string | null;
 }
 
-function CompareSlider({ beforeUrl, afterUrl, bgFill, customColor }: CompareSliderProps) {
+function CompareSlider({
+  beforeUrl,
+  afterUrl,
+  bgFill,
+  customColor,
+  gradient,
+  bgImageUrl,
+}: CompareSliderProps) {
   const [position, setPosition] = useState(50); // 0-100
   const containerRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
@@ -385,6 +583,7 @@ function CompareSlider({ beforeUrl, afterUrl, bgFill, customColor }: CompareSlid
     if (bgFill === "white") return { background: "#ffffff" };
     if (bgFill === "black") return { background: "#111111" };
     if (bgFill === "custom") return { background: parseHexColor(customColor) ?? "#888888" };
+    if (bgFill === "gradient") return { background: gradientCss(gradient) };
     return {};
   };
 
@@ -426,6 +625,14 @@ function CompareSlider({ beforeUrl, afterUrl, bgFill, customColor }: CompareSlid
           </div>
         ) : bgFill === "transparent" ? (
           <CheckerboardSVG size={10} />
+        ) : bgFill === "image" && bgImageUrl ? (
+          <img
+            src={bgImageUrl}
+            alt=""
+            className="bg-cs-bg-img"
+            aria-hidden="true"
+            draggable={false}
+          />
         ) : null}
         <div className="bg-cs-after-fill" style={afterBgStyle()} />
         <img
@@ -480,10 +687,13 @@ async function applyBgToResult(
   originalUrl: string | null,
   bgFill: BgFill,
   customColor: string,
+  gradient: GradientConfig,
+  bgImageUrl: string | null,
   width: number,
-  height: number
+  height: number,
+  format: "png" | "jpg" = "png"
 ): Promise<string> {
-  // For transparent output, return the existing URL as-is
+  // For transparent output, return the existing URL as-is (always PNG)
   if (bgFill === "transparent") return resultUrl;
 
   const fgBitmap = await createImageBitmap(await (await fetch(resultUrl)).blob());
@@ -501,11 +711,16 @@ async function applyBgToResult(
   } else if (bgFill === "custom") {
     ctx.fillStyle = parseHexColor(customColor) ?? "#ffffff";
     ctx.fillRect(0, 0, width, height);
+  } else if (bgFill === "gradient") {
+    // Resolve gradient stops relative to the canvas diagonal
+    const grd = ctx.createLinearGradient(...angleToPoints(gradient.angle, width, height));
+    grd.addColorStop(0, gradient.colorA);
+    grd.addColorStop(1, gradient.colorB);
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, width, height);
   } else if (bgFill === "blur" && originalUrl) {
-    // Draw original, apply CSS-blur equivalent via repeated downscale+upscale trick
-    // (OffscreenCanvas has no filter in all browsers; we approximate with a low-res layer)
+    // Draw original, approximate blur via downscale+upscale
     const origBitmap = await createImageBitmap(await (await fetch(originalUrl)).blob());
-    // Draw at 1/8 size then upscale — gives a cheap ~20px blur equivalent
     const blurCanvas = new OffscreenCanvas(Math.ceil(width / 8), Math.ceil(height / 8));
     const blurCtx = blurCanvas.getContext("2d");
     if (blurCtx) {
@@ -515,13 +730,37 @@ async function applyBgToResult(
       ctx.drawImage(origBitmap, 0, 0, width, height);
     }
     origBitmap.close();
+  } else if (bgFill === "image" && bgImageUrl) {
+    const bgBitmap = await createImageBitmap(await (await fetch(bgImageUrl)).blob());
+    const { x, y, w, h } = computeCoverFit(bgBitmap.width, bgBitmap.height, width, height);
+    ctx.drawImage(bgBitmap, x, y, w, h);
+    bgBitmap.close();
   }
 
   ctx.drawImage(fgBitmap, 0, 0, width, height);
   fgBitmap.close();
 
-  const blob = await canvas.convertToBlob({ type: "image/png" });
+  const mimeType = format === "jpg" ? "image/jpeg" : "image/png";
+  const quality = format === "jpg" ? 0.92 : undefined;
+  const blob = await canvas.convertToBlob({ type: mimeType, quality });
   return URL.createObjectURL(blob);
+}
+
+/**
+ * Convert a CSS-style gradient angle (deg, 0=up, clockwise) to
+ * CanvasRenderingContext2D createLinearGradient x0,y0,x1,y1 coordinates.
+ */
+function angleToPoints(angleDeg: number, w: number, h: number): [number, number, number, number] {
+  const rad = ((angleDeg - 90) * Math.PI) / 180;
+  const cx = w / 2;
+  const cy = h / 2;
+  // Length of the diagonal so the gradient always spans the full canvas
+  const len = Math.sqrt(w * w + h * h) / 2;
+  const x0 = cx - Math.cos(rad) * len;
+  const y0 = cy - Math.sin(rad) * len;
+  const x1 = cx + Math.cos(rad) * len;
+  const y1 = cy + Math.sin(rad) * len;
+  return [x0, y0, x1, y1];
 }
 
 // ── Tiny 1x1 transparent PNG data URL (sample image trigger) ─────────────────
@@ -590,6 +829,9 @@ export function App() {
 
   const [bgFill, setBgFill] = useState<BgFill>("transparent");
   const [customColor, setCustomColor] = useState("#ffffff");
+  const [gradient, setGradient] = useState<GradientConfig>(GRADIENT_PRESETS[0]);
+  const [bgImageFile, setBgImageFile] = useState<File | null>(null);
+  const [bgImageUrl, setBgImageUrl] = useState<string | null>(null);
   const [copyLabel, setCopyLabel] = useState<"Copy PNG" | "Copied!">("Copy PNG");
 
   const busy = phase === "model-loading" || phase === "processing";
@@ -645,41 +887,58 @@ export function App() {
     }
   }, [handleFile]);
 
-  const handleDownload = useCallback(async () => {
-    if (!resultUrl || !inputFile) return;
-    const { width, height } = resultDimensions;
+  const handleBgImage = useCallback((file: File, url: string) => {
+    setBgImageFile(file);
+    setBgImageUrl(url);
+  }, []);
 
-    let downloadUrl = resultUrl;
-    let didCreate = false;
-    try {
-      if (bgFill !== "transparent") {
-        downloadUrl = await applyBgToResult(
-          resultUrl,
-          inputUrl,
-          bgFill,
-          customColor,
-          width,
-          height
-        );
-        didCreate = true;
+  const handleClearBgImage = useCallback(() => {
+    if (bgImageUrl) URL.revokeObjectURL(bgImageUrl);
+    setBgImageFile(null);
+    setBgImageUrl(null);
+  }, [bgImageUrl]);
+
+  const handleDownload = useCallback(
+    async (format: "png" | "jpg" = "png") => {
+      if (!resultUrl || !inputFile) return;
+      const { width, height } = resultDimensions;
+
+      let downloadUrl = resultUrl;
+      let didCreate = false;
+      try {
+        if (bgFill !== "transparent" || format === "jpg") {
+          downloadUrl = await applyBgToResult(
+            resultUrl,
+            inputUrl,
+            bgFill,
+            customColor,
+            gradient,
+            bgImageUrl,
+            width,
+            height,
+            format
+          );
+          didCreate = true;
+        }
+      } catch {
+        // fallback: download the transparent PNG
+        downloadUrl = resultUrl;
       }
-    } catch {
-      // fallback: download the transparent PNG
-      downloadUrl = resultUrl;
-    }
 
-    const suffix = bgFill === "transparent" ? "bg-removed" : `bg-${bgFill}`;
-    const base = inputFile.name.replace(/\.[^.]+$/, "");
-    const a = document.createElement("a");
-    a.href = downloadUrl;
-    a.download = `${base}-${suffix}.png`;
-    a.click();
+      const suffix = bgFill === "transparent" ? "bg-removed" : `bg-${bgFill}`;
+      const base = inputFile.name.replace(/\.[^.]+$/, "");
+      const ext = format === "jpg" ? "jpg" : "png";
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = `${base}-${suffix}.${ext}`;
+      a.click();
 
-    if (didCreate) {
-      // Revoke after a short delay (browser needs time to initiate download)
-      setTimeout(() => URL.revokeObjectURL(downloadUrl), 10_000);
-    }
-  }, [resultUrl, inputFile, bgFill, customColor, inputUrl, resultDimensions]);
+      if (didCreate) {
+        setTimeout(() => URL.revokeObjectURL(downloadUrl), 10_000);
+      }
+    },
+    [resultUrl, inputFile, bgFill, customColor, gradient, bgImageUrl, inputUrl, resultDimensions]
+  );
 
   const handleCopyPng = useCallback(async () => {
     if (!resultUrl) return;
@@ -688,7 +947,17 @@ export function App() {
       let didCreate = false;
       const { width, height } = resultDimensions;
       if (bgFill !== "transparent") {
-        blobUrl = await applyBgToResult(resultUrl, inputUrl, bgFill, customColor, width, height);
+        blobUrl = await applyBgToResult(
+          resultUrl,
+          inputUrl,
+          bgFill,
+          customColor,
+          gradient,
+          bgImageUrl,
+          width,
+          height,
+          "png"
+        );
         didCreate = true;
       }
       const res = await fetch(blobUrl);
@@ -700,16 +969,20 @@ export function App() {
     } catch {
       // Clipboard API not available or denied -- silently ignore
     }
-  }, [resultUrl, bgFill, customColor, inputUrl, resultDimensions]);
+  }, [resultUrl, bgFill, customColor, gradient, bgImageUrl, inputUrl, resultDimensions]);
 
   const handleReset = useCallback(() => {
     if (inputUrl) URL.revokeObjectURL(inputUrl);
     if (resultUrl) revokeResult(resultUrl);
+    if (bgImageUrl) URL.revokeObjectURL(bgImageUrl);
     reset();
     setBgFill("transparent");
     setCustomColor("#ffffff");
+    setGradient(GRADIENT_PRESETS[0]);
+    setBgImageFile(null);
+    setBgImageUrl(null);
     setCopyLabel("Copy PNG");
-  }, [inputUrl, resultUrl, reset]);
+  }, [inputUrl, resultUrl, bgImageUrl, reset]);
 
   // Clean up blob URLs on unmount
   useEffect(() => {
@@ -776,6 +1049,8 @@ export function App() {
                 afterUrl={resultUrl}
                 bgFill={bgFill}
                 customColor={customColor}
+                gradient={gradient}
+                bgImageUrl={bgImageUrl}
               />
 
               {/* Background picker */}
@@ -786,16 +1061,37 @@ export function App() {
                 onCustomColor={setCustomColor}
               />
 
+              {/* Gradient / image replacement controls */}
+              <BgReplacePicker
+                bgFill={bgFill}
+                gradient={gradient}
+                bgImageFile={bgImageFile}
+                bgImageUrl={bgImageUrl}
+                onGradient={setGradient}
+                onBgImage={handleBgImage}
+                onClearBgImage={handleClearBgImage}
+              />
+
               {/* Actions */}
               <div className="bg-actions">
                 <button
                   type="button"
                   className="btn-primary"
-                  onClick={handleDownload}
+                  onClick={() => handleDownload("png")}
                   aria-label="Download result as PNG"
                 >
                   Download PNG
                 </button>
+                {isOpaqueFill(bgFill, bgImageFile) && (
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    onClick={() => handleDownload("jpg")}
+                    aria-label="Download result as JPG"
+                  >
+                    Download JPG
+                  </button>
+                )}
                 <button
                   type="button"
                   className={`btn-primary${copyLabel === "Copied!" ? " btn-primary--flash" : ""}`}
