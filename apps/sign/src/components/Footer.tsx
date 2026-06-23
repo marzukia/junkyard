@@ -18,15 +18,6 @@ export function Footer({ blurb }: FooterProps) {
         </a>
       </span>
       <span className="site-footer-sep">·</span>
-      <a
-        href="https://colours.mrzk.io"
-        target="_blank"
-        rel="noreferrer"
-        className="site-footer-link"
-      >
-        colours
-      </a>
-      <span className="site-footer-sep">·</span>
       <a href="https://junkyard.mrzk.io/" target="_blank" rel="noreferrer" className="site-footer-link">
         more tools
       </a>
