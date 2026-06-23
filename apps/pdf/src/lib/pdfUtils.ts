@@ -88,12 +88,33 @@ export async function reorderPages(pdfBytes: Uint8Array, newOrder: number[]): Pr
 }
 
 /**
- * Lightweight compress: re-save removing unused objects.
- * pdf-lib doesn't have zlib recompression, but objectsPerTick
- * and a fresh save does strip unused cross-references.
+ * Structural optimise: re-saves the PDF using object streams to reduce cross-reference
+ * table overhead and strip unused objects. Does NOT recompress image streams (pdf-lib
+ * does not expose zlib-level control). The size reduction is most noticeable on PDFs
+ * with many incremental updates or redundant objects; image-heavy files may see little
+ * or no change.
+ *
+ * H1: Encrypted PDFs are explicitly rejected -- callers must surface a warning before
+ * proceeding, because re-saving strips the encryption silently.
  */
 export async function compressPdf(pdfBytes: Uint8Array): Promise<Uint8Array> {
-  const doc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+  // Try to load without bypassing encryption. pdf-lib throws when the PDF is
+  // owner/user-password protected. We surface that as a clear caller-visible error
+  // rather than silently decrypting with ignoreEncryption:true.
+  let doc: PDFDocument;
+  try {
+    doc = await PDFDocument.load(pdfBytes);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    // pdf-lib surfaces encryption failures with "encrypted" in the message.
+    if (msg.toLowerCase().includes("encrypt")) {
+      throw new Error(
+        "This PDF is encrypted. Optimising it would remove its password protection. " +
+          "Decrypt the PDF first, then optimise."
+      );
+    }
+    throw err;
+  }
   return doc.save({ useObjectStreams: true });
 }
 
@@ -158,7 +179,13 @@ export async function rotatePages(
 
 export type PageNumberPosition = "bottom-center" | "bottom-right" | "bottom-left";
 
-/** Add page numbers to every page of a PDF. */
+/**
+ * Add page numbers to every page of a PDF.
+ *
+ * startAt: the number printed on the first page (default 1). The denominator in
+ * "n/N" format is always the total page COUNT of this document (not startAt+total-1),
+ * so a 3-page document starting at 5 renders "5 / 3", "6 / 3", "7 / 3".
+ */
 export async function addPageNumbers(
   pdfBytes: Uint8Array,
   opts: {
@@ -176,7 +203,8 @@ export async function addPageNumbers(
     const page = doc.getPage(i);
     const { width } = page.getSize();
     const num = startAt + i;
-    const label = format === "n/N" ? `${num} / ${startAt + total - 1}` : String(num);
+    // Denominator is always the real page count, not the last displayed number.
+    const label = format === "n/N" ? `${num} / ${total}` : String(num);
     const textWidth = font.widthOfTextAtSize(label, fontSize);
     const margin = 18;
     let x: number;
@@ -194,12 +222,19 @@ export async function addPageNumbers(
   return doc.save();
 }
 
-/** Add a text watermark diagonally to every page. */
+/**
+ * Add a text watermark diagonally to every page.
+ * Throws if text is empty or whitespace -- a blank watermark produces no visible
+ * mark but still modifies the file, which would silently mislead callers.
+ */
 export async function addWatermark(
   pdfBytes: Uint8Array,
   text: string,
   opts: { opacity?: number; fontSize?: number; color?: [number, number, number] } = {}
 ): Promise<Uint8Array> {
+  if (text.trim() === "") {
+    throw new Error("Watermark text must not be empty.");
+  }
   const { opacity = 0.15, fontSize = 48, color = [0.5, 0.5, 0.5] } = opts;
   const doc = await PDFDocument.load(pdfBytes);
   const font = await doc.embedFont(StandardFonts.HelveticaBold);
