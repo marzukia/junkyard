@@ -7,7 +7,8 @@
  * and never touches SharedArrayBuffer. WebGPU is attempted first (no isolation
  * required for WebGPU); WASM single-thread is the fallback.
  */
-import { type ImageSegmentationPipeline, RawImage, env, pipeline } from "@huggingface/transformers";
+import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface/transformers";
+import { configureTransformersEnv } from "./transformersEnv";
 
 const MODEL_ID = "briaai/RMBG-1.4";
 
@@ -28,10 +29,7 @@ let segmenter: ImageSegmentationPipeline | null = null;
 export async function loadModel(onProgress?: ProgressCallback): Promise<void> {
   if (segmenter) return;
 
-  // Apply ONNX/cache settings lazily, once, before any InferenceSession is created.
-  // Must run before pipeline() — that is why they live here rather than at module level.
-  (env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-  env.useBrowserCache = true;
+  configureTransformersEnv();
 
   const progressCb = (event: TransformersProgressEvent) => {
     if (!onProgress) return;

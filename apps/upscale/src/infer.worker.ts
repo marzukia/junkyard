@@ -6,15 +6,12 @@
  * The main thread creates the blob URL after receiving the result.
  */
 import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
-import { RawImage, env, pipeline } from "@huggingface/transformers";
+import { RawImage, pipeline } from "@huggingface/transformers";
+import { configureTransformersEnv } from "./lib/transformersEnv";
 import type { OutputFormat } from "./lib/imageHelpers";
 import { outputMime } from "./lib/imageHelpers";
 import type { ScaleFactor } from "./lib/upscale";
 import { MODEL_ID } from "./lib/upscale";
-
-// Must be set before any ONNX session is created.
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-env.useBrowserCache = true;
 
 type ImageToImagePipeline = (input: RawImage, options?: Record<string, unknown>) => Promise<RawImage>;
 let upscaler: ImageToImagePipeline | null = null;
@@ -42,6 +39,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!upscaler) {
+    configureTransformersEnv();
       upscaler = (await (pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>)(
         "image-to-image",
         MODEL_ID,

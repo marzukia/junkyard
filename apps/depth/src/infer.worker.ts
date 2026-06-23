@@ -4,12 +4,10 @@
  * Also returns the raw depth cache data for colourmap re-renders without re-inference.
  */
 import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
-import { type DepthEstimationPipeline, RawImage, env, pipeline } from "@huggingface/transformers";
+import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/transformers";
+import { configureTransformersEnv } from "./lib/transformersEnv";
 import type { ColourMap } from "./lib/depthEstimation";
 import { applyColourMap } from "./lib/depthEstimation";
-
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-env.useBrowserCache = true;
 
 const MODEL_ID = "onnx-community/depth-anything-v2-small";
 
@@ -37,6 +35,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!estimator) {
+      configureTransformersEnv();
       estimator = (await (pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>)(
         "depth-estimation",
         MODEL_ID,

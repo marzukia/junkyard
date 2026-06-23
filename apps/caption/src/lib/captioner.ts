@@ -7,14 +7,9 @@
  * and never touches SharedArrayBuffer. WebGPU is attempted first (no isolation
  * required for WebGPU); WASM single-thread is the fallback.
  */
-import { RawImage, env, pipeline } from "@huggingface/transformers";
+import { RawImage, pipeline } from "@huggingface/transformers";
+import { configureTransformersEnv } from "./transformersEnv";
 
-// ── Disable multi-threaded WASM (requires SharedArrayBuffer / COOP+COEP) ──────
-// Must be set BEFORE any InferenceSession is created.
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-
-// Use browser cache so subsequent visits skip the download.
-env.useBrowserCache = true;
 
 // Approx download size is ~90 MB for ViT-GPT2 image captioning.
 export const MODEL_ID = "Xenova/vit-gpt2-image-captioning";
@@ -39,6 +34,7 @@ let captioner: ImageToTextPipeline | null = null;
 /** Load (or return cached) the image-to-text pipeline. */
 export async function loadModel(onProgress?: ProgressCallback): Promise<void> {
   if (captioner) return;
+  configureTransformersEnv();
 
   const progressCb = (event: TransformersProgressEvent) => {
     if (!onProgress) return;
