@@ -19,6 +19,7 @@ import {
 import { renderMarkdown } from "./lib/renderMarkdown";
 import { DEFAULT_SYSTEM_PROMPT, useChatStore } from "./store/chatStore";
 import "./styles/chat.css";
+import { MobileWarning } from "./components/MobileWarning";
 
 // ── Brand glyph: two overlapping chat bubbles, teal + amber ──────────────
 
@@ -537,6 +538,7 @@ export function App() {
       />
 
       <main className="site-main">
+        <MobileWarning />
         <p className="chat-notice">
           <strong>Fully private.</strong> The AI runs entirely in your browser using WebGPU. First
           run downloads the model ({MODEL_SIZE_LABEL}), then it is instant and offline. Nothing is

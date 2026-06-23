@@ -4,6 +4,7 @@ import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { formatBytes, formatTime, getFFmpeg, parseTime, runFFmpeg } from "./lib/ffmpeg";
+import { MobileWarning } from "./components/MobileWarning";
 
 // Warn when file exceeds this size
 const LARGE_FILE_THRESHOLD = 500 * 1024 * 1024; // 500 MB
@@ -234,6 +235,7 @@ export function App() {
       />
 
       <main className="site-main">
+        <MobileWarning />
         {/* Drop zone */}
         {!file && (
           <label

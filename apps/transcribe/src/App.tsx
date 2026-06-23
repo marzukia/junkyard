@@ -17,6 +17,7 @@ import {
 import { MODEL_SIZE_MB, isModelLoaded, loadModel, transcribeFile } from "./lib/transcription";
 import { LANGUAGE_OPTIONS, useTranscribeStore } from "./store/transcribeStore";
 import "./styles/transcribe.css";
+import { MobileWarning } from "./components/MobileWarning";
 
 // ── Brand mark glyph, waveform for audio transcription ──────────────────────
 // Clean line-art: teal waveform bars + amber speech-to-text arrow + coral mic dot
@@ -700,6 +701,7 @@ export function App() {
       />
 
       <main className="site-main">
+        <MobileWarning />
         <p className="tr-beta-note">
           {isModelLoaded() ? (
             <>

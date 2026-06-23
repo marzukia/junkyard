@@ -13,6 +13,7 @@ import {
 } from "./lib/imageHelpers";
 import { useBgStore } from "./store/bgStore";
 import "./styles/bg.css";
+import { MobileWarning } from "./components/MobileWarning";
 
 // ── Brand mark glyph ──────────────────────────────────────────────────────────
 // A clean flat scissors/cutout mark: foreground shape in teal, shadow in amber,
@@ -1007,6 +1008,7 @@ export function App() {
       />
 
       <main className="site-main">
+        <MobileWarning />
         {/* Beta notice */}
         <p className="bg-beta-note">
           <strong>Beta</strong>, first run downloads a model (~40 MB), then it is instant &amp;

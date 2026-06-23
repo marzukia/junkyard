@@ -18,6 +18,7 @@ import { MODEL_SIZE_MB, isModelLoaded, loadModel, revokeResult, upscaleImage } f
 import type { ScaleFactor } from "./lib/upscale";
 import { useUpscaleStore } from "./store/upscaleStore";
 import "./styles/upscale.css";
+import { MobileWarning } from "./components/MobileWarning";
 
 // ── Brand mark glyph ──────────────────────────────────────────────────────────
 // Outer teal frame (upscaled), inner coral frame (original), amber corner
@@ -764,6 +765,7 @@ export function App() {
       />
 
       <main className="site-main">
+        <MobileWarning />
         <p className="up-beta-note">
           <strong>First run downloads the model (~{MODEL_SIZE_MB} MB)</strong>, then it runs
           offline. Processing a typical photo takes 5-30 seconds. Your images never leave your

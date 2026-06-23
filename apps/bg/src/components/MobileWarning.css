@@ -1,0 +1,73 @@
+/* MobileWarning - amber-tinted dismissible banner for heavy tools on phones.
+   All selectors namespaced under .jy-mobwarn.
+   Uses only shared tokens: --surface, --surface-sunken, --ink, --ink-mid,
+   --rule, --amber, --accent.
+   --amber is not in the shared kit; we define a local fallback:
+     light: #e8b04b  dark: #f0bc5e
+   so any future addition of --amber to kit/styles.css takes over naturally.
+*/
+
+.jy-mobwarn {
+  --_amber: var(--amber, #e8b04b);
+  --_amber-bg: color-mix(in srgb, var(--_amber) 12%, var(--surface));
+  --_amber-border: color-mix(in srgb, var(--_amber) 35%, var(--surface));
+
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.65rem 0.8rem;
+  margin: 0.75rem 1rem 0;
+  background: var(--_amber-bg);
+  border: 1px solid var(--_amber-border);
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  position: relative;
+}
+
+.jy-mobwarn__icon {
+  flex-shrink: 0;
+  color: var(--_amber);
+  margin-top: 1px;
+  display: flex;
+}
+
+.jy-mobwarn__text {
+  flex: 1;
+  color: var(--ink-mid);
+}
+
+.jy-mobwarn__dismiss {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-mid);
+  padding: 0.1rem;
+  border-radius: 4px;
+  margin-top: 1px;
+  transition: color 0.12s, background 0.12s;
+  line-height: 1;
+}
+
+.jy-mobwarn__dismiss:hover {
+  color: var(--ink);
+  background: var(--surface-sunken);
+}
+
+.jy-mobwarn__dismiss:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Tighten margin on very narrow phones */
+@media (max-width: 400px) {
+  .jy-mobwarn {
+    margin: 0.6rem 0.6rem 0;
+    font-size: 0.79rem;
+  }
+}

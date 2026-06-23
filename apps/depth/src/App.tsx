@@ -59,6 +59,7 @@ function DepthBrandGlyph() {
 // ── Colourmap toggle ──────────────────────────────────────────────────────────
 
 import type { ColourMap } from "./lib/depthEstimation";
+import { MobileWarning } from "./components/MobileWarning";
 
 const COLOURMAPS: { value: ColourMap; label: string; title: string }[] = [
   { value: "viridis", label: "Viridis", title: "Viridis: yellow = close, purple = far" },
@@ -591,6 +592,7 @@ export function App() {
       />
 
       <main className="site-main">
+        <MobileWarning />
         {/* Beta notice */}
         <p className="depth-beta-note">
           <strong>Beta</strong>, first run downloads the model (~25 MB), then it is instant &amp;
