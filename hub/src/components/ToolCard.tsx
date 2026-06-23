@@ -17,9 +17,8 @@ export function ToolCard({ tool, index, animationDelay }: ToolCardProps) {
     "free forever"
   );
 
-  // PHASE 2: switch to path-based routing junkyard.sh/<slug> when apps are
-  // consolidated onto one site.
-  const href = `https://${tool.slug}.mrzk.io`;
+  // Path-based routing - apps are served under /<slug>/ on the same site.
+  const href = `/${tool.slug}/`;
 
   return (
     <a className="card" href={href} style={{ animationDelay: `${animationDelay}s` }}>
