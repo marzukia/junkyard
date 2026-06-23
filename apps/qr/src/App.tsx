@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { BatchMode } from "./components/BatchMode";
 import { BrandMark } from "./components/BrandMark";
 import { ContentTypeTabs } from "./components/ContentTypeTabs";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { classifyContrast, contrastRatio, suggestFgForBg } from "./lib/contrast";
 import { canvasToPngUrl, generateSvgString, normaliseHex, renderQRToCanvas } from "./lib/qr";
-import type { DotStyle, ErrorCorrectionLevel } from "./lib/qr";
+import type { DotStyle, ErrorCorrectionLevel, EyeStyle } from "./lib/qr";
 import { willExceedCapacity } from "./lib/templates";
 import type { ContentType } from "./lib/templates";
 import { useQRStore } from "./store/qrStore";
@@ -130,11 +131,60 @@ function DotClassyIcon() {
   );
 }
 
+// ── Eye style icons ───────────────────────────────────────────────────────────
+
+function EyeSquareIcon() {
+  return (
+    <svg className="qr-dot-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <rect x="2" y="2" width="24" height="24" fill="currentColor" />
+      <rect x="5" y="5" width="18" height="18" fill="white" />
+      <rect x="9" y="9" width="10" height="10" fill="currentColor" />
+    </svg>
+  );
+}
+
+function EyeRoundedIcon() {
+  return (
+    <svg className="qr-dot-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <rect x="2" y="2" width="24" height="24" rx="5" fill="currentColor" />
+      <rect x="5" y="5" width="18" height="18" rx="3" fill="white" />
+      <rect x="9" y="9" width="10" height="10" rx="2" fill="currentColor" />
+    </svg>
+  );
+}
+
+function EyeCircleIcon() {
+  return (
+    <svg className="qr-dot-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <circle cx="14" cy="14" r="12" fill="currentColor" />
+      <circle cx="14" cy="14" r="8" fill="white" />
+      <circle cx="14" cy="14" r="5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function EyeLeafIcon() {
+  return (
+    <svg className="qr-dot-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <rect x="2" y="2" width="24" height="24" rx="7" fill="currentColor" />
+      <rect x="5" y="5" width="18" height="18" rx="4" fill="white" />
+      <rect x="9" y="9" width="10" height="10" rx="3" fill="currentColor" />
+    </svg>
+  );
+}
+
 const DOT_STYLES: { id: DotStyle; label: string }[] = [
   { id: "square", label: "Square" },
   { id: "rounded", label: "Rounded" },
   { id: "dots", label: "Dots" },
   { id: "classy", label: "Classy" },
+];
+
+const EYE_STYLES: { id: EyeStyle; label: string }[] = [
+  { id: "square", label: "Square" },
+  { id: "rounded", label: "Rounded" },
+  { id: "circle", label: "Circle" },
+  { id: "leaf", label: "Leaf" },
 ];
 
 const EC_LEVELS: ErrorCorrectionLevel[] = ["L", "M", "Q", "H"];
@@ -237,6 +287,8 @@ function ContrastBanner({ fgColor, bgColor, onFix }: ContrastBannerProps) {
 
 // ── Main App ──────────────────────────────────────────────────────────────────
 
+type AppMode = "single" | "batch";
+
 export function App() {
   const {
     text,
@@ -244,6 +296,7 @@ export function App() {
     bgColor,
     errorCorrectionLevel,
     dotStyle,
+    eyeStyle,
     logoDataUrl,
     logoFileName,
     setText,
@@ -251,6 +304,7 @@ export function App() {
     setBgColor,
     setErrorCorrectionLevel,
     setDotStyle,
+    setEyeStyle,
     setLogo,
     clearLogo,
   } = useQRStore();
@@ -261,6 +315,9 @@ export function App() {
   const [rendering, setRendering] = useState(false);
   const [copied, setCopied] = useState(false);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Top-level mode: single QR vs batch
+  const [appMode, setAppMode] = useState<AppMode>("single");
 
   // Content-type tab state (not persisted - session only)
   const [activeType, setActiveType] = useState<ContentType>("url");
@@ -277,6 +334,7 @@ export function App() {
         bgColor,
         errorCorrectionLevel,
         dotStyle,
+        eyeStyle,
         logoDataUrl: logoDataUrl ?? undefined,
       });
     } catch {
@@ -291,7 +349,7 @@ export function App() {
     } finally {
       setRendering(false);
     }
-  }, [text, fgColor, bgColor, errorCorrectionLevel, dotStyle, logoDataUrl]);
+  }, [text, fgColor, bgColor, errorCorrectionLevel, dotStyle, eyeStyle, logoDataUrl]);
 
   useEffect(() => {
     void render();
@@ -310,12 +368,13 @@ export function App() {
   const downloadSvg = useCallback(async () => {
     if (!text.trim()) return;
     try {
-      const svg = await generateSvgString({
+      const svg = generateSvgString({
         text: text.trim(),
         fgColor,
         bgColor,
         errorCorrectionLevel,
         dotStyle,
+        eyeStyle,
       });
       const blob = new Blob([svg], { type: "image/svg+xml" });
       const url = URL.createObjectURL(blob);
@@ -327,7 +386,7 @@ export function App() {
     } catch {
       setError("SVG export failed.");
     }
-  }, [text, fgColor, bgColor, errorCorrectionLevel, dotStyle]);
+  }, [text, fgColor, bgColor, errorCorrectionLevel, dotStyle, eyeStyle]);
 
   const copyImage = useCallback(async () => {
     const canvas = canvasRef.current;
@@ -396,195 +455,266 @@ export function App() {
       />
 
       <main className="site-main">
+        {/* Mode toggle: Single vs Batch */}
+        <div className="qr-mode-toggle-wrap">
+          <div className="space-toggle" role="tablist" aria-label="QR generation mode">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={appMode === "single"}
+              className={`space-btn${appMode === "single" ? " space-btn--active" : ""}`}
+              onClick={() => setAppMode("single")}
+            >
+              Single QR
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={appMode === "batch"}
+              className={`space-btn${appMode === "batch" ? " space-btn--active" : ""}`}
+              onClick={() => setAppMode("batch")}
+            >
+              Batch
+            </button>
+          </div>
+        </div>
+
         <div className="card">
-          <div className="qr-layout">
-            {/* Preview column */}
-            <div className="qr-preview-wrap">
-              <div className="qr-canvas-frame" style={{ background: bgColor }}>
-                {hasText ? (
-                  <canvas ref={canvasRef} width={512} height={512} aria-label="QR code preview" />
-                ) : (
-                  <div
-                    className="qr-empty-state"
-                    ref={canvasRef as unknown as React.RefObject<HTMLDivElement>}
-                  >
-                    <svg width="48" height="48" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                      <QRBrandGlyph />
-                    </svg>
-                    <span>Fill in the fields to generate a QR code</span>
+          {appMode === "single" ? (
+            <div className="qr-layout">
+              {/* Preview column */}
+              <div className="qr-preview-wrap">
+                <div className="qr-canvas-frame" style={{ background: bgColor }}>
+                  {hasText ? (
+                    <canvas ref={canvasRef} width={512} height={512} aria-label="QR code preview" />
+                  ) : (
+                    <div
+                      className="qr-empty-state"
+                      ref={canvasRef as unknown as React.RefObject<HTMLDivElement>}
+                    >
+                      <svg
+                        width="48"
+                        height="48"
+                        viewBox="0 0 32 32"
+                        fill="none"
+                        aria-hidden="true"
+                      >
+                        <QRBrandGlyph />
+                      </svg>
+                      <span>Fill in the fields to generate a QR code</span>
+                    </div>
+                  )}
+                </div>
+
+                {error && (
+                  <p className="qr-error-msg" role="alert">
+                    {error}
+                  </p>
+                )}
+
+                {hasText && !rendering && !error && (
+                  <div className="qr-download-row">
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      onClick={downloadPng}
+                      aria-label="Download QR code as PNG"
+                    >
+                      Download PNG
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() => void downloadSvg()}
+                      aria-label="Download QR code as SVG"
+                    >
+                      Download SVG
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn-secondary qr-copy-btn${copied ? " qr-copy-btn--copied" : ""}`}
+                      onClick={() => void copyImage()}
+                      aria-label="Copy QR code image to clipboard"
+                    >
+                      {copied ? "Copied!" : "Copy image"}
+                    </button>
                   </div>
                 )}
               </div>
 
-              {error && (
-                <p className="qr-error-msg" role="alert">
-                  {error}
-                </p>
-              )}
+              {/* Controls column */}
+              <div className="qr-controls">
+                {/* Content type tabs + input */}
+                <ContentTypeTabs
+                  activeType={activeType}
+                  onTypeChange={handleTypeChange}
+                  onPayload={setText}
+                  rawText={text}
+                />
 
-              {hasText && !rendering && !error && (
-                <div className="qr-download-row">
-                  <button
-                    type="button"
-                    className="btn-primary"
-                    onClick={downloadPng}
-                    aria-label="Download QR code as PNG"
-                  >
-                    Download PNG
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-secondary"
-                    onClick={() => void downloadSvg()}
-                    aria-label="Download QR code as SVG"
-                  >
-                    Download SVG
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn-secondary qr-copy-btn${copied ? " qr-copy-btn--copied" : ""}`}
-                    onClick={() => void copyImage()}
-                    aria-label="Copy QR code image to clipboard"
-                  >
-                    {copied ? "Copied!" : "Copy image"}
-                  </button>
+                {/* Contrast warning */}
+                <ContrastBanner fgColor={fgColor} bgColor={bgColor} onFix={handleFixContrast} />
+
+                {/* Colours */}
+                <div className="qr-field-group">
+                  <span className="qr-field-label">Colours</span>
+                  <div className="qr-colour-row">
+                    <ColourField
+                      label="Foreground"
+                      value={fgColor}
+                      onChange={setFgColor}
+                      id="qr-fg"
+                    />
+                    <ColourField
+                      label="Background"
+                      value={bgColor}
+                      onChange={setBgColor}
+                      id="qr-bg"
+                    />
+                  </div>
                 </div>
-              )}
+
+                {/* Dot style */}
+                <div className="qr-field-group">
+                  <span className="qr-field-label">Dot style</span>
+                  <div className="qr-dot-grid" role="radiogroup" aria-label="Dot style">
+                    {DOT_STYLES.map(({ id, label }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        className={`qr-dot-btn${dotStyle === id ? " qr-dot-btn--active" : ""}`}
+                        onClick={() => setDotStyle(id)}
+                        aria-pressed={dotStyle === id}
+                        aria-label={`${label} dot style`}
+                      >
+                        {id === "square" && <DotSquareIcon />}
+                        {id === "rounded" && <DotRoundedIcon />}
+                        {id === "dots" && <DotCircleIcon />}
+                        {id === "classy" && <DotClassyIcon />}
+                        <span>{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Eye style */}
+                <div className="qr-field-group">
+                  <span className="qr-field-label">Eye style</span>
+                  <div className="qr-dot-grid" role="radiogroup" aria-label="Eye style">
+                    {EYE_STYLES.map(({ id, label }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        className={`qr-dot-btn${eyeStyle === id ? " qr-dot-btn--active" : ""}`}
+                        onClick={() => setEyeStyle(id)}
+                        aria-pressed={eyeStyle === id}
+                        aria-label={`${label} eye style`}
+                      >
+                        {id === "square" && <EyeSquareIcon />}
+                        {id === "rounded" && <EyeRoundedIcon />}
+                        {id === "circle" && <EyeCircleIcon />}
+                        {id === "leaf" && <EyeLeafIcon />}
+                        <span>{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Error correction */}
+                <div className="qr-field-group">
+                  <span className="qr-field-label">Error correction</span>
+                  <div className="qr-ec-row" role="radiogroup" aria-label="Error correction level">
+                    {EC_LEVELS.map((level) => (
+                      <button
+                        key={level}
+                        type="button"
+                        className={`qr-ec-btn${errorCorrectionLevel === level ? " qr-ec-btn--active" : ""}`}
+                        onClick={() => setErrorCorrectionLevel(level)}
+                        aria-pressed={errorCorrectionLevel === level}
+                        title={
+                          level === "L"
+                            ? "Low, 7% recovery"
+                            : level === "M"
+                              ? "Medium, 15% recovery"
+                              : level === "Q"
+                                ? "Quartile, 25% recovery"
+                                : "High, 30% recovery (best for logos)"
+                        }
+                      >
+                        {level}
+                      </button>
+                    ))}
+                  </div>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.6rem",
+                      color: "var(--ink-faint)",
+                    }}
+                  >
+                    Use H when adding a logo
+                  </span>
+                </div>
+
+                {/* Logo upload */}
+                <div className="qr-field-group">
+                  <span className="qr-field-label">Logo overlay</span>
+                  <div className="qr-logo-upload">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                      onChange={handleLogoUpload}
+                      style={{ display: "none" }}
+                      aria-label="Upload logo image"
+                    />
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {logoDataUrl ? "Replace logo" : "Upload logo"}
+                    </button>
+                    {logoDataUrl && (
+                      <>
+                        <img src={logoDataUrl} alt="Logo preview" className="qr-logo-thumb" />
+                        {logoFileName && (
+                          <span
+                            style={{
+                              fontFamily: "var(--font-mono)",
+                              fontSize: "0.65rem",
+                              color: "var(--ink-mid)",
+                            }}
+                          >
+                            {logoFileName}
+                          </span>
+                        )}
+                        <button type="button" className="qr-logo-clear" onClick={clearLogo}>
+                          Remove
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
-
-            {/* Controls column */}
-            <div className="qr-controls">
-              {/* Content type tabs + input */}
-              <ContentTypeTabs
-                activeType={activeType}
-                onTypeChange={handleTypeChange}
-                onPayload={setText}
-                rawText={text}
-              />
-
-              {/* Contrast warning */}
-              <ContrastBanner fgColor={fgColor} bgColor={bgColor} onFix={handleFixContrast} />
-
-              {/* Colours */}
-              <div className="qr-field-group">
-                <span className="qr-field-label">Colours</span>
-                <div className="qr-colour-row">
-                  <ColourField
-                    label="Foreground"
-                    value={fgColor}
-                    onChange={setFgColor}
-                    id="qr-fg"
-                  />
-                  <ColourField
-                    label="Background"
-                    value={bgColor}
-                    onChange={setBgColor}
-                    id="qr-bg"
-                  />
-                </div>
-              </div>
-
-              {/* Dot style */}
-              <div className="qr-field-group">
-                <span className="qr-field-label">Dot style</span>
-                <div className="qr-dot-grid" role="radiogroup" aria-label="Dot style">
-                  {DOT_STYLES.map(({ id, label }) => (
-                    <button
-                      key={id}
-                      type="button"
-                      className={`qr-dot-btn${dotStyle === id ? " qr-dot-btn--active" : ""}`}
-                      onClick={() => setDotStyle(id)}
-                      aria-pressed={dotStyle === id}
-                      aria-label={`${label} dot style`}
-                    >
-                      {id === "square" && <DotSquareIcon />}
-                      {id === "rounded" && <DotRoundedIcon />}
-                      {id === "dots" && <DotCircleIcon />}
-                      {id === "classy" && <DotClassyIcon />}
-                      <span>{label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Error correction */}
-              <div className="qr-field-group">
-                <span className="qr-field-label">Error correction</span>
-                <div className="qr-ec-row" role="radiogroup" aria-label="Error correction level">
-                  {EC_LEVELS.map((level) => (
-                    <button
-                      key={level}
-                      type="button"
-                      className={`qr-ec-btn${errorCorrectionLevel === level ? " qr-ec-btn--active" : ""}`}
-                      onClick={() => setErrorCorrectionLevel(level)}
-                      aria-pressed={errorCorrectionLevel === level}
-                      title={
-                        level === "L"
-                          ? "Low, 7% recovery"
-                          : level === "M"
-                            ? "Medium, 15% recovery"
-                            : level === "Q"
-                              ? "Quartile, 25% recovery"
-                              : "High, 30% recovery (best for logos)"
-                      }
-                    >
-                      {level}
-                    </button>
-                  ))}
-                </div>
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.6rem",
-                    color: "var(--ink-faint)",
-                  }}
-                >
-                  Use H when adding a logo
+          ) : (
+            <div className="batch-layout">
+              <div className="batch-settings-note">
+                <span className="qr-field-label">
+                  Style settings from Single QR apply (colours, dot style, eye style, error
+                  correction)
                 </span>
               </div>
-
-              {/* Logo upload */}
-              <div className="qr-field-group">
-                <span className="qr-field-label">Logo overlay</span>
-                <div className="qr-logo-upload">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/png,image/jpeg,image/svg+xml,image/webp"
-                    onChange={handleLogoUpload}
-                    style={{ display: "none" }}
-                    aria-label="Upload logo image"
-                  />
-                  <button
-                    type="button"
-                    className="btn-secondary"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    {logoDataUrl ? "Replace logo" : "Upload logo"}
-                  </button>
-                  {logoDataUrl && (
-                    <>
-                      <img src={logoDataUrl} alt="Logo preview" className="qr-logo-thumb" />
-                      {logoFileName && (
-                        <span
-                          style={{
-                            fontFamily: "var(--font-mono)",
-                            fontSize: "0.65rem",
-                            color: "var(--ink-mid)",
-                          }}
-                        >
-                          {logoFileName}
-                        </span>
-                      )}
-                      <button type="button" className="qr-logo-clear" onClick={clearLogo}>
-                        Remove
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
+              <BatchMode
+                fgColor={fgColor}
+                bgColor={bgColor}
+                errorCorrectionLevel={errorCorrectionLevel}
+                dotStyle={dotStyle}
+                eyeStyle={eyeStyle}
+              />
             </div>
-          </div>
+          )}
         </div>
 
         <p

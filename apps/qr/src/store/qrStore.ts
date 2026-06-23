@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { DotStyle, ErrorCorrectionLevel } from "../lib/qr";
+import type { DotStyle, ErrorCorrectionLevel, EyeStyle } from "../lib/qr";
 
 interface QRState {
   text: string;
@@ -8,6 +8,7 @@ interface QRState {
   bgColor: string;
   errorCorrectionLevel: ErrorCorrectionLevel;
   dotStyle: DotStyle;
+  eyeStyle: EyeStyle;
   logoDataUrl: string | null;
   logoFileName: string | null;
 
@@ -16,6 +17,7 @@ interface QRState {
   setBgColor: (color: string) => void;
   setErrorCorrectionLevel: (level: ErrorCorrectionLevel) => void;
   setDotStyle: (style: DotStyle) => void;
+  setEyeStyle: (style: EyeStyle) => void;
   setLogo: (dataUrl: string, fileName: string) => void;
   clearLogo: () => void;
 }
@@ -28,6 +30,7 @@ export const useQRStore = create<QRState>()(
       bgColor: "#ffffff",
       errorCorrectionLevel: "M",
       dotStyle: "square",
+      eyeStyle: "square",
       logoDataUrl: null,
       logoFileName: null,
 
@@ -36,6 +39,7 @@ export const useQRStore = create<QRState>()(
       setBgColor: (bgColor) => set({ bgColor }),
       setErrorCorrectionLevel: (errorCorrectionLevel) => set({ errorCorrectionLevel }),
       setDotStyle: (dotStyle) => set({ dotStyle }),
+      setEyeStyle: (eyeStyle) => set({ eyeStyle }),
       setLogo: (logoDataUrl, logoFileName) => set({ logoDataUrl, logoFileName }),
       clearLogo: () => set({ logoDataUrl: null, logoFileName: null }),
     }),
@@ -47,6 +51,7 @@ export const useQRStore = create<QRState>()(
         bgColor: state.bgColor,
         errorCorrectionLevel: state.errorCorrectionLevel,
         dotStyle: state.dotStyle,
+        eyeStyle: state.eyeStyle,
       }),
     }
   )
