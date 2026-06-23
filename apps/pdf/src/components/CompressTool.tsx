@@ -45,10 +45,10 @@ export function CompressTool() {
         before: bytes.byteLength,
         after: compressed.byteLength,
         bytes: compressed,
-        filename: `${baseName(file.name)}-compressed.pdf`,
+        filename: `${baseName(file.name)}-optimized.pdf`,
       });
     } catch (err) {
-      setError(`Compress failed: ${err instanceof Error ? err.message : String(err)}`);
+      setError(`Optimize failed: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setBusy(false);
     }
@@ -68,7 +68,7 @@ export function CompressTool() {
         accept=".pdf,application/pdf"
         onFiles={onFile}
         label="Drop a PDF here or click to select"
-        sublabel="Re-saves with object stream compression to reduce size"
+        sublabel="Removes unused objects and applies object-stream compression. Does not re-encode images -- large image PDFs may not shrink much."
       />
 
       {file && !result && (
@@ -131,14 +131,14 @@ export function CompressTool() {
             className="btn-primary"
             onClick={() => void compress()}
             disabled={busy || !file}
-            title="Compress PDF (Cmd+Enter)"
+            title="Optimize PDF (Cmd+Enter)"
           >
             {busy ? (
               <>
-                <Spinner /> Compressing...
+                <Spinner /> Optimizing...
               </>
             ) : (
-              "Compress PDF"
+              "Optimize PDF"
             )}
           </button>
         </div>
