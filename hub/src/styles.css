@@ -121,41 +121,52 @@ header {
   color: var(--accent);
   margin-left: -.1em;
 }
-.toggle {
+.space-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+.space-toggle {
   display: flex;
   gap: 2px;
   padding: 3px;
   background: var(--surface-sunken);
   border-radius: 999px;
   border: 1px solid var(--rule);
-  flex: none;
 }
-.toggle button {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  color: var(--ink-mid);
-  background: transparent;
-  border: 0;
-  padding: 7px 12px;
+.space-btn {
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  padding: 0.32rem 0.8rem;
+  border: none;
   border-radius: 999px;
+  background: transparent;
+  color: var(--ink-mid);
   cursor: pointer;
-  transition: .18s ease;
+  transition: background 0.14s, color 0.14s;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
-.toggle button:hover {
+.space-btn:hover {
   color: var(--ink);
 }
-.toggle button.on {
+.space-btn--active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(26, 37, 48, 0.12);
+}
+[data-scheme="dark"] .space-btn--active {
   background: var(--accent);
   color: var(--accent-ink);
-  font-weight: 600;
+  box-shadow: none;
 }
-.toggle button .lg {
-  display: inline;
-}
-.toggle button .sm {
-  display: none;
+.space-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 /* screen-reader only utility */
@@ -873,18 +884,12 @@ footer {
     padding-block: 12px;
     gap: 10px;
   }
-  .toggle {
+  .space-toggle {
     padding: 2px;
   }
-  .toggle button {
-    padding: 7px 9px;
-    font-size: 10.5px;
-  }
-  .toggle button .lg {
-    display: none;
-  }
-  .toggle button .sm {
-    display: inline;
+  .space-btn {
+    padding: 0.28rem 0.6rem;
+    font-size: 0.72rem;
   }
   .logo .wm .wm-j,
   .logo .wm .sh {
@@ -944,10 +949,10 @@ footer {
   .chip {
     border-radius: 9px;
   }
-  .toggle {
+  .space-toggle {
     border-radius: 9px;
   }
-  .toggle button {
+  .space-btn {
     border-radius: 7px;
   }
   .search input {
