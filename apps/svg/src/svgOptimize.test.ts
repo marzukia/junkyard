@@ -106,7 +106,7 @@ describe("optimizeSvg", () => {
 
   it("throws a friendly error for invalid XML input", () => {
     expect(() => optimizeSvg("not xml at all <<<", DEFAULT_OPTS)).toThrow(
-      /valid SVG|SVG markup|well-formed/i
+      /not an SVG|valid SVG|SVG markup|well-formed/i
     );
   });
 
@@ -220,5 +220,35 @@ describe("formatBytes", () => {
 
   it("formats megabytes correctly", () => {
     expect(formatBytes(1024 * 1024 * 1.5)).toBe("1.50 MB");
+  });
+});
+
+
+describe("optimizeSvg input validation", () => {
+  it("throws for empty input", () => {
+    expect(() => optimizeSvg("", DEFAULT_OPTS)).toThrow(/not an SVG/i);
+  });
+
+  it("throws for whitespace-only input", () => {
+    expect(() => optimizeSvg("   ", DEFAULT_OPTS)).toThrow(/not an SVG/i);
+  });
+
+  it("throws for non-SVG HTML input", () => {
+    expect(() =>
+      optimizeSvg("<html><body><p>Hello</p></body></html>", DEFAULT_OPTS)
+    ).toThrow(/not an SVG/i);
+  });
+
+  it("throws for plain text input", () => {
+    expect(() => optimizeSvg("just some text", DEFAULT_OPTS)).toThrow(/not an SVG/i);
+  });
+
+  it("does not throw for valid SVG input", () => {
+    expect(() =>
+      optimizeSvg(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4"/></svg>',
+        DEFAULT_OPTS
+      )
+    ).not.toThrow();
   });
 });

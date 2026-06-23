@@ -163,15 +163,9 @@ describe("needsChunking -- additional cases", () => {
 // ── chunkText negative / edge cases ──────────────────────────────────────────
 
 describe("chunkText -- edge cases", () => {
-  it("handles empty string without throwing", () => {
-    // BUG?: chunkText("") returns [""] (one empty string) instead of [].
-    // "".trim().split(/\s+/) == [""], length 1, so the early-return branch fires
-    // and returns [text.trim()] = [""], which is an array of one empty string.
-    // Callers should guard against empty chunks or chunkText should filter them.
+  it("returns [] for empty string (fixed: was returning [\"\"])", () => {
     const chunks = chunkText("", 100);
-    // The function returns one element (the empty string) rather than zero.
-    expect(chunks).toHaveLength(1);
-    expect(chunks[0]).toBe("");
+    expect(chunks).toEqual([]);
   });
 
   it("handles text exactly at the limit without splitting", () => {

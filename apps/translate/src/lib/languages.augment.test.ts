@@ -116,21 +116,14 @@ describe("LANGUAGES -- structural invariants", () => {
 // ── splitIntoChunks -- additional edge cases ──────────────────────────────────
 
 describe("splitIntoChunks -- additional edge cases", () => {
-  it("empty string returns single-item array with empty string", () => {
-    // BUG?: splitIntoChunks("") returns [""] rather than []. The early return
-    // fires when text.length <= maxChars (0 <= 100 is true), returning [text].
-    // The final filter(c => c.trim().length > 0) is in the chunking path, not
-    // the early-return path. Callers should filter empty chunks.
+  it("returns [] for empty string (fixed: was returning [\"\"])", () => {
     const chunks = splitIntoChunks("", 100);
-    expect(chunks).toHaveLength(1);
-    expect(chunks[0]).toBe("");
+    expect(chunks).toEqual([]);
   });
 
-  it("whitespace-only string returns single-item array (not filtered)", () => {
-    // BUG?: splitIntoChunks("   ") returns ["   "] via the early-return path.
-    // The filter only applies in the chunking code path, not the fast path.
+  it("returns [] for whitespace-only string (fixed: was returning [\"   \"])", () => {
     const chunks = splitIntoChunks("   ", 100);
-    expect(chunks).toHaveLength(1);
+    expect(chunks).toEqual([]);
   });
 
   it("text exactly at maxChars is a single chunk", () => {

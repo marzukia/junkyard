@@ -145,7 +145,7 @@ export function wordDiffSingle(
  */
 export function computeDiff(oldText: string, newText: string, opts: DiffOptions = {}): DiffResult {
   // Normalise: ensure trailing newline so structuredPatch works correctly.
-  const ensureNewline = (s: string) => (s.endsWith("\n") ? s : `${s}\n`);
+  const ensureNewline = (s: string) => (s && !s.endsWith("\n") ? `${s}\n` : s);
 
   // When ignoring whitespace/case, diff against normalised text but display original lines.
   const compareOld = ensureNewline(normaliseForCompare(oldText, opts));
@@ -163,6 +163,9 @@ export function computeDiff(oldText: string, newText: string, opts: DiffOptions 
   // Remove trailing empty string from split if text ends with \n
   if (oldLines[oldLines.length - 1] === "") oldLines.pop();
   if (newLines[newLines.length - 1] === "") newLines.pop();
+  // An originally-empty input produces [""] after split+pop; treat as no lines.
+  if (oldLines.length === 1 && oldLines[0] === "") oldLines.pop();
+  if (newLines.length === 1 && newLines[0] === "") newLines.pop();
 
   // Use the diff library's line-diff to pair up changed lines.
   // We'll rebuild from the hunk lines directly.
@@ -316,7 +319,7 @@ export function buildUnifiedPatch(
   oldLabel = "original",
   newLabel = "modified"
 ): string {
-  const ensureNewline = (s: string) => (s.endsWith("\n") ? s : `${s}\n`);
+  const ensureNewline = (s: string) => (s && !s.endsWith("\n") ? `${s}\n` : s);
   const compareOld = ensureNewline(normaliseForCompare(oldText, opts));
   const compareNew = ensureNewline(normaliseForCompare(newText, opts));
 

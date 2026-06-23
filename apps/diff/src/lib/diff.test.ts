@@ -213,3 +213,25 @@ describe("wordLevelStats", () => {
     expect(wordRemoved).toBe(0);
   });
 });
+
+
+describe("computeDiff empty-side stats", () => {
+  it("stats.added=0 when new side is empty", () => {
+    const result = computeDiff("hello\nworld", "");
+    expect(result.stats.added).toBe(0);
+    expect(result.stats.removed).toBe(2);
+  });
+
+  it("stats.removed=0 when old side is empty", () => {
+    const result = computeDiff("", "hello\nworld");
+    expect(result.stats.removed).toBe(0);
+    expect(result.stats.added).toBe(2);
+  });
+
+  it("both sides empty gives zero stats", () => {
+    const result = computeDiff("", "");
+    expect(result.stats.added).toBe(0);
+    expect(result.stats.removed).toBe(0);
+    expect(result.stats.unchanged).toBe(0);
+  });
+});
