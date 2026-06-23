@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/meme/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/meme.ts",
     tools: [],
   },

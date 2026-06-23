@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/favicon/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/lib/faviconCore.ts",
     tools: [],
   },

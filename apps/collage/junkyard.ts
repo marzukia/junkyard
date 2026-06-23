@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/collage/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/lib/layouts.ts",
     tools: [],
   },

@@ -8,7 +8,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "HEIC to JPG, WebP & PNG, compress & resize",
     incumbent: "TinyPNG",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "QR Code",
@@ -24,7 +24,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Pull text out of any image (OCR)",
     incumbent: "i2OCR",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "OG Image",
@@ -32,7 +32,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Social share cards, 1200x630",
     incumbent: "Vercel OG",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "EXIF Viewer",
@@ -40,7 +40,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "See & strip photo metadata + GPS",
     incumbent: "metadata2go",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "Favicon",
@@ -48,7 +48,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Any image into a full favicon set",
     incumbent: "favicon.io",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "Background Remover",
@@ -65,7 +65,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Grid + freeform photo collages",
     incumbent: "Canva",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "Screenshot Beautifier",
@@ -73,7 +73,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Frame shots with bg, padding, shadow",
     incumbent: "shots.so",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "Meme Generator",
@@ -81,7 +81,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Top/bottom text, no watermark",
     incumbent: "imgflip",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "Image Cropper",
@@ -89,7 +89,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Crop, rotate, flip & resize",
     incumbent: "iLoveIMG",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "SVG Optimizer",
@@ -97,7 +97,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Shrink SVG files with SVGO",
     incumbent: "SVGOMG",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "GIF Maker",
@@ -105,7 +105,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Turn images into animated GIFs",
     incumbent: "EZGIF",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "JSON Formatter",
@@ -153,7 +153,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Shadow, gradient, glass & easing",
     incumbent: "cssgradient",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "CSV / JSON",
@@ -272,7 +272,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Merge, split & compress PDFs",
     incumbent: "iLovePDF",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "Subtitle Editor",
@@ -280,7 +280,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Edit, shift & convert .srt/.vtt",
     incumbent: "Subtitle Edit",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "Password",
@@ -328,7 +328,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Fill & export an invoice PDF",
     incumbent: "invoice-generator",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "Resume",
@@ -336,7 +336,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Build a CV, export to PDF",
     incumbent: "Zety",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "E-Signature",
@@ -344,7 +344,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Sign a PDF in your browser",
     incumbent: "DocuSign",
-    mcpExposed: true,
+    mcpExposed: false,
   },
   {
     name: "Video Toolkit",

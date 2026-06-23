@@ -10,7 +10,7 @@
     "path": "/convert/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/convert.ts",
       "tools": []
     }
@@ -42,7 +42,7 @@
     "path": "/ocr/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/ocrUtils.ts",
       "tools": []
     }
@@ -58,7 +58,7 @@
     "path": "/og/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/ogLogic.ts",
       "tools": []
     }
@@ -74,7 +74,7 @@
     "path": "/exif/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/exif-utils.ts",
       "tools": []
     }
@@ -90,7 +90,7 @@
     "path": "/favicon/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/faviconCore.ts",
       "tools": []
     }
@@ -126,7 +126,7 @@
     "path": "/collage/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/layouts.ts",
       "tools": []
     }
@@ -142,7 +142,7 @@
     "path": "/screenshot/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/beautifier.ts",
       "tools": []
     }
@@ -158,7 +158,7 @@
     "path": "/meme/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/meme.ts",
       "tools": []
     }
@@ -174,7 +174,7 @@
     "path": "/crop/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/crop.ts",
       "tools": []
     }
@@ -190,7 +190,7 @@
     "path": "/svg/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/svgOptimize.ts",
       "tools": []
     }
@@ -206,7 +206,7 @@
     "path": "/gif/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/gif.ts",
       "tools": []
     }
@@ -302,7 +302,7 @@
     "path": "/css/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/css.ts",
       "tools": []
     }
@@ -554,7 +554,7 @@
     "path": "/pdf/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/pdfUtils.ts",
       "tools": []
     }
@@ -570,7 +570,7 @@
     "path": "/subs/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/subtitle.ts",
       "tools": []
     }
@@ -666,7 +666,7 @@
     "path": "/invoice/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/invoiceCalc.ts",
       "tools": []
     }
@@ -682,7 +682,7 @@
     "path": "/resume/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/resumeUtils.ts",
       "tools": []
     }
@@ -698,7 +698,7 @@
     "path": "/sign/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/signPdf.ts",
       "tools": []
     }

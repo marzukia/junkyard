@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/sign/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/lib/signPdf.ts",
     tools: [],
   },
