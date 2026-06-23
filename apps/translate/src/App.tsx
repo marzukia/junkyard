@@ -14,6 +14,7 @@ import {
 import { isTranslatorLoaded, loadTranslator, translateText } from "./lib/translator";
 import { useTranslateStore } from "./store/translateStore";
 import "./styles/translate.css";
+import { MobileWarning } from "./components/MobileWarning";
 
 // ── Brand glyph: globe + bidirectional arrows ─────────────────────────────────
 
@@ -332,6 +333,7 @@ export function App() {
       />
 
       <main className="site-main">
+        <MobileWarning />
         {/* Model size notice -- shown only before first load so it does not
             clutter the UI once the model is cached */}
         {modelNeverLoaded && (
