@@ -1,0 +1,18 @@
+import type { JunkyardApp } from "../../scripts/catalogue-schema";
+
+export const app: JunkyardApp = {
+  slug: "barcode",
+  name: "Barcode",
+  category: "docs",
+  order: 39,
+  tagline: "Code128, EAN, UPC barcodes",
+  description: "Free online barcode generator. Create Code128, EAN-13, UPC-A, Code39 and ITF barcodes instantly. Download as PNG or SVG. No signup, no upload, runs entirely in your browser. A free barcode.tec-it.com alternative.",
+  incumbent: "TEC-IT",
+  path: "/barcode/",
+  runtime: "client",
+  mcp: {
+    exposed: true,
+    lib: "src/lib/barcode.ts",
+    tools: [],
+  },
+};

@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "predev": "node ../scripts/gen-catalogue.mjs",
+    "predev": "npx tsx ../scripts/gen-catalogue.ts",
     "dev": "vite",
-    "prebuild": "node ../scripts/gen-catalogue.mjs",
+    "prebuild": "npx tsx ../scripts/gen-catalogue.ts",
     "build": "tsc && vite build",
     "preview": "vite preview --port 4175",
     "lint": "biome check src/",

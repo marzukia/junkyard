@@ -1,0 +1,674 @@
+[
+  {
+    "slug": "convert",
+    "name": "Image Converter",
+    "category": "image",
+    "order": 1,
+    "tagline": "HEIC to JPG, WebP & PNG, compress & resize",
+    "description": "Free image converter and compressor. Convert HEIC to JPG, PNG to WebP, JPG to PNG and more, all in your browser, no upload, no account. A fast TinyPNG alternative with HEIC support.",
+    "incumbent": "TinyPNG",
+    "path": "/convert/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/convert.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "qr",
+    "name": "QR Code",
+    "category": "image",
+    "order": 2,
+    "tagline": "QR codes with logo, colours & dot styles",
+    "description": "Free QR code generator, add your logo, custom colours, dot styles, and error correction. Download PNG or SVG. No watermark, no signup, runs entirely in your browser. A qr-code-generator.com alternative.",
+    "incumbent": "qr-generator",
+    "path": "/qr/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/qr.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "ocr",
+    "name": "Image to Text",
+    "category": "image",
+    "order": 3,
+    "tagline": "Pull text out of any image (OCR)",
+    "description": "Extract text from any image or screenshot instantly. Free OCR tool that runs entirely in your browser, no upload, no signup, 100% private. A fast alternative to Google Drive OCR, Adobe Acrobat, and NewOCR.",
+    "incumbent": "i2OCR",
+    "path": "/ocr/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/ocrUtils.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "og",
+    "name": "OG Image",
+    "category": "image",
+    "order": 4,
+    "tagline": "Social share cards, 1200x630",
+    "description": "Free OG image generator. Make open graph images, Twitter cards, and social share images (1200×630) in seconds. No signup, no upload, runs entirely in your browser. A fast Bannerbear & Placid alternative.",
+    "incumbent": "Vercel OG",
+    "path": "/og/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/ogLogic.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "exif",
+    "name": "EXIF Viewer",
+    "category": "image",
+    "order": 5,
+    "tagline": "See & strip photo metadata + GPS",
+    "description": "Free online EXIF viewer and metadata remover. View GPS location, camera settings, and all hidden photo data. Strip EXIF data instantly, no upload, runs in your browser, completely private.",
+    "incumbent": "metadata2go",
+    "path": "/exif/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/exif-utils.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "favicon",
+    "name": "Favicon",
+    "category": "image",
+    "order": 6,
+    "tagline": "Any image into a full favicon set",
+    "description": "Free favicon generator. Upload any PNG or SVG and instantly get a full favicon set: 16×16, 32×32, 48×48, 180×180 Apple Touch, 192×192 and 512×512 PWA icons, favicon.ico, manifest.json, and the HTML snippet. A fast realfavicongenerator alternative, runs entirely in your browser, no upload, no signup.",
+    "incumbent": "favicon.io",
+    "path": "/favicon/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/faviconCore.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "bg",
+    "name": "Background Remover",
+    "category": "image",
+    "order": 7,
+    "tagline": "Erase backgrounds with on-device AI",
+    "description": "Remove image backgrounds instantly in your browser, free, private, no upload. A remove.bg alternative that runs entirely client-side with AI. No signup, no watermark, no data leaves your device.",
+    "incumbent": "remove.bg",
+    "path": "/bg/",
+    "runtime": "client-ai",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/bgRemoval.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "collage",
+    "name": "Collage Maker",
+    "category": "image",
+    "order": 8,
+    "tagline": "Grid + freeform photo collages",
+    "description": "Free photo collage maker that runs entirely in your browser. Grid layouts, freeform pinboard, pan and zoom photos in cells, export high-res PNG or JPG. No watermark, no upload, no signup.",
+    "incumbent": "Canva",
+    "path": "/collage/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/layouts.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "screenshot",
+    "name": "Screenshot Beautifier",
+    "category": "image",
+    "order": 9,
+    "tagline": "Frame shots with bg, padding, shadow",
+    "description": "Free screenshot beautifier. Add gradients, backgrounds, padding, rounded corners, drop shadows, and macOS window frames to any screenshot - all in your browser, no upload, no account. A free shots.so and screenshot.rocks alternative.",
+    "incumbent": "shots.so",
+    "path": "/screenshot/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/beautifier.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "meme",
+    "name": "Meme Generator",
+    "category": "image",
+    "order": 10,
+    "tagline": "Top/bottom text, no watermark",
+    "description": "Free meme generator. Add top and bottom text to any image with Impact font, drag to reposition, export PNG. A free imgflip alternative with no watermark, no account, runs entirely in your browser.",
+    "incumbent": "imgflip",
+    "path": "/meme/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/meme.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "crop",
+    "name": "Image Cropper",
+    "category": "image",
+    "order": 11,
+    "tagline": "Crop, rotate, flip & resize",
+    "description": "Free image cropper and resizer. Crop to 1:1, 4:5, 16:9 or free aspect ratio, rotate, flip, and resize to exact pixels. Runs in your browser, no upload, no account. A free iLoveIMG and Croppola alternative.",
+    "incumbent": "iLoveIMG",
+    "path": "/crop/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/crop.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "svg",
+    "name": "SVG Optimizer",
+    "category": "image",
+    "order": 12,
+    "tagline": "Shrink SVG files with SVGO",
+    "description": "Free SVG optimizer powered by SVGO. Paste or upload an SVG, strip metadata, collapse groups, round precision, and get a smaller file instantly. No upload, no signup, runs entirely in your browser. A free SVGOMG alternative.",
+    "incumbent": "SVGOMG",
+    "path": "/svg/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/svgOptimize.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "gif",
+    "name": "GIF Maker",
+    "category": "image",
+    "order": 13,
+    "tagline": "Turn images into animated GIFs",
+    "description": "Free animated GIF maker. Add images, reorder frames, set delay and loop count, preview and export. Runs entirely in your browser with no upload and no account. A free ezgif alternative.",
+    "incumbent": "EZGIF",
+    "path": "/gif/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/gif.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "json",
+    "name": "JSON Formatter",
+    "category": "text",
+    "order": 14,
+    "tagline": "Format, validate & minify JSON",
+    "description": "Free JSON formatter, beautifier and validator, format, minify, validate with precise error locations, and explore a collapsible tree view. No upload, no signup, runs entirely in your browser. A JSONLint alternative.",
+    "incumbent": "jsonformatter",
+    "path": "/json/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/json.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "diff",
+    "name": "Text Diff",
+    "category": "text",
+    "order": 15,
+    "tagline": "Compare two texts, every change",
+    "description": "Free online text diff tool. Compare two texts or code files side-by-side or inline, with line and word-level highlighting. No signup, no upload, runs entirely in your browser.",
+    "incumbent": "diffchecker",
+    "path": "/diff/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/diff.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "markdown",
+    "name": "Markdown",
+    "category": "text",
+    "order": 16,
+    "tagline": "Write Markdown with live preview",
+    "description": "Free online markdown editor with live HTML preview. Write markdown, see rendered HTML instantly. Export HTML, copy to clipboard, toolbar for bold/headings/links/code. No signup, no upload, runs entirely in your browser. A Dillinger and StackEdit alternative.",
+    "incumbent": "StackEdit",
+    "path": "/markdown/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/markdown.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "base64",
+    "name": "Base64",
+    "category": "text",
+    "order": 17,
+    "tagline": "Encode & decode text and files",
+    "description": "Free Base64 encoder and decoder, encode or decode text, files, and images in your browser. URL-safe Base64, data-URI preview, file download. No upload, no signup, fully private.",
+    "incumbent": "base64encode",
+    "path": "/base64/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/base64.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "regex",
+    "name": "Regex Tester",
+    "category": "text",
+    "order": 18,
+    "tagline": "Live matches, groups & explanation",
+    "description": "Free regex tester and playground. Test patterns live, highlight all matches and capture groups, toggle flags, see a plain-English explanation, preview replacements. No signup, no upload, runs entirely in your browser. A regex101 alternative.",
+    "incumbent": "regex101",
+    "path": "/regex/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/regex.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "css",
+    "name": "CSS Toolkit",
+    "category": "text",
+    "order": 19,
+    "tagline": "Shadow, gradient, glass & easing",
+    "description": "Free CSS generator toolkit with live preview and copyable output. Generate box shadows, linear and radial gradients, glassmorphism effects, and cubic-bezier easing curves. No signup, no upload, runs entirely in your browser. A CSS Tricks and cssmatic alternative.",
+    "incumbent": "cssgradient",
+    "path": "/css/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/css.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "csv",
+    "name": "CSV / JSON",
+    "category": "text",
+    "order": 20,
+    "tagline": "Convert CSV to JSON and back",
+    "description": "Free CSV to JSON converter and JSON to CSV converter. Paste or upload, auto-detects delimiter (comma, tab, semicolon, pipe), sortable table preview, download result. No upload, no signup, runs entirely in your browser. A free csvjson.com and convertcsv.com alternative.",
+    "incumbent": "convertcsv",
+    "path": "/csv/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/csv.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "timestamp",
+    "name": "Timestamp",
+    "category": "text",
+    "order": 21,
+    "tagline": "Unix epoch to human dates",
+    "description": "Free Unix timestamp converter. Convert epoch (seconds or milliseconds) to human-readable dates, ISO 8601, RFC 2822, relative time, and across time zones. A free epochconverter.com alternative. No upload, no account, runs in your browser.",
+    "incumbent": "epochconverter",
+    "path": "/timestamp/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/timestamp.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "uuid",
+    "name": "UUID",
+    "category": "text",
+    "order": 22,
+    "tagline": "v4, v7 & nano IDs in bulk",
+    "description": "Free online UUID generator. Generate UUID v4 (random), UUID v7 (time-ordered), and Nano IDs, single or bulk up to 1000. No signup, no upload, runs entirely in your browser.",
+    "incumbent": "uuidgenerator",
+    "path": "/uuid/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/uuid.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "hash",
+    "name": "Hash",
+    "category": "text",
+    "order": 23,
+    "tagline": "MD5, SHA-1, SHA-256 checksums",
+    "description": "Free online hash generator. Compute MD5, SHA-1, SHA-256 and SHA-512 hashes for text or files, private, runs entirely in your browser, no upload, no signup.",
+    "incumbent": "",
+    "path": "/hash/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/hash.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "jwt",
+    "name": "JWT Decoder",
+    "category": "text",
+    "order": 24,
+    "tagline": "Decode & inspect JWT tokens",
+    "description": "Decode and inspect JSON Web Tokens instantly in your browser. Parse header, payload and claims, exp/iat/nbf shown as human dates with expiry badge. No upload, no account. A free jwt.io alternative that runs entirely offline.",
+    "incumbent": "jwt.io",
+    "path": "/jwt/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/jwt.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "lorem",
+    "name": "Lorem Ipsum",
+    "category": "text",
+    "order": 25,
+    "tagline": "Placeholder text and images",
+    "description": "Free lorem ipsum generator and placeholder image maker. Generate paragraphs, sentences, words, or lists of lorem ipsum text. Create custom placeholder images with any size, colour, and label, rendered client-side as SVG or PNG. No upload, no account, runs entirely in your browser. A free lipsum.com and placeholder.com alternative.",
+    "incumbent": "lipsum",
+    "path": "/lorem/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/lorem.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "transcribe",
+    "name": "Transcribe",
+    "category": "ai",
+    "order": 26,
+    "tagline": "Whisper speech to text",
+    "description": "Transcribe audio and video to text instantly in your browser. Free Otter.ai and Whisper alternative. No upload, no signup, no API key. Runs 100% client-side with on-device AI.",
+    "incumbent": "Otter.ai",
+    "path": "/transcribe/",
+    "runtime": "client-ai",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/transcription.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "upscale",
+    "name": "Upscale",
+    "category": "ai",
+    "order": 27,
+    "tagline": "AI super-resolution 2x and 4x",
+    "description": "Upscale and sharpen images 2x or 4x in your browser, free, private, no upload. A Let",
+    "incumbent": "Upscayl",
+    "path": "/upscale/",
+    "runtime": "client-ai",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/upscale.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "depth",
+    "name": "Depth Map",
+    "category": "ai",
+    "order": 28,
+    "tagline": "Turn a photo into a depth map",
+    "description": "Generate depth maps from any photo instantly in your browser. Free, private, no upload. A Depth-Anything alternative that runs entirely client-side with AI. No signup, no API key, no data leaves your device.",
+    "incumbent": "Depth-Anything",
+    "path": "/depth/",
+    "runtime": "client-ai",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/depthEstimation.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "caption",
+    "name": "Caption",
+    "category": "ai",
+    "order": 29,
+    "tagline": "Describe any image for alt text",
+    "description": "Generate image captions and alt text instantly in your browser, free, private, no upload. A free alternative to paid captioning APIs that runs entirely client-side with AI. No signup, no data leaves your device.",
+    "incumbent": "BLIP",
+    "path": "/caption/",
+    "runtime": "client-ai",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/captioner.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "translate",
+    "name": "Translate",
+    "category": "ai",
+    "order": 30,
+    "tagline": "200 languages, on your device",
+    "description": "Translate text between 200+ languages instantly in your browser, free, private, no upload. A DeepL and Google Translate alternative powered by AI that runs entirely client-side. No signup, no API key, no data leaves your device.",
+    "incumbent": "DeepL",
+    "path": "/translate/",
+    "runtime": "client-ai",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/translator.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "summarize",
+    "name": "Summarize",
+    "category": "ai",
+    "order": 31,
+    "tagline": "Summarize long text and articles",
+    "description": "Summarize long articles and text instantly in your browser, free, private, no upload. A Jasper, QuillBot and TLDR This alternative that runs entirely client-side with AI. No signup, no API key, no data leaves your device.",
+    "incumbent": "QuillBot",
+    "path": "/summarize/",
+    "runtime": "client-ai",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/summarizer.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "chat",
+    "name": "Local Chat",
+    "category": "ai",
+    "order": 32,
+    "tagline": "An LLM running in your browser",
+    "description": "Chat with an AI that runs 100% in your browser. No API key, no server, no upload. A free ChatGPT alternative that stays fully private. Works offline after first load.",
+    "incumbent": "ChatGPT",
+    "path": "/chat/",
+    "runtime": "client-ai",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/llmEngine.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "pdf",
+    "name": "PDF Toolkit",
+    "category": "docs",
+    "order": 33,
+    "tagline": "Merge, split & compress PDFs",
+    "description": "Free online PDF toolkit. Merge multiple PDFs, split or extract pages, reorder, compress, convert images to PDF, and export PDF pages as images. No upload, no signup, runs entirely in your browser. A free iLovePDF and Smallpdf alternative.",
+    "incumbent": "iLovePDF",
+    "path": "/pdf/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/pdfUtils.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "subs",
+    "name": "Subtitle Editor",
+    "category": "docs",
+    "order": 34,
+    "tagline": "Edit, shift & convert .srt/.vtt",
+    "description": "Free online subtitle editor. Load .srt or .vtt files, edit lines and timings, time-shift all or selected subtitles, convert SRT to VTT or VTT to SRT, fix overlaps, and download. No upload, no signup, runs entirely in your browser.",
+    "incumbent": "Subtitle Edit",
+    "path": "/subs/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/subtitle.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "password",
+    "name": "Password",
+    "category": "docs",
+    "order": 35,
+    "tagline": "Strong, random passwords",
+    "description": "Free strong password generator, random passwords with custom length, symbols, digits, and passphrase mode. Entropy meter shows real strength. No signup, no upload, runs entirely in your browser. A 1Password / Bitwarden generator alternative.",
+    "incumbent": "1Password",
+    "path": "/password/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/password.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "units",
+    "name": "Unit Converter",
+    "category": "docs",
+    "order": 36,
+    "tagline": "Length, weight, temperature & more",
+    "description": "Free unit converter: length, mass, temperature, area, volume, speed, data, time, pressure & energy. Metric to imperial, instant results, runs entirely in your browser, no signup, no upload.",
+    "incumbent": "Google",
+    "path": "/units/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/units.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "colours",
+    "name": "Colours",
+    "category": "docs",
+    "order": 37,
+    "tagline": "Gradients, palettes & contrast",
+    "description": "Free online colour gradient and palette generator. Create stepped gradients with LAB/RGB/HSL interpolation, generate harmonious color palettes, copy hex/CSS. A fast coolors & colordesigner alternative.",
+    "incumbent": "Coolors",
+    "path": "/colours/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/color.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "cron",
+    "name": "Cron Builder",
+    "category": "docs",
+    "order": 38,
+    "tagline": "Build & decode cron schedules",
+    "description": "Free cron expression builder and decoder. Edit minute/hour/day/month/weekday fields with instant human-readable descriptions and next-run previews. No upload, no signup, runs entirely in your browser. A crontab.guru alternative.",
+    "incumbent": "crontab.guru",
+    "path": "/cron/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/cron.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "barcode",
+    "name": "Barcode",
+    "category": "docs",
+    "order": 39,
+    "tagline": "Code128, EAN, UPC barcodes",
+    "description": "Free online barcode generator. Create Code128, EAN-13, UPC-A, Code39 and ITF barcodes instantly. Download as PNG or SVG. No signup, no upload, runs entirely in your browser. A free barcode.tec-it.com alternative.",
+    "incumbent": "TEC-IT",
+    "path": "/barcode/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/barcode.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "invoice",
+    "name": "Invoice",
+    "category": "docs",
+    "order": 40,
+    "tagline": "Fill & export an invoice PDF",
+    "description": "Free invoice generator. Create professional invoices with line items, tax, discounts, logo and currency. Export a clean PDF instantly. No signup, no upload, 100% private. A free invoice-generator.com and DocuSign alternative.",
+    "incumbent": "invoice-generator",
+    "path": "/invoice/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/invoiceCalc.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "resume",
+    "name": "Resume",
+    "category": "docs",
+    "order": 41,
+    "tagline": "Build a CV, export to PDF",
+    "description": "Free resume builder. Create a professional resume or CV with contact info, summary, experience, education and skills. Export a clean PDF instantly. No signup, no upload, 100% private. A free alternative to Zety, Resume.io, and Canva resume.",
+    "incumbent": "Zety",
+    "path": "/resume/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/resumeUtils.ts",
+      "tools": []
+    }
+  },
+  {
+    "slug": "sign",
+    "name": "E-Signature",
+    "category": "docs",
+    "order": 42,
+    "tagline": "Sign a PDF in your browser",
+    "description": "Sign PDFs free in your browser. Draw or type your signature, drag it to the right spot, resize and download. No upload, no account, no DocuSign subscription. 100% private, runs offline.",
+    "incumbent": "DocuSign",
+    "path": "/sign/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": true,
+      "lib": "src/lib/signPdf.ts",
+      "tools": []
+    }
+  }
+]

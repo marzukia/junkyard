@@ -1,0 +1,18 @@
+import type { JunkyardApp } from "../../scripts/catalogue-schema";
+
+export const app: JunkyardApp = {
+  slug: "crop",
+  name: "Image Cropper",
+  category: "image",
+  order: 11,
+  tagline: "Crop, rotate, flip & resize",
+  description: "Free image cropper and resizer. Crop to 1:1, 4:5, 16:9 or free aspect ratio, rotate, flip, and resize to exact pixels. Runs in your browser, no upload, no account. A free iLoveIMG and Croppola alternative.",
+  incumbent: "iLoveIMG",
+  path: "/crop/",
+  runtime: "client",
+  mcp: {
+    exposed: true,
+    lib: "src/crop.ts",
+    tools: [],
+  },
+};
