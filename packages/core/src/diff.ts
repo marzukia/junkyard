@@ -38,13 +38,15 @@ function wordDiff(left: string, right: string): [WordChange[], WordChange[]] {
 }
 
 export function computeDiff(oldText: string, newText: string): DiffResult {
-  const ensureNl = (s: string) => s.endsWith("\n") ? s : `${s}\n`;
+  const ensureNl = (s: string) => (s && !s.endsWith("\n") ? `${s}\n` : s);
   const patch = structuredPatch("old", "new", ensureNl(oldText), ensureNl(newText), "", "", { context: Number.MAX_SAFE_INTEGER });
 
   const oldLines = oldText.split("\n");
   const newLines = newText.split("\n");
   if (oldLines[oldLines.length - 1] === "") oldLines.pop();
   if (newLines[newLines.length - 1] === "") newLines.pop();
+  if (oldLines.length === 1 && oldLines[0] === "") oldLines.pop();
+  if (newLines.length === 1 && newLines[0] === "") newLines.pop();
 
   const sideBySide: SideBySideLine[] = [];
   const stats = { added: 0, removed: 0, unchanged: 0 };

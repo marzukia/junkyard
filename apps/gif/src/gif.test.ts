@@ -110,3 +110,28 @@ describe("formatDuration", () => {
     expect(formatDuration(1000)).toBe("1.0 s");
   });
 });
+
+
+describe("msToFpsLabel consistency", () => {
+  it("shows no decimal for fps >= 10 (integral result)", () => {
+    // 100ms = 10fps -> toFixed(0)
+    expect(msToFpsLabel(100)).toBe("10 fps");
+    // 50ms = 20fps -> toFixed(0)
+    expect(msToFpsLabel(50)).toBe("20 fps");
+  });
+
+  it("shows one decimal for fps < 10", () => {
+    // 300ms = 3.333fps -> toFixed(1) = 3.3
+    expect(msToFpsLabel(300)).toBe("3.3 fps");
+    // 200ms = 5fps -> toFixed(1) = 5.0
+    expect(msToFpsLabel(200)).toBe("5.0 fps");
+    // 1000ms = 1fps -> toFixed(1) = 1.0
+    expect(msToFpsLabel(1000)).toBe("1.0 fps");
+  });
+
+  it("all results end in fps", () => {
+    for (const ms of [10, 33, 50, 100, 200, 300, 500, 1000]) {
+      expect(msToFpsLabel(ms)).toMatch(/fps$/);
+    }
+  });
+});

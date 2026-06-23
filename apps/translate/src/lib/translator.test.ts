@@ -112,3 +112,18 @@ describe("splitIntoChunks", () => {
     }
   });
 });
+
+
+describe("splitIntoChunks empty/whitespace input", () => {
+  it("returns [] for empty string", () => {
+    expect(splitIntoChunks("")).toEqual([]);
+  });
+
+  it("returns [] for whitespace-only string", () => {
+    expect(splitIntoChunks("   ")).toEqual([]);
+  });
+
+  it("returns [] for newline-only string", () => {
+    expect(splitIntoChunks("\n\n")).toEqual([]);
+  });
+});
