@@ -86,11 +86,16 @@ function applyMatrix(
 /**
  * Simulate how `hex` appears under the given CVD type.
  * Returns a normalised `#rrggbb` string. Always deterministic.
- * `none` returns the input unchanged (after normalising case/format).
+ * `none` returns the normalised input.
+ * Throws a RangeError if `hex` is not a valid 6-digit hex colour string.
  */
 export function simulate(hex: string, type: CvdType): string {
   const stripped = hex.replace(/^#/, "").toLowerCase();
-  if (!/^[0-9a-f]{6}$/.test(stripped)) return hex;
+  if (!/^[0-9a-f]{6}$/.test(stripped)) {
+    throw new RangeError(
+      `simulate: invalid hex colour "${hex}" — expected a 6-digit hex string like "#rrggbb".`
+    );
+  }
 
   if (type === "none") return `#${stripped}`;
 

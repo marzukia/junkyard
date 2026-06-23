@@ -90,8 +90,20 @@ describe("simulate — red changes under protanopia/deuteranopia", () => {
   });
 });
 
-describe("simulate — invalid input passthrough", () => {
-  it("returns the input unchanged if it is not a valid hex", () => {
-    expect(simulate("notahex", "protanopia")).toBe("notahex");
+describe("simulate — invalid input throws RangeError", () => {
+  it("throws RangeError for a non-hex string", () => {
+    expect(() => simulate("notahex", "protanopia")).toThrow(RangeError);
+  });
+
+  it("throws RangeError for a 3-digit shorthand hex", () => {
+    expect(() => simulate("#f00", "deuteranopia")).toThrow(RangeError);
+  });
+
+  it("throws RangeError for an empty string", () => {
+    expect(() => simulate("", "none")).toThrow(RangeError);
+  });
+
+  it("error message includes the invalid value", () => {
+    expect(() => simulate("badval", "protanopia")).toThrow("badval");
   });
 });

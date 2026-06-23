@@ -41,8 +41,31 @@ describe("formatDms", () => {
 
   it("produces degree, minute, second components", () => {
     const result = formatDms(0.5, "lat");
-    // 0.5 decimal = 0° 30′ 0.00″ N
+    // 0.5 decimal = 0° 30′ 00.00″ N
     expect(result).toMatch(/0°\s*30′/);
+  });
+
+  it("zero-pads minutes to 2 digits", () => {
+    // 0.0833... decimal lat = 0° 05′ ...
+    const result = formatDms(0.0833, "lat");
+    expect(result).toMatch(/0°\s*0[0-9]′/);
+    // minutes component must be 2 chars before the prime symbol
+    expect(result).toMatch(/\d{2}′/);
+  });
+
+  it("zero-pads seconds to 5 characters (MM.SS)", () => {
+    // Use a coordinate where seconds are a single digit before decimal
+    // 1° 00′ 09.00″ N => decimal = 1 + (9/3600) = 1.0025
+    const result = formatDms(1.0025, "lat");
+    // Seconds should be "09.00" not "9.00" — 5-char padded
+    expect(result).toMatch(/\d{2}\.\d{2}″/);
+  });
+
+  it("formats minutes and seconds consistently (both zero-padded)", () => {
+    // Both minutes and seconds should use zero-padded fixed-width format
+    const result = formatDms(0, "lat");
+    // 0° 00′ 00.00″ N
+    expect(result).toMatch(/0°\s*00′\s*00\.00″\s*N/);
   });
 });
 
