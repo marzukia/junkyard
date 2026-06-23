@@ -139,8 +139,56 @@ const angle: Category = { id: "angle", label: "Angle", baseUnit: "rad", units: [
   { id: "grad", label: "Gradian", symbol: "grad", toBase: Math.PI / 200 },
 ]};
 
+// 1 W = 1 W (base), 1 kW = 1000 W, 1 hp (mechanical) = 745.69987 W
+const power: Category = { id: "power", label: "Power", baseUnit: "W", units: [
+  { id: "W", label: "Watt", symbol: "W", toBase: 1 },
+  { id: "kW", label: "Kilowatt", symbol: "kW", toBase: 1000 },
+  { id: "MW", label: "Megawatt", symbol: "MW", toBase: 1_000_000 },
+  { id: "hp", label: "Horsepower (mech)", symbol: "hp", toBase: 745.69987 },
+  { id: "BTUh", label: "BTU/hour", symbol: "BTU/h", toBase: 0.29307107 },
+]};
+
+// 1 N = 1 N (base), 1 lbf = 4.44822 N, 1 kgf = 9.80665 N
+const force: Category = { id: "force", label: "Force", baseUnit: "N", units: [
+  { id: "N", label: "Newton", symbol: "N", toBase: 1 },
+  { id: "kN", label: "Kilonewton", symbol: "kN", toBase: 1000 },
+  { id: "lbf", label: "Pound-force", symbol: "lbf", toBase: 4.4482216 },
+  { id: "kgf", label: "Kilogram-force", symbol: "kgf", toBase: 9.80665 },
+  { id: "dyn", label: "Dyne", symbol: "dyn", toBase: 0.00001 },
+]};
+
+// Fuel efficiency: base unit is km/L (distance per volume).
+// All units below are linear multiples of km/L.
+//   1 mpg (US) = 1.609344 km / 3.785412 L = 0.42514371 km/L
+//   1 mpg (UK) = 1.609344 km / 4.54609 L  = 0.35400620 km/L
+// L/100km is the inverse of km/L and is non-linear, so it is handled via a
+// special-case convert path (see fuelToKmL / kmLToFuel below).
+const fuel: Category = { id: "fuel", label: "Fuel Efficiency", baseUnit: "kml", units: [
+  { id: "kml", label: "Kilometres per litre", symbol: "km/L", toBase: 1 },
+  { id: "mpgUS", label: "Miles per gallon (US)", symbol: "mpg (US)", toBase: 0.42514371 },
+  { id: "mpgUK", label: "Miles per gallon (UK)", symbol: "mpg (UK)", toBase: 0.35400620 },
+  { id: "l100km", label: "Litres per 100km", symbol: "L/100km", toBase: 1 },  // inversion handled below
+]};
+
+const FUEL_INVERSE_ID = "l100km";
+
+function fuelToKmL(value: number, fromId: string): number {
+  if (fromId === FUEL_INVERSE_ID) return 100 / value;
+  const unit = fuel.units.find((u) => u.id === fromId);
+  if (!unit) throw new Error(`Unknown fuel unit: ${fromId}`);
+  return value * unit.toBase;
+}
+
+function kmLToFuel(kmL: number, toId: string): number {
+  if (toId === FUEL_INVERSE_ID) return 100 / kmL;
+  const unit = fuel.units.find((u) => u.id === toId);
+  if (!unit) throw new Error(`Unknown fuel unit: ${toId}`);
+  return kmL / unit.toBase;
+}
+
 export const CATEGORIES: Category[] = [
   length, mass, temperature, area, volume, speed, data, time, pressure, energy, angle,
+  power, force, fuel,
 ];
 
 export function findUnit(unitId: string): { category: Category; unit: UnitDef } | null {
@@ -170,6 +218,10 @@ export function convert(value: number, fromId: string, toId: string, categoryId?
     return kelvinToUnit(tempToKelvin(value, fromId), toId);
   }
 
+  if (cat.id === "fuel") {
+    return kmLToFuel(fuelToKmL(value, fromId), toId);
+  }
+
   const from = cat.units.find((u) => u.id === fromId);
   const to = cat.units.find((u) => u.id === toId);
   if (!from || !to) throw new Error(`Unknown unit ${fromId} or ${toId} in ${cat.id}`);
@@ -184,7 +236,7 @@ export const unitsTool: ToolDef = {
   ops: [
     {
       name: "convert",
-      description: "Convert a value between units (length, mass, temperature, area, volume, speed, data, time, pressure, energy, angle)",
+      description: "Convert a value between units (length, mass, temperature, area, volume, speed, data, time, pressure, energy, angle, power, force, fuel)",
       inputSchema: z.object({
         value: z.number(),
         from: z.string(),

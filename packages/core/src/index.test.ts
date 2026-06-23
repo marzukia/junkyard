@@ -317,6 +317,37 @@ describe("units", () => {
   it("converts bytes to kilobytes", () => {
     expect(convertUnit(1000, "B", "KB")).toBeCloseTo(1, 3);
   });
+
+  // Power category (newly added)
+  it("converts 1000 W to kW", () => {
+    expect(convertUnit(1000, "W", "kW")).toBeCloseTo(1, 6);
+  });
+
+  it("converts 1 hp to watts", () => {
+    expect(convertUnit(1, "hp", "W")).toBeCloseTo(745.69987, 3);
+  });
+
+  // Force category (newly added)
+  it("converts 1 N to lbf", () => {
+    expect(convertUnit(1, "N", "lbf")).toBeCloseTo(0.22481, 3);
+  });
+
+  it("converts 1 kgf to N", () => {
+    expect(convertUnit(1, "kgf", "N")).toBeCloseTo(9.80665, 4);
+  });
+
+  // Fuel category (newly added)
+  it("converts 8 L/100km to km/L (100/8 = 12.5)", () => {
+    expect(convertUnit(8, "l100km", "kml")).toBeCloseTo(12.5, 4);
+  });
+
+  it("converts 1 mpg(US) to km/L", () => {
+    expect(convertUnit(1, "mpgUS", "kml")).toBeCloseTo(0.42514371, 5);
+  });
+
+  it("converts 8 L/100km to L/100km (identity)", () => {
+    expect(convertUnit(8, "l100km", "l100km")).toBeCloseTo(8, 6);
+  });
 });
 
 // ── Colours ───────────────────────────────────────────────────────────────────
@@ -346,6 +377,25 @@ describe("colours", () => {
   it("contrast: similar colors have low ratio", () => {
     const r = contrastRatio("#ffffff", "#fefefe");
     expect(r.ratio).toBeLessThan(2);
+  });
+
+  // New: accept non-hex inputs in convertColor
+  it("converts CSS named color 'red' to hex", () => {
+    const r = convertColor("red", "hex");
+    expect(r).toBe("#ff0000");
+  });
+
+  it("converts rgb() string to hsl", () => {
+    const r = convertColor("rgb(255, 0, 0)", "hsl");
+    expect(r).toContain("hsl(0");
+  });
+
+  it("throws clean error on invalid color in convertColor", () => {
+    expect(() => convertColor("notacolor", "hex")).toThrow("Invalid color: notacolor");
+  });
+
+  it("throws clean error on invalid color in contrastRatio (first arg)", () => {
+    expect(() => contrastRatio("notacolor", "#fff")).toThrow("Invalid color: notacolor");
   });
 });
 
@@ -418,6 +468,17 @@ describe("markdown", () => {
   it("converts GFM code block", () => {
     const html = toHtml("```js\nconsole.log('hi')\n```");
     expect(html).toContain("<code");
+  });
+
+  it("does NOT emit executable <script> tag for inline HTML input", () => {
+    const html = toHtml("<script>alert(1)</script>");
+    // The output must not contain a literal opening <script tag
+    expect(html).not.toMatch(/<script[\s>]/i);
+  });
+
+  it("does NOT emit executable <img onerror> for inline HTML input", () => {
+    const html = toHtml('<img src=x onerror="alert(1)">');
+    expect(html).not.toMatch(/<img\s/i);
   });
 });
 

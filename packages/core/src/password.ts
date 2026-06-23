@@ -13,16 +13,14 @@ const SYMBOLS = "!@#$%^&*()-_=+[]{}|;:,.<>?";
 
 function randomInt(max: number): number {
   if (max <= 0) throw new Error("max must be > 0");
+  // Rejection sampling: discard values in the biased tail so every outcome
+  // in [0, max) is equally likely. The loop samples until val < limit.
   const limit = 2 ** 32 - (2 ** 32 % max);
-  const buf = randomBytes(4);
   let val: number;
   do {
-    // Re-read fresh random bytes each iteration
-    const fresh = randomBytes(4);
-    val = fresh.readUInt32BE(0);
+    val = randomBytes(4).readUInt32BE(0);
   } while (val >= limit);
-  void buf; // satisfy TS
-  return randomBytes(4).readUInt32BE(0) % max;
+  return val % max;
 }
 
 function randomPick<T>(arr: readonly T[]): T {
