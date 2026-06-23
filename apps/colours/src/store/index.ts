@@ -241,6 +241,12 @@ export const useColoursStore = create<ColoursStore>((set, get) => ({
 
   setPaletteHarmony: (mode) => {
     set((s) => {
+      const snap: PaletteSnapshot = {
+        colors: s.palette.colors,
+        locked: s.palette.locked,
+        count: s.palette.count,
+        harmonyMode: s.palette.harmonyMode,
+      };
       const { colors, locked } = s.palette;
       const nextSeed = s._seedCounter + 1;
       const newColors = regeneratePalette(colors, locked, mode, nextSeed);
@@ -252,6 +258,8 @@ export const useColoursStore = create<ColoursStore>((set, get) => ({
       savePalette(nextPalette);
       return {
         _seedCounter: nextSeed,
+        _undoStack: pushUndo(s._undoStack, snap),
+        canUndo: true,
         palette: nextPalette,
       };
     });

@@ -179,3 +179,39 @@ describe("setPaletteCount is undoable (W4)", () => {
     expect(useColoursStore.getState().palette.count).toBe(5);
   });
 });
+
+describe("setPaletteHarmony is undoable (W4)", () => {
+  beforeEach(() => {
+    useColoursStore.setState((s) => ({
+      palette: {
+        ...s.palette,
+        colors: ["#111111", "#222222", "#333333", "#444444", "#555555"],
+        locked: [false, false, false, false, false],
+        count: 5,
+        harmonyMode: "analogous",
+      },
+      _undoStack: [],
+      canUndo: false,
+    }));
+  });
+
+  it("setPaletteHarmony pushes to undo stack and sets canUndo", () => {
+    useColoursStore.getState().setPaletteHarmony("triadic");
+    expect(useColoursStore.getState().canUndo).toBe(true);
+    expect(useColoursStore.getState()._undoStack.length).toBeGreaterThan(0);
+  });
+
+  it("undoPalette after setPaletteHarmony restores prior harmonyMode", () => {
+    useColoursStore.getState().setPaletteHarmony("triadic");
+    expect(useColoursStore.getState().palette.harmonyMode).toBe("triadic");
+    useColoursStore.getState().undoPalette();
+    expect(useColoursStore.getState().palette.harmonyMode).toBe("analogous");
+  });
+
+  it("undoPalette after setPaletteHarmony restores prior colors", () => {
+    const colorsBefore = [...useColoursStore.getState().palette.colors];
+    useColoursStore.getState().setPaletteHarmony("monochromatic");
+    useColoursStore.getState().undoPalette();
+    expect(useColoursStore.getState().palette.colors).toEqual(colorsBefore);
+  });
+});
