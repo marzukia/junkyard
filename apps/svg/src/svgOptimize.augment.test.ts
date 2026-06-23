@@ -192,4 +192,23 @@ describe("toJsxComponent -- additional paths", () => {
     // className already correct; should not appear twice or broken
     expect(jsx).toContain("className=");
   });
+
+  it("does not corrupt class= inside an attribute string value", () => {
+    // aria-label value contains the text "class=" -- must not be replaced
+    const input = '<svg><g aria-label="has class= here" class="real"/></svg>';
+    const jsx = toJsxComponent(input);
+    // The attribute-name class= should become className=
+    expect(jsx).toContain('className="real"');
+    // The string content "has class= here" should NOT be corrupted
+    expect(jsx).toContain('"has class= here"');
+  });
+
+  it("does not corrupt stroke-width= inside an attribute string value", () => {
+    const input = '<svg><path data-info="stroke-width=2" stroke-width="4"/></svg>';
+    const jsx = toJsxComponent(input);
+    // The attribute stroke-width= must be camelCased
+    expect(jsx).toContain("strokeWidth=");
+    // The data-info string content stroke-width=2 must be preserved
+    expect(jsx).toContain("stroke-width=2");
+  });
 });
