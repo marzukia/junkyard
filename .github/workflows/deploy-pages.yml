@@ -1,4 +1,4 @@
-name: Deploy hub to GitHub Pages
+name: Deploy site to GitHub Pages
 
 on:
   push:
@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "hub/**"
+      - "apps/**"
+      - "scripts/**"
       - ".github/workflows/deploy-pages.yml"
 
 permissions:
@@ -20,9 +22,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: hub
     steps:
       - uses: actions/checkout@v4
 
@@ -30,14 +29,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "npm"
-          cache-dependency-path: hub/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
+      - name: Build consolidated site
+        run: bash scripts/build-site.sh
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -45,7 +39,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./hub/dist
+          path: ./dist
 
   deploy:
     needs: build
