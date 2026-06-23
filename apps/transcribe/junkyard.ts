@@ -15,4 +15,5 @@ export const app: JunkyardApp = {
     lib: "src/lib/transcription.ts",
     tools: [],
   },
+  tags: ["on-device-ai", "large-download"],
 };

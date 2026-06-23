@@ -109,7 +109,11 @@
       "exposed": false,
       "lib": "src/lib/bgRemoval.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "collage",
@@ -413,7 +417,11 @@
       "exposed": false,
       "lib": "src/lib/transcription.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "upscale",
@@ -429,7 +437,11 @@
       "exposed": false,
       "lib": "src/lib/upscale.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "depth",
@@ -445,7 +457,11 @@
       "exposed": false,
       "lib": "src/lib/depthEstimation.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "caption",
@@ -461,7 +477,11 @@
       "exposed": false,
       "lib": "src/lib/captioner.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "translate",
@@ -477,7 +497,11 @@
       "exposed": false,
       "lib": "src/lib/translator.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "summarize",
@@ -493,7 +517,11 @@
       "exposed": false,
       "lib": "src/lib/summarizer.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "chat",
@@ -509,7 +537,11 @@
       "exposed": false,
       "lib": "src/lib/llmEngine.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "webgpu",
+      "large-download"
+    ]
   },
   {
     "slug": "pdf",
@@ -670,5 +702,43 @@
       "lib": "src/lib/signPdf.ts",
       "tools": []
     }
+  },
+  {
+    "slug": "video",
+    "name": "Video Toolkit",
+    "category": "image",
+    "order": 43,
+    "tagline": "Trim, convert, compress & GIF - in your browser",
+    "description": "Free in-browser video toolkit: trim, convert (mp4/webm/gif), compress, and turn video into GIF. Runs entirely client-side with ffmpeg.wasm - no upload, no signup, no watermark. A Veed / Kapwing / ezgif alternative.",
+    "incumbent": "Veed",
+    "path": "/video/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/ffmpeg.ts",
+      "tools": []
+    },
+    "tags": [
+      "large-download"
+    ]
+  },
+  {
+    "slug": "cleanup",
+    "name": "Cleanup",
+    "category": "ai",
+    "order": 44,
+    "tagline": "Erase objects from photos, on-device",
+    "description": "Free object and people remover. Brush over anything you want gone and erase it with on-device inpainting - no upload, no signup, no watermark. A Cleanup.pictures alternative that runs entirely in your browser.",
+    "incumbent": "Cleanup.pictures",
+    "path": "/cleanup/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/inpaint.ts",
+      "tools": []
+    },
+    "tags": [
+      "beta"
+    ]
   }
 ]

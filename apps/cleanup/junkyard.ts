@@ -10,10 +10,11 @@ export const app: JunkyardApp = {
     "Free object and people remover. Brush over anything you want gone and erase it with on-device inpainting - no upload, no signup, no watermark. A Cleanup.pictures alternative that runs entirely in your browser.",
   incumbent: "Cleanup.pictures",
   path: "/cleanup/",
-  runtime: "client-ai",
+  runtime: "client",
   mcp: {
     exposed: false,
     lib: "src/lib/inpaint.ts",
     tools: [],
   },
+  tags: ["beta"],
 };

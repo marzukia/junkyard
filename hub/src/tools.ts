@@ -1,4 +1,5 @@
 export type Yard = "image" | "text" | "ai" | "docs";
+export type AppTag = "webgpu" | "on-device-ai" | "large-download" | "beta";
 
 export interface Tool {
   name: string;
@@ -7,6 +8,8 @@ export interface Tool {
   tagline: string;
   /** The paid incumbent this tool replaces. Empty string = show "free forever". */
   incumbent: string;
+  tags?: AppTag[];
+  mcpExposed: boolean;
 }
 
 export const YARDS: { id: Yard; label: string }[] = [

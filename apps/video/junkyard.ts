@@ -16,4 +16,5 @@ export const app: JunkyardApp = {
     lib: "src/lib/ffmpeg.ts",
     tools: [],
   },
+  tags: ["large-download"],
 };
