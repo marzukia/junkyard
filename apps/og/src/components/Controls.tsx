@@ -219,7 +219,7 @@ export function Controls() {
               className="og-input"
               value={config.badge}
               onChange={(e) => store.setBadge(e.target.value)}
-              placeholder="junkyard.mrzk.io/og/"
+              placeholder="junkyard.sh/og/"
             />
           </div>
         </div>

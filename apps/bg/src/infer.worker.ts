@@ -3,10 +3,8 @@
  * Returns image bytes as ArrayBuffer (blob URLs don't cross worker boundaries).
  */
 import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
-import { type ImageSegmentationPipeline, RawImage, env, pipeline } from "@huggingface/transformers";
-
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-env.useBrowserCache = true;
+import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface/transformers";
+import { configureTransformersEnv } from "./lib/transformersEnv";
 
 const MODEL_ID = "briaai/RMBG-1.4";
 const MAX_INFER_SIDE = 1024;
@@ -31,6 +29,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!segmenter) {
+    configureTransformersEnv();
       segmenter = (await (pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>)(
         "image-segmentation",
         MODEL_ID,

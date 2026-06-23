@@ -28,8 +28,8 @@ export interface OgConfig {
 
 export const DEFAULT_CONFIG: OgConfig = {
   title: "My OG Image",
-  subtitle: "A social share image created with junkyard.mrzk.io/og/",
-  badge: "junkyard.mrzk.io/og/",
+  subtitle: "A social share image created with junkyard.sh/og/",
+  badge: "junkyard.sh/og/",
   bgType: "solid",
   bgColor: "#1a2530",
   bgColorEnd: "#2f9d8d",
@@ -183,7 +183,8 @@ export function buildMetaSnippet(
   width: number,
   height: number
 ): string {
-  const esc = (s: string) => s.replace(/"/g, "&quot;");
+  const esc = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   return [
     "<!-- Open Graph -->",
     `<meta property="og:title" content="${esc(title)}" />`,
@@ -224,7 +225,28 @@ export function wrapTextCtx(
     }
   }
   if (current) lines.push(current);
-  return lines;
+
+  // Character-level break: if any line is still wider than maxWidth (e.g. a long
+  // URL with no spaces), split it character-by-character.
+  const result: string[] = [];
+  for (const line of lines) {
+    if (ctx.measureText(line).width <= maxWidth) {
+      result.push(line);
+      continue;
+    }
+    let chunk = "";
+    for (const char of line) {
+      const next = chunk + char;
+      if (ctx.measureText(next).width > maxWidth && chunk) {
+        result.push(chunk);
+        chunk = char;
+      } else {
+        chunk = next;
+      }
+    }
+    if (chunk) result.push(chunk);
+  }
+  return result;
 }
 
 /**

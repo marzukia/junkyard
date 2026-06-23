@@ -11,16 +11,11 @@
  * and never touches SharedArrayBuffer. WebGPU is attempted first (no isolation
  * required); WASM single-thread is the fallback.
  */
-import { RawImage, env, pipeline } from "@huggingface/transformers";
+import { RawImage, pipeline } from "@huggingface/transformers";
+import { configureTransformersEnv } from "./transformersEnv";
 import type { OutputFormat } from "./imageHelpers";
 import { outputMime } from "./imageHelpers";
 
-// ── Disable multi-threaded WASM (requires SharedArrayBuffer / COOP+COEP) ──────
-// Must be set BEFORE any InferenceSession is created.
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-
-// Use browser cache so subsequent visits skip the download.
-env.useBrowserCache = true;
 
 export const MODEL_ID = "Xenova/swin2SR-classical-sr-x2-64";
 // Approx download size shown to the user.
@@ -47,6 +42,7 @@ let upscaler: ImageToImagePipeline | null = null;
 /** Load (or return cached) the image-to-image pipeline. */
 export async function loadModel(onProgress?: ProgressCallback): Promise<void> {
   if (upscaler) return;
+  configureTransformersEnv();
 
   const progressCb = (event: TransformersProgressEvent) => {
     if (!onProgress) return;
