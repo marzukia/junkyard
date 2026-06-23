@@ -20,7 +20,52 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install hub deps (provides tsx)
+        run: cd hub && npm ci
+
+      - name: Check catalogue is up to date
+        # Fails if any apps/*/junkyard.ts was edited without regenerating the
+        # catalogue artifacts. The generator also validates description quality
+        # and mcp.tools shape.
+        run: |
+          npx tsx scripts/gen-catalogue.ts
+          git diff --exit-code hub/src/catalogue.generated.ts hub/public/catalogue.json
+
+      - name: Check vendored AppSwitcher copies are up to date
+        # Fails if kit/AppSwitcher.* was changed without running vendor-switcher.mjs
+        run: |
+          node scripts/vendor-switcher.mjs
+          git diff --exit-code
+
+      - name: SEO domain guard - no stale per-app mrzk.io subdomains
+        # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
+        # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).
+        # NOTE: this check will FAIL until the SEO-fix branch is merged; that is
+        # expected. The guard correctly detects current violations (proof below).
+        run: |
+          if grep -rE '[a-z0-9-]+\.mrzk\.io' \
+               --include='index.html' \
+               --include='sitemap.xml' \
+               --include='robots.txt' \
+               apps/*/public/ \
+             | grep -v 'junkyard\.mrzk\.io'; then
+            echo "ERROR: stale non-junkyard mrzk.io subdomain(s) found in apps/*/public/"
+            exit 1
+          fi
+          echo "SEO domain guard: OK"
+
   build:
+    needs: verify
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

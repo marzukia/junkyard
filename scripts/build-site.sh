@@ -36,6 +36,8 @@ done
 # somehow touched the dist root (it won't since each app uses --outDir to a
 # subdirectory, but be explicit).
 printf 'junkyard.mrzk.io' > "$DIST/CNAME"
+# Prevent GitHub Pages from running Jekyll, which silently 404s any _-prefixed asset.
+printf '' > "$DIST/.nojekyll"
 
 echo ""
 echo "==> Build complete"
