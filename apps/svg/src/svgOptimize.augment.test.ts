@@ -164,18 +164,12 @@ describe("optimizeSvg -- additional option paths", () => {
     expect(result.saving).toBeLessThanOrEqual(1);
   });
 
-  it("handles empty input without throwing (SVGO processes it silently)", () => {
-    // BUG?: optimizeSvg("") does not throw; SVGO processes the empty string
-    // and returns a result instead of raising a validation error. Callers should
-    // guard against empty input upstream.
-    expect(() => optimizeSvg("", BASE_OPTS)).not.toThrow();
+  it("throws for empty input (fixed: was silently passing to SVGO)", () => {
+    expect(() => optimizeSvg("", BASE_OPTS)).toThrow(/not an SVG/i);
   });
 
-  it("handles HTML input (not SVG) without throwing", () => {
-    // BUG?: optimizeSvg does not throw when given plain HTML (no <svg> root).
-    // SVGO processes it and may return modified HTML. Callers should pre-validate
-    // that input contains an <svg> root before calling optimizeSvg.
-    expect(() => optimizeSvg("<html><body>Hello</body></html>", BASE_OPTS)).not.toThrow();
+  it("throws for HTML input without <svg> root (fixed: was passing to SVGO)", () => {
+    expect(() => optimizeSvg("<html><body>Hello</body></html>", BASE_OPTS)).toThrow(/not an SVG/i);
   });
 });
 

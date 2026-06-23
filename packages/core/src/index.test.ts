@@ -1007,3 +1007,25 @@ describe("headless proof: no browser globals used", () => {
     expect(results.length).toBeGreaterThan(0);
   });
 });
+
+
+describe("computeDiff empty-side stats (core)", () => {
+  it("stats.added=0 when new side is empty", () => {
+    const r = computeDiff("hello\nworld", "");
+    expect(r.stats.added).toBe(0);
+    expect(r.stats.removed).toBe(2);
+  });
+
+  it("stats.removed=0 when old side is empty", () => {
+    const r = computeDiff("", "hello\nworld");
+    expect(r.stats.removed).toBe(0);
+    expect(r.stats.added).toBe(2);
+  });
+
+  it("both sides empty gives zero stats", () => {
+    const r = computeDiff("", "");
+    expect(r.stats.added).toBe(0);
+    expect(r.stats.removed).toBe(0);
+    expect(r.stats.unchanged).toBe(0);
+  });
+});

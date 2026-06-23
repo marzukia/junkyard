@@ -299,3 +299,18 @@ describe("extractTextFromHtml", () => {
     expect(result).not.toMatch(/\s{2,}/);
   });
 });
+
+
+describe("chunkText empty/whitespace input", () => {
+  it("returns [] for empty string", () => {
+    expect(chunkText("")).toEqual([]);
+  });
+
+  it("returns [] for whitespace-only string", () => {
+    expect(chunkText("   ")).toEqual([]);
+  });
+
+  it("returns [] for tab-and-newline whitespace", () => {
+    expect(chunkText("\t\n  \n")).toEqual([]);
+  });
+});

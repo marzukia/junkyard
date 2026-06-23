@@ -254,6 +254,7 @@ export function validateLanguagePair(source: string, target: string): string | n
  * back to word boundaries, then hard-splits if a single word is over-long.
  */
 export function splitIntoChunks(text: string, maxChars: number = MAX_CHUNK_CHARS): string[] {
+  if (!text.trim()) return [];
   if (text.length <= maxChars) return [text];
 
   const chunks: string[] = [];
