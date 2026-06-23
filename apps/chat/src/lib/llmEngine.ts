@@ -68,13 +68,16 @@ export async function streamChat(
     max_tokens: 1024,
   });
 
-  for await (const chunk of stream) {
-    if (signal.aborted) break;
-    const delta = chunk.choices[0]?.delta?.content ?? "";
-    if (delta) onChunk(delta);
+  try {
+    for await (const chunk of stream) {
+      if (signal.aborted) break;
+      const delta = chunk.choices[0]?.delta?.content ?? "";
+      if (delta) onChunk(delta);
+    }
+  } finally {
+    // Always clear the controller so a stale reference cannot be aborted later.
+    currentAbortController = null;
   }
-
-  currentAbortController = null;
 }
 
 /** Abort the current in-progress generation, if any. */
