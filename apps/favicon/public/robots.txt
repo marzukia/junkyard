@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://favicon.mrzk.io/sitemap.xml
+Sitemap: https://junkyard.mrzk.io/favicon/sitemap.xml

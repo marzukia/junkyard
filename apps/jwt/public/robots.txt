@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://jwt.mrzk.io/sitemap.xml
+Sitemap: https://junkyard.mrzk.io/jwt/sitemap.xml
