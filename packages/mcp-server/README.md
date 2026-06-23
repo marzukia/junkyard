@@ -49,7 +49,7 @@ Add to `claude_desktop_config.json` (or your client's MCP config):
 | `junkyard_jwt_decode` | Decode JWT payload |
 | `junkyard_jwt_verifyHmac` | Verify HMAC-signed JWT |
 | `junkyard_regex_test` | Test regex against text |
-| `junkyard_cron_explain` | Explain cron expression |
+| `junkyard_cron_describe` | Explain cron expression |
 | `junkyard_uuid_generate` | Generate UUID v4 or v7 |
 | `junkyard_timestamp_convert` | Convert Unix timestamp |
 | `junkyard_timestamp_now` | Current time in multiple formats |
@@ -59,7 +59,7 @@ Add to `claude_desktop_config.json` (or your client's MCP config):
 | `junkyard_colours_contrast` | WCAG contrast ratio |
 | `junkyard_password_generate` | Password generator |
 | `junkyard_lorem_generate` | Lorem ipsum text |
-| `junkyard_markdown_render` | Markdown to HTML |
+| `junkyard_markdown_toHtml` | Markdown to HTML |
 | `junkyard_qr_generate` | QR code as SVG |
 | `junkyard_barcode_generate` | Barcode as SVG |
 

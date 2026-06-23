@@ -56,8 +56,10 @@ export function hexToHsl(hex: string): HslColor | null {
   return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
 }
 
-export function contrastRatio(hex1: string, hex2: string): { ratio: number; wcagAA: boolean; wcagAAA: boolean } {
-  const ratio = wcagContrast(hex1, hex2);
+export function contrastRatio(color1: string, color2: string): { ratio: number; wcagAA: boolean; wcagAAA: boolean } {
+  if (!parse(color1)) throw new Error(`Invalid color: ${color1}`);
+  if (!parse(color2)) throw new Error(`Invalid color: ${color2}`);
+  const ratio = wcagContrast(color1, color2);
   return {
     ratio: Math.round(ratio * 100) / 100,
     wcagAA: ratio >= 4.5,
@@ -78,7 +80,10 @@ export function generateGradient(start: string, end: string, steps: number, spac
 export type ConvertTarget = "hex" | "rgb" | "hsl";
 
 export function convertColor(input: string, to: ConvertTarget): string {
-  const hex = normalizeHex(input);
+  // Accept any culori-parseable format (hex, rgb(), hsl(), named colours, etc.)
+  const parsed = parse(input);
+  if (!parsed) throw new Error(`Invalid color: ${input}`);
+  const hex = formatHex(parsed);
   if (!hex) throw new Error(`Invalid color: ${input}`);
   if (to === "hex") return hex;
   if (to === "rgb") {
@@ -102,7 +107,7 @@ export const coloursTool: ToolDef = {
   ops: [
     {
       name: "convert",
-      description: "Convert a hex color to hex, rgb() or hsl()",
+      description: "Convert a color (hex, rgb(), hsl(), or CSS named color) to hex, rgb() or hsl()",
       inputSchema: z.object({
         color: z.string(),
         to: z.enum(["hex", "rgb", "hsl"]).default("rgb"),

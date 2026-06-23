@@ -2,24 +2,12 @@
  * Unit tests for name sanitisation and content formatting helpers.
  * These are the two pure functions that could silently produce invalid MCP
  * tool names or broken content if changed.
+ *
+ * We import the REAL exported helpers from index.ts so that any change to
+ * the production functions is caught immediately here.
  */
 import { describe, it, expect } from "bun:test";
-
-// Re-exported only for testing; the helpers live in index.ts.
-// We duplicate the pure logic here rather than exporting from index.ts
-// (which would force the server to register tools on import).
-
-function sanitiseName(slug: string, opName: string): string {
-  const safe = `junkyard_${slug}_${opName}`.replace(/[^a-zA-Z0-9_-]/g, "_");
-  return safe.slice(0, 64);
-}
-
-function toContent(value: unknown): { type: "text"; text: string }[] {
-  if (typeof value === "string") {
-    return [{ type: "text", text: value }];
-  }
-  return [{ type: "text", text: JSON.stringify(value, null, 2) }];
-}
+import { sanitiseName, toContent } from "./index.ts";
 
 describe("sanitiseName", () => {
   it("produces expected names for normal slug+opName", () => {
@@ -40,6 +28,14 @@ describe("sanitiseName", () => {
 
   it("preserves hyphens and digits", () => {
     expect(sanitiseName("foo-bar", "op2")).toBe("junkyard_foo-bar_op2");
+  });
+
+  it("produces the real cron tool name (guards against rename regression)", () => {
+    expect(sanitiseName("cron", "describe")).toBe("junkyard_cron_describe");
+  });
+
+  it("produces the real markdown tool name (guards against rename regression)", () => {
+    expect(sanitiseName("markdown", "toHtml")).toBe("junkyard_markdown_toHtml");
   });
 });
 
