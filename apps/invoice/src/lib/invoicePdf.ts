@@ -422,7 +422,7 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
     thickness: 0.5,
     color: RULE,
   });
-  const footerTxt = "Generated with invoice.mrzk.io";
+  const footerTxt = "Generated with junkyard.mrzk.io/invoice/";
   const ftW = regular.widthOfTextAtSize(footerTxt, 7);
   page.drawText(footerTxt, {
     x: (width - ftW) / 2,
@@ -439,7 +439,7 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
 
   pdfDoc.setTitle(`Invoice ${data.invoiceNumber}`);
   pdfDoc.setAuthor(data.senderName || "Invoice Generator");
-  pdfDoc.setCreator("invoice.mrzk.io");
+  pdfDoc.setCreator("junkyard.mrzk.io/invoice/");
 
   return pdfDoc.save();
 }

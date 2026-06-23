@@ -453,8 +453,9 @@ function BrushEditor({
       </div>
 
       <p className="cl-mask-hint">
-        <strong>Paint</strong> over the object to erase, then click <strong>Erase</strong>. The red
-        area will be filled using content-aware inpainting.
+        <strong>Paint</strong> over the object to erase, then click <strong>Erase</strong>. Works
+        best on simple backgrounds (sky, walls, grass) and small objects - busy or textured areas
+        may smear.
       </p>
 
       <div className="cl-controls">
@@ -530,7 +531,7 @@ export function App() {
   const [maskState, setMaskState] = useState<{ mask: Uint8Array; count: number } | null>(null);
   // Natural image dimensions (needed for eraseRegion)
   const [imgDims, setImgDims] = useState<{ w: number; h: number } | null>(null);
-  const [copyLabel, setCopyLabel] = useState<"Copy PNG" | "Copied!">("Copy PNG");
+  const [copyLabel, setCopyLabel] = useState<"Copy PNG" | "Copied!" | "Copy not supported, use Download">("Copy PNG");
 
   const busy = phase === "erasing";
 
@@ -626,7 +627,8 @@ export function App() {
       setCopyLabel("Copied!");
       setTimeout(() => setCopyLabel("Copy PNG"), 2000);
     } catch {
-      // Clipboard API unavailable - silently ignore
+      setCopyLabel("Copy not supported, use Download");
+      setTimeout(() => setCopyLabel("Copy PNG"), 3000);
     }
   }, [resultUrl]);
 
@@ -676,8 +678,8 @@ export function App() {
 
       <main className="site-main">
         <p className="cl-beta-note">
-          <strong>On-device</strong> - brush over anything to erase it. Classical inpainting runs
-          entirely in your browser. Images never leave your device.
+          <strong>On-device</strong> - classical inpainting runs entirely in your browser. Images
+          never leave your device. Works best on simple backgrounds and small objects.
         </p>
 
         <div className="card">

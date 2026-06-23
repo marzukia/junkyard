@@ -3,7 +3,7 @@ import type { JunkyardApp } from "../../scripts/catalogue-schema";
 export const app: JunkyardApp = {
   slug: "cleanup",
   name: "Cleanup",
-  category: "ai",
+  category: "image",
   order: 44,
   tagline: "Erase objects from photos, on-device",
   description:

@@ -70,7 +70,7 @@ describe("buildHtmlSnippet", () => {
 
   it("includes a comment with the generator URL", () => {
     const snippet = buildHtmlSnippet("Test");
-    expect(snippet).toContain("favicon.mrzk.io");
+    expect(snippet).toContain("junkyard.mrzk.io/favicon/");
   });
 });
 

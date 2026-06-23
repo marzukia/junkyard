@@ -15,6 +15,8 @@ export interface QueueItem {
   text: string;
   confidence: number;
   errorMsg: string;
+  /** Word-level bounding boxes cached after OCR so multi-page PDF uses per-page data. */
+  words: OcrWord[];
 }
 
 /** A rectangular region in natural image coordinates (pixels on the source image). */
@@ -69,7 +71,7 @@ export interface OcrState {
     lowConfWords?: Array<{ text: string; confidence: number }>,
     ocrWords?: OcrWord[]
   ) => void;
-  setQueueItemResult: (id: string, text: string, confidence: number, errorMsg?: string) => void;
+  setQueueItemResult: (id: string, text: string, confidence: number, errorMsg?: string, words?: OcrWord[]) => void;
   setEditedText: (text: string) => void;
   setCopyDone: (v: boolean) => void;
   setCropRect: (rect: CropRect | null) => void;
@@ -110,6 +112,7 @@ function makeQueueItem(file: File): QueueItem {
     text: "",
     confidence: 0,
     errorMsg: "",
+    words: [],
   };
 }
 
@@ -242,11 +245,11 @@ export const useOcrStore = create<OcrState>((set, get) => ({
     });
   },
 
-  setQueueItemResult: (id, text, confidence, errorMsg = "") => {
+  setQueueItemResult: (id, text, confidence, errorMsg = "", words = []) => {
     const state = get();
     const status: OcrStatus = errorMsg ? "error" : "done";
     const queue = state.queue.map((item) =>
-      item.id === id ? { ...item, status, text, confidence, errorMsg } : item
+      item.id === id ? { ...item, status, text, confidence, errorMsg, words } : item
     );
     set({ queue });
   },
