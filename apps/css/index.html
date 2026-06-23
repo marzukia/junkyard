@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>CSS Toolkit, Free CSS Generator: Box Shadow, Gradient, Glassmorphism, Cubic Bezier</title>
+    <meta
+      name="description"
+      content="Free CSS generator toolkit with live preview and copyable output. Generate box shadows, linear and radial gradients, glassmorphism effects, and cubic-bezier easing curves. No signup, no upload, runs entirely in your browser. A CSS Tricks and cssmatic alternative."
+    />
+    <meta
+      name="keywords"
+      content="css generator, box shadow generator, css gradient generator, glassmorphism generator, cubic bezier generator, css shadow tool, linear gradient css, radial gradient css, css easing editor, cssmatic alternative, css tricks alternative, free css generator, css no signup, css offline, css in browser, box-shadow css, backdrop-filter css"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://css.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CSS Toolkit" />
+    <meta
+      property="og:title"
+      content="CSS Toolkit, Free CSS Generator: Box Shadow, Gradient, Glassmorphism, Cubic Bezier"
+    />
+    <meta
+      property="og:description"
+      content="Free CSS generator toolkit. Box shadows, gradients, glassmorphism, and cubic-bezier curves with live preview. No signup, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://css.mrzk.io/" />
+    <meta property="og:image" content="https://css.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="CSS Toolkit, generate box shadows, gradients, glassmorphism and easing curves"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="CSS Toolkit, Free CSS Generator: Box Shadow, Gradient, Glassmorphism, Cubic Bezier"
+    />
+    <meta
+      name="twitter:description"
+      content="Generate CSS box shadows, gradients, glassmorphism, and easing curves with live preview. No signup, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://css.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "CSS Toolkit",
+            "url": "https://css.mrzk.io/",
+            "description": "Free CSS generator toolkit. Generate box shadows, linear and radial gradients, glassmorphism effects, and cubic-bezier easing curves with live preview and one-click copy. No signup, no upload, runs entirely in your browser.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Box shadow generator with live preview",
+              "Linear gradient generator",
+              "Radial gradient generator",
+              "Glassmorphism CSS generator",
+              "Cubic-bezier easing curve editor",
+              "Copy CSS to clipboard",
+              "Live real-time preview",
+              "No upload required",
+              "No signup required",
+              "Runs entirely in browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="542abea0-f52d-468a-973d-b62cefaebc7a"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

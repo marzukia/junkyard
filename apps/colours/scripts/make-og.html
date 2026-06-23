@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    background: #fafafa;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .canvas {
+    width: 1200px;
+    height: 630px;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    padding: 72px 80px;
+  }
+
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #2f9d8d;
+    margin-bottom: 16px;
+  }
+
+  .title {
+    font-family: 'Inter', sans-serif;
+    font-size: 128px;
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 0.9;
+    color: #1a2530;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .title-mark {
+    /* cap-height of 128px Inter 800 ≈ 0.72 × 128px ≈ 92px */
+    width: 92px;
+    height: 92px;
+    flex-shrink: 0;
+  }
+
+  .subtitle {
+    font-size: 26px;
+    font-weight: 400;
+    color: #5b6671;
+    margin-bottom: 48px;
+    letter-spacing: -0.01em;
+  }
+
+  .visuals {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .gradient-bands,
+  .palette-row {
+    display: flex;
+    gap: 10px;
+  }
+  .gradient-bands { height: 84px; }
+  .palette-row { height: 64px; }
+
+  .band, .swatch {
+    flex: 1;
+    border-radius: 12px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 9px;
+    box-shadow: 0 2px 10px rgba(26,37,48,0.07);
+  }
+
+  .band-label, .swatch-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .domain {
+    position: absolute;
+    bottom: 64px;
+    right: 80px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: #9aa3ac;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="kicker">Gradient + Palette Generator</div>
+  <div class="title">
+    <svg class="title-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2" y="2" width="13" height="13" rx="2" fill="#2f9d8d"/>
+      <rect x="2" y="17" width="13" height="13" rx="2" fill="#e8b04b"/>
+      <rect x="17" y="17" width="13" height="13" rx="2" fill="#d9594c"/>
+    </svg>
+    Colours
+  </div>
+  <div class="subtitle">Stepped gradients &amp; harmonious palettes — LAB interpolation, free.</div>
+
+  <div class="visuals">
+    <!-- Teal → coral LAB ramp: 8 steps -->
+    <div class="gradient-bands">
+      <div class="band" style="background:#2f9d8d;"><span class="band-label" style="color:rgba(255,255,255,0.85);">#2F9D8D</span></div>
+      <div class="band" style="background:#44a88c;"><span class="band-label" style="color:rgba(255,255,255,0.85);">#44A88C</span></div>
+      <div class="band" style="background:#6aab80;"><span class="band-label" style="color:rgba(255,255,255,0.82);">#6AAB80</span></div>
+      <div class="band" style="background:#97ac6e;"><span class="band-label" style="color:rgba(26,37,48,0.72);">#97AC6E</span></div>
+      <div class="band" style="background:#c0a456;"><span class="band-label" style="color:rgba(26,37,48,0.72);">#C0A456</span></div>
+      <div class="band" style="background:#d9944a;"><span class="band-label" style="color:rgba(26,37,48,0.72);">#D9944A</span></div>
+      <div class="band" style="background:#d97050;"><span class="band-label" style="color:rgba(255,255,255,0.82);">#D97050</span></div>
+      <div class="band" style="background:#d9594c;"><span class="band-label" style="color:rgba(255,255,255,0.85);">#D9594C</span></div>
+    </div>
+
+    <!-- Charted palette: teal / amber / coral tints -->
+    <div class="palette-row">
+      <div class="swatch" style="background:#1d6b61;"><span class="swatch-label" style="color:rgba(255,255,255,0.85);">#1D6B61</span></div>
+      <div class="swatch" style="background:#2f9d8d;"><span class="swatch-label" style="color:rgba(255,255,255,0.85);">#2F9D8D</span></div>
+      <div class="swatch" style="background:#7dcfc5;"><span class="swatch-label" style="color:rgba(26,37,48,0.72);">#7DCFC5</span></div>
+      <div class="swatch" style="background:#e8b04b;"><span class="swatch-label" style="color:rgba(26,37,48,0.72);">#E8B04B</span></div>
+      <div class="swatch" style="background:#d9594c;"><span class="swatch-label" style="color:rgba(255,255,255,0.85);">#D9594C</span></div>
+    </div>
+  </div>
+
+  <div class="domain">colours.mrzk.io</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Local AI Chat, Free In-Browser LLM, No API Key, Fully Private</title>
+    <meta
+      name="description"
+      content="Chat with an AI that runs 100% in your browser. No API key, no server, no upload. A free ChatGPT alternative that stays fully private. Works offline after first load."
+    />
+    <meta
+      name="keywords"
+      content="ChatGPT alternative free, local AI chat, in-browser LLM, AI chat no API key, private AI chat, offline AI, WebGPU LLM, free AI chat no signup, on-device AI, ChatGPT no login, Llama browser, local language model"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://chat.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Local AI Chat" />
+    <meta property="og:title" content="Local AI Chat, Free In-Browser LLM, No API Key, Fully Private" />
+    <meta
+      property="og:description"
+      content="Chat with an AI that runs 100% in your browser. No API key, no server, no upload. Free, private, works offline."
+    />
+    <meta property="og:url" content="https://chat.mrzk.io/" />
+    <meta property="og:image" content="https://chat.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Local AI Chat, free in-browser AI, no API key required"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Local AI Chat, Free In-Browser LLM, No API Key, Fully Private" />
+    <meta
+      name="twitter:description"
+      content="Chat with an AI in your browser. Free, private, no API key, no signup. Works offline."
+    />
+    <meta name="twitter:image" content="https://chat.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Local AI Chat",
+            "url": "https://chat.mrzk.io/",
+            "description": "Chat with an AI that runs 100% in your browser. No API key, no server, no data sent anywhere. Free, private, works offline after first load.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "100% in-browser LLM inference",
+              "No API key required",
+              "No server, no upload",
+              "Fully private, zero data sent",
+              "Works offline after first load",
+              "Streaming responses",
+              "Free ChatGPT alternative",
+              "WebGPU-accelerated inference"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="fd6576c9-7144-4561-98f1-d4c33f7eb06a"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

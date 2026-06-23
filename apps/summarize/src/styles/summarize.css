@@ -1,0 +1,550 @@
+/* ─── Beta notice ───────────────────────────────────────────────────────────── */
+
+.sum-beta-note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+}
+
+.sum-beta-note strong {
+  color: var(--accent);
+}
+
+/* ─── Two-column layout ─────────────────────────────────────────────────────── */
+
+.sum-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .sum-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Panel (input / output) ────────────────────────────────────────────────── */
+
+.sum-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sum-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sum-panel-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.sum-word-count {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
+}
+
+/* ─── Input panel header extras ─────────────────────────────────────────────── */
+
+.sum-input-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+/* Push actions to far right */
+.sum-panel-header {
+  gap: 0.5rem;
+}
+
+.sum-input-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Minimum-length nudge */
+.sum-min-hint {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: #e8b04b;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Small inline text buttons (Clear, Try sample) */
+.sum-inline-btn {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  min-height: 28px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.sum-inline-btn:hover {
+  background: var(--surface-sunken);
+  color: var(--ink-mid);
+  border-color: var(--ink-faint);
+}
+
+.sum-inline-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+@media (pointer: coarse) {
+  .sum-inline-btn {
+    min-height: 40px;
+    padding: 0.35rem 0.8rem;
+  }
+}
+
+/* ─── Textarea ──────────────────────────────────────────────────────────────── */
+
+.sum-textarea {
+  width: 100%;
+  min-height: 240px;
+  resize: vertical;
+  padding: 0.85rem 1rem;
+  font-family: var(--font-text);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color 0.14s, background 0.14s;
+}
+
+.sum-textarea:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.sum-textarea::placeholder {
+  color: var(--ink-faint);
+}
+
+/* ─── Output box ────────────────────────────────────────────────────────────── */
+
+.sum-output {
+  min-height: 240px;
+  padding: 0.85rem 1rem;
+  font-family: var(--font-text);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.sum-output--placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.sum-output--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-direction: column;
+}
+
+/* ─── Controls row ──────────────────────────────────────────────────────────── */
+
+.sum-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  padding-top: 0.25rem;
+}
+
+.sum-length-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 180px;
+}
+
+.sum-length-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.sum-length-slider {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sum-length-slider input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  background: var(--rule);
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.sum-length-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  cursor: pointer;
+}
+
+.sum-length-slider input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  cursor: pointer;
+}
+
+.sum-length-value {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-mid);
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+/* ─── Progress bar ──────────────────────────────────────────────────────────── */
+
+.sum-progress-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-width: 320px;
+}
+
+.sum-progress-track {
+  height: 5px;
+  background: var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.sum-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.sum-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-mid);
+  text-align: center;
+}
+
+/* ─── Spinner ───────────────────────────────────────────────────────────────── */
+
+@keyframes sumSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sum-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: sumSpin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+.sum-spinner-label {
+  font-family: var(--font-text);
+  font-size: 0.82rem;
+  color: var(--ink-mid);
+}
+
+/* ─── Reduction badge ───────────────────────────────────────────────────────── */
+
+.sum-reduction {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 0.18rem 0.55rem;
+}
+
+/* ─── Output actions ────────────────────────────────────────────────────────── */
+
+.sum-output-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ─── Mobile: breathing room below controls ──────────────────────────────────── */
+
+@media (max-width: 720px) {
+  .sum-controls {
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* ─── Error state ───────────────────────────────────────────────────────────── */
+
+.sum-error-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.sum-error-msg {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #d9594c;
+  max-width: 380px;
+}
+
+/* ─── Drag-and-drop overlay ─────────────────────────────────────────────────── */
+
+.sum-panel {
+  position: relative;
+}
+
+.sum-panel--dragging .sum-textarea {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.sum-drag-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+}
+
+/* ─── Long-document notices ──────────────────────────────────────────────────── */
+
+.sum-long-doc-hint {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #e8b04b;
+  background: rgba(232, 176, 75, 0.12);
+  border-radius: 999px;
+  padding: 0.12rem 0.45rem;
+  white-space: nowrap;
+}
+
+.sum-long-doc-notice {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: #e8b04b;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+/* ─── Chunk badge (in output header) ────────────────────────────────────────── */
+
+.sum-chunk-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: var(--surface-sunken);
+  border-radius: 999px;
+  padding: 0.12rem 0.45rem;
+  margin-left: 0.4rem;
+}
+
+/* ─── URL import panel ───────────────────────────────────────────────────────── */
+
+.sum-url-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.75rem;
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+}
+
+.sum-url-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.sum-url-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color 0.14s;
+}
+
+.sum-url-input:focus {
+  border-color: var(--accent);
+}
+
+.sum-url-input::placeholder {
+  color: var(--ink-faint);
+}
+
+.sum-url-fetch-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.sum-url-error {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: #d9594c;
+  line-height: 1.5;
+}
+
+.sum-url-note {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+
+/* ─── Submit area with keyboard hint ────────────────────────────────────────── */
+
+.sum-submit-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.sum-submit-hint {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: #e8b04b;
+  letter-spacing: 0.02em;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.sum-kbd-hint {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.sum-kbd-hint kbd {
+  font-family: inherit;
+  display: inline-block;
+  padding: 0.06rem 0.3rem;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--surface-sunken);
+  color: var(--ink-mid);
+  font-size: 0.58rem;
+  line-height: 1.4;
+}
+
+/* Active state for toggled inline buttons */
+.sum-inline-btn--active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Mobile: ensure URL panel doesn't overflow */
+@media (max-width: 480px) {
+  .sum-url-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sum-kbd-hint {
+    display: none;
+  }
+}

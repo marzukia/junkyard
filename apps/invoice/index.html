@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>Invoice Generator - Free, No Signup, Runs in Your Browser</title>
+    <meta
+      name="description"
+      content="Free invoice generator. Create professional invoices with line items, tax, discounts, logo and currency. Export a clean PDF instantly. No signup, no upload, 100% private. A free invoice-generator.com and DocuSign alternative."
+    />
+    <meta
+      name="keywords"
+      content="invoice generator free, create invoice online, invoice pdf free, free invoice maker, invoice no signup, invoice generator alternative, invoice-generator.com alternative, docusign alternative, free invoice template, online invoice creator, invoice pdf download, tax invoice free, small business invoice"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://invoice.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Theme colour (light + dark) -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Invoice Generator" />
+    <meta property="og:title" content="Invoice Generator - Free, No Signup, Runs in Your Browser" />
+    <meta
+      property="og:description"
+      content="Create professional invoices with line items, tax, discounts, logo and currency. Export a clean PDF instantly. No signup, no upload, 100% private."
+    />
+    <meta property="og:url" content="https://invoice.mrzk.io/" />
+    <meta property="og:image" content="https://invoice.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Invoice Generator - free professional invoice builder in your browser"
+    />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Invoice Generator - Free, No Signup, Runs in Your Browser" />
+    <meta
+      name="twitter:description"
+      content="Create professional invoices with line items, tax, discounts, logo and currency. Export a clean PDF instantly. No signup, 100% private."
+    />
+    <meta name="twitter:image" content="https://invoice.mrzk.io/og.png" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Invoice Generator",
+            "url": "https://invoice.mrzk.io/",
+            "description": "Free invoice generator. Create professional invoices with line items, tax, discounts, logo and currency. Export a clean PDF instantly. No signup required, runs entirely in your browser.",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Professional invoice creation",
+              "Line items with quantity and price",
+              "Tax and discount support",
+              "Multiple currency support",
+              "Logo upload",
+              "Live preview",
+              "PDF export",
+              "No signup required",
+              "100% browser-based",
+              "No data uploaded"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- No-flash dark-mode script -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="01f4db34-9136-4178-bd2f-7dcc5a8c9cc8"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

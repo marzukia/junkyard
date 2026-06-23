@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Markdown Editor, Free Online Markdown to HTML Converter &amp; Preview</title>
+    <meta
+      name="description"
+      content="Free online markdown editor with live HTML preview. Write markdown, see rendered HTML instantly. Export HTML, copy to clipboard, toolbar for bold/headings/links/code. No signup, no upload, runs entirely in your browser. A Dillinger and StackEdit alternative."
+    />
+    <meta
+      name="keywords"
+      content="markdown editor online, markdown to html, markdown preview, md converter, markdown live preview, free markdown editor, markdown editor no signup, dillinger alternative, stackedit alternative, markdown renderer, gfm editor, github flavored markdown, markdown html export, browser markdown editor, offline markdown editor"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://markdown.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Markdown Editor" />
+    <meta property="og:title" content="Markdown Editor, Free Online Markdown to HTML Converter &amp; Preview" />
+    <meta
+      property="og:description"
+      content="Free online markdown editor with live HTML preview. Export HTML, copy to clipboard, GFM support. No signup, no upload, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://markdown.mrzk.io/" />
+    <meta property="og:image" content="https://markdown.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Markdown Editor, live markdown preview and HTML export in your browser" />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Markdown Editor, Free Online Markdown to HTML Converter &amp; Preview" />
+    <meta
+      name="twitter:description"
+      content="Free online markdown editor with live HTML preview. GFM, export HTML, copy to clipboard. No signup, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://markdown.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Markdown Editor",
+            "url": "https://markdown.mrzk.io/",
+            "description": "Free online markdown editor with live HTML preview. Write markdown, see rendered HTML instantly. Export HTML, copy to clipboard, GFM support. No signup, no upload, runs entirely in your browser.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Live markdown to HTML preview",
+              "GitHub Flavored Markdown (GFM) support",
+              "Toolbar: bold, headings, link, inline code, code block",
+              "Export HTML file",
+              "Copy HTML to clipboard",
+              "Word and character count",
+              "Sanitized HTML output",
+              "No signup required",
+              "No data uploaded",
+              "Runs entirely in browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="bad3f9b4-bb48-4ec0-927e-47d2668f6775"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

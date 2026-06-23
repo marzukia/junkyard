@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://lorem.mrzk.io/sitemap.xml

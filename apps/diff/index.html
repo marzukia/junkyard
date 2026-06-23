@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Text Diff, Free Online Diff Checker, No Upload</title>
+    <meta name="description" content="Free online text diff tool. Compare two texts or code files side-by-side or inline, with line and word-level highlighting. No signup, no upload, runs entirely in your browser." />
+    <meta name="keywords" content="text diff online, diffchecker alternative, compare two texts, diff checker free, online diff tool, code diff, file diff, diff no signup, diff no upload, diff private, compare code online, diff viewer, text compare, word diff, line diff" />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://diff.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Text Diff, Free Online Diff Checker" />
+    <meta property="og:title" content="Text Diff, Free Online Diff Checker, No Upload" />
+    <meta property="og:description" content="Free online text diff tool. Compare two texts or code files side-by-side or inline, with line and word-level highlighting. No signup, no upload, runs entirely in your browser." />
+    <meta property="og:url" content="https://diff.mrzk.io/" />
+    <meta property="og:image" content="https://diff.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Text Diff, Free Online Diff Checker, screenshot" />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Text Diff, Free Online Diff Checker, No Upload" />
+    <meta name="twitter:description" content="Free online text diff tool. Compare two texts or code files side-by-side or inline, with line and word-level highlighting. No signup, no upload, runs entirely in your browser." />
+    <meta name="twitter:image" content="https://diff.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Text Diff",
+            "url": "https://diff.mrzk.io/",
+            "description": "Free online text diff tool. Compare two texts or code files side-by-side or inline, with line and word-level highlighting. No signup, no upload, runs entirely in your browser.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": ["Side-by-side diff", "Inline diff", "Line-level diff", "Word-level diff", "Added/removed highlighting", "Swap inputs", "Copy output", "No upload required", "Runs in browser"],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="e695baa6-6956-4000-8064-f6f710f53bc5"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

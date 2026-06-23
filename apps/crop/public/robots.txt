@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://crop.mrzk.io/sitemap.xml

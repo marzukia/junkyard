@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Regex Tester, Free Online Regular Expression Playground</title>
+    <meta
+      name="description"
+      content="Free regex tester and playground. Test patterns live, highlight all matches and capture groups, toggle flags, see a plain-English explanation, preview replacements. No signup, no upload, runs entirely in your browser. A regex101 alternative."
+    />
+    <meta
+      name="keywords"
+      content="regex tester, regex101 alternative, regular expression tester, regex playground, online regex, regex match highlighter, regex flags, capture groups, regex replace, free regex tool, regex no signup, regex offline, test regex online, javascript regex, regex explainer"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://regex.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Regex Tester" />
+    <meta
+      property="og:title"
+      content="Regex Tester, Free Online Regular Expression Playground"
+    />
+    <meta
+      property="og:description"
+      content="Test regex patterns live, highlight matches and capture groups, toggle flags, see a plain-English explanation. No signup, no upload, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://regex.mrzk.io/" />
+    <meta property="og:image" content="https://regex.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Regex Tester, live match highlighting and plain-English explanations"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Regex Tester, Free Online Regular Expression Playground"
+    />
+    <meta
+      name="twitter:description"
+      content="Test regex live, highlight matches and capture groups, plain-English explanations. No signup, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://regex.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Regex Tester",
+            "url": "https://regex.mrzk.io/",
+            "description": "Free regex tester and playground. Test patterns live, highlight all matches and capture groups, toggle flags, see plain-English explanations, preview replacements. No signup, no upload, runs entirely in your browser.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Live regex match highlighting",
+              "Capture group extraction and display",
+              "Flag toggles: global, case-insensitive, multiline, dotAll, unicode",
+              "Plain-English pattern explanation",
+              "Replace preview with backreferences",
+              "Common pattern library (email, URL, IPv4, etc.)",
+              "Match count and position display",
+              "No upload required",
+              "No signup required",
+              "Runs entirely in browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="8f871984-c3e9-4e6f-bb2b-cd596af782c1"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

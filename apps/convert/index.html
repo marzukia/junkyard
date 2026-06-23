@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Convert, Free Image Converter &amp; Compressor. HEIC to JPG, WebP, PNG, No Upload</title>
+    <meta
+      name="description"
+      content="Free image converter and compressor. Convert HEIC to JPG, PNG to WebP, JPG to PNG and more, all in your browser, no upload, no account. A fast TinyPNG alternative with HEIC support."
+    />
+    <meta
+      name="keywords"
+      content="image converter, HEIC to JPG, HEIC to PNG, convert to WebP, image compressor, TinyPNG alternative, compress images free, PNG to JPG, JPG to WebP, WebP to PNG, no upload image converter, offline image converter, image converter no signup, browser image compression, HEIC converter free"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://convert.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#FAF9F5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1814" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Convert" />
+    <meta property="og:title" content="Convert, Free Image Converter &amp; Compressor. HEIC to JPG, WebP, PNG, No Upload" />
+    <meta
+      property="og:description"
+      content="Free image converter and compressor. Convert HEIC to JPG, PNG to WebP, JPG to PNG and more, all in your browser, no upload, no account. A fast TinyPNG alternative with HEIC support."
+    />
+    <meta property="og:url" content="https://convert.mrzk.io/" />
+    <meta property="og:image" content="https://convert.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Convert app, image converter and compressor running entirely in the browser"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Convert, Free Image Converter &amp; Compressor. HEIC to JPG, WebP, PNG, No Upload" />
+    <meta
+      name="twitter:description"
+      content="Free image converter and compressor. Convert HEIC to JPG, PNG to WebP, JPG to PNG and more, all in your browser, no upload, no account. A fast TinyPNG alternative with HEIC support."
+    />
+    <meta name="twitter:image" content="https://convert.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Convert",
+            "url": "https://convert.mrzk.io/",
+            "description": "Free image converter and compressor. Convert HEIC to JPG, PNG to WebP, JPG to PNG and more, all in your browser, no upload, no account.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "HEIC to JPG conversion",
+              "HEIC to PNG conversion",
+              "PNG to JPG conversion",
+              "JPG to WebP conversion",
+              "PNG to WebP conversion",
+              "WebP to JPG conversion",
+              "WebP to PNG conversion",
+              "Batch image conversion",
+              "Image compression with quality control",
+              "Image resize by max dimension",
+              "Runs entirely in browser, no upload"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="18d7beb3-bb22-4ce8-8dd7-49f68d522f85"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

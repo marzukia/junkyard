@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Background Remover, Free remove.bg Alternative, No Upload Needed</title>
+    <meta
+      name="description"
+      content="Remove image backgrounds instantly in your browser, free, private, no upload. A remove.bg alternative that runs entirely client-side with AI. No signup, no watermark, no data leaves your device."
+    />
+    <meta
+      name="keywords"
+      content="remove.bg alternative, free background remover, remove image background online free, background removal no upload, private background remover, AI background removal browser, transparent background maker, background eraser free, remove background no signup"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://bg.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Background Remover" />
+    <meta property="og:title" content="Background Remover, Free remove.bg Alternative, No Upload Needed" />
+    <meta
+      property="og:description"
+      content="Remove image backgrounds instantly in your browser, free, private, no upload. AI-powered, no signup, no watermark."
+    />
+    <meta property="og:url" content="https://bg.mrzk.io/" />
+    <meta property="og:image" content="https://bg.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Background Remover, free in-browser background removal, no upload required"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Background Remover, Free remove.bg Alternative, No Upload Needed" />
+    <meta
+      name="twitter:description"
+      content="Remove image backgrounds in your browser. Free, private, no upload, no signup. AI-powered."
+    />
+    <meta name="twitter:image" content="https://bg.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Background Remover",
+            "url": "https://bg.mrzk.io/",
+            "description": "Remove image backgrounds instantly in your browser, free, private, no upload. AI-powered background removal with no signup and no watermark.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "AI background removal in browser",
+              "No upload, fully client-side",
+              "No signup required",
+              "No watermark",
+              "Download as transparent PNG",
+              "Works offline after first load",
+              "Before / after comparison",
+              "Private, images never leave your device",
+              "remove.bg alternative"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="563a94cf-1ca1-4714-9b52-250d02e0bf63"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

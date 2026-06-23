@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>GIF Maker - Free Animated GIF Creator. No Upload, No Account.</title>
+    <meta
+      name="description"
+      content="Free animated GIF maker. Add images, reorder frames, set delay and loop count, preview and export. Runs entirely in your browser with no upload and no account. A free ezgif alternative."
+    />
+    <meta
+      name="keywords"
+      content="gif maker, animated gif creator, make gif from images, free gif maker, ezgif alternative, gif maker no upload, gif maker no signup, online gif creator, image to gif, gif maker free, gif creator browser, imgflip alternative, ilovegif alternative, gif loop, gif delay"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://gif.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#FAF9F5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1814" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="GIF Maker" />
+    <meta property="og:title" content="GIF Maker - Free Animated GIF Creator. No Upload, No Account." />
+    <meta
+      property="og:description"
+      content="Free animated GIF maker. Add images, reorder frames, set delay and loop count, preview and export. Runs entirely in your browser with no upload and no account."
+    />
+    <meta property="og:url" content="https://gif.mrzk.io/" />
+    <meta property="og:image" content="https://gif.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="GIF Maker app - create animated GIFs entirely in your browser"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GIF Maker - Free Animated GIF Creator. No Upload, No Account." />
+    <meta
+      name="twitter:description"
+      content="Free animated GIF maker. Add images, reorder frames, set delay and loop count, preview and export. Runs entirely in your browser with no upload and no account."
+    />
+    <meta name="twitter:image" content="https://gif.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "GIF Maker",
+            "url": "https://gif.mrzk.io/",
+            "description": "Free animated GIF maker. Add images, reorder frames, set delay and loop count, preview and export. Runs entirely in your browser with no upload and no account.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Drag and drop image upload",
+              "Reorder frames with drag handles",
+              "Per-frame delay control",
+              "Global delay setting",
+              "Loop count control (finite or infinite)",
+              "Live animated preview",
+              "Export as .gif file",
+              "Runs entirely in browser - no upload"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="e69af657-3b61-409c-b005-7f824782b6cd"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

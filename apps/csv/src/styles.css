@@ -1,0 +1,695 @@
+/* ─── Reset & Base ──────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Theme variables, light (default) ─────────────────────────────────── */
+
+:root,
+[data-mantine-color-scheme="light"] {
+  --canvas: #fafafa;
+  --surface: #ffffff;
+  --surface-sunken: #f4f5f6;
+  --ink: #1a2530;
+  --ink-mid: #5b6671;
+  --ink-faint: #9aa3ac;
+  --rule: #e8eaed;
+  --accent: #2f9d8d;
+  --accent-ink: #ffffff;
+  --accent-soft: #eaf6f3;
+  --shadow-card: 0 1px 2px rgba(26, 37, 48, 0.04), 0 8px 28px rgba(26, 37, 48, 0.06);
+  --shadow-pop: 0 6px 28px rgba(26, 37, 48, 0.14);
+  --font-text: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+/* ─── Theme variables, dark ────────────────────────────────────────────── */
+
+[data-mantine-color-scheme="dark"] {
+  --canvas: #13171a;
+  --surface: #1b2126;
+  --surface-sunken: #161b1f;
+  --ink: #e9eef1;
+  --ink-mid: #9aa6b0;
+  --ink-faint: #5f6e78;
+  --rule: #283037;
+  --accent: #41b6a6;
+  --accent-ink: #0e1518;
+  --accent-soft: #18302c;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 6px 28px rgba(0, 0, 0, 0.5);
+}
+
+html {
+  font-size: 16px;
+  background: var(--canvas);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-text);
+  background: var(--canvas);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ─── Load animation ────────────────────────────────────────────────────── */
+
+@keyframes fadeRise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-root {
+  animation: fadeRise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ─── Utility bar ───────────────────────────────────────────────────────── */
+
+.utility-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem 2rem 0;
+}
+
+.utility-bar .space-btn {
+  font-size: 0.7rem;
+  padding: 0.22rem 0.65rem;
+}
+
+@media (max-width: 480px) {
+  .utility-bar {
+    padding: 0.4rem 1rem 0;
+  }
+}
+
+/* ─── Site Header ───────────────────────────────────────────────────────── */
+
+.site-header {
+  padding: 0 2rem;
+}
+
+.site-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2.25rem 0 0.5rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.site-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.site-title-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.brand-mark {
+  width: clamp(1.44rem, 2.88vw, 2.16rem);
+  height: clamp(1.44rem, 2.88vw, 2.16rem);
+  flex-shrink: 0;
+}
+
+.site-title-main {
+  font-family: var(--font-text);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.site-title-sub {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink-mid);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+/* ─── Segmented pill toggle ─────────────────────────────────────────────── */
+
+.space-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.space-toggle-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.space-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  background: var(--surface-sunken);
+  border-radius: 999px;
+}
+
+.space-btn {
+  font-family: var(--font-text);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  padding: 0.32rem 0.8rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.space-btn:hover {
+  color: var(--ink);
+}
+
+.space-btn--active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(26, 37, 48, 0.12);
+}
+
+[data-mantine-color-scheme="dark"] .space-btn--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+
+.space-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+@media (max-width: 640px) {
+  .space-toggle {
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ─── Main Content ──────────────────────────────────────────────────────── */
+
+.site-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ─── Card shell ────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem 1.5rem;
+}
+
+/* ─── Primary button ────────────────────────────────────────────────────── */
+
+.btn-primary {
+  font-family: var(--font-text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  padding: 0.5rem 1.1rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--surface);
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.14s, background 0.14s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ─── Secondary button ──────────────────────────────────────────────────── */
+
+.btn-secondary {
+  font-family: var(--font-text);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  padding: 0.32rem 0.75rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+
+.btn-secondary:hover {
+  background: var(--surface-sunken);
+  color: var(--ink);
+  border-color: var(--ink-faint);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ─── Footer ────────────────────────────────────────────────────────────── */
+
+.site-footer {
+  padding: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--ink-faint);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  flex-wrap: wrap;
+}
+
+.site-footer-sep {
+  opacity: 0.5;
+}
+
+.site-footer-link {
+  color: var(--ink-mid);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--rule);
+  transition: color 0.14s, text-decoration-color 0.14s;
+}
+
+.site-footer-link:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
+/* ─── iOS / touch: prevent focus-zoom ───────────────────────────────────── */
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+}
+
+/* ─── CSV tool specific ──────────────────────────────────────────────────── */
+
+.csv-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Two equal columns on wide, stack on narrow */
+.csv-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .csv-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.csv-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.csv-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  min-height: 1.8rem;
+}
+
+.csv-panel-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  flex: 1;
+  white-space: nowrap;
+}
+
+.csv-stat {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.csv-panel-actions {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.csv-output-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.csv-textarea {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.14s;
+  resize: vertical;
+  min-height: 380px;
+  tab-size: 2;
+}
+
+.csv-textarea:focus {
+  border-color: var(--accent);
+}
+
+.csv-textarea[readonly] {
+  cursor: default;
+}
+
+.csv-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background: #fff0ef;
+  border: 1px solid #f5c2be;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #b03030;
+}
+
+[data-mantine-color-scheme="dark"] .csv-error {
+  background: #2a1616;
+  border-color: #4a2020;
+  color: #e87070;
+}
+
+.csv-error-icon {
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.csv-error-msg {
+  word-break: break-word;
+}
+
+.csv-valid {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #2a8a6e;
+  padding: 0.3rem 0;
+}
+
+[data-mantine-color-scheme="dark"] .csv-valid {
+  color: #41b6a6;
+}
+
+.csv-valid-icon {
+  font-weight: 700;
+}
+
+.csv-privacy-note {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+/* ─── Ragged-row warning (amber, distinct from error red) ───────────────── */
+
+.csv-warn {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background: #fffbeb;
+  border: 1px solid #f5d77e;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #92610a;
+}
+
+[data-mantine-color-scheme="dark"] .csv-warn {
+  background: #221e0a;
+  border-color: #4a3a10;
+  color: #d4a83a;
+}
+
+.csv-warn-icon {
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.csv-warn-msg {
+  word-break: break-word;
+}
+
+.csv-warn-item {
+  display: inline;
+}
+
+/* ─── Table viewer ───────────────────────────────────────────────────────── */
+
+.csv-table-wrapper {
+  overflow: auto;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  min-height: 380px;
+  max-height: 600px;
+}
+
+.csv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.csv-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface);
+}
+
+.csv-table th {
+  padding: 0;
+  border-bottom: 2px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  white-space: nowrap;
+}
+
+.csv-table th:last-child {
+  border-right: none;
+}
+
+.csv-th-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  transition: color 0.12s, background 0.12s;
+  text-align: left;
+}
+
+.csv-th-btn:hover {
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.csv-th-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.csv-th-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.csv-th-empty {
+  font-style: italic;
+  color: var(--ink-faint);
+}
+
+.csv-sort-icon {
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  transition: color 0.12s;
+}
+
+.csv-sort-icon--active {
+  color: var(--accent);
+}
+
+.csv-table td {
+  padding: 0.4rem 0.65rem;
+  border-bottom: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  color: var(--ink);
+  font-size: 12px;
+  white-space: nowrap;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.csv-table td:last-child {
+  border-right: none;
+}
+
+.csv-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.csv-table tbody tr:hover td {
+  background: var(--accent-soft);
+}
+
+@media (max-width: 480px) {
+  .csv-header-controls {
+    gap: 0.6rem;
+  }
+}
+
+/* ─── CSV mobile overrides ───────────────────────────────────────────────── */
+
+@media (max-width: 860px) {
+  /* Cap textarea so the output panel isn't buried below the fold */
+  .csv-textarea {
+    min-height: 200px;
+    max-height: 40vh;
+    /* Slightly larger mono font on touch — readable without zooming */
+    font-size: 13px;
+  }
+
+  /* Table wrapper: let it fill available space but don't go taller than viewport */
+  .csv-table-wrapper {
+    min-height: 200px;
+    max-height: 40vh;
+  }
+}
+
+/* Horizontal scroll shadow hint for wide tables — inset shadows on left/right
+   appear when there is overflowed content in that direction */
+.csv-table-wrapper {
+  background: linear-gradient(to right, var(--surface-sunken) 16px, transparent 16px),
+    linear-gradient(to left, var(--surface-sunken) 16px, transparent 16px),
+    radial-gradient(ellipse at left, rgba(0, 0, 0, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse at right, rgba(0, 0, 0, 0.12) 0%, transparent 70%);
+  background-repeat: no-repeat;
+  background-color: var(--surface-sunken);
+  background-size: 16px 100%, 16px 100%, 10px 100%, 10px 100%;
+  background-position: left, right, left, right;
+  background-attachment: local, local, scroll, scroll;
+}

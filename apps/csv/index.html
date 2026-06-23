@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>CSV to JSON Converter, Free CSV Toolkit, No Upload</title>
+    <meta
+      name="description"
+      content="Free CSV to JSON converter and JSON to CSV converter. Paste or upload, auto-detects delimiter (comma, tab, semicolon, pipe), sortable table preview, download result. No upload, no signup, runs entirely in your browser. A free csvjson.com and convertcsv.com alternative."
+    />
+    <meta
+      name="keywords"
+      content="csv to json, json to csv, csv converter, csv online, convert csv, csv json converter, csvjson alternative, convertcsv alternative, csv viewer, csv table, csv download, csv no upload, csv offline, free csv tool, parse csv online, csv delimiter, tsv to json, csv to array"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://csv.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CSV Converter" />
+    <meta
+      property="og:title"
+      content="CSV to JSON Converter, Free CSV Toolkit, No Upload"
+    />
+    <meta
+      property="og:description"
+      content="Free CSV to JSON and JSON to CSV converter. Auto-detects delimiter, sortable table preview. No upload, no signup, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://csv.mrzk.io/" />
+    <meta property="og:image" content="https://csv.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="CSV Converter, convert CSV to JSON and back on a clean canvas"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="CSV to JSON Converter, Free CSV Toolkit, No Upload"
+    />
+    <meta
+      name="twitter:description"
+      content="Convert CSV to JSON and JSON to CSV. Auto-detect delimiter, sortable table, download result. No upload, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://csv.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "CSV Converter",
+            "url": "https://csv.mrzk.io/",
+            "description": "Free CSV to JSON and JSON to CSV converter. Auto-detects delimiter, sortable table preview, download result. No upload, no signup, runs entirely in your browser.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "CSV to JSON conversion",
+              "JSON to CSV conversion",
+              "Auto-detect delimiter (comma, tab, semicolon, pipe)",
+              "Paste or upload file",
+              "Sortable table viewer",
+              "Download as .json or .csv",
+              "Copy to clipboard",
+              "Row and column count stats",
+              "No upload required",
+              "No signup required",
+              "Runs entirely in browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="1f963817-7d40-4438-a030-b0efdaf39559"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Top-left cell -->
+  <rect x="2" y="2" width="13" height="13" rx="2.5" stroke="#2f9d8d" stroke-width="1.8"/>
+  <!-- Top-right cell -->
+  <rect x="17" y="2" width="13" height="13" rx="2.5" stroke="#2f9d8d" stroke-width="1.8"/>
+  <!-- Bottom-left cell -->
+  <rect x="2" y="17" width="13" height="13" rx="2.5" stroke="#2f9d8d" stroke-width="1.8"/>
+  <!-- Bottom-right cell -->
+  <rect x="17" y="17" width="13" height="13" rx="2.5" stroke="#2f9d8d" stroke-width="1.8"/>
+  <!-- Overlapping accent frame in amber -->
+  <rect x="11" y="11" width="10" height="10" rx="2" stroke="#e8b04b" stroke-width="1.8"/>
+</svg>

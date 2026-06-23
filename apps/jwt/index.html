@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>JWT Decoder, Free Online JWT Inspector, jwt.io Alternative</title>
+    <meta name="description" content="Decode and inspect JSON Web Tokens instantly in your browser. Parse header, payload and claims, exp/iat/nbf shown as human dates with expiry badge. No upload, no account. A free jwt.io alternative that runs entirely offline." />
+    <meta name="keywords" content="jwt decoder, jwt.io alternative, decode jwt token online, json web token inspector, jwt parser, jwt claims, jwt header, jwt payload, jwt expiry checker, free jwt tool, no signup jwt, private jwt decoder, jwt viewer, jwt debugger" />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://jwt.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="JWT Decoder, Free JWT Inspector" />
+    <meta property="og:title" content="JWT Decoder, Free Online JWT Inspector, jwt.io Alternative" />
+    <meta property="og:description" content="Decode and inspect JSON Web Tokens instantly in your browser. Parse header, payload and claims, exp/iat/nbf shown as human dates. No upload, no account, private." />
+    <meta property="og:url" content="https://jwt.mrzk.io/" />
+    <meta property="og:image" content="https://jwt.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="JWT Decoder, Free Online JWT Inspector" />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="JWT Decoder, Free Online JWT Inspector, jwt.io Alternative" />
+    <meta name="twitter:description" content="Decode and inspect JSON Web Tokens instantly in your browser. Parse header, payload and claims, exp/iat/nbf shown as human dates. No upload, no account, private." />
+    <meta name="twitter:image" content="https://jwt.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "JWT Decoder",
+            "url": "https://jwt.mrzk.io/",
+            "description": "Decode and inspect JSON Web Tokens instantly in your browser. Parse header, payload and claims, exp/iat/nbf shown as human dates with expiry badge. No upload, no account.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": ["JWT decoding", "Claim inspection", "Expiry detection", "Pretty-printed JSON", "Three-segment colouring", "Copy to clipboard", "Runs offline", "No upload"],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="d9c6adf5-0c86-4603-b62c-376c478e94ff"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

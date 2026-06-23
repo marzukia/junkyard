@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://upscale.mrzk.io/sitemap.xml

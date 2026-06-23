@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Left angle bracket -->
+  <polyline points="12,7 5,16 12,25" stroke="#2f9d8d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Right angle bracket -->
+  <polyline points="20,7 27,16 20,25" stroke="#2f9d8d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Amber data line -->
+  <line x1="14" y1="16" x2="18" y2="16" stroke="#e8b04b" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- Coral accent dot -->
+  <circle cx="16" cy="22" r="1.8" fill="#d9594c"/>
+</svg>

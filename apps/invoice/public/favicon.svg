@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Document outline: teal stroke -->
+  <path d="M5 2 L20 2 L27 9 L27 30 L5 30 Z" fill="none" stroke="#2f9d8d" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Fold crease -->
+  <path d="M20 2 L20 9 L27 9" fill="none" stroke="#2f9d8d" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Amber fold triangle -->
+  <path d="M20 2 L20 9 L27 9 Z" fill="#e8b04b"/>
+  <!-- Dollar sign: coral -->
+  <text x="16" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="#d9594c" font-family="sans-serif">$</text>
+  <!-- Teal line hints -->
+  <rect x="8" y="14" width="8" height="1.5" rx="0.75" fill="#2f9d8d" opacity="0.45"/>
+  <rect x="8" y="17" width="5" height="1.5" rx="0.75" fill="#2f9d8d" opacity="0.3"/>
+</svg>

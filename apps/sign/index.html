@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>PDF Sign - Free E-Signature Tool. No Upload, No Account</title>
+    <meta
+      name="description"
+      content="Sign PDFs free in your browser. Draw or type your signature, drag it to the right spot, resize and download. No upload, no account, no DocuSign subscription. 100% private, runs offline."
+    />
+    <meta
+      name="keywords"
+      content="sign pdf free, e-signature free, pdf signature online, docusign alternative free, sign pdf no upload, sign pdf no account, free esignature, sign document online free, pdf sign browser, electronic signature free, sign pdf offline, docusign free alternative"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://sign.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Theme colour (light + dark) -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PDF Sign" />
+    <meta property="og:title" content="PDF Sign - Free E-Signature Tool. No Upload, No Account" />
+    <meta
+      property="og:description"
+      content="Sign PDFs free in your browser. Draw or type your signature, place it anywhere on the page, and download. No upload, no account required."
+    />
+    <meta property="og:url" content="https://sign.mrzk.io/" />
+    <meta property="og:image" content="https://sign.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="PDF Sign - draw or type your signature and place it on any PDF, free"
+    />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PDF Sign - Free E-Signature Tool. No Upload, No Account" />
+    <meta
+      name="twitter:description"
+      content="Sign PDFs free in your browser. Draw or type your signature, place it anywhere, and download. No upload, no account required."
+    />
+    <meta name="twitter:image" content="https://sign.mrzk.io/og.png" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "PDF Sign",
+            "url": "https://sign.mrzk.io/",
+            "description": "Sign PDFs free in your browser. Draw or type your signature, drag it to the right spot on the page, resize it, and download the signed PDF. No upload required.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Draw signature on canvas",
+              "Type signature with custom font",
+              "Drag signature to any position",
+              "Resize signature freely",
+              "Multi-page PDF support",
+              "Download signed PDF",
+              "No upload required",
+              "100% browser-based",
+              "Works offline",
+              "Free DocuSign alternative"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- No-flash dark-mode script -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="b29cce1a-4460-4228-95dd-22f8de593d92"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

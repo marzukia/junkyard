@@ -1,0 +1,483 @@
+/* ─── Beta notice ──────────────────────────────────────────────────────────── */
+
+.up-beta-note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+}
+
+.up-beta-note strong {
+  color: var(--accent);
+}
+
+/* ─── Scale picker ─────────────────────────────────────────────────────────── */
+
+.up-scale-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.up-scale-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Scale buttons: always >= 40px tall for touch targets */
+.up-scale-btn {
+  min-height: 40px;
+  min-width: 44px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.up-scale-btn.space-btn--active {
+  background: var(--accent) !important;
+  color: var(--accent-ink) !important;
+  box-shadow: none;
+}
+
+/* ─── Sample button row ────────────────────────────────────────────────────── */
+
+.up-sample-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.up-sample-btn {
+  font-size: 0.75rem;
+}
+
+/* ─── Drop zone ────────────────────────────────────────────────────────────── */
+
+.up-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 2rem;
+  width: 100%;
+  background: transparent;
+  border: 2px dashed var(--rule);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.16s, background 0.16s;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+}
+
+.up-dropzone:hover,
+.up-dropzone:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.up-dropzone--drag {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.up-dropzone--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.up-dropzone-label {
+  font-family: var(--font-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.up-dropzone-hint {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+
+.up-dropzone--compact {
+  padding: 1.25rem 1.5rem;
+  flex-direction: row;
+  gap: 0.75rem;
+}
+
+.up-dropzone--compact svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ─── Progress bar ─────────────────────────────────────────────────────────── */
+
+.up-status-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.up-progress-wrap {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.up-progress-track {
+  height: 6px;
+  background: var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.up-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.up-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-mid);
+  text-align: center;
+}
+
+.up-status-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  text-align: center;
+  max-width: 360px;
+}
+
+/* ─── Spinner ──────────────────────────────────────────────────────────────── */
+
+@keyframes upSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.up-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: upSpin 0.75s linear infinite;
+}
+
+.up-status-label {
+  font-family: var(--font-text);
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+}
+
+.up-thumb-preview {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  object-fit: contain;
+  opacity: 0.5;
+}
+
+/* ─── Result / before-after ────────────────────────────────────────────────── */
+
+.up-result-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.up-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 560px) {
+  .up-compare {
+    grid-template-columns: 1fr;
+  }
+}
+
+.up-compare-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.up-compare-label {
+  text-align: center;
+}
+
+.up-compare-img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  object-fit: contain;
+  max-height: 420px;
+  background: var(--surface-sunken);
+  display: block;
+}
+
+/* ─── Dimensions badge ─────────────────────────────────────────────────────── */
+
+.up-dims-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.up-dims-badge strong {
+  color: var(--accent);
+}
+
+/* ─── Actions row ──────────────────────────────────────────────────────────── */
+
+.up-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.up-file-meta {
+  text-align: left;
+  margin-top: 0.25rem;
+}
+
+/* ─── Error state ──────────────────────────────────────────────────────────── */
+
+.up-error-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.up-error-msg {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #d9594c;
+  max-width: 420px;
+}
+
+/* ─── Copy image button ────────────────────────────────────────────────────── */
+
+.up-copy-btn {
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+
+.up-copy-btn--ok {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.up-copy-btn--err {
+  border-color: #d9594c;
+  color: #d9594c;
+}
+
+/* ─── Header controls row (scale + format pickers) ─────────────────────────── */
+
+.up-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+/* ─── Processing metadata (thumb + estimated dimensions) ───────────────────── */
+
+.up-processing-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ─── Download button size hint ─────────────────────────────────────────────── */
+
+.up-btn-size {
+  font-weight: 400;
+  font-size: 0.72em;
+  opacity: 0.8;
+}
+
+/* ─── Format note (JPEG/WebP quality info) ─────────────────────────────────── */
+
+.up-format-note {
+  text-align: left;
+  margin-top: 0.1rem;
+  color: var(--ink-faint);
+}
+
+/* ─── Before/after split slider ────────────────────────────────────────────── */
+
+.up-split-slider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  background: var(--surface-sunken);
+  cursor: col-resize;
+  user-select: none;
+  /* min-height so small images still show a decent slider */
+  min-height: 120px;
+  max-height: 520px;
+}
+
+/* Both images sit in the same slot; height is driven by the after image */
+.up-split-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  object-fit: contain;
+  object-position: center center;
+}
+
+.up-split-img--after {
+  /* after sits at normal flow, drives container height */
+}
+
+/*
+ * The clip div uses clip-path to show only the left portion.
+ * The before image inside is positioned to match the container exactly
+ * (100% of the container's width and height), so both images render
+ * with identical object-fit geometry.
+ */
+.up-split-before-clip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* full container width; clip-path applied inline via style prop in JSX */
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.up-split-before-clip .up-split-img--before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+}
+
+.up-split-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.up-split-line {
+  flex: 1;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0.85;
+}
+
+.up-split-grip {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
+}
+
+.up-split-label {
+  position: absolute;
+  top: 0.5rem;
+  padding: 0.18rem 0.45rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  font-size: 0.58rem;
+  pointer-events: none;
+}
+
+.up-split-label--before {
+  left: 0.5rem;
+}
+
+.up-split-label--after {
+  right: 0.5rem;
+}
+
+/* ─── Large image warning ───────────────────────────────────────────────────── */
+
+.up-warning-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: color-mix(in srgb, #e8b04b 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, #e8b04b 40%, var(--rule));
+  border-radius: var(--radius-sm);
+}
+
+.up-warning-msg {
+  font-family: var(--font-text);
+  font-size: 0.84rem;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.up-warning-sub {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-mid);
+}
+
+.up-warning-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 480px) {
+  .up-warning-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .up-warning-actions button {
+    width: 100%;
+    text-align: center;
+  }
+}

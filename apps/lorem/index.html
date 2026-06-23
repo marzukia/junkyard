@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Lorem Ipsum Generator + Placeholder Images, Free, No Signup</title>
+    <meta
+      name="description"
+      content="Free lorem ipsum generator and placeholder image maker. Generate paragraphs, sentences, words, or lists of lorem ipsum text. Create custom placeholder images with any size, colour, and label, rendered client-side as SVG or PNG. No upload, no account, runs entirely in your browser. A free lipsum.com and placeholder.com alternative."
+    />
+    <meta
+      name="keywords"
+      content="lorem ipsum generator, placeholder image generator, lorem ipsum text, lipsum, lorem ipsum paragraphs, lorem ipsum sentences, placeholder.com alternative, lorempixel alternative, dummy text generator, lorem ipsum no signup, placeholder image online, lorem ipsum free, dummy image generator, lorem ipsum offline, fake image placeholder, lorem ipsum tool"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://lorem.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Lorem Ipsum Generator" />
+    <meta
+      property="og:title"
+      content="Lorem Ipsum Generator + Placeholder Images, Free, No Signup"
+    />
+    <meta
+      property="og:description"
+      content="Generate lorem ipsum text and custom placeholder images in seconds. No upload, no account, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://lorem.mrzk.io/" />
+    <meta property="og:image" content="https://lorem.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Lorem Ipsum Generator and Placeholder Image tool on a clean canvas"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Lorem Ipsum Generator + Placeholder Images, Free, No Signup"
+    />
+    <meta
+      name="twitter:description"
+      content="Generate lorem ipsum text and custom placeholder images. No upload, no account, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://lorem.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Lorem Ipsum Generator",
+            "url": "https://lorem.mrzk.io/",
+            "description": "Free lorem ipsum generator and placeholder image maker. Generate paragraphs, sentences, words, or lists. Create custom placeholder images client-side as SVG or PNG. No upload, no signup.",
+            "applicationCategory": "UtilityApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Lorem ipsum paragraph generation",
+              "Lorem ipsum sentence generation",
+              "Lorem ipsum word generation",
+              "Lorem ipsum list generation",
+              "Custom placeholder image generation",
+              "SVG and PNG placeholder image export",
+              "Custom image size, background colour, text colour, and label",
+              "Copy to clipboard",
+              "Download placeholder image",
+              "No upload required",
+              "No signup required",
+              "Runs entirely in browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="7e272731-bcc4-4792-a47f-29da467b0439"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

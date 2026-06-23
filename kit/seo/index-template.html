@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <!--
+      FILL:
+        {{TITLE}}    — full page title, e.g. "Typecheck — Free Font Pairing Tool"
+        {{DESC}}     — 1–2 sentence meta description targeting incumbent SEO terms
+        {{KEYWORDS}} — comma-separated keyword list
+        {{SLUG}}     — the tool's subdomain slug, e.g. "typecheck"
+    -->
+    <title>{{TITLE}}</title>
+    <meta name="description" content="{{DESC}}" />
+    <meta name="keywords" content="{{KEYWORDS}}" />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://{{SLUG}}.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="{{TITLE}}" />
+    <meta property="og:title" content="{{TITLE}}" />
+    <meta property="og:description" content="{{DESC}}" />
+    <meta property="og:url" content="https://{{SLUG}}.mrzk.io/" />
+    <meta property="og:image" content="https://{{SLUG}}.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="{{TITLE}} — screenshot" />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{TITLE}}" />
+    <meta name="twitter:description" content="{{DESC}}" />
+    <meta name="twitter:image" content="https://{{SLUG}}.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <!--
+      FILL in the WebApplication block:
+        {{TITLE}}       — application name
+        {{SLUG}}        — subdomain slug
+        {{DESC}}        — short description (can reuse meta description)
+        {{APP_CAT}}     — schema.org applicationCategory, e.g. "DesignApplication",
+                          "DeveloperApplication", "UtilityApplication"
+        {{FEATURE_LIST}} — JSON array of feature strings, e.g.
+                          ["Font pairing", "Preview", "Export CSS"]
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "{{TITLE}}",
+            "url": "https://{{SLUG}}.mrzk.io/",
+            "description": "{{DESC}}",
+            "applicationCategory": "{{APP_CAT}}",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": {{FEATURE_LIST}},
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <!-- Reads the Mantine colour-scheme preference from localStorage before
+         React hydrates, sets data-mantine-color-scheme on <html> immediately
+         so there is zero flash of wrong background. -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <!-- Replace __UMAMI_ID__ with the real site ID after creating the
+         Umami site for this tool. -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="__UMAMI_ID__"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

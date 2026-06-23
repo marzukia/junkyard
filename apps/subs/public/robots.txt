@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://subs.mrzk.io/sitemap.xml

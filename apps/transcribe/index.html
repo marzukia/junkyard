@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Audio Transcription, Free Otter.ai Alternative, No Upload Needed</title>
+    <meta
+      name="description"
+      content="Transcribe audio and video to text instantly in your browser. Free Otter.ai and Whisper alternative. No upload, no signup, no API key. Runs 100% client-side with on-device AI."
+    />
+    <meta
+      name="keywords"
+      content="otter.ai alternative, free audio transcription, whisper transcription online, speech to text browser, transcribe audio no upload, private transcription, audio to text free, video to text no signup, whisper online free, transcription no account, offline transcription"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://transcribe.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Audio Transcription" />
+    <meta property="og:title" content="Audio Transcription, Free Otter.ai Alternative, No Upload Needed" />
+    <meta
+      property="og:description"
+      content="Transcribe audio and video to text in your browser. Free, private, no upload. Powered by Whisper AI, no signup required."
+    />
+    <meta property="og:url" content="https://transcribe.mrzk.io/" />
+    <meta property="og:image" content="https://transcribe.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Audio Transcription, free in-browser speech-to-text, no upload required"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Audio Transcription, Free Otter.ai Alternative, No Upload Needed" />
+    <meta
+      name="twitter:description"
+      content="Transcribe audio and video in your browser. Free, private, no upload, no signup. Powered by Whisper AI."
+    />
+    <meta name="twitter:image" content="https://transcribe.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Audio Transcription",
+            "url": "https://transcribe.mrzk.io/",
+            "description": "Transcribe audio and video to text instantly in your browser. Free Otter.ai alternative powered by Whisper AI. No upload, no signup, no data leaves your device.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Whisper AI speech-to-text in browser",
+              "No upload, fully client-side",
+              "No signup required",
+              "No API key needed",
+              "Timestamped transcript",
+              "Works offline after first load",
+              "Copy transcript to clipboard",
+              "Supports audio and video files",
+              "Otter.ai alternative",
+              "Private, files never leave your device"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="278ac9c7-3d07-41a2-bb9f-9df69f3adedd"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

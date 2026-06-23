@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>OG, Free OG Image Generator &amp; Social Card Maker</title>
+    <meta
+      name="description"
+      content="Free OG image generator. Make open graph images, Twitter cards, and social share images (1200×630) in seconds. No signup, no upload, runs entirely in your browser. A fast Bannerbear &amp; Placid alternative."
+    />
+    <meta
+      name="keywords"
+      content="og image generator free, open graph image generator, social card maker, twitter card image maker, social share image generator, og image maker no signup, og image generator no upload, free social card generator, open graph image maker, bannerbear alternative, placid alternative, og image generator offline, og image generator browser"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://og.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#FAF9F5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1814" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OG" />
+    <meta property="og:title" content="OG, Free OG Image Generator &amp; Social Card Maker" />
+    <meta
+      property="og:description"
+      content="Free OG image generator. Make open graph images, Twitter cards, and social share images (1200×630) in seconds. No signup, no upload, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://og.mrzk.io/" />
+    <meta property="og:image" content="https://og.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="OG app, social share image generator with live 1200×630 preview on a clean canvas"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="OG, Free OG Image Generator &amp; Social Card Maker" />
+    <meta
+      name="twitter:description"
+      content="Free OG image generator. Make open graph images, Twitter cards, and social share images (1200×630) in seconds. No signup, no upload, runs entirely in your browser."
+    />
+    <meta name="twitter:image" content="https://og.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "OG Image Generator",
+            "url": "https://og.mrzk.io/",
+            "description": "Free OG image generator. Make open graph images, Twitter cards, and social share images (1200×630) in seconds. No signup, no upload, runs entirely in your browser.",
+            "applicationCategory": "DesignApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "OG image generator (1200×630)",
+              "Twitter card maker",
+              "Social share image generator",
+              "Live preview canvas",
+              "Background colour and gradient",
+              "Background image upload",
+              "Font and layout presets",
+              "Title, subtitle, badge inputs",
+              "PNG download",
+              "Runs entirely in browser, no upload, no signup"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="59ccfd5a-323a-43e8-8743-9f6f7a0376f5"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

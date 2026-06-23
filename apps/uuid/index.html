@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>UUID Generator: Free Online UUID v4, v7, Nano ID Tool</title>
+    <meta
+      name="description"
+      content="Free online UUID generator. Generate UUID v4 (random), UUID v7 (time-ordered), and Nano IDs, single or bulk up to 1000. No signup, no upload, runs entirely in your browser."
+    />
+    <meta
+      name="keywords"
+      content="uuid generator, uuid v4 generator, uuid v7 generator, nanoid generator, random uuid online, bulk uuid generator, generate uuid free, uuid online, uuid no signup, uuid browser, uuid generator alternative, uuid generator tool, free uuid, private uuid generator"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://uuid.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="UUID Generator" />
+    <meta property="og:title" content="UUID Generator: Free Online UUID v4, v7, Nano ID Tool" />
+    <meta
+      property="og:description"
+      content="Free online UUID generator. Generate UUID v4 (random), UUID v7 (time-ordered), and Nano IDs, single or bulk up to 1000. No signup, no upload, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://uuid.mrzk.io/" />
+    <meta property="og:image" content="https://uuid.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="UUID Generator at uuid.mrzk.io" />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="UUID Generator: Free Online UUID v4, v7, Nano ID Tool" />
+    <meta
+      name="twitter:description"
+      content="Free online UUID generator. UUID v4, v7, Nano IDs, bulk up to 1000, copy or download, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://uuid.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "UUID Generator",
+            "url": "https://uuid.mrzk.io/",
+            "description": "Free online UUID generator. Generate UUID v4 (random), UUID v7 (time-ordered), and Nano IDs, single or bulk up to 1000. No signup, no upload, runs entirely in your browser.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "UUID v4 generator (RFC 4122 random)",
+              "UUID v7 generator (RFC 9562 time-ordered)",
+              "Nano ID generator (URL-safe 21-char)",
+              "Bulk generation up to 1000 IDs",
+              "Copy single or all to clipboard",
+              "Download as .txt file",
+              "Uppercase / lowercase toggle",
+              "No-dashes format option",
+              "No upload, runs in browser",
+              "Private, no data leaves device"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="7e4e69dc-a3b9-422e-af46-dd950fc0df8d"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

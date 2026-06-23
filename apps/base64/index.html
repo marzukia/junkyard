@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Base64 Encode / Decode, Free Base64 &amp; URL Encoder Online</title>
+    <meta
+      name="description"
+      content="Free Base64 encoder and decoder, encode or decode text, files, and images in your browser. URL-safe Base64, data-URI preview, file download. No upload, no signup, fully private."
+    />
+    <meta
+      name="keywords"
+      content="base64 encode decode, base64 encoder online, base64 decoder online, base64 to image, base64 to file, url encode decode online, base64 url safe, data uri encoder, base64 converter, base64 no signup, free base64 tool"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://base64.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Base64 Encode / Decode" />
+    <meta property="og:title" content="Base64 Encode / Decode, Free Base64 &amp; URL Encoder Online" />
+    <meta
+      property="og:description"
+      content="Free Base64 encoder and decoder, encode or decode text, files, and images. URL-safe variant, data-URI preview, file download. No upload, no signup, runs in your browser."
+    />
+    <meta property="og:url" content="https://base64.mrzk.io/" />
+    <meta property="og:image" content="https://base64.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Base64 Encode / Decode, free in-browser Base64 &amp; URL encoder" />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Base64 Encode / Decode, Free Base64 &amp; URL Encoder Online" />
+    <meta
+      name="twitter:description"
+      content="Encode or decode Base64, URL-safe Base64, and URL encoding. Text or file. No upload, no signup."
+    />
+    <meta name="twitter:image" content="https://base64.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Base64 Encode / Decode",
+            "url": "https://base64.mrzk.io/",
+            "description": "Free Base64 and URL encoder/decoder. Encode or decode text and files, URL-safe Base64, data-URI preview, image preview, file download. No upload, no signup, runs entirely in browser.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Base64 encode text",
+              "Base64 decode text",
+              "URL-safe Base64 variant",
+              "URL encode and decode",
+              "File to Base64 encoding",
+              "Base64 to file download",
+              "Image data-URI preview",
+              "No upload required",
+              "No signup",
+              "Runs entirely in browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="4710cf17-d089-47b2-8cdf-5feccd638b99"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

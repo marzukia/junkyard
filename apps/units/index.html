@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Unit Converter, Free Metric &amp; Imperial Converter Online</title>
+    <meta
+      name="description"
+      content="Free unit converter: length, mass, temperature, area, volume, speed, data, time, pressure &amp; energy. Metric to imperial, instant results, runs entirely in your browser, no signup, no upload."
+    />
+    <meta
+      name="keywords"
+      content="unit converter, metric to imperial, convert units online, measurement converter, length converter, weight converter, temperature converter, free unit converter, unit calculator, metric converter, imperial to metric"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://units.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Unit Converter, Free Metric &amp; Imperial Converter" />
+    <meta property="og:title" content="Unit Converter, Free Metric &amp; Imperial Converter Online" />
+    <meta
+      property="og:description"
+      content="Free unit converter: length, mass, temperature, area, volume, speed, data, time, pressure &amp; energy. Instant results, no signup, no upload, runs in your browser."
+    />
+    <meta property="og:url" content="https://units.mrzk.io/" />
+    <meta property="og:image" content="https://units.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Unit Converter, Free Metric &amp; Imperial Converter" />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Unit Converter, Free Metric &amp; Imperial Converter Online" />
+    <meta
+      name="twitter:description"
+      content="Free unit converter: length, mass, temperature &amp; more. Instant, in-browser, no signup."
+    />
+    <meta name="twitter:image" content="https://units.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Unit Converter",
+            "url": "https://units.mrzk.io/",
+            "description": "Free unit converter for length, mass, temperature, area, volume, speed, data, time, pressure and energy. Metric to imperial and back, runs entirely in your browser.",
+            "applicationCategory": "UtilityApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Length conversion (mm, cm, m, km, in, ft, yd, mi, nmi)",
+              "Mass conversion (mg, g, kg, t, oz, lb, st, ton)",
+              "Temperature conversion (°C, °F, K, °R)",
+              "Area conversion (mm², cm², m², km², in², ft², yd², ac, ha)",
+              "Volume conversion (ml, cl, l, m³, tsp, tbsp, fl oz, cup, pt, qt, gal)",
+              "Speed conversion (m/s, km/h, mph, kn, ft/s)",
+              "Data conversion (bit, B, KB, MB, GB, TB, PB, KiB, MiB, GiB, TiB)",
+              "Time conversion (ns, μs, ms, s, min, h, d, wk, mo, yr)",
+              "Pressure conversion (Pa, kPa, MPa, bar, psi, atm, mmHg, inHg)",
+              "Energy conversion (J, kJ, MJ, cal, kcal, Wh, kWh, BTU, eV)",
+              "Live instant conversion",
+              "From/to swap",
+              "Common conversions quick reference",
+              "Runs entirely in your browser, no upload"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="6f8f634a-0774-4c53-8b17-504979483697"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

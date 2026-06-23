@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Speech bubble outline (teal) -->
+  <path d="M4 6a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H10l-6 4v-4a2 2 0 0 1-2-2V6z" stroke="#2f9d8d" stroke-width="2.2" stroke-linejoin="round"/>
+  <!-- Eye shape (amber) inside bubble -->
+  <path d="M10 13c1.5-2 4.5-3 6-3s4.5 1 6 3c-1.5 2-4.5 3-6 3s-4.5-1-6-3z" stroke="#e8b04b" stroke-width="1.8" stroke-linejoin="round"/>
+  <!-- Pupil dot (coral) -->
+  <circle cx="16" cy="13" r="1.5" fill="#d9594c"/>
+</svg>

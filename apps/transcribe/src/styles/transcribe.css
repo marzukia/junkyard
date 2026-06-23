@@ -1,0 +1,633 @@
+/* ─── Beta notice ────────────────────────────────────────────────────────── */
+
+.tr-beta-note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+}
+
+.tr-beta-note strong {
+  color: var(--accent);
+}
+
+/* ─── Drop zone ──────────────────────────────────────────────────────────── */
+
+.tr-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 2rem;
+  width: 100%;
+  background: transparent;
+  border: 2px dashed var(--rule);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.16s, background 0.16s;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+}
+
+.tr-dropzone:hover,
+.tr-dropzone:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.tr-dropzone--drag {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.tr-dropzone--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tr-dropzone-label {
+  font-family: var(--font-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.tr-dropzone-hint {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+
+.tr-dropzone-microcopy {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+  max-width: 360px;
+  line-height: 1.6;
+}
+
+/* ─── Idle footer row (language + sample) ───────────────────────────────── */
+
+.tr-idle-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.tr-idle-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tr-idle-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.tr-language-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tr-language-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.tr-language-select {
+  font-family: var(--font-text);
+  font-size: 0.78rem;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.14s;
+}
+
+.tr-language-select:hover {
+  border-color: var(--ink-faint);
+}
+
+.tr-language-select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.tr-sample-btn {
+  white-space: nowrap;
+}
+
+/* ─── Translate toggle ───────────────────────────────────────────────────── */
+
+.tr-translate-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.tr-translate-check {
+  accent-color: var(--accent);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.tr-translate-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  user-select: none;
+}
+
+/* ─── Shortcut hint ──────────────────────────────────────────────────────── */
+
+.tr-shortcut-hint {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--ink-faint);
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.tr-shortcut-hint kbd {
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0.05em 0.3em;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+}
+
+/* ─── Microphone recorder ────────────────────────────────────────────────── */
+
+.tr-mic-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.tr-mic-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-text);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+  white-space: nowrap;
+}
+
+.tr-mic-btn:hover:not(:disabled) {
+  background: var(--surface-sunken);
+  color: var(--ink);
+  border-color: var(--ink-faint);
+}
+
+.tr-mic-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tr-mic-btn--recording {
+  background: #fff0ef;
+  border-color: #d9594c;
+  color: #d9594c;
+}
+
+[data-mantine-color-scheme="dark"] .tr-mic-btn--recording {
+  background: #2c1514;
+  border-color: #d9594c;
+  color: #e57368;
+}
+
+.tr-mic-btn--recording:hover:not(:disabled) {
+  background: #ffe5e3;
+  color: #c44135;
+}
+
+[data-mantine-color-scheme="dark"] .tr-mic-btn--recording:hover:not(:disabled) {
+  background: #3a1918;
+  color: #e57368;
+}
+
+.tr-mic-error {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: #d9594c;
+  max-width: 260px;
+  line-height: 1.5;
+}
+
+/* ─── Model gate dialog ──────────────────────────────────────────────────── */
+
+.tr-gate-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 37, 48, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+  backdrop-filter: blur(2px);
+}
+
+[data-mantine-color-scheme="dark"] .tr-gate-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.tr-gate-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  padding: 2rem;
+  max-width: 440px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* Reset browser default dialog styles */
+  color: inherit;
+  margin: 0;
+}
+
+.tr-gate-title {
+  font-family: var(--font-text);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.tr-gate-body {
+  font-family: var(--font-text);
+  font-size: 0.84rem;
+  color: var(--ink-mid);
+  line-height: 1.65;
+}
+
+.tr-gate-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ─── Model ready badge ──────────────────────────────────────────────────── */
+
+.tr-model-ready {
+  color: var(--accent);
+}
+
+/* ─── Sample notice banner ──────────────────────────────────────────────── */
+
+.tr-sample-notice {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-mid);
+  background: var(--accent-soft);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+}
+
+/* ─── Progress bar ───────────────────────────────────────────────────────── */
+
+.tr-status-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.tr-progress-wrap {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tr-progress-track {
+  height: 6px;
+  background: var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.tr-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.tr-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-mid);
+  text-align: center;
+}
+
+.tr-status-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  text-align: center;
+  max-width: 360px;
+}
+
+.tr-status-hint {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--ink-faint);
+  text-align: center;
+  max-width: 360px;
+  margin-top: 0.25rem;
+}
+
+/* ─── Spinner ────────────────────────────────────────────────────────────── */
+
+@keyframes trSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tr-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: trSpin 0.75s linear infinite;
+}
+
+.tr-status-label {
+  font-family: var(--font-text);
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+}
+
+/* ─── Transcript result ──────────────────────────────────────────────────── */
+
+.tr-result-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tr-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tr-result-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tr-file-meta {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+}
+
+/* ─── Tabs (Full text / Timestamps) ─────────────────────────────────────── */
+
+.tr-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--surface-sunken);
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.tr-tab {
+  font-family: var(--font-text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.28rem 0.75rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+  line-height: 1.2;
+}
+
+.tr-tab:hover {
+  color: var(--ink);
+}
+
+.tr-tab--active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(26, 37, 48, 0.12);
+}
+
+[data-mantine-color-scheme="dark"] .tr-tab--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+
+.tr-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ─── Full text panel ────────────────────────────────────────────────────── */
+
+.tr-fulltext {
+  font-family: var(--font-text);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 120px;
+  max-height: 480px;
+  overflow-y: auto;
+  resize: vertical;
+}
+
+/* ─── Inline media player ────────────────────────────────────────────────── */
+
+.tr-player-wrap {
+  width: 100%;
+}
+
+.tr-media-player {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  outline: none;
+}
+
+.tr-media-player--audio {
+  height: 40px;
+}
+
+/* ─── Timestamp chunks ───────────────────────────────────────────────────── */
+
+.tr-tab-hint {
+  font-weight: 400;
+  opacity: 0.6;
+  font-size: 0.68rem;
+}
+
+.tr-chunks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.tr-chunk {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.4rem;
+  transition: background 0.12s;
+}
+
+.tr-chunk--seekable {
+  cursor: pointer;
+}
+
+.tr-chunk--seekable:hover {
+  background: var(--accent-soft);
+}
+
+.tr-chunk--seekable:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.tr-chunk--active {
+  background: var(--accent-soft);
+}
+
+.tr-chunk-time {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--accent);
+  white-space: nowrap;
+  min-width: 3.5rem;
+  flex-shrink: 0;
+  padding-top: 0.1rem;
+}
+
+.tr-chunk--seekable .tr-chunk-time {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--rule);
+}
+
+.tr-chunk--seekable:hover .tr-chunk-time {
+  text-decoration-color: var(--accent);
+}
+
+.tr-chunk-text {
+  font-family: var(--font-text);
+  font-size: 0.87rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+/* ─── No-speech guidance ─────────────────────────────────────────────────── */
+
+.tr-no-speech {
+  color: var(--ink-mid);
+  font-style: italic;
+}
+
+.tr-no-speech-hints {
+  margin-top: 0.6rem;
+  padding-left: 1.25rem;
+  font-style: normal;
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: var(--ink-mid);
+}
+
+/* ─── Compact drop zone (used below result) ──────────────────────────────── */
+
+.tr-dropzone--compact {
+  padding: 1.25rem 1.5rem;
+  flex-direction: row;
+  gap: 0.75rem;
+}
+
+/* ─── Copy feedback ──────────────────────────────────────────────────────── */
+
+.tr-copy-feedback {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+/* ─── Error state ────────────────────────────────────────────────────────── */
+
+.tr-error-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.tr-error-msg {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #d9594c;
+  max-width: 480px;
+}

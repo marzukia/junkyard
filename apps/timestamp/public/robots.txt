@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://timestamp.mrzk.io/sitemap.xml

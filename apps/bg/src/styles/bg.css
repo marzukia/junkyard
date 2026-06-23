@@ -1,0 +1,588 @@
+/* ─── Beta notice ──────────────────────────────────────────────────────────── */
+
+.bg-beta-note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+}
+
+.bg-beta-note strong {
+  color: var(--accent);
+}
+
+/* ─── Drop zone ─────────────────────────────────────────────────────────────── */
+
+.bg-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 2rem;
+  width: 100%;
+  background: transparent;
+  border: 2px dashed var(--rule);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.16s, background 0.16s;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+}
+
+.bg-dropzone:hover,
+.bg-dropzone:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.bg-dropzone--drag {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.bg-dropzone--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.bg-dropzone-label {
+  font-family: var(--font-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.bg-dropzone-hint {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+
+/* ─── Progress bar ──────────────────────────────────────────────────────────── */
+
+.bg-status-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.bg-progress-wrap {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.bg-progress-track {
+  height: 6px;
+  background: var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bg-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.bg-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-mid);
+  text-align: center;
+}
+
+.bg-status-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  text-align: center;
+  max-width: 360px;
+}
+
+/* ─── Spinner ───────────────────────────────────────────────────────────────── */
+
+@keyframes bgSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.bg-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: bgSpin 0.75s linear infinite;
+}
+
+.bg-status-label {
+  font-family: var(--font-text);
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+}
+
+.bg-thumb-preview {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  object-fit: contain;
+  opacity: 0.5;
+}
+
+/* ─── Result / before-after ─────────────────────────────────────────────────── */
+
+.bg-result-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.bg-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 560px) {
+  .bg-compare {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bg-compare-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bg-compare-label {
+  text-align: center;
+}
+
+.bg-compare-img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  object-fit: contain;
+  max-height: 360px;
+  background: var(--surface-sunken);
+}
+
+.bg-compare-panel--result .bg-compare-img {
+  background: transparent;
+}
+
+/* Transparent result frame with checkerboard */
+.bg-result-frame {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  max-height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-compare-img--result {
+  position: relative;
+  z-index: 1;
+  border: none;
+  border-radius: 0;
+}
+
+/* ─── Actions row ───────────────────────────────────────────────────────────── */
+
+.bg-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.bg-file-meta {
+  text-align: left;
+  margin-top: 0.25rem;
+}
+
+/* ─── Error state ───────────────────────────────────────────────────────────── */
+
+.bg-error-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.bg-error-msg {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #d9594c;
+  max-width: 420px;
+}
+
+/* ─── Sample / empty-state CTA ─────────────────────────────────────────────── */
+
+.bg-sample-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.bg-sample-divider {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+}
+
+/* ─── Indeterminate processing progress bar ─────────────────────────────────── */
+
+@keyframes bgSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(500%);
+  }
+}
+
+.bg-progress-track--indeterminate .bg-progress-fill {
+  width: 30% !important;
+  animation: bgSweep 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* ─── Background picker ─────────────────────────────────────────────────────── */
+
+.bg-bg-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.bg-bg-picker-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.bg-swatch-group {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  background: var(--surface-sunken);
+  border-radius: 999px;
+}
+
+.bg-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s, border-color 0.14s;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.bg-swatch:hover {
+  transform: scale(1.1);
+}
+
+.bg-swatch--active {
+  border-color: var(--accent);
+}
+
+.bg-swatch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.bg-swatch--transparent {
+  background: transparent;
+}
+
+/* checkerboard for transparent swatch */
+.bg-swatch--transparent::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(45deg, #c0c0c0 25%, transparent 25%),
+    linear-gradient(-45deg, #c0c0c0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #c0c0c0 75%),
+    linear-gradient(-45deg, transparent 75%, #c0c0c0 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  background-color: #e8e8e8;
+}
+
+.bg-swatch--white {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.bg-swatch--black {
+  background: #111111;
+}
+
+/* Result frame with configurable fill ─────────────────────────────────────── */
+
+.bg-result-frame[data-bg="white"] {
+  background: #ffffff;
+}
+
+.bg-result-frame[data-bg="black"] {
+  background: #111111;
+}
+
+/* When solid bg, hide the checkerboard svg */
+.bg-result-frame[data-bg="white"] .bg-checker,
+.bg-result-frame[data-bg="black"] .bg-checker {
+  display: none;
+}
+
+/* ─── Copy image flash ──────────────────────────────────────────────────────── */
+
+@keyframes bgCopied {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.btn-primary--flash {
+  animation: bgCopied 0.3s ease;
+  background: var(--accent) !important;
+  color: var(--accent-ink) !important;
+}
+
+/* ─── Blur swatch ───────────────────────────────────────────────────────────── */
+
+.bg-swatch--blur {
+  background: linear-gradient(135deg, #c0c0c0 25%, #e8e8e8 50%, #c0c0c0 75%);
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-swatch--blur::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(3px);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ─── Custom color swatch ───────────────────────────────────────────────────── */
+
+.bg-swatch--custom {
+  /* background set inline from the chosen color */
+  border: 2px dashed var(--rule);
+}
+
+.bg-swatch--custom.bg-swatch--active {
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+/* ─── Hex color input ───────────────────────────────────────────────────────── */
+
+.bg-hex-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.25rem;
+}
+
+.bg-hex-prefix {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  line-height: 1;
+}
+
+.bg-hex-input {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 0.2rem 0.5rem;
+  width: 7ch;
+  outline: none;
+  transition: border-color 0.14s;
+}
+
+.bg-hex-input:focus {
+  border-color: var(--accent);
+}
+
+.bg-hex-input--error {
+  border-color: #d9594c;
+}
+
+.bg-hex-error {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: #d9594c;
+}
+
+/* ─── Compare slider ────────────────────────────────────────────────────────── */
+
+.bg-compare-slider {
+  position: relative;
+  width: 100%;
+  aspect-ratio: auto;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  cursor: ew-resize;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  border: 1px solid var(--rule);
+  outline: none;
+  max-height: 480px;
+  display: flex;
+  align-items: stretch;
+}
+
+.bg-compare-slider:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Before layer: sits beneath everything, full width */
+.bg-cs-before {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* After layer: clipped to the left portion by clip-path */
+.bg-cs-after {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.bg-cs-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  /* checkerboard behind transparent */
+  background: var(--surface-sunken);
+}
+
+.bg-cs-img--fg {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+}
+
+/* Blur background for the "blur" fill mode */
+.bg-cs-blur-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.bg-cs-blur-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(18px);
+  transform: scale(1.08); /* prevent white fringe from blur */
+  display: block;
+}
+
+/* Solid fill overlay (white/black/custom) sits above blur, below fg */
+.bg-cs-after-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* background set inline */
+}
+
+/* Before/After labels */
+.bg-cs-label {
+  position: absolute;
+  bottom: 0.5rem;
+  z-index: 10;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+  pointer-events: none;
+}
+
+.bg-cs-label--left {
+  left: 0.5rem;
+}
+
+.bg-cs-label--right {
+  right: 0.5rem;
+}
+
+/* Vertical divider line */
+.bg-cs-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--surface);
+  z-index: 20;
+  transform: translateX(-50%);
+  pointer-events: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Handle circle */
+.bg-cs-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
+}
+
+@media (max-width: 480px) {
+  .bg-compare-slider {
+    max-height: 320px;
+  }
+}
