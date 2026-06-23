@@ -1,4 +1,4 @@
-import { diffWordsWithSpace, structuredPatch } from "diff";
+import { type ParsedDiff, diffWordsWithSpace, structuredPatch } from "diff";
 import { z } from "zod";
 import type { ToolDef } from "./types.js";
 
@@ -98,19 +98,97 @@ export function computeDiff(oldText: string, newText: string): DiffResult {
     flush();
   }
 
-  // Build unified patch string with context=3
-  const unifiedPatch = structuredPatch("original", "modified", ensureNl(oldText), ensureNl(newText), "", "", { context: 3 });
-  let unified = "";
-  if (unifiedPatch.hunks.length > 0) {
-    const lines = ["--- original", "+++ modified"];
-    for (const hunk of unifiedPatch.hunks) {
-      lines.push(`@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`);
-      for (const line of hunk.lines) lines.push(line);
-    }
-    unified = `${lines.join("\n")}\n`;
-  }
+  // Build unified patch string from the already-computed full-context hunkLines
+  // using a 3-line context window -- avoids a second structuredPatch call.
+  const unified = buildUnifiedFromFullHunk(patch.hunks, "original", "modified");
 
   return { sideBySide, unified, stats };
+}
+
+
+/**
+ * Build a standard unified-diff string (context=3) from a full-context patch
+ * (produced with context=MAX_SAFE_INTEGER). Avoids a second structuredPatch call.
+ */
+function buildUnifiedFromFullHunk(
+  hunks: ParsedDiff["hunks"],
+  oldLabel: string,
+  newLabel: string,
+  context = 3
+): string {
+  if (hunks.length === 0) return "";
+
+  // With context=MAX the patch has a single hunk covering the full file.
+  // We re-emit it trimmed to `context` lines around each changed block.
+  const allLines = hunks.flatMap((h) => h.lines);
+  if (allLines.length === 0) return "";
+
+  // Find indices of non-context (changed) lines.
+  const changedIdx = new Set<number>();
+  for (let i = 0; i < allLines.length; i++) {
+    const p = allLines[i]?.[0];
+    if (p === "+" || p === "-") changedIdx.add(i);
+  }
+  if (changedIdx.size === 0) return "";
+
+  // Build keep-set: indices within `context` lines of any changed line.
+  const keep = new Set<number>();
+  for (const ci of changedIdx) {
+    for (let d = -context; d <= context; d++) {
+      const idx = ci + d;
+      if (idx >= 0 && idx < allLines.length) keep.add(idx);
+    }
+  }
+
+  // Walk keep indices, grouping into hunks separated by gaps.
+  const sorted = [...keep].sort((a, b) => a - b);
+  const outputLines: string[] = [`--- ${oldLabel}`, `+++ ${newLabel}`];
+
+  // The full-context hunk starts at line 1 in both old and new.
+  // Track old/new line numbers as we walk.
+  let oldLine = hunks[0]?.oldStart ?? 1;
+  let newLine = hunks[0]?.newStart ?? 1;
+
+  let groupStart = 0;
+  while (groupStart < sorted.length) {
+    // Find contiguous run.
+    let groupEnd = groupStart;
+    while (
+      groupEnd + 1 < sorted.length &&
+      (sorted[groupEnd + 1] ?? 0) === (sorted[groupEnd] ?? 0) + 1
+    ) {
+      groupEnd++;
+    }
+
+    const indices = sorted.slice(groupStart, groupEnd + 1);
+
+    // Compute old/new start positions for this group by counting lines before it.
+    let oldStart = hunks[0]?.oldStart ?? 1;
+    let newStart = hunks[0]?.newStart ?? 1;
+    for (let i = 0; i < (indices[0] ?? 0); i++) {
+      const p = allLines[i]?.[0];
+      if (p === " " || p === "-") oldStart++;
+      if (p === " " || p === "+") newStart++;
+    }
+
+    let oldCount = 0;
+    let newCount = 0;
+    const hunkBody: string[] = [];
+    for (const i of indices) {
+      const line = allLines[i] ?? " ";
+      const p = line[0];
+      hunkBody.push(line);
+      if (p === " " || p === "-") oldCount++;
+      if (p === " " || p === "+") newCount++;
+    }
+
+    outputLines.push(`@@ -${oldStart},${oldCount} +${newStart},${newCount} @@`);
+    for (const l of hunkBody) outputLines.push(l);
+
+    groupStart = groupEnd + 1;
+  }
+
+  return outputLines.join("\n") + "\n";
 }
 
 // ── ToolDef ──────────────────────────────────────────────────────────────────

@@ -34,11 +34,9 @@ describe("hexToRgba additional cases", () => {
     expect(result).toMatch(/^rgba\(/);
   });
 
-  it("handles 4-digit hex as invalid (not a recognised length)", () => {
-    // 4-digit hex is not standard #rgb or #rrggbb; should fall back
-    const result = hexToRgba("#ffff", 1);
-    // Falls back to rgba(0,0,0,...)
-    expect(result).toBe("rgba(0,0,0,1)");
+  it("throws on 4-digit hex (not a recognised length)", () => {
+    // 4-digit hex is not standard #rgb or #rrggbb; should signal invalid
+    expect(() => hexToRgba("#ffff", 1)).toThrow("Invalid hex colour");
   });
 
   it("opacity 0 produces alpha 0", () => {

@@ -139,11 +139,26 @@ describe("hexToRgb", () => {
     expect(result.blue).toBeCloseTo(0x30 / 255);
   });
 
-  it("falls back to black for malformed input", () => {
-    const result = hexToRgb("zzz");
-    expect(result.red).toBe(0);
-    expect(result.green).toBe(0);
-    expect(result.blue).toBe(0);
+  it("throws for malformed input (invalid chars)", () => {
+    expect(() => hexToRgb("zzz")).toThrow("Invalid hex colour");
+  });
+
+  it("throws for empty input", () => {
+    expect(() => hexToRgb("")).toThrow("Invalid hex colour");
+  });
+
+  it("parses 3-digit hex correctly", () => {
+    const result = hexToRgb("#fff");
+    expect(result.red).toBeCloseTo(1);
+    expect(result.green).toBeCloseTo(1);
+    expect(result.blue).toBeCloseTo(1);
+  });
+
+  it("parses 3-digit hex without hash", () => {
+    const result = hexToRgb("abc");
+    expect(result.red).toBeCloseTo(0xaa / 255);
+    expect(result.green).toBeCloseTo(0xbb / 255);
+    expect(result.blue).toBeCloseTo(0xcc / 255);
   });
 });
 
