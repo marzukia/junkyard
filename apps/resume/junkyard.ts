@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/resume/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/lib/resumeUtils.ts",
     tools: [],
   },

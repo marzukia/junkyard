@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/og/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/ogLogic.ts",
     tools: [],
   },

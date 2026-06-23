@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/invoice/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/lib/invoiceCalc.ts",
     tools: [],
   },

@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/ocr/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/ocrUtils.ts",
     tools: [],
   },

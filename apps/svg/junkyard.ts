@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/svg/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/svgOptimize.ts",
     tools: [],
   },
