@@ -1,6 +1,11 @@
 export type Category = "image" | "text" | "ai" | "docs";
 export type Runtime = "client" | "client-ai";
 
+export interface McpTool {
+  name: string;
+  summary?: string;
+}
+
 export interface JunkyardApp {
   slug: string;
   name: string;
@@ -11,5 +16,5 @@ export interface JunkyardApp {
   incumbent: string;
   path: string;
   runtime: Runtime;
-  mcp: { exposed: boolean; lib: string; tools: unknown[] };
+  mcp: { exposed: boolean; lib: string; tools: McpTool[] };
 }
