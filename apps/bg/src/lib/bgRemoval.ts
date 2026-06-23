@@ -9,13 +9,6 @@
  */
 import { type ImageSegmentationPipeline, RawImage, env, pipeline } from "@huggingface/transformers";
 
-// ── Disable multi-threaded WASM (requires SharedArrayBuffer / COOP+COEP) ──────
-// Must be set BEFORE any InferenceSession is created.
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-
-// Use browser cache so subsequent visits skip the download.
-env.useBrowserCache = true;
-
 const MODEL_ID = "briaai/RMBG-1.4";
 
 // Maximum edge length before downscaling for inference (avoids OOM on huge images)
@@ -34,6 +27,11 @@ let segmenter: ImageSegmentationPipeline | null = null;
 /** Load (or return cached) the segmentation pipeline. */
 export async function loadModel(onProgress?: ProgressCallback): Promise<void> {
   if (segmenter) return;
+
+  // Apply ONNX/cache settings lazily, once, before any InferenceSession is created.
+  // Must run before pipeline() — that is why they live here rather than at module level.
+  (env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
+  env.useBrowserCache = true;
 
   const progressCb = (event: TransformersProgressEvent) => {
     if (!onProgress) return;
