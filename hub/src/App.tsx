@@ -63,7 +63,7 @@ export function App() {
         <main id="yard">
           {totalShown === 0 ? (
             <div className="empty">
-              nothing matches <b>&quot;{q}&quot;</b> &mdash; try another search.
+              nothing matches <b>&quot;{q}&quot;</b> - try another search.
             </div>
           ) : (
             sections.map(({ yard, items }) => (
@@ -82,7 +82,7 @@ export function App() {
       <div className="wrap">
         <footer>
           <div className="fbar">
-            <span>&#169; 2026 junkyard.sh &mdash; take freely</span>
+            <span>&#169; 2026 junkyard.sh - take freely</span>
             <span>built in a browser, runs in a browser</span>
           </div>
         </footer>
