@@ -97,9 +97,17 @@ export async function upscaleImage(
   let rawImage = await RawImage.fromURL(srcUrl);
   URL.revokeObjectURL(srcUrl);
 
-  // Run once for 2x, twice for 4x
-  const passes = scale === 4 ? 2 : 1;
-  for (let i = 0; i < passes; i++) {
+  // Run once for 2x, twice for 4x.
+  // For 4x: dispose the pass-1 output after promoting it to rawImage so the
+  // JS engine can GC the intermediate buffer before pass 2 allocates its own.
+  if (scale === 4) {
+    const pass1 = await upscaler(rawImage);
+    // rawImage (the source) is no longer needed; drop the reference so it can
+    // be collected before the second pass allocates a new output tensor.
+    rawImage = pass1;
+    const pass2 = await upscaler(rawImage);
+    rawImage = pass2;
+  } else {
     rawImage = await upscaler(rawImage);
   }
 
