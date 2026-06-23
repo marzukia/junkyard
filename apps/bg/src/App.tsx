@@ -832,7 +832,7 @@ export function App() {
   const [gradient, setGradient] = useState<GradientConfig>(GRADIENT_PRESETS[0]);
   const [bgImageFile, setBgImageFile] = useState<File | null>(null);
   const [bgImageUrl, setBgImageUrl] = useState<string | null>(null);
-  const [copyLabel, setCopyLabel] = useState<"Copy PNG" | "Copied!">("Copy PNG");
+  const [copyLabel, setCopyLabel] = useState<"Copy PNG" | "Copied!" | "Copy not supported, use Download">("Copy PNG");
 
   const busy = phase === "model-loading" || phase === "processing";
 
@@ -967,7 +967,8 @@ export function App() {
       setCopyLabel("Copied!");
       setTimeout(() => setCopyLabel("Copy PNG"), 2000);
     } catch {
-      // Clipboard API not available or denied -- silently ignore
+      setCopyLabel("Copy not supported, use Download");
+      setTimeout(() => setCopyLabel("Copy PNG"), 3000);
     }
   }, [resultUrl, bgFill, customColor, gradient, bgImageUrl, inputUrl, resultDimensions]);
 
