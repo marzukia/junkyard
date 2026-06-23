@@ -15,6 +15,18 @@ export interface RegexTestResult {
   flags: string;
 }
 
+// Feature-detect the 'd' flag (RegExp hasIndices, ES2022 / Node 16+).
+// Node 22 and Bun 1.x both support it, so this guard never triggers in practice,
+// but avoids a hard crash on older engines that would mis-handle the flag string.
+const HAS_INDICES_SUPPORTED = (() => {
+  try {
+    void new RegExp("x", "dg");
+    return true;
+  } catch {
+    return false;
+  }
+})();
+
 export function testRegex(
   pattern: string,
   flags: string,
@@ -22,11 +34,11 @@ export function testRegex(
 ): RegexTestResult {
   if (!pattern) return { matches: [], matchCount: 0, flags: "" };
 
-  // Always include 'g' for matchAll; include 'd' so match.indices is populated
-  // which gives us the correct positional index for each named group.
+  // Always include 'g' for matchAll; include 'd' (hasIndices) when supported so
+  // match.indices is populated, giving correct positional index for named groups.
   const flagSet = new Set(flags.split("").filter(Boolean));
   flagSet.add("g");
-  flagSet.add("d");
+  if (HAS_INDICES_SUPPORTED) flagSet.add("d");
   const flagStr = ["d", "g", "i", "m", "s", "u"].filter((f) => flagSet.has(f)).join("");
 
   const re = new RegExp(pattern, flagStr);
