@@ -1,0 +1,38 @@
+/**
+ * Web Worker for translate: runs model load + inference off the main thread.
+ */
+import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
+import type { TranslationResult } from "./lib/translator";
+import { isTranslatorLoaded, loadTranslator, translateText } from "./lib/translator";
+
+type Args = {
+  text: string;
+  sourceLang: string;
+  targetLang: string;
+};
+
+self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
+  if (e.data.type !== "run") return;
+  const { text, sourceLang, targetLang } = e.data.args;
+
+  try {
+    if (!isTranslatorLoaded()) {
+      await loadTranslator((loaded, total, status) => {
+        const msg: WorkerMsg<TranslationResult> = { type: "progress", loaded, total, status };
+        self.postMessage(msg);
+      });
+    }
+
+    const result = await translateText(text, sourceLang, targetLang, (done, total) => {
+      const msg: WorkerMsg<TranslationResult> = { type: "chunk_progress", done, total };
+      self.postMessage(msg);
+    });
+
+    const msg: WorkerMsg<TranslationResult> = { type: "result", payload: result };
+    self.postMessage(msg);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error during translation.";
+    const msg: WorkerMsg<TranslationResult> = { type: "error", message };
+    self.postMessage(msg);
+  }
+};
