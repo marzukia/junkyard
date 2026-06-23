@@ -713,6 +713,13 @@ header {
     transform: none;
   }
 }
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
 .empty {
   padding: 48px 0;
   text-align: center;
