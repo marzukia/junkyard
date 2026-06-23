@@ -2,15 +2,22 @@
  * Markdown to HTML conversion using `marked` (Node-safe, no browser globals).
  *
  * Safety guarantees:
- * 1. Raw HTML blocks in the input are escaped (not passed through) so that
- *    `<script>` tags and other injected markup cannot survive as executable
- *    HTML in the output.
+ * 1. Raw HTML blocks and inline HTML in the input are escaped (not passed
+ *    through) so that `<script>` tags and other injected markup cannot
+ *    survive as executable HTML in the output.
  * 2. Links and images whose href/src uses a dangerous URI scheme
  *    (javascript:, data:, vbscript:) are neutralised: the href/src is
  *    replaced with "#". This defeats both plain and entity-obfuscated
  *    variants (e.g. `java&#115;cript:`) by decoding HTML entities before
  *    the scheme check. Safe schemes (http, https, mailto, relative paths,
  *    anchor fragments) pass through unmodified.
+ * 3. All user-controlled values interpolated into HTML attributes or text
+ *    content (href, src, title, alt, link label text) are passed through
+ *    escapeHtml before interpolation, closing attribute-breakout and
+ *    raw-HTML-in-label injection vectors. The link label (text) is treated
+ *    as plain text: in this version of marked, emphasis/strong inside a
+ *    link label is NOT recursively rendered -- the label arrives as the
+ *    literal source characters -- so escaping it is both safe and necessary.
  */
 import { marked, Renderer, type Tokens } from "marked";
 import { z } from "zod";
@@ -60,9 +67,11 @@ safeRenderer.html = ({ text }: { text: string }) => {
 safeRenderer.link = ({ href, title, text }: Tokens.Link) => {
   const safeHref = isSafeUri(href) ? escapeHtml(href) : "#";
   const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
-  // text may contain child HTML produced by marked (e.g. <strong>); do not
-  // double-escape it. The scheme-block + href escaping closes the vector.
-  return `<a href="${safeHref}"${titleAttr}>${text}</a>`;
+  // In this version of marked the link label (text) arrives as the raw source
+  // characters -- inline markup such as **bold** is NOT pre-rendered into child
+  // HTML. Escaping it is therefore both correct and required to close the
+  // raw-HTML-in-label injection vector.
+  return `<a href="${safeHref}"${titleAttr}>${escapeHtml(text)}</a>`;
 };
 
 safeRenderer.image = ({ href, title, text }: Tokens.Image) => {
@@ -85,7 +94,7 @@ export const markdownTool: ToolDef = {
   ops: [
     {
       name: "toHtml",
-      description: "Convert Markdown to HTML using marked (GFM enabled). Raw HTML is escaped (no <script> pass-through). Links and images with javascript:, data:, or vbscript: URIs are neutralised (href/src set to '#'), including entity-obfuscated variants.",
+      description: "Convert Markdown to HTML using marked (GFM enabled). All raw HTML in the input is escaped (no <script> pass-through, no inline event handlers). Links and images with javascript:, data:, or vbscript: URIs are neutralised (href/src set to '#'), including entity-obfuscated and whitespace-padded variants. Link label text, titles, and alt attributes are HTML-escaped before interpolation, closing attribute-breakout and raw-HTML-in-label injection vectors.",
       inputSchema: z.object({ markdown: z.string() }),
       run({ markdown }) {
         return { html: toHtml(markdown) };

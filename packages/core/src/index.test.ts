@@ -637,6 +637,262 @@ describe("markdown", () => {
     // i.e. title attribute must not end prematurely with a bare double-quote.
     expect(html).not.toContain('" title="say "');
   });
+
+  // ── Comprehensive XSS battery (round-4) ─────────────────────────────────────
+  // Each case asserts: no live <script, no live on<event>= attribute, no active
+  // javascript:/data:/vbscript: URI survives into the rendered HTML.
+
+  // Helper: assert a string has no live XSS sinks
+  // (used inline -- not extracted to a function so each test name is precise)
+
+  // --- LINK LABEL raw HTML injection (the round-4 fix) ---
+
+  it("[XSS-LL-1] raw <script> in link label is escaped to entities", () => {
+    const html = toHtml("[<script>alert(1)</script>](http://x)");
+    expect(html).not.toMatch(/<script[\s>]/i);
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("[XSS-LL-2] <img onerror> in link label is escaped, no live handler", () => {
+    const html = toHtml("[<img src=x onerror=alert(1)>](http://x)");
+    // The tag must be escaped so no literal <img with an onerror attribute appears
+    expect(html).not.toMatch(/<img\s[^>]*onerror/i);
+    expect(html).toContain("&lt;img");
+  });
+
+  it("[XSS-LL-3] smuggled <a href=javascript:> in link label has scheme escaped", () => {
+    const html = toHtml('[<a href="javascript:alert(1)">x</a>](http://ok)');
+    // The inner literal 'javascript:' must not appear unescaped as a live URI
+    expect(html).not.toMatch(/href="javascript:/i);
+    // The angle bracket of the injected <a must be escaped
+    expect(html).toContain("&lt;a");
+  });
+
+  it("[XSS-LL-4] <a href=javascript:> in image alt is escaped", () => {
+    const html = toHtml('![<a href="javascript:alert(1)">x</a>](http://x)');
+    expect(html).not.toMatch(/href="javascript:/i);
+    expect(html).toContain("&lt;a");
+  });
+
+  // --- raw HTML in various block/inline contexts ---
+
+  it("[XSS-BL-1] <script> standalone (raw HTML block) is escaped", () => {
+    const html = toHtml("<script>alert(1)</script>");
+    expect(html).not.toMatch(/<script[\s>]/i);
+  });
+
+  it("[XSS-BL-2] <script> in a heading is escaped", () => {
+    const html = toHtml("# <script>alert(1)</script>");
+    expect(html).not.toMatch(/<script[\s>]/i);
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("[XSS-BL-3] <script> in a list item is escaped", () => {
+    const html = toHtml("- <script>alert(1)</script>");
+    expect(html).not.toMatch(/<script[\s>]/i);
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("[XSS-BL-4] <script> in a blockquote is escaped", () => {
+    const html = toHtml("> <script>alert(1)</script>");
+    expect(html).not.toMatch(/<script[\s>]/i);
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("[XSS-BL-5] <script> inside emphasis is escaped", () => {
+    const html = toHtml("*<script>alert(1)</script>*");
+    expect(html).not.toMatch(/<script[\s>]/i);
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("[XSS-BL-6] <script> inside a code span renders as escaped text (not executed)", () => {
+    // Inside a code span the output must contain the escaped form visibly
+    const html = toHtml("`<script>alert(1)</script>`");
+    expect(html).not.toMatch(/<script[\s>]/i);
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("[XSS-BL-7] <script> in image alt attribute is escaped", () => {
+    const html = toHtml("![<script>alert(1)</script>](http://x)");
+    expect(html).not.toMatch(/<script[\s>]/i);
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("[XSS-BL-8] <script> in a link title attribute is escaped", () => {
+    const html = toHtml('[x](http://x "<script>alert(1)</script>")');
+    expect(html).not.toMatch(/<script[\s>]/i);
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  // --- event-handler injection via attribute breakout ---
+
+  it("[XSS-EV-1] onerror via raw <img onerror=> standalone is escaped", () => {
+    const html = toHtml('<img src=x onerror="alert(1)">');
+    expect(html).not.toMatch(/<img\s[^>]*onerror/i);
+  });
+
+  it("[XSS-EV-2] onmouseover via href quote breakout is escaped", () => {
+    const html = toHtml('[x](<https://ok.com/" onmouseover="alert(1)>)');
+    expect(html).not.toContain('" onmouseover=');
+  });
+
+  it("[XSS-EV-3] onerror via image title quote breakout is escaped", () => {
+    const html = toHtml('![a](https://ok.com "x\\" onerror=\\"alert(1)")');
+    expect(html).not.toContain('" onerror=');
+  });
+
+  it("[XSS-EV-4] onload via <img onload=> in link label is escaped", () => {
+    const html = toHtml("[<img src=x onload=alert(1)>](http://x)");
+    expect(html).not.toMatch(/<img\s[^>]*onload/i);
+    expect(html).toContain("&lt;img");
+  });
+
+  // --- dangerous URI schemes: link href ---
+
+  it("[XSS-URI-1] javascript: in link href is blocked (plain)", () => {
+    const html = toHtml("[x](javascript:alert(1))");
+    expect(html).not.toContain("javascript:");
+    expect(html).toContain('href="#"');
+  });
+
+  it("[XSS-URI-2] data: in link href is blocked", () => {
+    const html = toHtml("[x](data:text/html,<h1>hi</h1>)");
+    expect(html).not.toContain("data:");
+    expect(html).toContain('href="#"');
+  });
+
+  it("[XSS-URI-3] vbscript: in link href is blocked", () => {
+    const html = toHtml("[x](vbscript:msgbox(1))");
+    expect(html).not.toContain("vbscript:");
+    expect(html).toContain('href="#"');
+  });
+
+  it("[XSS-URI-4] JAVASCRIPT: uppercase in link href is blocked", () => {
+    const html = toHtml("[x](JAVASCRIPT:alert(1))");
+    expect(html).toContain('href="#"');
+  });
+
+  it("[XSS-URI-5] leading whitespace before javascript: is stripped and blocked", () => {
+    const html = toHtml("[x](  javascript:alert(1))");
+    expect(html).toContain('href="#"');
+  });
+
+  it("[XSS-URI-6] entity-obfuscated java&#115;cript: is blocked", () => {
+    const html = toHtml("[x](java&#115;cript:alert(1))");
+    expect(html).not.toContain("javascript:");
+    expect(html).toContain('href="#"');
+  });
+
+  it("[XSS-URI-7] entity-obfuscated &#106;avascript: is blocked", () => {
+    const html = toHtml("[x](&#106;avascript:alert(1))");
+    expect(html).not.toContain("javascript:");
+    expect(html).toContain('href="#"');
+  });
+
+  it("[XSS-URI-8] &colon; entity in javascript&colon; is blocked", () => {
+    const html = toHtml("[x](javascript&colon;alert(1))");
+    expect(html).toContain('href="#"');
+  });
+
+  // --- dangerous URI schemes: image src ---
+
+  it("[XSS-URI-9] javascript: in image src is blocked", () => {
+    const html = toHtml("![alt](javascript:alert(1))");
+    expect(html).not.toContain("javascript:");
+    expect(html).toContain('src="#"');
+  });
+
+  it("[XSS-URI-10] data: in image src is blocked", () => {
+    const html = toHtml("![alt](data:image/png;base64,abc)");
+    expect(html).not.toContain("data:");
+    expect(html).toContain('src="#"');
+  });
+
+  it("[XSS-URI-11] vbscript: in image src is blocked", () => {
+    const html = toHtml("![alt](vbscript:msgbox(1))");
+    expect(html).not.toContain("vbscript:");
+    expect(html).toContain('src="#"');
+  });
+
+  // --- autolink dangerous scheme ---
+
+  it("[XSS-URI-12] autolink <javascript:...> is neutralised", () => {
+    const html = toHtml("<javascript:alert(1)>");
+    // Either href is '#' or the URI does not appear as a live href value
+    const hasLiveJsHref = /href="javascript:/i.test(html);
+    expect(hasLiveJsHref).toBe(false);
+  });
+
+  // --- nested / smuggled vectors ---
+
+  it("[XSS-NS-1] javascript: link nested inside a link label is fully escaped", () => {
+    const html = toHtml('[<a href="javascript:alert(1)">click</a>](https://safe.com)');
+    expect(html).not.toMatch(/href="javascript:/i);
+  });
+
+  it("[XSS-NS-2] javascript: link inside image alt is escaped", () => {
+    const html = toHtml('![<a href="javascript:alert(1)">x</a>](https://safe.com/img.png)');
+    expect(html).not.toMatch(/href="javascript:/i);
+  });
+
+  // --- sabotage check: escapeHtml on link label must be required ---
+  // This test documents and enforces the invariant: if escapeHtml were removed
+  // from the link renderer's text interpolation, this test would fail.
+  // (The test itself uses the same assertion as XSS-LL-1; its value is as
+  //  documentation of the perturbation that must fail without the fix.)
+  it("[XSS-SAB-1] link label with raw <script> is escaped (sabotage-guard)", () => {
+    // Without escapeHtml(text) in safeRenderer.link, this would produce a live script.
+    const html = toHtml("[<script>xss</script>](https://x.com)");
+    expect(html).not.toMatch(/<script[\s>]/i);
+    expect(html).toContain("&lt;script");
+  });
+
+  // --- POSITIVE cases: safe inputs that must pass through unmodified ---
+
+  it("[XSS-POS-1] normal https:// link renders correctly", () => {
+    const html = toHtml("[link](https://example.com)");
+    expect(html).toContain('href="https://example.com"');
+    expect(html).toContain(">link<");
+  });
+
+  it("[XSS-POS-2] mailto: link is preserved", () => {
+    const html = toHtml("[email](mailto:user@example.com)");
+    expect(html).toContain('href="mailto:user@example.com"');
+  });
+
+  it("[XSS-POS-3] relative link is preserved", () => {
+    const html = toHtml("[page](/about)");
+    expect(html).toContain('href="/about"');
+  });
+
+  it("[XSS-POS-4] anchor fragment link is preserved", () => {
+    const html = toHtml("[section](#intro)");
+    expect(html).toContain('href="#intro"');
+  });
+
+  it("[XSS-POS-5] plain text link label renders correctly", () => {
+    const html = toHtml("[plain](https://example.com)");
+    expect(html).toContain(">plain<");
+  });
+
+  it("[XSS-POS-6] link label with ** (bold markup) renders as literal text, not a script", () => {
+    // In this marked version, emphasis inside a link label is not rendered;
+    // the label arrives as raw source. **bold** becomes the literal text.
+    const html = toHtml("[**bold**](https://example.com)");
+    expect(html).toContain("**bold**");
+    expect(html).not.toMatch(/<script[\s>]/i);
+  });
+
+  it("[XSS-POS-7] normal image with safe https src renders correctly", () => {
+    const html = toHtml("![photo](https://example.com/img.png)");
+    expect(html).toContain('src="https://example.com/img.png"');
+    expect(html).toContain('alt="photo"');
+  });
+
+  it("[XSS-POS-8] plain text paragraph renders without escaping regular text", () => {
+    const html = toHtml("Hello, world!");
+    expect(html).toContain("Hello, world!");
+  });
 });
 
 // ── QR ────────────────────────────────────────────────────────────────────────
