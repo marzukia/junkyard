@@ -1,0 +1,18 @@
+import type { JunkyardApp } from "../../scripts/catalogue-schema";
+
+export const app: JunkyardApp = {
+  slug: "regex",
+  name: "Regex Tester",
+  category: "text",
+  order: 18,
+  tagline: "Live matches, groups & explanation",
+  description: "Free regex tester and playground. Test patterns live, highlight all matches and capture groups, toggle flags, see a plain-English explanation, preview replacements. No signup, no upload, runs entirely in your browser. A regex101 alternative.",
+  incumbent: "regex101",
+  path: "/regex/",
+  runtime: "client",
+  mcp: {
+    exposed: true,
+    lib: "src/lib/regex.ts",
+    tools: [],
+  },
+};

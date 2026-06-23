@@ -1,0 +1,18 @@
+import type { JunkyardApp } from "../../scripts/catalogue-schema";
+
+export const app: JunkyardApp = {
+  slug: "units",
+  name: "Unit Converter",
+  category: "docs",
+  order: 36,
+  tagline: "Length, weight, temperature & more",
+  description: "Free unit converter: length, mass, temperature, area, volume, speed, data, time, pressure & energy. Metric to imperial, instant results, runs entirely in your browser, no signup, no upload.",
+  incumbent: "Google",
+  path: "/units/",
+  runtime: "client",
+  mcp: {
+    exposed: true,
+    lib: "src/lib/units.ts",
+    tools: [],
+  },
+};

@@ -1,0 +1,18 @@
+import type { JunkyardApp } from "../../scripts/catalogue-schema";
+
+export const app: JunkyardApp = {
+  slug: "markdown",
+  name: "Markdown",
+  category: "text",
+  order: 16,
+  tagline: "Write Markdown with live preview",
+  description: "Free online markdown editor with live HTML preview. Write markdown, see rendered HTML instantly. Export HTML, copy to clipboard, toolbar for bold/headings/links/code. No signup, no upload, runs entirely in your browser. A Dillinger and StackEdit alternative.",
+  incumbent: "StackEdit",
+  path: "/markdown/",
+  runtime: "client",
+  mcp: {
+    exposed: true,
+    lib: "src/lib/markdown.ts",
+    tools: [],
+  },
+};
