@@ -1,4 +1,5 @@
 export type Yard = "image" | "text" | "ai" | "docs";
+// keep in sync with scripts/catalogue-schema.ts AppTag
 export type AppTag = "webgpu" | "on-device-ai" | "large-download" | "beta";
 
 export interface Tool {
