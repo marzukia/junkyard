@@ -55,6 +55,24 @@ describe("parseSkills", () => {
     const result = parseSkills("  Docker ,  Kubernetes  ");
     expect(result).toEqual(["Docker", "Kubernetes"]);
   });
+
+  it("preserves multi-char tokens like C++ intact", () => {
+    // Splits only on comma/newline — the '+' chars must survive untouched
+    expect(parseSkills("C++, Python")).toEqual(["C++", "Python"]);
+  });
+
+  it("preserves C# intact", () => {
+    expect(parseSkills("C#, Java, Go")).toEqual(["C#", "Java", "Go"]);
+  });
+
+  it("preserves .NET intact", () => {
+    expect(parseSkills(".NET, Node.js, TypeScript")).toEqual([".NET", "Node.js", "TypeScript"]);
+  });
+
+  it("handles mixed comma and newline delimiters with special tokens", () => {
+    const result = parseSkills("C++\nC#\n.NET, Node.js");
+    expect(result).toEqual(["C++", "C#", ".NET", "Node.js"]);
+  });
 });
 
 describe("hasContactInfo", () => {

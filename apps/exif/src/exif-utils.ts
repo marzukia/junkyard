@@ -91,13 +91,17 @@ export function getPrivacyVerdict(exif: Record<string, unknown>): PrivacyVerdict
 /**
  * Format a decimal GPS coordinate to a human-readable DMS string.
  * e.g. formatDms(37.7749, "lat") → "37° 46′ 29.64″ N"
+ *
+ * Minutes are zero-padded to 2 digits; seconds use toFixed(2) with 5-character
+ * zero-padding (e.g. "09.50") so both components format consistently.
  */
 export function formatDms(decimal: number, axis: "lat" | "lon"): string {
   const abs = Math.abs(decimal);
   const deg = Math.floor(abs);
   const minFull = (abs - deg) * 60;
   const min = Math.floor(minFull);
-  const sec = ((minFull - min) * 60).toFixed(2);
+  const sec = ((minFull - min) * 60).toFixed(2).padStart(5, "0");
+  const minStr = String(min).padStart(2, "0");
 
   let dir: string;
   if (axis === "lat") {
@@ -106,7 +110,7 @@ export function formatDms(decimal: number, axis: "lat" | "lon"): string {
     dir = decimal >= 0 ? "E" : "W";
   }
 
-  return `${deg}° ${min}′ ${sec}″ ${dir}`;
+  return `${deg}° ${minStr}′ ${sec}″ ${dir}`;
 }
 
 /**
