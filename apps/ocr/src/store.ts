@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { OcrWord } from "./ocrPdfUtils";
 import { loadPersistedLanguage } from "./ocrUtils";
 
 export type OcrStatus = "idle" | "loading" | "running" | "done" | "error";
@@ -46,6 +47,8 @@ export interface OcrState {
   confidence: number; // 0-100
   /** Low-confidence words for the current result. */
   lowConfWords: Array<{ text: string; confidence: number }>;
+  /** Word-level bounding box data for searchable PDF export. Empty if not available. */
+  ocrWords: OcrWord[];
 
   // UI
   copyDone: boolean;
@@ -63,7 +66,8 @@ export interface OcrState {
   setResult: (
     text: string,
     confidence: number,
-    lowConfWords?: Array<{ text: string; confidence: number }>
+    lowConfWords?: Array<{ text: string; confidence: number }>,
+    ocrWords?: OcrWord[]
   ) => void;
   setQueueItemResult: (id: string, text: string, confidence: number, errorMsg?: string) => void;
   setEditedText: (text: string) => void;
@@ -92,6 +96,7 @@ const initialState = {
   editedText: "",
   confidence: 0,
   lowConfWords: [] as Array<{ text: string; confidence: number }>,
+  ocrWords: [] as OcrWord[],
   copyDone: false,
   showWordHighlights: false,
 };
@@ -180,6 +185,7 @@ export const useOcrStore = create<OcrState>((set, get) => ({
       confidence: activeItem.confidence,
       cropRect: null,
       lowConfWords: [],
+      ocrWords: [],
     });
   },
 
@@ -197,6 +203,7 @@ export const useOcrStore = create<OcrState>((set, get) => ({
       confidence: item.confidence,
       cropRect: null,
       lowConfWords: [],
+      ocrWords: [],
       progress: 0,
       progressMessage: "",
     });
@@ -215,7 +222,7 @@ export const useOcrStore = create<OcrState>((set, get) => ({
 
   setProgress: (progress, progressMessage) => set({ progress, progressMessage }),
 
-  setResult: (rawText, confidence, lowConfWords = []) => {
+  setResult: (rawText, confidence, lowConfWords = [], ocrWords = []) => {
     const state = get();
     // Also update the active queue item
     const queue = state.queue.map((item, i) =>
@@ -230,6 +237,7 @@ export const useOcrStore = create<OcrState>((set, get) => ({
       status: "done",
       progress: 100,
       lowConfWords,
+      ocrWords,
       queue,
     });
   },
