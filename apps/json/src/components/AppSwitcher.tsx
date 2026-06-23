@@ -17,7 +17,13 @@ const CATEGORY_LABELS: Record<string, string> = {
   docs: "Docs & Utility",
 };
 
-const CATEGORY_ORDER = ["image", "text", "ai", "docs"];
+// Humanize an unknown category id: capitalize each word, replace dashes with spaces.
+function humanizeCategory(cat: string): string {
+  return cat
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
 
 function ArrowLeftIcon() {
   return (
@@ -63,22 +69,26 @@ export function AppSwitcher() {
   const menuRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLInputElement>(null);
 
-  // Fetch catalogue on mount
+  // Fetch catalogue on mount; abort on unmount to prevent setState after unmount.
   useEffect(() => {
-    fetch("/catalogue.json")
+    const controller = new AbortController();
+    fetch("/catalogue.json", { signal: controller.signal })
       .then((r) => r.json())
       .then((data: CatalogueEntry[]) => {
         setTools(data.sort((a, b) => a.order - b.order));
       })
-      .catch(() => {
-        // Degrade gracefully: dashboard link still renders, menu list omitted
+      .catch((err) => {
+        // Abort errors are expected on unmount; ignore them.
+        if (err instanceof Error && err.name === "AbortError") return;
+        // Other errors: degrade gracefully - dashboard link still renders.
       });
+    return () => controller.abort();
   }, []);
 
-  // Close on outside click
+  // Close on outside click/touch (pointerdown covers mouse + touch).
   useEffect(() => {
     if (!open) return;
-    function handleClick(e: MouseEvent) {
+    function handlePointer(e: PointerEvent) {
       if (
         menuRef.current &&
         !menuRef.current.contains(e.target as Node) &&
@@ -88,11 +98,11 @@ export function AppSwitcher() {
         setOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("pointerdown", handlePointer);
+    return () => document.removeEventListener("pointerdown", handlePointer);
   }, [open]);
 
-  // Close on Escape; focus back to button
+  // Close on Escape; restore focus to trigger button.
   useEffect(() => {
     if (!open) return;
     function handleKey(e: KeyboardEvent) {
@@ -105,7 +115,7 @@ export function AppSwitcher() {
     return () => document.removeEventListener("keydown", handleKey);
   }, [open]);
 
-  // Move focus into filter when menu opens
+  // Move focus into filter when menu opens.
   useEffect(() => {
     if (open) {
       filterRef.current?.focus();
@@ -125,12 +135,89 @@ export function AppSwitcher() {
       )
     : tools;
 
-  // Group by category in canonical order
-  const groups = CATEGORY_ORDER.map((cat) => ({
+  // Derive category order from the sorted catalogue (first-seen order by `order` field).
+  // This ensures unknown future categories are never silently dropped.
+  const categoryOrder: string[] = [];
+  for (const t of filtered) {
+    if (!categoryOrder.includes(t.category)) {
+      categoryOrder.push(t.category);
+    }
+  }
+
+  const groups = categoryOrder.map((cat) => ({
     key: cat,
-    label: CATEGORY_LABELS[cat] ?? cat,
+    label: CATEGORY_LABELS[cat] ?? humanizeCategory(cat),
     items: filtered.filter((t) => t.category === cat),
-  })).filter((g) => g.items.length > 0);
+  }));
+
+  // Flat list of all item elements for roving tabindex / arrow-key nav.
+  const allItems = groups.flatMap((g) => g.items);
+
+  function focusItemByIndex(idx: number) {
+    if (idx < 0 || idx >= allItems.length) return;
+    const slug = allItems[idx].slug;
+    const el = menuRef.current?.querySelector<HTMLAnchorElement>(
+      `[data-slug="${slug}"]`,
+    );
+    el?.focus();
+  }
+
+  function handleFilterKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      focusItemByIndex(0);
+    }
+  }
+
+  function handleItemKeyDown(
+    e: React.KeyboardEvent<HTMLAnchorElement>,
+    idx: number,
+  ) {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (idx + 1 < allItems.length) {
+        focusItemByIndex(idx + 1);
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (idx === 0) {
+        filterRef.current?.focus();
+      } else {
+        focusItemByIndex(idx - 1);
+      }
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      focusItemByIndex(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      focusItemByIndex(allItems.length - 1);
+    }
+    // Tab: let it fall through; the focus-trap below handles it.
+  }
+
+  // Focus trap: prevent Tab from escaping the open menu.
+  function handleMenuKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key !== "Tab") return;
+    const focusable = Array.from(
+      menuRef.current?.querySelectorAll<HTMLElement>(
+        'input, a[href], button, [tabindex]:not([tabindex="-1"])',
+      ) ?? [],
+    ).filter((el) => !el.hasAttribute("disabled"));
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  }
 
   function toggle() {
     if (open) {
@@ -144,7 +231,8 @@ export function AppSwitcher() {
 
   return (
     <div className="jy-switcher">
-      <a href="/" className="jy-switcher__back" aria-label="Back to dashboard">
+      {/* Drop aria-label so visible "Dashboard" text is the accessible name (WCAG 2.5.3). */}
+      <a href="/" className="jy-switcher__back">
         <ArrowLeftIcon />
         <span>Dashboard</span>
       </a>
@@ -155,7 +243,7 @@ export function AppSwitcher() {
           type="button"
           className="jy-switcher__trigger"
           onClick={toggle}
-          aria-haspopup="true"
+          aria-haspopup="dialog"
           aria-expanded={open}
         >
           <span>All tools</span>
@@ -163,7 +251,14 @@ export function AppSwitcher() {
         </button>
 
         {open && (
-          <div ref={menuRef} className="jy-switcher__menu" role="dialog" aria-label="All tools">
+          <div
+            ref={menuRef}
+            className="jy-switcher__menu"
+            role="dialog"
+            aria-label="All tools"
+            aria-modal="true"
+            onKeyDown={handleMenuKeyDown}
+          >
             <div className="jy-switcher__filter-wrap">
               <input
                 ref={filterRef}
@@ -173,6 +268,7 @@ export function AppSwitcher() {
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
                 aria-label="Filter tools"
+                onKeyDown={handleFilterKeyDown}
               />
             </div>
 
@@ -184,6 +280,7 @@ export function AppSwitcher() {
               <div key={group.key} className="jy-switcher__group">
                 <div className="jy-switcher__group-label">{group.label}</div>
                 {group.items.map((tool) => {
+                  const globalIdx = allItems.indexOf(tool);
                   const isActive =
                     currentPath === tool.path ||
                     currentPath.startsWith(tool.path);
@@ -191,12 +288,15 @@ export function AppSwitcher() {
                     <a
                       key={tool.slug}
                       href={tool.path}
+                      data-slug={tool.slug}
                       className={
                         "jy-switcher__item" +
                         (isActive ? " jy-switcher__item--active" : "")
                       }
                       aria-current={isActive ? "page" : undefined}
+                      tabIndex={0}
                       onClick={() => setOpen(false)}
+                      onKeyDown={(e) => handleItemKeyDown(e, globalIdx)}
                     >
                       <span className="jy-switcher__item-name">{tool.name}</span>
                       <span className="jy-switcher__item-tag">{tool.tagline}</span>
