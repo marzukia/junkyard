@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sign.mrzk.io/sitemap.xml
+Sitemap: https://junkyard.mrzk.io/sign/sitemap.xml
