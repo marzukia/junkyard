@@ -2,6 +2,7 @@ import QRCode from "qrcode";
 
 export type ErrorCorrectionLevel = "L" | "M" | "Q" | "H";
 export type DotStyle = "square" | "rounded" | "dots" | "classy";
+export type EyeStyle = "square" | "rounded" | "circle" | "leaf";
 
 export interface QROptions {
   text: string;
@@ -9,6 +10,7 @@ export interface QROptions {
   bgColor: string;
   errorCorrectionLevel: ErrorCorrectionLevel;
   dotStyle: DotStyle;
+  eyeStyle?: EyeStyle;
   logoDataUrl?: string;
   logoSizeRatio?: number;
 }
@@ -49,6 +51,7 @@ export async function renderQRToCanvas(
     bgColor,
     errorCorrectionLevel,
     dotStyle,
+    eyeStyle = "square",
     logoDataUrl,
     logoSizeRatio = 0.22,
   } = opts;
@@ -66,9 +69,10 @@ export async function renderQRToCanvas(
     errorCorrectionLevel,
   });
 
-  // 2. Apply dot style via pixel manipulation if not plain square
-  if (dotStyle !== "square") {
-    applyDotStyle(canvas, fgColor, bgColor, dotStyle);
+  // 2. Apply dot style + eye style via pixel/canvas manipulation
+  const needsRestyle = dotStyle !== "square" || eyeStyle !== "square";
+  if (needsRestyle) {
+    applyDotStyle(canvas, fgColor, bgColor, dotStyle, eyeStyle);
   }
 
   // 3. Overlay logo if provided
@@ -80,14 +84,19 @@ export async function renderQRToCanvas(
 }
 
 /**
- * Post-processes the canvas to restyle QR dots.
+ * Post-processes the canvas to restyle QR dots and eye (finder pattern) shapes.
  * Reads existing dark pixels, clears canvas, re-draws with new shape per module.
+ *
+ * Eye styling draws each of the three 7x7 finder pattern blocks as a single
+ * composed shape rather than per-module dots, enabling distinct styling from
+ * the data modules while preserving scanner-readable finder patterns.
  */
 function applyDotStyle(
   canvas: HTMLCanvasElement,
   fgColor: string,
   bgColor: string,
-  style: DotStyle
+  style: DotStyle,
+  eyeStyle: EyeStyle
 ): void {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -151,6 +160,35 @@ function applyDotStyle(
     }
   }
 
+  // The quiet zone margin (in modules). qrcode lib default is 2.
+  const margin = Math.round(firstDark / moduleSize);
+
+  // Total QR modules = cols - 2*margin
+  const qrModules = cols - 2 * margin;
+
+  // Finder pattern regions (in grid coordinates, which include margin):
+  //   top-left:     rows [margin, margin+7), cols [margin, margin+7)
+  //   top-right:    rows [margin, margin+7), cols [margin+qrModules-7, margin+qrModules)
+  //   bottom-left:  rows [margin+qrModules-7, margin+qrModules), cols [margin, margin+7)
+  const finderSize = 7;
+  const tlRow = margin;
+  const tlCol = margin;
+  const trRow = margin;
+  const trCol = margin + qrModules - finderSize;
+  const blRow = margin + qrModules - finderSize;
+  const blCol = margin;
+
+  /** Returns true if (row, col) is within a 7x7 finder block. */
+  function isFinderModule(row: number, col: number): boolean {
+    const inTL =
+      row >= tlRow && row < tlRow + finderSize && col >= tlCol && col < tlCol + finderSize;
+    const inTR =
+      row >= trRow && row < trRow + finderSize && col >= trCol && col < trCol + finderSize;
+    const inBL =
+      row >= blRow && row < blRow + finderSize && col >= blCol && col < blCol + finderSize;
+    return inTL || inTR || inBL;
+  }
+
   // Redraw with style
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, size, size);
@@ -162,6 +200,10 @@ function applyDotStyle(
   for (let row = 0; row < cols; row++) {
     for (let col = 0; col < cols; col++) {
       if (!grid[row][col]) continue;
+
+      // Finder modules are drawn as composed shapes below; skip per-module here
+      if (eyeStyle !== "square" && isFinderModule(row, col)) continue;
+
       const cx = col * moduleSize + moduleSize / 2;
       const cy = row * moduleSize + moduleSize / 2;
 
@@ -194,8 +236,126 @@ function applyDotStyle(
           ctx.arc(cx, cy, dotR, 0, Math.PI * 2);
           ctx.fill();
         }
+      } else {
+        // square: plain rect
+        const x = cx - moduleSize / 2 + pad;
+        const y = cy - moduleSize / 2 + pad;
+        const w = moduleSize - pad * 2;
+        ctx.fillRect(x, y, w, w);
       }
     }
+  }
+
+  // Draw finder patterns as composed shapes when eyeStyle is not square
+  if (eyeStyle !== "square") {
+    const finderOrigins = [
+      { row: tlRow, col: tlCol },
+      { row: trRow, col: trCol },
+      { row: blRow, col: blCol },
+    ];
+    for (const origin of finderOrigins) {
+      drawFinderEye(ctx, origin.row, origin.col, moduleSize, fgColor, bgColor, eyeStyle);
+    }
+  }
+}
+
+/**
+ * Draws a single 7x7 finder pattern eye at the given grid origin (row, col)
+ * using the specified eye style.
+ *
+ * A finder pattern is:
+ *   - Outer 7x7 dark ring (1 module thick border)
+ *   - 1-module-wide light separator (implicit - bgColor fill inside outer ring)
+ *   - Inner 3x3 dark square
+ */
+function drawFinderEye(
+  ctx: CanvasRenderingContext2D,
+  originRow: number,
+  originCol: number,
+  moduleSize: number,
+  fgColor: string,
+  bgColor: string,
+  eyeStyle: EyeStyle
+): void {
+  const x = originCol * moduleSize;
+  const y = originRow * moduleSize;
+  const outerSize = 7 * moduleSize;
+  const innerOffset = 2 * moduleSize; // separator is 1 module, inner starts at offset 2
+  const innerSize = 3 * moduleSize;
+
+  ctx.fillStyle = fgColor;
+
+  if (eyeStyle === "rounded") {
+    const outerR = moduleSize * 1.5;
+    const innerR = moduleSize * 0.6;
+
+    // Outer ring: draw filled rounded rect then punch hole with bg
+    ctx.beginPath();
+    ctx.roundRect(x, y, outerSize, outerSize, outerR);
+    ctx.fill();
+
+    // Punch inner area (light separator + inner square area) with bgColor
+    ctx.fillStyle = bgColor;
+    ctx.beginPath();
+    ctx.roundRect(x + moduleSize, y + moduleSize, 5 * moduleSize, 5 * moduleSize, outerR * 0.5);
+    ctx.fill();
+
+    // Draw inner 3x3 filled square
+    ctx.fillStyle = fgColor;
+    ctx.beginPath();
+    ctx.roundRect(x + innerOffset, y + innerOffset, innerSize, innerSize, innerR);
+    ctx.fill();
+  } else if (eyeStyle === "circle") {
+    const outerCx = x + outerSize / 2;
+    const outerCy = y + outerSize / 2;
+    const outerR = outerSize / 2;
+    const gapR = outerSize / 2 - moduleSize;
+    const innerR = innerSize / 2;
+
+    // Outer ring as annulus: filled circle then bg circle to punch hole
+    ctx.beginPath();
+    ctx.arc(outerCx, outerCy, outerR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = bgColor;
+    ctx.beginPath();
+    ctx.arc(outerCx, outerCy, gapR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Inner dot as circle
+    ctx.fillStyle = fgColor;
+    ctx.beginPath();
+    ctx.arc(outerCx, outerCy, innerR, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (eyeStyle === "leaf") {
+    // Leaf: outer ring has rounded corners only on the outer-top-left corner;
+    // inner square similarly has a single rounded corner (opposing corner).
+    // The resulting shape looks like a leaf/teardrop per finder eye.
+    const leafR = moduleSize * 2;
+
+    ctx.beginPath();
+    ctx.roundRect(x, y, outerSize, outerSize, [leafR, 0, leafR, 0]);
+    ctx.fill();
+
+    ctx.fillStyle = bgColor;
+    ctx.beginPath();
+    ctx.roundRect(x + moduleSize, y + moduleSize, 5 * moduleSize, 5 * moduleSize, [
+      leafR * 0.5,
+      0,
+      leafR * 0.5,
+      0,
+    ]);
+    ctx.fill();
+
+    ctx.fillStyle = fgColor;
+    ctx.beginPath();
+    ctx.roundRect(x + innerOffset, y + innerOffset, innerSize, innerSize, [
+      leafR * 0.25,
+      0,
+      leafR * 0.25,
+      0,
+    ]);
+    ctx.fill();
   }
 }
 
