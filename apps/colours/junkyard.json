@@ -4,7 +4,7 @@
   "category": "docs",
   "order": 37,
   "tagline": "Gradients, palettes & contrast",
-  "description": "Free online colour gradient and palette generator. Create stepped gradients with LAB/RGB/HSL interpolation, generate harmonious color palettes, copy hex/CSS. A fast coolors &amp; colordesigner alternative.",
+  "description": "Free online colour gradient and palette generator. Create stepped gradients with LAB/RGB/HSL interpolation, generate harmonious color palettes, copy hex/CSS. A fast coolors & colordesigner alternative.",
   "incumbent": "Coolors",
   "path": "/colours/",
   "runtime": "client",

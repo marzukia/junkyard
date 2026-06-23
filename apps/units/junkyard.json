@@ -4,7 +4,7 @@
   "category": "docs",
   "order": 36,
   "tagline": "Length, weight, temperature & more",
-  "description": "Free unit converter: length, mass, temperature, area, volume, speed, data, time, pressure &amp; energy. Metric to imperial, instant results, runs entirely in your browser, no signup, no upload.",
+  "description": "Free unit converter: length, mass, temperature, area, volume, speed, data, time, pressure & energy. Metric to imperial, instant results, runs entirely in your browser, no signup, no upload.",
   "incumbent": "Google",
   "path": "/units/",
   "runtime": "client",
