@@ -66,7 +66,7 @@ export function AppSwitcher() {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("");
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDialogElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLInputElement>(null);
 
   // Fetch catalogue on mount; abort on unmount to prevent setState after unmount.
@@ -122,7 +122,8 @@ export function AppSwitcher() {
     }
   }, [open]);
 
-  const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
+  const currentPath =
+    typeof window !== "undefined" ? window.location.pathname : "";
 
   const filterLower = filter.toLowerCase();
   const filtered = filterLower
@@ -130,7 +131,7 @@ export function AppSwitcher() {
         (t) =>
           t.name.toLowerCase().includes(filterLower) ||
           t.slug.toLowerCase().includes(filterLower) ||
-          t.tagline.toLowerCase().includes(filterLower)
+          t.tagline.toLowerCase().includes(filterLower),
       )
     : tools;
 
@@ -155,7 +156,9 @@ export function AppSwitcher() {
   function focusItemByIndex(idx: number) {
     if (idx < 0 || idx >= allItems.length) return;
     const slug = allItems[idx].slug;
-    const el = menuRef.current?.querySelector<HTMLAnchorElement>(`[data-slug="${slug}"]`);
+    const el = menuRef.current?.querySelector<HTMLAnchorElement>(
+      `[data-slug="${slug}"]`,
+    );
     el?.focus();
   }
 
@@ -166,7 +169,10 @@ export function AppSwitcher() {
     }
   }
 
-  function handleItemKeyDown(e: React.KeyboardEvent<HTMLAnchorElement>, idx: number) {
+  function handleItemKeyDown(
+    e: React.KeyboardEvent<HTMLAnchorElement>,
+    idx: number,
+  ) {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (idx + 1 < allItems.length) {
@@ -190,12 +196,12 @@ export function AppSwitcher() {
   }
 
   // Focus trap: prevent Tab from escaping the open menu.
-  function handleMenuKeyDown(e: React.KeyboardEvent<HTMLDialogElement>) {
+  function handleMenuKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (e.key !== "Tab") return;
     const focusable = Array.from(
       menuRef.current?.querySelectorAll<HTMLElement>(
-        'input, a[href], button, [tabindex]:not([tabindex="-1"])'
-      ) ?? []
+        'input, a[href], button, [tabindex]:not([tabindex="-1"])',
+      ) ?? [],
     ).filter((el) => !el.hasAttribute("disabled"));
     if (focusable.length === 0) return;
     const first = focusable[0];
@@ -245,11 +251,12 @@ export function AppSwitcher() {
         </button>
 
         {open && (
-          <dialog
+          <div
             ref={menuRef}
-            open
             className="jy-switcher__menu"
+            role="dialog"
             aria-label="All tools"
+            aria-modal="true"
             onKeyDown={handleMenuKeyDown}
           >
             <div className="jy-switcher__filter-wrap">
@@ -265,20 +272,27 @@ export function AppSwitcher() {
               />
             </div>
 
-            {groups.length === 0 && <div className="jy-switcher__empty">No tools match</div>}
+            {groups.length === 0 && (
+              <div className="jy-switcher__empty">No tools match</div>
+            )}
 
             {groups.map((group) => (
               <div key={group.key} className="jy-switcher__group">
                 <div className="jy-switcher__group-label">{group.label}</div>
                 {group.items.map((tool) => {
                   const globalIdx = allItems.indexOf(tool);
-                  const isActive = currentPath === tool.path || currentPath.startsWith(tool.path);
+                  const isActive =
+                    currentPath === tool.path ||
+                    currentPath.startsWith(tool.path);
                   return (
                     <a
                       key={tool.slug}
                       href={tool.path}
                       data-slug={tool.slug}
-                      className={`jy-switcher__item${isActive ? " jy-switcher__item--active" : ""}`}
+                      className={
+                        "jy-switcher__item" +
+                        (isActive ? " jy-switcher__item--active" : "")
+                      }
                       aria-current={isActive ? "page" : undefined}
                       tabIndex={0}
                       onClick={() => setOpen(false)}
@@ -291,7 +305,7 @@ export function AppSwitcher() {
                 })}
               </div>
             ))}
-          </dialog>
+          </div>
         )}
       </div>
     </div>
