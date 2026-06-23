@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>Cleanup, Free Cleanup.pictures Alternative, No Upload Needed</title>
+    <meta
+      name="description"
+      content="Erase objects and people from photos instantly in your browser, free, private, no upload. A Cleanup.pictures alternative that runs entirely client-side. No signup, no watermark, no data leaves your device."
+    />
+    <meta
+      name="keywords"
+      content="cleanup pictures alternative, free object remover, remove objects from photos online free, erase people from photos, object removal no upload, private photo cleanup, inpainting browser, content-aware fill free, remove background objects"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://junkyard.mrzk.io/cleanup/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Theme colour (light + dark) -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Cleanup" />
+    <meta property="og:title" content="Cleanup, Free Cleanup.pictures Alternative, No Upload Needed" />
+    <meta
+      property="og:description"
+      content="Erase objects and people from photos in your browser, free, private, no upload. Brush over anything you want gone. No signup, no watermark."
+    />
+    <meta property="og:url" content="https://junkyard.mrzk.io/cleanup/" />
+    <meta property="og:image" content="https://junkyard.mrzk.io/cleanup/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Cleanup, free in-browser object eraser, no upload required"
+    />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cleanup, Free Cleanup.pictures Alternative, No Upload Needed" />
+    <meta
+      name="twitter:description"
+      content="Erase objects from photos in your browser. Free, private, no upload, no signup. Brush to erase."
+    />
+    <meta name="twitter:image" content="https://junkyard.mrzk.io/cleanup/og.png" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Cleanup",
+            "url": "https://junkyard.mrzk.io/cleanup/",
+            "description": "Erase objects and people from photos instantly in your browser, free, private, no upload. Brush over anything you want gone. No signup, no watermark, no data leaves your device.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Object removal in browser",
+              "Brush-based mask painting",
+              "Classical inpainting (content-aware fill)",
+              "No upload, fully client-side",
+              "No signup required",
+              "No watermark",
+              "Download as PNG or JPEG",
+              "Private, images never leave your device",
+              "Cleanup.pictures alternative"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- No-flash dark-mode script -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
