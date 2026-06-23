@@ -86,7 +86,7 @@ jobs:
         # slugs registered in @junkyard/core TOOLS (must stay at 17).
         # Installs core deps first so the import succeeds in CI.
         run: |
-          cd packages/core && bun install --frozen-lockfile && cd ..
+          cd packages/core && bun install --frozen-lockfile && cd ../..
           bun ./scripts/check-core-vs-exposed.mjs
 
   build:
