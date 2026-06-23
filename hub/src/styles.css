@@ -176,6 +176,38 @@ header {
   display: none;
 }
 
+/* screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* header controls group */
+.hcontrols {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+.gh-link {
+  display: flex;
+  align-items: center;
+  color: var(--ink-mid);
+  text-decoration: none;
+  transition: color .15s;
+  line-height: 0;
+}
+.gh-link:hover {
+  color: var(--accent);
+}
+
 /* hero */
 .hero {
   display: grid;
