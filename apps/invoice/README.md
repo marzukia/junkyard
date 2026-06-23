@@ -30,7 +30,7 @@ npx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
-Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/invoice/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/invoice/` into `dist/invoice/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
+Part of the junkyard monorepo. Live at https://junkyard.sh/invoice/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/invoice/` into `dist/invoice/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
 
 ## Tech notes
 - PDF built with `pdf-lib` running entirely in the browser (no server-side rendering)

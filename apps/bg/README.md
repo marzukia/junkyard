@@ -32,7 +32,7 @@ npx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
-Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/bg/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/bg/` into `dist/bg/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
+Part of the junkyard monorepo. Live at https://junkyard.sh/bg/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/bg/` into `dist/bg/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
 
 ## Tech notes
 - RMBG-1.4 requires `numThreads=1` set on `env.backends.onnx.wasm` before pipeline creation; GitHub Pages cannot send COOP/COEP headers so SharedArrayBuffer is unavailable and multi-threaded WASM would crash

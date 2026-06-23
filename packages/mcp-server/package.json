@@ -12,5 +12,13 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0"
+  },
+  "description": "MCP stdio server exposing 17 junkyard tool categories (25 ops) for use with Claude Desktop, Claude Code, and any MCP-compatible client",
+  "license": "MIT",
+  "author": "Andryo Marzuki",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marzukia/junkyard.git",
+    "directory": "packages/mcp-server"
   }
 }

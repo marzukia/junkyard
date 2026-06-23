@@ -31,7 +31,7 @@ npx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
-Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/diff/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/diff/` into `dist/diff/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
+Part of the junkyard monorepo. Live at https://junkyard.sh/diff/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/diff/` into `dist/diff/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
 
 ## Tech notes
 - Wraps the `diff` npm package for LCS-based diffing; all type shaping and normalisation is in pure `diff.ts`
