@@ -159,12 +159,27 @@ describe("toBase64DataUri", () => {
     expect(uri).toMatch(/^data:image\/svg\+xml;base64,/);
   });
 
-  it("can be decoded back to the original", () => {
+  it("can be decoded back to the original ASCII SVG", () => {
     const svg = "<svg/>";
     const uri = toBase64DataUri(svg);
     const b64 = uri.replace("data:image/svg+xml;base64,", "");
-    // Should successfully atob without throwing
     expect(() => atob(b64)).not.toThrow();
+  });
+
+  it("round-trips a UTF-8 SVG with non-ASCII content correctly", () => {
+    // SVG containing non-ASCII characters (accented vowels, Unicode symbol).
+    // The old unescape()-based encode corrupted these; TextEncoder must preserve them.
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg"><text>café élève ☃</text></svg>';
+    const uri = toBase64DataUri(svg);
+    const b64 = uri.replace("data:image/svg+xml;base64,", "");
+    // Decode base64 back to UTF-8 bytes then to string via TextDecoder
+    const binaryStr = atob(b64);
+    const bytes = new Uint8Array(binaryStr.length);
+    for (let i = 0; i < binaryStr.length; i++) {
+      bytes[i] = binaryStr.charCodeAt(i);
+    }
+    const decoded = new TextDecoder().decode(bytes);
+    expect(decoded).toBe(svg);
   });
 });
 
