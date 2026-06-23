@@ -13,13 +13,13 @@ This means adding a tool is a single-file declaration. The hub, the nav switcher
 
 ## URL structure
 
-All tools are served under `junkyard.mrzk.io`:
+All tools are served under `junkyard.sh`:
 
 | URL | Content |
 |-----|---------|
-| `junkyard.mrzk.io/` | Hub landing page (built from `hub/`) |
-| `junkyard.mrzk.io/<slug>/` | Tool app (built from `apps/<slug>/` with `--base=/<slug>/`) |
-| `junkyard.mrzk.io/catalogue.json` | Full catalogue JSON (from `hub/public/catalogue.json`) |
+| `junkyard.sh/` | Hub landing page (built from `hub/`) |
+| `junkyard.sh/<slug>/` | Tool app (built from `apps/<slug>/` with `--base=/<slug>/`) |
+| `junkyard.sh/catalogue.json` | Full catalogue JSON (from `hub/public/catalogue.json`) |
 
 Each app is built independently with Vite's `--base` flag set to `/<slug>/`, so asset paths are self-contained within the subdirectory.
 

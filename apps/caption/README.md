@@ -31,7 +31,7 @@ npx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
-Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/caption/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/caption/` into `dist/caption/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
+Part of the junkyard monorepo. Live at https://junkyard.sh/caption/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/caption/` into `dist/caption/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
 
 ## Tech notes
 - `numThreads=1` forced on ONNX WASM backend before pipeline init (same pattern as bg/depth -- GitHub Pages has no COOP/COEP headers)

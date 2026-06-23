@@ -28,7 +28,7 @@ npx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
-Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/favicon/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/favicon/` into `dist/favicon/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
+Part of the junkyard monorepo. Live at https://junkyard.sh/favicon/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/favicon/` into `dist/favicon/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
 
 ## Tech notes
 - `favicon.ico` is synthesised by packing the 16, 32, and 48px canvases into the ICO binary format in-browser
