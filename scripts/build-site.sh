@@ -32,6 +32,9 @@ for d in "$ROOT"/apps/*/; do
   built=$((built + 1))
 done
 
+echo "==> Injecting Umami analytics into dist/"
+node "$ROOT/scripts/inject-umami.mjs"
+
 # Ensure CNAME is correct at root - defensive re-write in case an app build
 # somehow touched the dist root (it won't since each app uses --outDir to a
 # subdirectory, but be explicit).
