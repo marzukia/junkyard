@@ -14,8 +14,18 @@ import {
   resizeImageFile,
 } from "./lib/imageHelpers";
 import type { OutputFormat } from "./lib/imageHelpers";
-import { MODEL_SIZE_MB, isModelLoaded, loadModel, revokeResult, upscaleImage } from "./lib/upscale";
+import { MODEL_SIZE_MB, revokeResult } from "./lib/upscale";
 import type { ScaleFactor } from "./lib/upscale";
+import { useWorkerTask } from "./lib/workerTask";
+
+/** Shape returned by infer.worker.ts for upscale. */
+type UpscaleWorkerResult = {
+  imageBytes: ArrayBuffer;
+  width: number;
+  height: number;
+  resultSize: number;
+  format: OutputFormat;
+};
 import { useUpscaleStore } from "./store/upscaleStore";
 import "./styles/upscale.css";
 import { MobileWarning } from "./components/MobileWarning";
@@ -586,29 +596,41 @@ export function App() {
   // Large image interstitial: stored locally so it doesn't persist
   const [pendingLarge, setPendingLarge] = useState<PendingLargeImage | null>(null);
 
+  const { run: runWorker, cancel: cancelWorker } = useWorkerTask<
+    { file: File; scale: ScaleFactor; format: OutputFormat; quality: number },
+    UpscaleWorkerResult
+  >();
+
+  const handleCancel = useCallback(() => {
+    cancelWorker();
+    setPhase("idle");
+  }, [cancelWorker, setPhase]);
+
   const runUpscale = useCallback(
     async (file: File) => {
-      try {
-        if (!isModelLoaded()) {
-          setPhase("model-loading");
-          await loadModel((loaded, total, status) => {
+      setPhase("model-loading");
+      await runWorker(
+        new URL("./infer.worker.ts", import.meta.url),
+        { file, scale, format: outputFormat, quality: 0.88 },
+        {
+          onProgress: (loaded, total, status) => {
             setModelProgress(loaded, total, status);
-          });
+            setPhase("model-loading");
+          },
+          onResult: ({ imageBytes, width, height, resultSize: size, format }) => {
+            const blob = new Blob([imageBytes], {
+              type: format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp",
+            });
+            const outUrl = URL.createObjectURL(blob);
+            setResult(outUrl, width, height, size);
+          },
+          onError: (message) => {
+            setError(message);
+          },
         }
-        setPhase("processing");
-        const {
-          resultUrl: outUrl,
-          width,
-          height,
-          resultSize: size,
-        } = await upscaleImage(file, scale, outputFormat);
-        setResult(outUrl, width, height, size);
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : "Unknown error during processing.";
-        setError(msg);
-      }
+      );
     },
-    [scale, outputFormat, setPhase, setModelProgress, setResult, setError]
+    [scale, outputFormat, setPhase, setModelProgress, setResult, setError, runWorker]
   );
 
   const handleFile = useCallback(
@@ -822,6 +844,9 @@ export function App() {
               <p className="up-status-sub">
                 One-time download (~{MODEL_SIZE_MB} MB). Saved in your browser cache.
               </p>
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           )}
 
@@ -843,6 +868,9 @@ export function App() {
                   )}
                 </div>
               )}
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           )}
 

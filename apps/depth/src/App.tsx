@@ -3,13 +3,18 @@ import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import {
-  estimateDepth,
   exportRaw16bit,
-  isModelLoaded,
-  loadModel,
   renderDepthFromCache,
   revokeResult,
 } from "./lib/depthEstimation";
+import { useWorkerTask } from "./lib/workerTask";
+
+type DepthWorkerResult = {
+  imageBytes: ArrayBuffer;
+  width: number;
+  height: number;
+  normalisedDepth: Float32Array;
+};
 import { formatBytes, formatProgress, isSupportedImage, outputFilename } from "./lib/imageHelpers";
 import { useDepthStore } from "./store/depthStore";
 import "./styles/depth.css";
@@ -463,6 +468,16 @@ export function App() {
     prevInvert.current = invert;
   }, [colourMap, invert, phase, depthCache, resultUrl, setResultUrl]);
 
+  const { run: runWorker, cancel: cancelWorker } = useWorkerTask<
+    { file: File; colourMap: typeof colourMap; invert: boolean },
+    DepthWorkerResult
+  >();
+
+  const handleCancel = useCallback(() => {
+    cancelWorker();
+    setPhase("idle");
+  }, [cancelWorker, setPhase]);
+
   const handleFile = useCallback(
     async (file: File) => {
       if (!isSupportedImage(file)) {
@@ -490,24 +505,29 @@ export function App() {
       const url = URL.createObjectURL(file);
       setInputFile(file, url);
 
-      try {
-        if (!isModelLoaded()) {
-          setPhase("model-loading");
-          await loadModel((loaded, total, status) => {
+      setPhase("model-loading");
+      await runWorker(
+        new URL("./infer.worker.ts", import.meta.url),
+        { file, colourMap, invert },
+        {
+          onProgress: (loaded, total, status) => {
             setModelProgress(loaded, total, status);
-          });
+            setPhase("model-loading");
+          },
+          onResult: ({ imageBytes, width, height, normalisedDepth }) => {
+            const blob = new Blob([imageBytes], { type: "image/png" });
+            const outUrl = URL.createObjectURL(blob);
+            const cache = { normalised: normalisedDepth, width, height };
+            setResult(outUrl, cache);
+          },
+          onError: (message) => {
+            const msg = message || "An error occurred while generating the depth map. Please try another image.";
+            setError(msg);
+          },
         }
-        setPhase("processing");
-        const { resultUrl: outUrl, cache } = await estimateDepth(file, colourMap, invert);
-        setResult(outUrl, cache);
-      } catch (err) {
-        const raw = err instanceof Error ? err.message : "";
-        const msg =
-          raw || "An error occurred while generating the depth map. Please try another image.";
-        setError(msg);
-      }
+      );
     },
-    [colourMap, invert, setInputFile, setPhase, setModelProgress, setResult, setError]
+    [colourMap, invert, setInputFile, setPhase, setModelProgress, setResult, setError, runWorker]
   );
 
   // Cmd/Ctrl+Enter triggers upload when idle
@@ -614,6 +634,9 @@ export function App() {
               <p className="depth-status-sub">
                 One-time download (~25 MB). Saved in your browser cache.
               </p>
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           )}
 
@@ -623,6 +646,9 @@ export function App() {
               <div className="depth-spinner" aria-label="Processing..." />
               <p className="depth-status-label">Generating depth map...</p>
               {inputUrl && <img src={inputUrl} alt="Source" className="depth-thumb-preview" />}
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           )}
 

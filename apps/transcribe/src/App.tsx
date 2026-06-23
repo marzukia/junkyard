@@ -14,7 +14,12 @@ import {
   formatVTT,
   isSupportedAudio,
 } from "./lib/audioHelpers";
-import { MODEL_SIZE_MB, isModelLoaded, loadModel, transcribeFile } from "./lib/transcription";
+import { MODEL_SIZE_MB } from "./lib/transcription";
+import type { TranscriptionResult } from "./lib/transcription";
+import { useWorkerTask } from "./lib/workerTask";
+
+/** Track whether the model has been loaded at least once (persists across re-renders). */
+const modelEverLoaded = { current: false };
 import { LANGUAGE_OPTIONS, useTranscribeStore } from "./store/transcribeStore";
 import "./styles/transcribe.css";
 import { MobileWarning } from "./components/MobileWarning";
@@ -509,6 +514,17 @@ export function App() {
     return () => stopElapsedTimer();
   }, [stopElapsedTimer]);
 
+  const { run: runWorker, cancel: cancelWorker } = useWorkerTask<
+    { file: File; language?: string; translateToEnglish: boolean },
+    TranscriptionResult
+  >();
+
+  const handleCancel = useCallback(() => {
+    cancelWorker();
+    stopElapsedTimer();
+    setPhase("idle");
+  }, [cancelWorker, stopElapsedTimer, setPhase]);
+
   const runTranscription = useCallback(
     async (file: File) => {
       setInputFile(file);
@@ -517,47 +533,38 @@ export function App() {
       setMediaUrl(URL.createObjectURL(file));
       setSeekingTo(null);
 
-      try {
-        if (!isModelLoaded()) {
-          setPhase("model-loading");
-          await loadModel((loaded, total, status) => {
+      setPhase("model-loading");
+      startElapsedTimer(() => 0);
+      await runWorker(
+        new URL("./infer.worker.ts", import.meta.url),
+        { file, language: language !== "auto" ? language : undefined, translateToEnglish },
+        {
+          onProgress: (loaded, total, status) => {
             setModelProgress(loaded, total, status);
-          });
+            setPhase("model-loading");
+          },
+          onChunkProgress: (done) => {
+            setPhase("transcribing");
+            setTranscribeProgress({ elapsedSec: 0, chunksProcessed: done });
+          },
+          onResult: (result) => {
+            stopElapsedTimer();
+            modelEverLoaded.current = true;
+            setResult(result.text, result.chunks);
+            setActiveTab(result.chunks.length > 0 ? "timestamps" : "full");
+          },
+          onError: (message) => {
+            stopElapsedTimer();
+            setError(message);
+          },
         }
-        setPhase("decoding");
-        // Give the UI a tick to update before blocking decode
-        await new Promise((r) => setTimeout(r, 0));
-
-        setPhase("transcribing");
-        let chunksProcessed = 0;
-        // Elapsed timer runs on a 500ms interval; onChunk updates chunk count.
-        startElapsedTimer(() => chunksProcessed);
-        const updateProgress = (n: number) => {
-          chunksProcessed = n;
-        };
-
-        const result = await transcribeFile(
-          file,
-          undefined,
-          language !== "auto" ? language : undefined,
-          {
-            translateToEnglish,
-            onChunk: updateProgress,
-          }
-        );
-        stopElapsedTimer();
-        setResult(result.text, result.chunks);
-        setActiveTab(result.chunks.length > 0 ? "timestamps" : "full");
-      } catch (err) {
-        stopElapsedTimer();
-        const msg = err instanceof Error ? err.message : "Unknown error during transcription.";
-        setError(msg);
-      }
+      );
     },
     [
       setInputFile,
       setPhase,
       setModelProgress,
+      setTranscribeProgress,
       setResult,
       setError,
       language,
@@ -565,6 +572,7 @@ export function App() {
       startElapsedTimer,
       stopElapsedTimer,
       mediaUrl,
+      runWorker,
     ]
   );
 
@@ -577,8 +585,8 @@ export function App() {
         return;
       }
       setIsSample(false);
-      if (!isModelLoaded()) {
-        // Show the gate dialog before triggering the download
+      if (!modelEverLoaded.current) {
+        // Show the gate dialog before triggering the ~145 MB download
         setPendingFile(file);
         return;
       }
@@ -703,7 +711,7 @@ export function App() {
       <main className="site-main">
         <MobileWarning />
         <p className="tr-beta-note">
-          {isModelLoaded() ? (
+          {modelEverLoaded.current ? (
             <>
               <strong className="tr-model-ready">Model ready</strong> &mdash; offline, instant. Your
               files never leave your device.
@@ -778,6 +786,9 @@ export function App() {
               <p className="tr-status-sub">
                 One-time download (~{MODEL_SIZE_MB} MB). Saved in your browser cache.
               </p>
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           )}
 
@@ -791,6 +802,9 @@ export function App() {
                   {inputFile.name} &middot; {formatBytes(inputFile.size)}
                 </p>
               )}
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           )}
 
@@ -815,6 +829,9 @@ export function App() {
               <p className="tr-status-hint">
                 Long files can take a few minutes. The tab will stay active.
               </p>
+              <button type="button" className="btn-secondary" onClick={handleCancel}>
+                Cancel
+              </button>
             </div>
           )}
 
