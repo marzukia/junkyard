@@ -28,7 +28,7 @@ npx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
-Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/exif/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), building this app with `--base=/exif/` into `dist/exif/`. Umami analytics are injected at build from repo-root `umami-ids.txt`.
+Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/exif/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/exif/` into `dist/exif/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
 
 ## Tech notes
 - Uses the `exifr` library for broad format support (JPEG, TIFF, HEIC, RAW)

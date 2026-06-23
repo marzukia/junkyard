@@ -2,10 +2,10 @@
 
 Length, weight, temperature & more. Replaces Google. 100% client-side (no server, no upload, no account).
 
-Convert between units across 14 categories: length, mass, temperature, area, volume, speed, data, time, pressure, energy, angle, power, force, and fuel economy. Instant results, metric and imperial, with common conversions shown alongside the main result.
+Convert between units across 14 categories: length, mass, temperature, area, volume, speed, data, time, pressure, energy, angle, power, force, and fuel. Instant results, metric and imperial, with common conversions shown alongside the main result.
 
 ## Features
-- 14 categories: length, mass, temperature, area, volume, speed, data, time, pressure, energy, angle, power, force, fuel economy
+- 14 categories: length, mass, temperature, area, volume, speed, data, time, pressure, energy, angle, power, force, fuel
 - Temperature handled with full affine transforms (Celsius, Fahrenheit, Kelvin, Rankine)
 - Common conversions panel shows related results alongside the main output
 - Human-readable result formatting for very large and very small values
@@ -28,7 +28,7 @@ npx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
-Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/units/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), building this app with `--base=/units/` into `dist/units/`. Umami analytics are injected at build from repo-root `umami-ids.txt`.
+Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/units/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/units/` into `dist/units/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
 
 ## Tech notes
 - Base-unit strategy: every unit stores a `toBase` factor (value * toBase = base unit value); conversion is `value * fromUnit.toBase / toUnit.toBase`

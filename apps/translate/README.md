@@ -30,7 +30,7 @@ npx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
-Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/translate/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), building this app with `--base=/translate/` into `dist/translate/`. Umami analytics are injected at build from repo-root `umami-ids.txt`.
+Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/translate/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/translate/` into `dist/translate/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
 
 ## Tech notes
 - Model: `Xenova/nllb-200-distilled-600M` (~600 MB); all 200 FLORES-200 language codes are supported
