@@ -22,17 +22,22 @@ export function Toolbar({ query, onQuery, active, onFilter, searchRef }: Toolbar
   return (
     <div className="tools-top">
       <label className="search">
-        <span className="ic">&gt;</span>
+        <span className="ic" aria-hidden="true">
+          &gt;
+        </span>
         <input
           ref={searchRef}
           type="text"
+          aria-label="Search the yard"
           placeholder="search the yard…  try 'qr', 'pdf', 'image'"
           autoComplete="off"
           spellCheck={false}
           value={query}
           onChange={(e) => onQuery(e.target.value)}
         />
-        <span className="kbd">/</span>
+        <span className="kbd" aria-hidden="true">
+          /
+        </span>
       </label>
       <div className="filters">
         {chips.map((chip) => (
