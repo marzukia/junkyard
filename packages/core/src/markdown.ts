@@ -15,6 +15,7 @@
 import { marked, Renderer, type Tokens } from "marked";
 import { z } from "zod";
 import type { ToolDef } from "./types.js";
+import { escapeHtml } from "./util.js";
 
 // Schemes that must never appear in href or src attributes.
 const BLOCKED_SCHEMES = ["javascript:", "data:", "vbscript:"];
@@ -57,15 +58,17 @@ safeRenderer.html = ({ text }: { text: string }) => {
 };
 
 safeRenderer.link = ({ href, title, text }: Tokens.Link) => {
-  const safeHref = isSafeUri(href) ? href : "#";
-  const titleAttr = title ? ` title="${title}"` : "";
+  const safeHref = isSafeUri(href) ? escapeHtml(href) : "#";
+  const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+  // text may contain child HTML produced by marked (e.g. <strong>); do not
+  // double-escape it. The scheme-block + href escaping closes the vector.
   return `<a href="${safeHref}"${titleAttr}>${text}</a>`;
 };
 
 safeRenderer.image = ({ href, title, text }: Tokens.Image) => {
-  const safeSrc = isSafeUri(href) ? href : "#";
-  const titleAttr = title ? ` title="${title}"` : "";
-  return `<img src="${safeSrc}" alt="${text}"${titleAttr}>`;
+  const safeSrc = isSafeUri(href) ? escapeHtml(href) : "#";
+  const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+  return `<img src="${safeSrc}" alt="${escapeHtml(text)}"${titleAttr}>`;
 };
 
 marked.setOptions({ gfm: true, breaks: false });

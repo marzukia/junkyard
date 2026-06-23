@@ -22,10 +22,12 @@ export function testRegex(
 ): RegexTestResult {
   if (!pattern) return { matches: [], matchCount: 0, flags: "" };
 
-  // Always include 'g' for matchAll
+  // Always include 'g' for matchAll; include 'd' so match.indices is populated
+  // which gives us the correct positional index for each named group.
   const flagSet = new Set(flags.split("").filter(Boolean));
   flagSet.add("g");
-  const flagStr = ["g", "i", "m", "s", "u"].filter((f) => flagSet.has(f)).join("");
+  flagSet.add("d");
+  const flagStr = ["d", "g", "i", "m", "s", "u"].filter((f) => flagSet.has(f)).join("");
 
   const re = new RegExp(pattern, flagStr);
   const spans: MatchSpan[] = [];
@@ -38,16 +40,42 @@ export function testRegex(
 
     const groups: MatchSpan["groups"] = [];
     const namedGroups = m.groups ?? {};
-    const namedKeys = Object.keys(namedGroups);
+
+    // Build a map from group name -> positional index using match.indices.groups.
+    // This is correct even when two groups capture the same string value, because
+    // indices are position-based not value-based.
+    //
+    // The 'd' flag populates `indices` (ES2022 RegExp hasIndices). TypeScript's
+    // matchAll return type doesn't expose `.indices` directly, so we access it
+    // via an explicit structural type assertion.
+    type MatchWithIndices = {
+      indices?: Array<[number, number] | undefined> & { groups?: Record<string, [number, number] | undefined> };
+    };
+    const mIdx = (m as unknown as MatchWithIndices).indices;
+    const namedIndexMap = new Map<string, number>();
+    const indicesGroups = mIdx?.groups ?? {};
+    for (const name of Object.keys(indicesGroups)) {
+      // Find the positional index (1-based) whose span matches the named group span.
+      const namedSpan = indicesGroups[name];
+      if (namedSpan === undefined) continue;
+      for (let i = 1; i < m.length; i++) {
+        const span = mIdx?.[i];
+        if (span && span[0] === namedSpan[0] && span[1] === namedSpan[1]) {
+          if (!namedIndexMap.has(name)) {
+            namedIndexMap.set(name, i);
+            break;
+          }
+        }
+      }
+    }
 
     for (let i = 1; i < m.length; i++) {
       const val = m[i];
       groups.push({ index: i, value: val !== undefined ? val : null });
     }
 
-    for (const name of namedKeys) {
-      const namedVal = namedGroups[name] !== undefined ? namedGroups[name] : null;
-      const g = groups.find((x) => x.value === namedVal && x.name === undefined);
+    for (const [name, idx] of namedIndexMap) {
+      const g = groups.find((x) => x.index === idx);
       if (g) g.name = name;
     }
 

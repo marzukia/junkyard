@@ -215,6 +215,32 @@ describe("regex", () => {
     const r = testRegex("", "g", "hello");
     expect(r.matchCount).toBe(0);
   });
+
+  // Named-group mis-association regression tests (round-3).
+  // When two groups capture the same value the name must attach to the correct
+  // (second) group, not the first positional group with that value.
+
+  it("named group on second capture correctly identified when both groups match same value", () => {
+    // (x)(?<a>x) on "xx": group 1 = 'x' (unnamed), group 2 = 'x' (named 'a')
+    const r = testRegex("(x)(?<a>x)", "g", "xx");
+    expect(r.matchCount).toBe(1);
+    const grps = r.matches[0].groups;
+    // group at index 1 should be unnamed
+    const g1 = grps.find((g) => g.index === 1);
+    const g2 = grps.find((g) => g.index === 2);
+    expect(g1?.name).toBeUndefined();
+    // group at index 2 should carry the name 'a'
+    expect(g2?.name).toBe("a");
+    expect(g2?.value).toBe("x");
+  });
+
+  it("single named group still attaches correctly", () => {
+    const r = testRegex("(?<word>\\w+)", "g", "hello");
+    expect(r.matchCount).toBe(1);
+    const g = r.matches[0].groups.find((g) => g.name === "word");
+    expect(g?.value).toBe("hello");
+    expect(g?.index).toBe(1);
+  });
 });
 
 // ── Cron ──────────────────────────────────────────────────────────────────────
@@ -566,6 +592,50 @@ describe("markdown", () => {
   it("preserves relative link href", () => {
     const html = toHtml("[page](/about)");
     expect(html).toContain('href="/about"');
+  });
+
+  // Attribute-injection XSS regression tests (round-3)
+  // These verify that attribute values are HTML-escaped before interpolation,
+  // closing the breakout vectors that survived the round-2 scheme-block fix.
+
+  it("title breakout in link: script tag in title is escaped", () => {
+    // title="a\"><script>alert(1)</script>" must not emit a live <script>
+    const html = toHtml('[x](https://ok.com "a\\"><script>alert(1)</script>")');
+    expect(html).not.toMatch(/<script[\s>]/i);
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("title onerror breakout in image: onerror handler in title is escaped to entities", () => {
+    // title contains x" onerror="alert(1) -- the " must be escaped to &quot; so it
+    // does not close the attribute early and inject onerror as a live handler.
+    const html = toHtml('![a](https://ok.com "x\\" onerror=\\"alert(1)")');
+    // A raw unescaped " before onerror would produce: title="x" onerror="..."
+    // i.e. a literal '" onerror=' sequence in the HTML source.
+    // After escaping that " becomes &quot;, so the literal sequence must not appear.
+    expect(html).not.toContain('" onerror=');
+    // The &quot; entity must appear confirming the escape happened.
+    expect(html).toContain("&quot;");
+  });
+
+  it("href quote breakout: double-quote in https href is escaped to &quot;", () => {
+    // The scheme is https (safe), but a bare " would break out of href="..." and
+    // allow onmouseover to become a live attribute. After escaping it stays inside href.
+    const html = toHtml('[x](<https://ok.com/" onmouseover="alert(1)>)');
+    // A raw " breaking out would produce href="https://ok.com/" onmouseover="..."
+    // i.e. the literal '" onmouseover=' sequence between attributes.
+    // After escaping that " becomes &quot;, so the literal sequence must not appear.
+    expect(html).not.toContain('" onmouseover=');
+    // The &quot; entity must appear confirming the escape happened.
+    expect(html).toContain("&quot;");
+  });
+
+  it("double-quote in link title is escaped to &quot;", () => {
+    const html = toHtml('[link](https://example.com "say \\"hi\\"")');
+    expect(html).toContain("&quot;");
+    // A raw " in the title would close the attribute early and inject trailing markup.
+    // Verify the output does not contain a raw closing " mid-attribute followed by >.
+    // i.e. title attribute must not end prematurely with a bare double-quote.
+    expect(html).not.toContain('" title="say "');
   });
 });
 
