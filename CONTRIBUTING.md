@@ -1,6 +1,6 @@
 # Contributing to junkyard
 
-A monorepo of 44 free, client-side web tools served at `junkyard.mrzk.io/<slug>/`.
+A monorepo of 44 free, client-side web tools served at `junkyard.sh/<slug>/`.
 
 ## Repo layout
 
@@ -79,7 +79,7 @@ Copy the structure of an existing simple app (e.g. `apps/json/`) as a starting p
 apps/<slug>/
   src/
   public/
-    CNAME          # content: junkyard.mrzk.io  (single line, no newline)
+    CNAME          # GH Pages custom domain (see DEPLOY.md for the value)
     favicon.svg
     og.png         # 1200x630
     robots.txt
@@ -165,7 +165,7 @@ CI checks that all vendored copies match the canonical source via `git diff --ex
 
 ### 5. SEO and domain rules
 
-Apps must only reference `junkyard.mrzk.io` (not any `<slug>.mrzk.io` subdomain) in their `index.html`, `sitemap.xml`, and `robots.txt`. CI enforces this with a regex grep that fails the build on any stale per-app subdomain.
+Apps must only reference the main junkyard domain (not any per-tool `<slug>.mrzk.io` subdomain) in their `index.html`, `sitemap.xml`, and `robots.txt`. CI enforces this with a regex grep that fails the build on any stale per-app subdomain. See `DEPLOY.md` for the exact CI rule.
 
 ### 6. Testing conventions
 

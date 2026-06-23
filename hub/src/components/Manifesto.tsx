@@ -16,7 +16,6 @@ export function Manifesto() {
           <span>
             Built by <a href="https://mrzk.io">Andryo Marzuki</a>
           </span>
-          <a href="https://github.com/marzukia/junkyard">Source on GitHub</a>
           <a href="https://mrzk.io">mrzk.io</a>
         </div>
       </div>

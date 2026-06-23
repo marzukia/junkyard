@@ -32,5 +32,13 @@
     "@types/qrcode": "^1.5.5",
     "typescript": "^5.8.3",
     "vitest": "^2.0.0"
+  },
+  "description": "Headless pure-logic implementations of 17 junkyard tool categories, used by the MCP server and testable without a browser",
+  "license": "MIT",
+  "author": "Andryo Marzuki",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marzukia/junkyard.git",
+    "directory": "packages/core"
   }
 }
