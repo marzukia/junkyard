@@ -1,0 +1,18 @@
+import type { JunkyardApp } from "../../scripts/catalogue-schema";
+
+export const app: JunkyardApp = {
+  slug: "collage",
+  name: "Collage Maker",
+  category: "image",
+  order: 8,
+  tagline: "Grid + freeform photo collages",
+  description: "Free photo collage maker that runs entirely in your browser. Grid layouts, freeform pinboard, pan and zoom photos in cells, export high-res PNG or JPG. No watermark, no upload, no signup.",
+  incumbent: "Canva",
+  path: "/collage/",
+  runtime: "client",
+  mcp: {
+    exposed: true,
+    lib: "src/lib/layouts.ts",
+    tools: [],
+  },
+};

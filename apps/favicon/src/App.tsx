@@ -1,5 +1,6 @@
 import { FaviconGenerator } from "./components/FaviconGenerator";
 import { ThemeToggle } from "./components/ThemeToggle";
+import { AppSwitcher } from "./AppSwitcher";
 
 function BrandMark() {
   return (
@@ -23,6 +24,7 @@ export function App() {
   return (
     <div className="app-root">
       <div className="utility-bar">
+        <AppSwitcher />
         <ThemeToggle />
       </div>
 

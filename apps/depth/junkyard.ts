@@ -1,0 +1,18 @@
+import type { JunkyardApp } from "../../scripts/catalogue-schema";
+
+export const app: JunkyardApp = {
+  slug: "depth",
+  name: "Depth Map",
+  category: "ai",
+  order: 28,
+  tagline: "Turn a photo into a depth map",
+  description: "Generate depth maps from any photo instantly in your browser. Free, private, no upload. A Depth-Anything alternative that runs entirely client-side with AI. No signup, no API key, no data leaves your device.",
+  incumbent: "Depth-Anything",
+  path: "/depth/",
+  runtime: "client-ai",
+  mcp: {
+    exposed: false,
+    lib: "src/lib/depthEstimation.ts",
+    tools: [],
+  },
+};
