@@ -1,4 +1,4 @@
-import QRCode from "qrcode";
+import QRCode, { type BitMatrix } from "qrcode";
 
 export type ErrorCorrectionLevel = "L" | "M" | "Q" | "H";
 export type DotStyle = "square" | "rounded" | "dots" | "classy";
@@ -83,6 +83,11 @@ export function isFinderModule(row: number, col: number, regions: FinderRegions)
  * Generates a QR code onto a canvas element, applying dot-style post-processing
  * and an optional logo overlay.
  *
+ * Uses QRCode.create() to obtain the raw module matrix so that finder-pattern
+ * detection is exact and not susceptible to the quiet-zone row-0 pixel-scan bug
+ * that caused applyDotStyle to silently return early (row 0 is always white when
+ * margin > 0, so the old firstDark scan found nothing and styling never applied).
+ *
  * Returns the canvas element (same as the one passed in) so callers can chain.
  */
 export async function renderQRToCanvas(
@@ -100,24 +105,15 @@ export async function renderQRToCanvas(
     logoSizeRatio = 0.22,
   } = opts;
 
-  const size = canvas.width;
+  const margin = 2; // quiet-zone width in modules, matching QRCode.toCanvas default
 
-  // 1. Render base QR via qrcode lib (square dots, then we may restyle)
-  await QRCode.toCanvas(canvas, text, {
-    width: size,
-    margin: 2,
-    color: {
-      dark: fgColor,
-      light: bgColor,
-    },
-    errorCorrectionLevel,
-  });
+  // 1. Get the module matrix synchronously from QRCode.create().
+  //    This is the same source the SVG path uses -- no pixel scanning.
+  const qr = QRCode.create(text, { errorCorrectionLevel });
+  const qrModules = qr.modules.size;
 
-  // 2. Apply dot style + eye style via pixel/canvas manipulation
-  const needsRestyle = dotStyle !== "square" || eyeStyle !== "square";
-  if (needsRestyle) {
-    applyDotStyle(canvas, fgColor, bgColor, dotStyle, eyeStyle);
-  }
+  // 2. Render into the canvas using matrix-driven drawing (no toCanvas needed).
+  applyDotStyle(canvas, qr.modules, qrModules, margin, fgColor, bgColor, dotStyle, eyeStyle);
 
   // 3. Overlay logo if provided
   if (logoDataUrl) {
@@ -128,15 +124,23 @@ export async function renderQRToCanvas(
 }
 
 /**
- * Post-processes the canvas to restyle QR dots and eye (finder pattern) shapes.
- * Reads existing dark pixels, clears canvas, re-draws with new shape per module.
+ * Renders the QR module matrix directly onto the canvas with the requested dot
+ * and eye styles.
  *
- * Eye styling draws each of the three 7x7 finder pattern blocks as a single
- * composed shape rather than per-module dots, enabling distinct styling from
- * the data modules while preserving scanner-readable finder patterns.
+ * Replaces the old pixel-scan approach (which scanned row 0 for dark pixels --
+ * always white inside the quiet zone -- and therefore silently returned early,
+ * leaving every style setting inert on canvas). This function receives the module
+ * matrix from QRCode.create() so there is no pixel heuristic at all.
+ *
+ * @param modules   The raw QRCode module matrix (qr.modules from QRCode.create()).
+ * @param qrModules Number of data modules (qr.modules.size, excludes quiet zone).
+ * @param margin    Quiet-zone width in modules (matches QRCode.toCanvas default of 2).
  */
 function applyDotStyle(
   canvas: HTMLCanvasElement,
+  modules: BitMatrix,
+  qrModules: number,
+  margin: number,
   fgColor: string,
   bgColor: string,
   style: DotStyle,
@@ -146,90 +150,32 @@ function applyDotStyle(
   if (!ctx) return;
 
   const size = canvas.width;
-  const imageData = ctx.getImageData(0, 0, size, size);
-  const data = imageData.data;
-
-  // Detect module size by scanning top row for the first dark pixel run
-  const fg = hexToRgb(fgColor) ?? { r: 0, g: 0, b: 0 };
-  const threshold = 128;
-
-  // Find the quiet zone offset and module size by looking at the top finder pattern
-  let firstDark = -1;
-  for (let x = 0; x < size; x++) {
-    const idx = x * 4;
-    if (
-      Math.abs(data[idx] - fg.r) < threshold &&
-      Math.abs(data[idx + 1] - fg.g) < threshold &&
-      Math.abs(data[idx + 2] - fg.b) < threshold
-    ) {
-      firstDark = x;
-      break;
-    }
-  }
-  if (firstDark < 0) return;
-
-  // Count pixels in first dark run to get module size
-  let moduleSize = 0;
-  for (let x = firstDark; x < size; x++) {
-    const idx = x * 4;
-    if (
-      Math.abs(data[idx] - fg.r) < threshold &&
-      Math.abs(data[idx + 1] - fg.g) < threshold &&
-      Math.abs(data[idx + 2] - fg.b) < threshold
-    ) {
-      moduleSize++;
-    } else {
-      break;
-    }
-  }
-  if (moduleSize < 1) return;
-
-  // Build a boolean grid of dark modules
-  const cols = Math.round(size / moduleSize);
-  const grid: boolean[][] = [];
-  for (let row = 0; row < cols; row++) {
-    grid[row] = [];
-    for (let col = 0; col < cols; col++) {
-      const px = Math.floor(col * moduleSize + moduleSize / 2);
-      const py = Math.floor(row * moduleSize + moduleSize / 2);
-      if (px >= size || py >= size) {
-        grid[row][col] = false;
-        continue;
-      }
-      const idx = (py * size + px) * 4;
-      grid[row][col] =
-        Math.abs(data[idx] - fg.r) < threshold &&
-        Math.abs(data[idx + 1] - fg.g) < threshold &&
-        Math.abs(data[idx + 2] - fg.b) < threshold;
-    }
-  }
-
-  // The quiet zone margin (in modules). qrcode lib default is 2.
-  const margin = Math.round(firstDark / moduleSize);
-
-  // Total QR modules = cols - 2*margin
-  const qrModules = cols - 2 * margin;
+  const totalCells = qrModules + 2 * margin;
+  const moduleSize = size / totalCells;
+  const pad = moduleSize * 0.12;
+  const dotR = moduleSize / 2 - pad;
 
   const regions = computeFinderRegions(margin, qrModules);
   const { tlRow, tlCol, trRow, trCol, blRow, blCol } = regions;
 
-  // Redraw with style
+  // Fill background
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, size, size);
   ctx.fillStyle = fgColor;
 
-  const pad = moduleSize * 0.12;
-  const dotR = moduleSize / 2 - pad;
+  // Draw data modules (QR matrix row/col, offset into canvas by margin)
+  for (let row = 0; row < qrModules; row++) {
+    for (let col = 0; col < qrModules; col++) {
+      if (!modules.get(row, col)) continue;
 
-  for (let row = 0; row < cols; row++) {
-    for (let col = 0; col < cols; col++) {
-      if (!grid[row][col]) continue;
+      const gridRow = row + margin;
+      const gridCol = col + margin;
 
-      // Finder modules are drawn as composed shapes below; skip per-module here
-      if (eyeStyle !== "square" && isFinderModule(row, col, regions)) continue;
+      // Finder modules drawn as composed shapes below
+      if (isFinderModule(gridRow, gridCol, regions)) continue;
 
-      const cx = col * moduleSize + moduleSize / 2;
-      const cy = row * moduleSize + moduleSize / 2;
+      const cx = gridCol * moduleSize + moduleSize / 2;
+      const cy = gridRow * moduleSize + moduleSize / 2;
 
       if (style === "dots") {
         ctx.beginPath();
@@ -244,12 +190,16 @@ function applyDotStyle(
         ctx.roundRect(x, y, w, w, r);
         ctx.fill();
       } else if (style === "classy") {
-        // Classy: dots where all 4 neighbours are dark -> square; else circle
+        // Classy: isolated modules become circles; connected modules stay square
         const allNeighboursDark =
-          grid[row - 1]?.[col] &&
-          grid[row + 1]?.[col] &&
-          grid[row]?.[col - 1] &&
-          grid[row]?.[col + 1];
+          row > 0 &&
+          modules.get(row - 1, col) &&
+          row < qrModules - 1 &&
+          modules.get(row + 1, col) &&
+          col > 0 &&
+          modules.get(row, col - 1) &&
+          col < qrModules - 1 &&
+          modules.get(row, col + 1);
         if (allNeighboursDark) {
           const x = cx - moduleSize / 2 + pad;
           const y = cy - moduleSize / 2 + pad;
@@ -270,16 +220,15 @@ function applyDotStyle(
     }
   }
 
-  // Draw finder patterns as composed shapes when eyeStyle is not square
-  if (eyeStyle !== "square") {
-    const finderOrigins = [
-      { row: tlRow, col: tlCol },
-      { row: trRow, col: trCol },
-      { row: blRow, col: blCol },
-    ];
-    for (const origin of finderOrigins) {
-      drawFinderEye(ctx, origin.row, origin.col, moduleSize, fgColor, bgColor, eyeStyle);
-    }
+  // Draw all three finder eyes as composed shapes (always, not just non-square,
+  // because the per-module path above skips all finder cells unconditionally).
+  const finderOrigins = [
+    { row: tlRow, col: tlCol },
+    { row: trRow, col: trCol },
+    { row: blRow, col: blCol },
+  ];
+  for (const origin of finderOrigins) {
+    drawFinderEye(ctx, origin.row, origin.col, moduleSize, fgColor, bgColor, eyeStyle);
   }
 }
 
@@ -380,6 +329,13 @@ function drawFinderEye(
       0,
     ]);
     ctx.fill();
+  } else {
+    // square (default): outer filled rect, bg punch for separator, inner filled rect
+    ctx.fillRect(x, y, outerSize, outerSize);
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(x + moduleSize, y + moduleSize, 5 * moduleSize, 5 * moduleSize);
+    ctx.fillStyle = fgColor;
+    ctx.fillRect(x + innerOffset, y + innerOffset, innerSize, innerSize);
   }
 }
 
