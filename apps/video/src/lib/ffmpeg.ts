@@ -61,34 +61,33 @@ export async function runFFmpeg(
 ): Promise<Blob> {
   const ff = await getFFmpeg();
 
-  if (onProgress) {
-    ff.on("progress", ({ progress }) => onProgress(Math.min(progress, 1)));
-  }
+  const handler = onProgress
+    ? ({ progress }: { progress: number }) => onProgress(Math.min(progress, 1))
+    : null;
+
+  if (handler) ff.on("progress", handler);
 
   const inName = `input_${Date.now()}_${inputFile.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
 
-  await ff.writeFile(inName, await fetchFile(inputFile));
+  let bytes: Uint8Array;
+  try {
+    await ff.writeFile(inName, await fetchFile(inputFile));
 
-  await ff.exec(["-i", inName, ...args, outputName]);
+    await ff.exec(["-i", inName, ...args, outputName]);
 
-  const data = await ff.readFile(outputName);
-  // readFile returns Uint8Array | string; copy into a plain Uint8Array for Blob
-  const bytes =
-    data instanceof Uint8Array ? new Uint8Array(data) : new TextEncoder().encode(data as string);
+    const data = await ff.readFile(outputName);
+    // readFile returns Uint8Array | string; copy into a plain Uint8Array for Blob
+    bytes =
+      data instanceof Uint8Array ? new Uint8Array(data) : new TextEncoder().encode(data as string);
 
-  // Clean up to avoid accumulating files in the virtual FS
-  await ff.deleteFile(inName).catch(() => {});
-  await ff.deleteFile(outputName).catch(() => {});
-
-  if (onProgress) {
-    // Remove all progress listeners by replacing with a no-op - FFmpeg.wasm
-    // doesn't expose removeListener in 0.12.x, but we can re-add our desired
-    // listener on the next call. The handler added above fires for this job only
-    // since we tear down after completion.
-    ff.on("progress", () => {});
+    // Clean up to avoid accumulating files in the virtual FS
+    await ff.deleteFile(inName).catch(() => {});
+    await ff.deleteFile(outputName).catch(() => {});
+  } finally {
+    if (handler) ff.off("progress", handler);
   }
 
-  return new Blob([bytes.buffer as ArrayBuffer], { type: mimeForName(outputName) });
+  return new Blob([bytes!.buffer as ArrayBuffer], { type: mimeForName(outputName) });
 }
 
 function mimeForName(name: string): string {

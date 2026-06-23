@@ -942,9 +942,9 @@ export function App() {
 
   const handleCopyPng = useCallback(async () => {
     if (!resultUrl) return;
+    let blobUrl = resultUrl;
+    let didCreate = false;
     try {
-      let blobUrl = resultUrl;
-      let didCreate = false;
       const { width, height } = resultDimensions;
       if (bgFill !== "transparent") {
         blobUrl = await applyBgToResult(
@@ -963,12 +963,13 @@ export function App() {
       const res = await fetch(blobUrl);
       const blob = await res.blob();
       await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-      if (didCreate) URL.revokeObjectURL(blobUrl);
       setCopyLabel("Copied!");
       setTimeout(() => setCopyLabel("Copy PNG"), 2000);
     } catch {
       setCopyLabel("Copy not supported, use Download");
       setTimeout(() => setCopyLabel("Copy PNG"), 3000);
+    } finally {
+      if (didCreate) URL.revokeObjectURL(blobUrl);
     }
   }, [resultUrl, bgFill, customColor, gradient, bgImageUrl, inputUrl, resultDimensions]);
 
