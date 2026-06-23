@@ -10,6 +10,20 @@ export interface Cue {
   text: string;
 }
 
+// ── ID helper ────────────────────────────────────────────────────────────────
+
+/**
+ * Generate a unique cue ID.
+ * Falls back to a random string when crypto.randomUUID is unavailable
+ * (HTTP / local file / older runtimes).
+ */
+function genId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return "cue-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
 // ── Time helpers ─────────────────────────────────────────────────────────────
 
 /** Parse "HH:MM:SS,mmm" (SRT) or "HH:MM:SS.mmm" (VTT) → ms */
@@ -70,7 +84,7 @@ export function parseSrt(raw: string): Cue[] {
       .slice(idx + 1)
       .join("\n")
       .trim();
-    cues.push({ id: crypto.randomUUID(), startMs, endMs, text });
+    cues.push({ id: genId(), startMs, endMs, text });
   }
   return cues;
 }
@@ -142,7 +156,7 @@ export function parseVtt(raw: string): Cue[] {
       i++;
     }
     const text = textLines.join("\n").trim();
-    cues.push({ id: cueId ?? crypto.randomUUID(), startMs, endMs, text });
+    cues.push({ id: cueId ?? genId(), startMs, endMs, text });
   }
   return cues;
 }
@@ -221,7 +235,7 @@ export function parseAss(raw: string): Cue[] {
       // text field may contain commas — rejoin from textIdx onward
       const rawText = parts.slice(textIdx).join(",").trim();
       const text = stripAssTags(rawText);
-      if (text) cues.push({ id: crypto.randomUUID(), startMs, endMs, text });
+      if (text) cues.push({ id: genId(), startMs, endMs, text });
     } catch {
       // skip malformed dialogue line
     }
@@ -284,7 +298,7 @@ export function parseSbv(raw: string): Cue[] {
       const startMs = parseSbvTimestamp(timingMatch[1]);
       const endMs = parseSbvTimestamp(timingMatch[2]);
       const text = lines.slice(1).join("\n").trim();
-      if (text) cues.push({ id: crypto.randomUUID(), startMs, endMs, text });
+      if (text) cues.push({ id: genId(), startMs, endMs, text });
     } catch {
       // skip
     }
@@ -400,20 +414,31 @@ export function shiftSelected(cues: Cue[], ids: Set<string>, deltaMs: number): C
  * before the previous one ends. A 1 ms gap is inserted between them.
  */
 export function fixOverlaps(cues: Cue[]): Cue[] {
-  const sorted = [...cues].sort((a, b) => a.startMs - b.startMs);
+  // Build an index to restore original order after overlap resolution.
+  const indexed = cues.map((c, i) => ({ cue: c, origIdx: i }));
+  // Sort by start time for overlap detection; use origIdx as tiebreaker to stay stable.
+  const sorted = [...indexed].sort((a, b) => a.cue.startMs - b.cue.startMs || a.origIdx - b.origIdx);
   for (let i = 1; i < sorted.length; i++) {
-    const prev = sorted[i - 1];
-    const cur = sorted[i];
+    const prev = sorted[i - 1].cue;
+    const cur = sorted[i].cue;
     if (cur.startMs < prev.endMs) {
       const duration = cur.endMs - cur.startMs;
       sorted[i] = {
-        ...cur,
-        startMs: prev.endMs + 1,
-        endMs: prev.endMs + 1 + duration,
+        ...sorted[i],
+        cue: {
+          ...cur,
+          startMs: prev.endMs + 1,
+          endMs: prev.endMs + 1 + duration,
+        },
       };
     }
   }
-  return sorted;
+  // Restore original input order.
+  const result = new Array(cues.length);
+  for (const { cue, origIdx } of sorted) {
+    result[origIdx] = cue;
+  }
+  return result;
 }
 
 /**

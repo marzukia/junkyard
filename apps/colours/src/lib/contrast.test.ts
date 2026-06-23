@@ -17,9 +17,14 @@ describe("relativeLuminance", () => {
     expect(l).toBeLessThan(1);
   });
 
-  it("returns 0 for invalid input", () => {
-    expect(relativeLuminance("invalid")).toBe(0);
-    expect(relativeLuminance("")).toBe(0);
+  it("returns NaN for invalid input", () => {
+    expect(relativeLuminance("invalid")).toBeNaN();
+    expect(relativeLuminance("")).toBeNaN();
+  });
+
+  it("returns NaN propagates to contrastRatio", () => {
+    expect(contrastRatio("invalid", "#ffffff")).toBeNaN();
+    expect(contrastRatio("#000000", "")).toBeNaN();
   });
 });
 

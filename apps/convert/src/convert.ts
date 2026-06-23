@@ -42,23 +42,40 @@ export function formatToMime(format: OutputFormat): string {
 }
 
 /**
- * Returns true if the browser can encode to the given MIME type via canvas.toBlob.
- * AVIF encode support is Chrome 94+ / Firefox 113+; older browsers fall back gracefully.
- * This is async because the only reliable check is a round-trip.
+ * Returns true if the browser can encode to AVIF via canvas.toBlob.
+ * Uses a real round-trip probe (1x1 canvas) rather than UA sniffing.
+ * Result is cached after the first call.
  */
-export function canEncodeAvif(): boolean {
-  // We use a feature-detect heuristic: userAgent-free check via canvas toBlob support
-  // tested at startup. If canvas.toBlob with image/avif produces a non-zero blob,
-  // AVIF encode is supported. We return a synchronous best-guess from the UA string
-  // to avoid async complexity at format-select time; the actual encode will fall back.
-  // Chrome >=94 and Firefox >=113 support AVIF encode.
-  if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent;
-  const chromeM = /Chrome\/(\d+)/.exec(ua);
-  if (chromeM && Number(chromeM[1]) >= 94) return true;
-  const ffM = /Firefox\/(\d+)/.exec(ua);
-  if (ffM && Number(ffM[1]) >= 113) return true;
-  return false;
+let _avifProbeResult: boolean | null = null;
+
+export async function canEncodeAvif(): Promise<boolean> {
+  if (_avifProbeResult !== null) return _avifProbeResult;
+  if (typeof document === "undefined") {
+    _avifProbeResult = false;
+    return false;
+  }
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    // Wrap in a race so environments where toBlob never calls back (e.g. jsdom)
+    // resolve to false rather than hanging indefinitely.
+    const blob = await Promise.race<Blob | null>([
+      new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(resolve, "image/avif", 0.5);
+      }),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 500)),
+    ]);
+    _avifProbeResult = blob !== null && blob.type === "image/avif";
+  } catch {
+    _avifProbeResult = false;
+  }
+  return _avifProbeResult;
+}
+
+/** Reset the cached AVIF probe result (for testing). */
+export function _resetAvifProbeCache(): void {
+  _avifProbeResult = null;
 }
 
 /** Derive the output filename: swap extension, preserve stem. */

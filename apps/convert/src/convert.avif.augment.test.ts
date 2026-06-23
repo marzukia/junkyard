@@ -5,8 +5,9 @@
  * - computeOutputDimensions additional edge cases
  * - isHeic additional cases
  */
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
+  _resetAvifProbeCache,
   canEncodeAvif,
   computeOutputDimensions,
   formatBytes,
@@ -16,56 +17,47 @@ import {
 } from "./convert";
 
 // ── canEncodeAvif ─────────────────────────────────────────────────────────────
+// canEncodeAvif now uses a real canvas round-trip probe rather than UA sniffing.
+// In jsdom (test env) canvas.toBlob always returns a PNG blob (jsdom has no AVIF encoder),
+// so the probe correctly returns false — which is the right answer for a headless env.
 
 describe("canEncodeAvif", () => {
-  let originalUserAgent: PropertyDescriptor | undefined;
-
   beforeEach(() => {
-    originalUserAgent = Object.getOwnPropertyDescriptor(navigator, "userAgent");
+    _resetAvifProbeCache();
   });
 
-  afterEach(() => {
-    if (originalUserAgent) {
-      Object.defineProperty(navigator, "userAgent", originalUserAgent);
+  it("returns a Promise", async () => {
+    const result = canEncodeAvif();
+    expect(result).toBeInstanceOf(Promise);
+    await result; // ensure it settles (probe may take up to 500ms in jsdom)
+  }, 10_000);
+
+  it("returns false in jsdom (no AVIF encoder available)", async () => {
+    // jsdom's canvas.toBlob never calls back -- the probe times out after 500ms
+    // and correctly returns false (no AVIF support in jsdom).
+    const result = await canEncodeAvif();
+    expect(result).toBe(false);
+  }, 10_000);
+
+  it("caches the result so subsequent calls are synchronously resolved", async () => {
+    const first = await canEncodeAvif();
+    // Second call hits the cache (no re-probe)
+    const second = await canEncodeAvif();
+    expect(second).toBe(first);
+  }, 10_000);
+
+  it("returns false when document is undefined (SSR)", async () => {
+    _resetAvifProbeCache();
+    const origDoc = globalThis.document;
+    // @ts-expect-error - simulating SSR
+    delete globalThis.document;
+    try {
+      const result = await canEncodeAvif();
+      expect(result).toBe(false);
+    } finally {
+      globalThis.document = origDoc;
+      _resetAvifProbeCache();
     }
-  });
-
-  function mockUA(ua: string) {
-    Object.defineProperty(navigator, "userAgent", {
-      value: ua,
-      configurable: true,
-    });
-  }
-
-  it("returns true for Chrome >= 94", () => {
-    mockUA(
-      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36"
-    );
-    expect(canEncodeAvif()).toBe(true);
-  });
-
-  it("returns false for Chrome < 94", () => {
-    mockUA(
-      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
-    );
-    expect(canEncodeAvif()).toBe(false);
-  });
-
-  it("returns true for Firefox >= 113", () => {
-    mockUA("Mozilla/5.0 (X11; Linux x86_64; rv:115.0) Gecko/20100101 Firefox/115.0");
-    expect(canEncodeAvif()).toBe(true);
-  });
-
-  it("returns false for Firefox < 113", () => {
-    mockUA("Mozilla/5.0 (X11; Linux x86_64; rv:110.0) Gecko/20100101 Firefox/110.0");
-    expect(canEncodeAvif()).toBe(false);
-  });
-
-  it("returns false for Safari (no Chrome or Firefox indicator)", () => {
-    mockUA(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15"
-    );
-    expect(canEncodeAvif()).toBe(false);
   });
 });
 
