@@ -413,7 +413,8 @@ header {
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 .hero h1 {
-  font-size: clamp(42px, 7vw, 72px);
+  font-family: "JetBrains Mono", monospace;
+  font-size: clamp(40px, 6.6vw, 68px);
   font-weight: 800;
   letter-spacing: -.045em;
   line-height: 1;
@@ -424,11 +425,11 @@ header {
 }
 .hero h1 .sh {
   font-family: "JetBrains Mono", monospace;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--accent);
-  letter-spacing: -.03em;
+  letter-spacing: -.045em;
   font-size: 1em;
-  margin-left: -.05em;
+  margin-left: -.1em;
 }
 .hero p.lead {
   margin-top: 22px;
