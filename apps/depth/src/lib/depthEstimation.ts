@@ -7,14 +7,9 @@
  * and never touches SharedArrayBuffer. WebGPU is attempted first (no isolation
  * required for WebGPU); WASM single-thread is the fallback.
  */
-import { type DepthEstimationPipeline, RawImage, env, pipeline } from "@huggingface/transformers";
+import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/transformers";
+import { configureTransformersEnv } from "./transformersEnv";
 
-// ── Disable multi-threaded WASM (requires SharedArrayBuffer / COOP+COEP) ──────
-// Must be set BEFORE any InferenceSession is created.
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-
-// Use browser cache so subsequent visits skip the download.
-env.useBrowserCache = true;
 
 const MODEL_ID = "onnx-community/depth-anything-v2-small";
 
@@ -33,6 +28,7 @@ let estimator: DepthEstimationPipeline | null = null;
 /** Load (or return cached) the depth-estimation pipeline. */
 export async function loadModel(onProgress?: ProgressCallback): Promise<void> {
   if (estimator) return;
+  configureTransformersEnv();
 
   const progressCb = (event: TransformersProgressEvent) => {
     if (!onProgress) return;

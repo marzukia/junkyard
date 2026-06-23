@@ -22,6 +22,7 @@ import {
   parseHex,
   resolveBgCss,
   resolveFontFamily,
+  wrapTextCtx,
 } from "./ogLogic";
 
 // ── parseHex — additional negative cases ─────────────────────────────────────
@@ -280,5 +281,106 @@ describe("DEFAULT_CONFIG — completeness", () => {
   it("bgImageOpacity is between 0 and 1", () => {
     expect(DEFAULT_CONFIG.bgImageOpacity).toBeGreaterThanOrEqual(0);
     expect(DEFAULT_CONFIG.bgImageOpacity).toBeLessThanOrEqual(1);
+  });
+});
+
+
+// ── DEFAULT_CONFIG domain ─────────────────────────────────────────────────────
+
+describe("DEFAULT_CONFIG — domain", () => {
+  it("subtitle does not contain junkyard.mrzk.io", () => {
+    expect(DEFAULT_CONFIG.subtitle).not.toContain("junkyard.mrzk.io");
+    expect(DEFAULT_CONFIG.subtitle).toContain("junkyard.sh");
+  });
+
+  it("badge does not contain junkyard.mrzk.io", () => {
+    expect(DEFAULT_CONFIG.badge).not.toContain("junkyard.mrzk.io");
+    expect(DEFAULT_CONFIG.badge).toContain("junkyard.sh");
+  });
+});
+
+// ── buildMetaSnippet — full HTML escaping ─────────────────────────────────────
+
+describe("buildMetaSnippet — full HTML escaping", () => {
+  it("escapes & in imageUrl", () => {
+    const snippet = buildMetaSnippet("T", "D", "https://x.com/og.png?a=1&b=2", 1200, 630);
+    expect(snippet).toContain("?a=1&amp;b=2");
+    expect(snippet).not.toContain("?a=1&b=2");
+  });
+
+  it("escapes < and > in imageUrl", () => {
+    const snippet = buildMetaSnippet("T", "D", "https://x.com/<bad>", 1200, 630);
+    expect(snippet).toContain("&lt;bad&gt;");
+    expect(snippet).not.toContain("<bad>");
+  });
+
+  it("escapes & in title", () => {
+    const snippet = buildMetaSnippet("Tom & Jerry", "D", "https://x.com/og.png", 1200, 630);
+    expect(snippet).toContain("Tom &amp; Jerry");
+    expect(snippet).not.toContain('content="Tom & Jerry"');
+  });
+});
+
+// ── wrapTextCtx — character-level break ──────────────────────────────────────
+// Uses a fake ctx where measureText returns charCount * charWidth px.
+// This is deterministic and avoids a real canvas dependency.
+
+function makeFakeCtx(charWidthPx: number): CanvasRenderingContext2D {
+  return {
+    measureText(text: string) {
+      return { width: text.length * charWidthPx } as TextMetrics;
+    },
+  } as unknown as CanvasRenderingContext2D;
+}
+
+describe("wrapTextCtx — word wrapping", () => {
+  it("returns empty array for empty string", () => {
+    const ctx = makeFakeCtx(10);
+    expect(wrapTextCtx(ctx, "", 100)).toEqual([]);
+  });
+
+  it("single short word fits on one line", () => {
+    const ctx = makeFakeCtx(10);
+    // "hi" = 20px, maxWidth = 100
+    expect(wrapTextCtx(ctx, "hi", 100)).toEqual(["hi"]);
+  });
+
+  it("wraps words that exceed maxWidth", () => {
+    // charWidth=10, maxWidth=30 => 3 chars per line
+    // "ab cd ef" -> "ab cd" = 50px > 30, so breaks
+    const ctx = makeFakeCtx(10);
+    const lines = wrapTextCtx(ctx, "ab cd ef", 30);
+    expect(lines.length).toBeGreaterThan(1);
+  });
+});
+
+describe("wrapTextCtx — character-level break for over-wide tokens", () => {
+  it("breaks a single long token with no spaces into multiple lines", () => {
+    // charWidth=10, maxWidth=30 => 3 chars per line
+    // "https://example.com/very/long/url" = 34 chars = 340px > 30
+    const ctx = makeFakeCtx(10);
+    const token = "https://example.com/very/long/url";
+    const lines = wrapTextCtx(ctx, token, 30);
+    // Should produce multiple lines, each <= 30px wide (<=3 chars)
+    expect(lines.length).toBeGreaterThan(1);
+    for (const line of lines) {
+      expect(line.length).toBeLessThanOrEqual(3);
+    }
+    // Rejoined they equal the original token
+    expect(lines.join("")).toBe(token);
+  });
+
+  it("does not break tokens that fit within maxWidth", () => {
+    const ctx = makeFakeCtx(10);
+    // "URL" = 30px, maxWidth=100
+    const lines = wrapTextCtx(ctx, "URL", 100);
+    expect(lines).toEqual(["URL"]);
+  });
+
+  it("character-breaks preserves all characters (no data loss)", () => {
+    const ctx = makeFakeCtx(10);
+    const longUrl = "https://cdn.example.com/images/social/og-preview-2024-01.png?v=3&size=large";
+    const lines = wrapTextCtx(ctx, longUrl, 50);
+    expect(lines.join("")).toBe(longUrl);
   });
 });
