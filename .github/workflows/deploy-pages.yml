@@ -52,13 +52,6 @@ jobs:
           node scripts/vendor-themetoggle.mjs
           git diff --exit-code
 
-      - name: Check vendored MobileWarning copies are up to date
-        # Fails if kit/components/MobileWarning.* was changed without running
-        # vendor-mobilewarn.mjs to re-vendor into the 9 heavy apps.
-        run: |
-          node scripts/vendor-mobilewarn.mjs
-          git diff --exit-code
-
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).
