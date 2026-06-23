@@ -8,30 +8,40 @@ export function Hero() {
           </span>
         </h1>
         <p className="lead">
-          A pile of free tools I salvaged from behind paywalls and left out for anyone to grab. They
-          all run <b>entirely in your browser</b>. No accounts, no uploads, no "upgrade to export".{" "}
-          <b>Take what you need.</b>
+          Paywalls crept into everything - tools that do 90% of a job, then hold the result hostage
+          until you hand over a card. I got fed up and started rebuilding them, open-sourcing every
+          one, and giving them away. They run <b>entirely in your browser</b> - no accounts, no
+          uploads, no "upgrade to export". It&apos;s a junkyard: take what you need, and if you can
+          make it better, the source is right there.
         </p>
         <div className="cta">
           <a className="btn btn-primary" href="#yard">
             Browse the yard <span className="ar">&#x2193;</span>
           </a>
-          <a className="btn btn-ghost" href="https://github.com/marzukia" rel="noreferrer">
-            GitHub
+          <a
+            className="btn btn-ghost"
+            href="https://github.com/marzukia/junkyard"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+            </svg>
+            View source
           </a>
         </div>
         <div className="statline">
           <span className="pill">
             <b>42</b> tools
           </span>
-          <span className="pill coral">
-            paywalls <b>0</b>
-          </span>
           <span className="pill warn">
-            cost <b>$0</b>
+            <b>$0</b> forever
+          </span>
+          <span className="pill coral">
+            no <b>paywalls</b>
           </span>
           <span className="pill">
-            uploads <b>none</b>
+            <b>open source</b>
           </span>
         </div>
       </div>
