@@ -101,3 +101,26 @@ npx biome ci src/    # lint
 npx tsc --noEmit     # typecheck
 npm test             # vitest
 ```
+
+---
+
+## Session update — 2026-06-23 (read this first on resume)
+
+**junkyard.sh hub is LIVE** — deployed on the `hydrogen` box (122.199.31.95): an `nginx:alpine` container named `junkyard` serving `/opt/junkyard/index.html`, on the `traefik-public` docker network, behind the existing **traefik v3.6** with labels `traefik.http.routers.junkyard.rule=Host(\`junkyard.sh\`)` + `entrypoints=websecure` + `tls.certresolver=cloudflare` + `services.junkyard.loadbalancer.server.port=80`. The apex `junkyard.sh` already DNS-resolves to hydrogen. **To update the hub:** replace `/opt/junkyard/index.html` on hydrogen (source is `hub/index.html` here, latest working copy was `~/projects/junkyard-proto/index.html` on the planky box). traefik configs live at `/opt/traefik` (traefik.yml + dynamic/ + acme/). hydrogen ssh alias = `andryo@122.199.31.95`.
+
+**ROUTING DECISION (owner, this session):** the target is **path-based routing — `junkyard.sh/<appname>`** (e.g. `junkyard.sh/qr`, `junkyard.sh/pdf`), NOT the current `<slug>.mrzk.io` subdomains. So the productionized hub + server should serve each app under a path on junkyard.sh. The 42 `<slug>.mrzk.io` deploys stay live during migration; redirect or alias them to the new paths later. (This pairs with the one-server + MCP goal.)
+
+**Post-wave-2 QoL sweep — DONE.** 23/42 tools came back genuinely **solid**. ~10 had real issues; a targeted fix wave was dispatched for them (workflow task `wxm31o9oa`).
+- **MAJOR:** `bg` result-preview `<img>` collapses to height:0px (cutout invisible) · `colours` mobile copy-actions row overflows 390px (no wrap).
+- **MINOR:** `regex` mobile horizontal overflow (~50px) · `depth`/`caption`/`pdf` swallow bad files with no error message · `convert` AVIF emitted as PNG-under-.avif with no capability check · `units` Copy-result has no "Copied!" toast · `lorem` style selection doesn't persist · `css` clipboard write throws uncaught in locked-down contexts · assorted sub-40px mobile tap targets.
+
+### ⚠️ FIRST ACTION ON RESUME
+The fix wave (`wxm31o9oa`) was still running at session end. When it completes, its builders have committed fixes **locally only** in each `tool-<slug>` dir on the planky box (`~/projects/_fleet/tool-*` and `~/projects/colours`). **Commit + push each changed tool to its `marzukia/<slug>` repo to deploy** (git identity `Andryo Marzuki <42439397+marzukia@users.noreply.github.com>`, push via `git push https://x-access-token:$(ssh hydrogen 'gh auth token')@github.com/marzukia/<slug>.git HEAD:main`). Then re-pull those fixed sources into this monorepo's `apps/`. Tools in the wave: bg, colours, regex, depth, caption, pdf, units, convert, lorem, css.
+
+### Open items (updated)
+- [ ] Push + deploy the `wxm31o9oa` fix-wave results (see above) — **do this first.**
+- [ ] Re-sync `apps/` in this monorepo from the latest tool sources after the fix wave.
+- [ ] Productionize the junkyard.sh hub (Vite/React + shared tool manifest) and move to **path-based routing** `junkyard.sh/<app>`.
+- [ ] Per-tool deferred features (round-2 commit messages): resume CV-import, jwt signature verify, pdf rotate/watermark/page-numbers, qr batch/eye-shapes, ocr searchable-PDF/DOCX, bg background-replacement, etc.
+- [ ] Build the MCP server (each tool's `src/lib/*` = the handler).
+- [ ] Migrate `<slug>.mrzk.io` deploys onto the consolidated junkyard server.
