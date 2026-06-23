@@ -85,7 +85,7 @@ export function App() {
         </span>
         <span className="site-footer-sep">·</span>
         <a
-          href="https://mrzk.io/apps/"
+          href="https://junkyard.mrzk.io/"
           target="_blank"
           rel="noreferrer"
           className="site-footer-link"

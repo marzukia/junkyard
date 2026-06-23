@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cron.mrzk.io/sitemap.xml
+Sitemap: https://junkyard.mrzk.io/cron/sitemap.xml
