@@ -123,11 +123,22 @@ npm test             # vitest
 - **Hub follow-ups (non-blocking):** generate `hub/public/og.png` (1200x630 banner; referenced in meta with a TODO); wire Umami (needs a new hub site-id; script intentionally omitted, no `__UMAMI_ID__` placeholder).
 - **`junkyard.sh` (hydrogen nginx prototype) still serves the OLD static prototype** - left untouched intentionally. When the consolidated path-routing site (`junkyard.sh/<app>`) is ready, point `junkyard.sh` at it and retire the individual `marzukia/<slug>` repos.
 
+## Session update - 2026-06-23 (later still) - CONSOLIDATION LIVE + self-describing apps
+
+**All 42 apps now served under `https://junkyard.mrzk.io/<slug>/`** (path-based routing, the owner's decision). The GH Pages deploy on `marzukia/junkyard` now builds the WHOLE site via `scripts/build-site.sh`: generates the catalogue, builds the hub into `dist/` root, then builds each `apps/<slug>` with `--base=/<slug>/` into `dist/<slug>/`. The deploy workflow `.github/workflows/deploy-pages.yml` runs that script (triggers on `hub/** apps/** scripts/**` + the workflow). Hub cards link to `/<slug>/` (trailing slash avoids the GH Pages 301). Header padding bug fixed (`.hbar` was killing `.wrap`'s horizontal padding; now `padding-block`). Live-verified: hub + all sampled paths 200 incl. transformer apps, subpath assets resolve (e.g. `/depth/` 21MB wasm), 0px mobile overflow.
+- **CI gotcha fixed:** the transformers apps (bg, caption, depth, summarize, transcribe, translate, upscale) pull `onnxruntime-node`, whose postinstall 403s downloading CUDA binaries. `build-site.sh` exports `npm_config_onnxruntime_node_install_cuda=skip` + `ONNXRUNTIME_NODE_INSTALL_CUDA=skip` to skip it (browser apps only use onnxruntime-web). Without this the whole build fails.
+- **`junkyard.sh` (hydrogen nginx) still serves the OLD static prototype.** Next: point it at the consolidated site (or redirect to junkyard.mrzk.io) and delete/disable the individual `marzukia/<slug>` repos once happy.
+
+**Self-describing apps (single source of truth for catalogue + MCP).** Each `apps/<slug>/junkyard.json` declares `slug, name, category, order, tagline, description, incumbent, path, runtime (client|client-ai), mcp {exposed, lib, tools}`. `scripts/gen-catalogue.mjs` reads + validates all 42 (fails the build on missing/dup/invalid - never silently drops a tool) and generates `hub/src/catalogue.generated.ts`; `hub/src/tools.ts` re-exports `TOOLS` from it (Tool/Yard/YARDS types unchanged). Runs via hub `prebuild`/`predev` and as the first step of `build-site.sh`. **The MCP phase reads these same json files** (`mcp.lib` points at each tool's pure-logic module; `runtime: client-ai` = browser-only, `mcp.exposed:false` for now). Identical-render proof passed; hub still shows 42 cards, same order/numbering.
+
 ### Open items (updated)
 - [x] Push + deploy the `wxm31o9oa` fix-wave results.
 - [x] Re-sync `apps/` from the latest tool sources after the fix wave.
-- [x] Productionize the hub (Vite/React + shared manifest) and deploy to `junkyard.mrzk.io`.
-- [ ] **Migrate the 42 apps onto one site with path-based routing `junkyard.sh/<app>`**, then point `junkyard.sh` over and delete/disable the individual repos (owner's stated next big arc).
-- [ ] Generate the hub OG banner + wire Umami on the hub.
+- [x] Productionize the hub and deploy to `junkyard.mrzk.io`.
+- [x] Consolidate all 42 apps under `junkyard.mrzk.io/<slug>/` (path-based routing) + hub cards link to paths.
+- [x] Per-app `junkyard.json` single source of truth; hub catalogue generated from it.
+- [ ] Point `junkyard.sh` (hydrogen) at the consolidated site / redirect to junkyard.mrzk.io, then delete or disable the individual `marzukia/<slug>` repos.
+- [ ] Generate the hub OG banner (`hub/public/og.png`) + wire Umami on the hub.
+- [ ] Per-app SEO: each app's `<link rel=canonical>`/`og:url` still points at `<slug>.mrzk.io` - update to the `/<slug>/` paths.
 - [ ] Per-tool deferred features (round-2 commit messages): resume CV-import, jwt signature verify, pdf rotate/watermark/page-numbers, qr batch/eye-shapes, ocr searchable-PDF/DOCX, bg background-replacement, etc.
-- [ ] Build the MCP server (each tool's `src/lib/*` = the handler) - after the migration.
+- [ ] **Build the MCP server** - read `apps/*/junkyard.json`, wrap each `mcp.lib` as a handler (`junkyard.<slug>`); client-ai tools need a server-side inference path or a browser-only marker.
