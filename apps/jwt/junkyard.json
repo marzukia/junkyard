@@ -1,0 +1,16 @@
+{
+  "slug": "jwt",
+  "name": "JWT Decoder",
+  "category": "text",
+  "order": 24,
+  "tagline": "Decode & inspect JWT tokens",
+  "description": "Decode and inspect JSON Web Tokens instantly in your browser. Parse header, payload and claims, exp/iat/nbf shown as human dates with expiry badge. No upload, no account. A free jwt.io alternative that runs entirely offline.",
+  "incumbent": "jwt.io",
+  "path": "/jwt/",
+  "runtime": "client",
+  "mcp": {
+    "exposed": true,
+    "lib": "src/lib/jwt.ts",
+    "tools": []
+  }
+}
