@@ -4,9 +4,11 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import {
   checkImageSize,
+  deviceMemoryBudgetMB,
   formatBytes,
   formatDimensions,
   formatProgress,
+  isConstrainedDevice,
   isSupportedImage,
   outputFilename,
   resizeImageFile,
@@ -453,6 +455,8 @@ interface LargeImageWarningProps {
   scale: ScaleFactor;
   clampedW: number;
   clampedH: number;
+  /** When true, this device cannot safely upscale full-size -- hide "proceed anyway". */
+  constrainedByMemory: boolean;
   onProceedClamped: () => void;
   onProceedFull: () => void;
   onCancel: () => void;
@@ -464,6 +468,7 @@ function LargeImageWarning({
   scale,
   clampedW,
   clampedH,
+  constrainedByMemory,
   onProceedClamped,
   onProceedFull,
   onCancel,
@@ -488,18 +493,27 @@ function LargeImageWarning({
       </svg>
       <p className="up-warning-msg">
         <strong>Large image detected:</strong> {formatDimensions(inputW, inputH)} at {scale}x would
-        produce {formatDimensions(outW, outH)}, which may freeze your tab or run out of memory.
+        produce {formatDimensions(outW, outH)},{" "}
+        {constrainedByMemory
+          ? "which would exceed this device's memory limit and crash the browser tab."
+          : "which may freeze your tab or run out of memory."}
       </p>
       <p className="up-warning-sub">
-        Recommended: resize to {formatDimensions(clampedW, clampedH)} before upscaling.
+        {constrainedByMemory
+          ? `This device has limited memory. The image will be automatically resized to ${formatDimensions(clampedW, clampedH)} before upscaling.`
+          : `Recommended: resize to ${formatDimensions(clampedW, clampedH)} before upscaling.`}
       </p>
       <div className="up-warning-actions">
         <button type="button" className="btn-primary" onClick={onProceedClamped}>
-          Resize to {formatDimensions(clampedW, clampedH)} then upscale
+          {constrainedByMemory
+            ? `Resize to ${formatDimensions(clampedW, clampedH)} and upscale`
+            : `Resize to ${formatDimensions(clampedW, clampedH)} then upscale`}
         </button>
-        <button type="button" className="btn-secondary" onClick={onProceedFull}>
-          Upscale full size anyway
-        </button>
+        {!constrainedByMemory && (
+          <button type="button" className="btn-secondary" onClick={onProceedFull}>
+            Upscale full size anyway
+          </button>
+        )}
         <button type="button" className="btn-secondary" onClick={onCancel}>
           Cancel
         </button>
@@ -534,6 +548,8 @@ interface PendingLargeImage {
   height: number;
   clampedWidth: number;
   clampedHeight: number;
+  /** True when the limit came from device memory (not desktop default). Hide "proceed anyway" on mobile. */
+  constrainedByMemory: boolean;
 }
 
 // ── Main App ──────────────────────────────────────────────────────────────────
@@ -604,17 +620,21 @@ export function App() {
       setInputFile(file, url);
 
       try {
-        const sizeCheck = await checkImageSize(file, scale);
+        const budgetMB = deviceMemoryBudgetMB();
+        const sizeCheck = await checkImageSize(file, scale, budgetMB);
         setInputDimensions(sizeCheck.width, sizeCheck.height);
 
         if (sizeCheck.tooLarge && sizeCheck.clampedWidth && sizeCheck.clampedHeight) {
-          // Show warning interstitial rather than silently hanging
+          // Show warning interstitial rather than silently hanging.
+          // On constrained devices (constrainedByMemory=true) we hide the
+          // "proceed full size anyway" button since it would crash the tab.
           setPendingLarge({
             file,
             width: sizeCheck.width,
             height: sizeCheck.height,
             clampedWidth: sizeCheck.clampedWidth,
             clampedHeight: sizeCheck.clampedHeight,
+            constrainedByMemory: sizeCheck.constrainedByMemory,
           });
           return;
         }
@@ -749,6 +769,13 @@ export function App() {
           offline. Processing a typical photo takes 5-30 seconds. Your images never leave your
           device.
         </p>
+        {isConstrainedDevice() && (
+          <p className="up-beta-note up-mobile-cap-note">
+            <strong>Mobile / limited memory detected.</strong> Large images will be automatically
+            downscaled before upscaling to prevent the browser tab from crashing.
+            {scale === 4 ? " 4x on this device is limited to smaller inputs." : ""}
+          </p>
+        )}
 
         <div className="card">
           {/* Upload zone */}
@@ -775,6 +802,7 @@ export function App() {
               scale={scale}
               clampedW={pendingLarge.clampedWidth}
               clampedH={pendingLarge.clampedHeight}
+              constrainedByMemory={pendingLarge.constrainedByMemory}
               onProceedClamped={() => void handleProceedClamped()}
               onProceedFull={() => void handleProceedFull()}
               onCancel={handleCancelPending}
