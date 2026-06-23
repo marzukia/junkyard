@@ -25,6 +25,7 @@ interface PdfInvoiceData {
   discountPercent: number;
   shipping: number;
   amountPaid: number;
+  taxOnGross: boolean;
   notes: string;
   logoDataUrl: string | null;
 }
@@ -354,7 +355,8 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
     data.taxRate,
     data.discountPercent,
     data.shipping,
-    data.amountPaid
+    data.amountPaid,
+    data.taxOnGross
   );
   const totalsX = width - marginX - 200;
 

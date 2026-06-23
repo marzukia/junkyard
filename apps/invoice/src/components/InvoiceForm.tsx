@@ -45,6 +45,7 @@ export function InvoiceForm() {
       discountPercent: store.discountPercent,
       shipping: store.shipping,
       amountPaid: store.amountPaid,
+      taxOnGross: store.taxOnGross,
       notes: store.notes,
       logoDataUrl: store.logoDataUrl,
     };
@@ -331,6 +332,25 @@ export function InvoiceForm() {
           </div>
         </div>
       </div>
+
+      {/* Tax on gross toggle */}
+      {store.taxRate > 0 && store.discountPercent > 0 && (
+        <div className="form-section">
+          <div className="form-section-title">Tax options</div>
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={store.taxOnGross}
+              onChange={(e) => store.setTaxOnGross(e.target.checked)}
+            />
+            Apply tax to gross (before discount)
+          </label>
+          <p className="field-hint">
+            When checked, tax is calculated on the pre-discount subtotal. By default tax applies to
+            the discounted amount.
+          </p>
+        </div>
+      )}
 
       {/* Notes */}
       <div className="form-section">
