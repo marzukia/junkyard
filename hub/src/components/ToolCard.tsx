@@ -22,13 +22,7 @@ export function ToolCard({ tool, index, animationDelay }: ToolCardProps) {
   const href = `https://${tool.slug}.mrzk.io`;
 
   return (
-    <a
-      className="card"
-      href={href}
-      style={{ animationDelay: `${animationDelay}s` }}
-      target="_blank"
-      rel="noreferrer"
-    >
+    <a className="card" href={href} style={{ animationDelay: `${animationDelay}s` }}>
       <div className="top">
         <span className="num">#{cardNum}</span>
         <span className="free">FREE</span>
