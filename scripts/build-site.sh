@@ -11,6 +11,9 @@ export ONNXRUNTIME_NODE_INSTALL_CUDA=skip
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/dist"
 
+echo "==> Generating catalogue from apps/*/junkyard.json"
+node "$ROOT/scripts/gen-catalogue.mjs"
+
 echo "==> Building hub into $DIST"
 cd "$ROOT/hub"
 npm ci
