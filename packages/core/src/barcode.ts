@@ -15,6 +15,7 @@
 import JsBarcode from "jsbarcode";
 import { z } from "zod";
 import type { ToolDef } from "./types.js";
+import { escapeHtml } from "./util.js";
 
 export type BarcodeFormat = "CODE128" | "EAN13" | "UPC" | "EAN8" | "CODE39" | "CODE93" | "ITF";
 
@@ -128,9 +129,8 @@ interface JsBarcodeTarget {
   encodings?: BarcodeEncoding[];
 }
 
-function escapeXml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+// escapeXml is now provided by escapeHtml from util.ts (also escapes single quotes).
+const escapeXml = escapeHtml;
 
 function renderEncodingToSvg(encoding: BarcodeEncoding, opts: BarcodeRenderOptions, offsetX: number): string {
   const binary = encoding.data;
