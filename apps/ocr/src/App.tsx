@@ -287,7 +287,7 @@ export function App() {
         const ocrWords: OcrWord[] = (rawWords ?? [])
           .filter((w) => w.text.trim().length > 0)
           .map((w) => ({ text: w.text, confidence: w.confidence, bbox: w.bbox }));
-        store.setQueueItemResult(item.id, text, conf);
+        store.setQueueItemResult(item.id, text, conf, "", ocrWords);
         store.setResult(text, conf, lowConf, ocrWords);
       } catch {
         store.setQueueItemResult(item.id, "", 0, "OCR failed");
@@ -355,20 +355,23 @@ export function App() {
 
   const [pdfExporting, setPdfExporting] = useState(false);
 
+  const [pdfError, setPdfError] = useState<string | null>(null);
+
   const handleDownloadPdf = useCallback(async () => {
     if (!store.imageUrl || !store.imageFile) return;
     setPdfExporting(true);
+    setPdfError(null);
     try {
       const mimeType = store.imageFile.type === "image/jpeg" ? "image/jpeg" : "image/png";
 
       let pdfBytes: Uint8Array<ArrayBuffer>;
       if (hasQueue && store.queue.some((q) => q.status === "done" && q.previewUrl)) {
-        // Multi-page: one PDF page per done queue item.
+        // Multi-page: one PDF page per done queue item, using each item's own cached words.
         const pages = store.queue
           .filter((q) => q.status === "done" && q.previewUrl)
           .map((q) => ({
             imageUrl: q.previewUrl,
-            words: store.ocrWords, // words from the current active item; per-item words not cached in queue
+            words: q.words,
             fallbackText: q.text,
             mimeType: (q.file.type === "image/jpeg" ? "image/jpeg" : "image/png") as
               | "image/png"
@@ -391,6 +394,10 @@ export function App() {
       a.download = buildFilename(store.imageFile.name, "pdf");
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } catch {
+      setPdfError(
+        "PDF export currently supports Latin scripts - the text layer could not be embedded for this language."
+      );
     } finally {
       setPdfExporting(false);
     }
@@ -772,6 +779,11 @@ export function App() {
                 >
                   {pdfExporting ? "Building PDF..." : "Download PDF"}
                 </button>
+                {pdfError && (
+                  <p className="ocr-pdf-error" role="alert">
+                    {pdfError}
+                  </p>
+                )}
                 {hasQueue && store.queue.some((q) => q.status === "done" && q.text) && (
                   <button type="button" className="btn-secondary" onClick={handleDownloadAll}>
                     Download all

@@ -28,8 +28,8 @@ export interface OgConfig {
 
 export const DEFAULT_CONFIG: OgConfig = {
   title: "My OG Image",
-  subtitle: "A social share image created with og.mrzk.io",
-  badge: "og.mrzk.io",
+  subtitle: "A social share image created with junkyard.mrzk.io/og/",
+  badge: "junkyard.mrzk.io/og/",
   bgType: "solid",
   bgColor: "#1a2530",
   bgColorEnd: "#2f9d8d",

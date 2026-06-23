@@ -34,10 +34,17 @@ export async function getFFmpeg(onLoad?: ProgressCallback): Promise<FFmpeg> {
       });
     }
 
-    await ff.load({
-      coreURL: await toBlobURL(`${CORE_CDN}/ffmpeg-core.js`, "text/javascript"),
-      wasmURL: await toBlobURL(`${CORE_CDN}/ffmpeg-core.wasm`, "application/wasm"),
-    });
+    try {
+      await ff.load({
+        coreURL: await toBlobURL(`${CORE_CDN}/ffmpeg-core.js`, "text/javascript"),
+        wasmURL: await toBlobURL(`${CORE_CDN}/ffmpeg-core.wasm`, "application/wasm"),
+      });
+    } catch (err) {
+      // Clear cached promise and instance so the next call can retry the download.
+      loadPromise = null;
+      ffmpegInstance = null;
+      throw err;
+    }
 
     ffmpegInstance = ff;
     return ff;

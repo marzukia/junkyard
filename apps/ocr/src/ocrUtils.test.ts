@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { scaleBboxToPdfCoords } from "./ocrPdfUtils";
+import { useOcrStore } from "./store";
 import {
   LANG_STORAGE_KEY,
   buildBatchFilename,
@@ -208,6 +209,48 @@ describe("scaleBboxToPdfCoords", () => {
     expect(result.h).toBeCloseTo(40); // (40-20) * 2
     // y = 200 - (40 * 2) = 200 - 80 = 120
     expect(result.y).toBeCloseTo(120);
+  });
+});
+
+describe("OcrStore - per-item words caching", () => {
+  it("setQueueItemResult stores words on the queue item", () => {
+    const store = useOcrStore.getState();
+    const file = new File([""], "page1.png", { type: "image/png" });
+    store.setImage(file);
+    const id = useOcrStore.getState().queue[0].id;
+
+    const words = [
+      { text: "Hello", confidence: 95, bbox: { x0: 0, y0: 0, x1: 50, y1: 10 } },
+      { text: "World", confidence: 90, bbox: { x0: 60, y0: 0, x1: 110, y1: 10 } },
+    ];
+    store.setQueueItemResult(id, "Hello World", 92, "", words);
+
+    const item = useOcrStore.getState().queue[0];
+    expect(item.words).toHaveLength(2);
+    expect(item.words[0].text).toBe("Hello");
+    expect(item.words[1].text).toBe("World");
+  });
+
+  it("two queue items carry independent word sets", () => {
+    const store = useOcrStore.getState();
+    store.reset();
+    const file1 = new File([""], "page1.png", { type: "image/png" });
+    const file2 = new File([""], "page2.png", { type: "image/png" });
+    store.setImage(file1);
+    store.addFiles([file2]);
+
+    const [id1, id2] = useOcrStore.getState().queue.map((q) => q.id);
+    const words1 = [{ text: "Page1Word", confidence: 90, bbox: { x0: 0, y0: 0, x1: 40, y1: 10 } }];
+    const words2 = [{ text: "Page2Word", confidence: 88, bbox: { x0: 0, y0: 0, x1: 40, y1: 10 } }];
+
+    store.setQueueItemResult(id1, "Page1Word", 90, "", words1);
+    store.setQueueItemResult(id2, "Page2Word", 88, "", words2);
+
+    const queue = useOcrStore.getState().queue;
+    expect(queue[0].words[0].text).toBe("Page1Word");
+    expect(queue[1].words[0].text).toBe("Page2Word");
+    // Confirm they are distinct references -- no cross-contamination
+    expect(queue[0].words).not.toBe(queue[1].words);
   });
 });
 
