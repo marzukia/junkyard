@@ -16,4 +16,5 @@ export const app: JunkyardApp = {
     lib: "src/lib/upscale.ts",
     tools: [],
   },
+  tags: ["on-device-ai", "large-download"],
 };
