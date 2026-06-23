@@ -5,6 +5,7 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { RegionSelector } from "./components/RegionSelector";
 import { WordHighlightView } from "./components/WordHighlightView";
+import { type OcrWord, buildMultiPageSearchablePdf, buildSearchablePdf } from "./ocrPdfUtils";
 import {
   buildBatchFilename,
   buildCombinedText,
@@ -231,10 +232,18 @@ export function App() {
       const result = await worker.recognize(sourceFile);
       const text = normaliseText(result.data.text);
       const conf = Math.round(result.data.confidence);
-      const lowConf = extractLowConfidenceWords(
-        result.data.words as Array<{ text: string; confidence: number }> | undefined
-      );
-      store.setResult(text, conf, lowConf);
+      const rawWords = result.data.words as
+        | Array<{
+            text: string;
+            confidence: number;
+            bbox: { x0: number; y0: number; x1: number; y1: number };
+          }>
+        | undefined;
+      const lowConf = extractLowConfidenceWords(rawWords);
+      const ocrWords: OcrWord[] = (rawWords ?? [])
+        .filter((w) => w.text.trim().length > 0)
+        .map((w) => ({ text: w.text, confidence: w.confidence, bbox: w.bbox }));
+      store.setResult(text, conf, lowConf, ocrWords);
     } catch (err) {
       console.error(err);
       store.setStatus("error");
@@ -267,11 +276,19 @@ export function App() {
         const result = await worker.recognize(item.file);
         const text = normaliseText(result.data.text);
         const conf = Math.round(result.data.confidence);
-        const lowConf = extractLowConfidenceWords(
-          result.data.words as Array<{ text: string; confidence: number }> | undefined
-        );
+        const rawWords = result.data.words as
+          | Array<{
+              text: string;
+              confidence: number;
+              bbox: { x0: number; y0: number; x1: number; y1: number };
+            }>
+          | undefined;
+        const lowConf = extractLowConfidenceWords(rawWords);
+        const ocrWords: OcrWord[] = (rawWords ?? [])
+          .filter((w) => w.text.trim().length > 0)
+          .map((w) => ({ text: w.text, confidence: w.confidence, bbox: w.bbox }));
         store.setQueueItemResult(item.id, text, conf);
-        store.setResult(text, conf, lowConf);
+        store.setResult(text, conf, lowConf, ocrWords);
       } catch {
         store.setQueueItemResult(item.id, "", 0, "OCR failed");
         store.setStatus("error");
@@ -335,6 +352,49 @@ export function App() {
     if (items.length === 0) return;
     downloadText(buildCombinedText(items), "ocr-all-pages.txt");
   }, [store]);
+
+  const [pdfExporting, setPdfExporting] = useState(false);
+
+  const handleDownloadPdf = useCallback(async () => {
+    if (!store.imageUrl || !store.imageFile) return;
+    setPdfExporting(true);
+    try {
+      const mimeType = store.imageFile.type === "image/jpeg" ? "image/jpeg" : "image/png";
+
+      let pdfBytes: Uint8Array<ArrayBuffer>;
+      if (hasQueue && store.queue.some((q) => q.status === "done" && q.previewUrl)) {
+        // Multi-page: one PDF page per done queue item.
+        const pages = store.queue
+          .filter((q) => q.status === "done" && q.previewUrl)
+          .map((q) => ({
+            imageUrl: q.previewUrl,
+            words: store.ocrWords, // words from the current active item; per-item words not cached in queue
+            fallbackText: q.text,
+            mimeType: (q.file.type === "image/jpeg" ? "image/jpeg" : "image/png") as
+              | "image/png"
+              | "image/jpeg",
+          }));
+        pdfBytes = await buildMultiPageSearchablePdf(pages);
+      } else {
+        pdfBytes = await buildSearchablePdf(
+          store.imageUrl,
+          store.ocrWords,
+          store.editedText,
+          mimeType
+        );
+      }
+
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = buildFilename(store.imageFile.name, "pdf");
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } finally {
+      setPdfExporting(false);
+    }
+  }, [store, hasQueue]);
 
   const handleRegionConfirm = useCallback(
     (rect: { x: number; y: number; w: number; h: number }) => {
@@ -702,6 +762,15 @@ export function App() {
                 </button>
                 <button type="button" className="btn-secondary" onClick={handleDownload}>
                   Download .txt
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={handleDownloadPdf}
+                  disabled={pdfExporting}
+                  title="Download a PDF with the image as background and invisible searchable text"
+                >
+                  {pdfExporting ? "Building PDF..." : "Download PDF"}
                 </button>
                 {hasQueue && store.queue.some((q) => q.status === "done" && q.text) && (
                   <button type="button" className="btn-secondary" onClick={handleDownloadAll}>
