@@ -4,7 +4,7 @@ Pure logic library for the 17 junkyard tools. No browser APIs, no framework depe
 
 ## Why it exists
 
-The junkyard monorepo has multiple consumers of the same tool logic: a React/SvelteKit web UI and a stdio MCP server. Extracting the logic here means neither consumer owns it, tests run without a DOM, and adding a new consumer (CLI, HTTP API, etc.) requires no duplication.
+The junkyard monorepo has multiple consumers of the same tool logic: a React web UI and a stdio MCP server. Extracting the logic here means neither consumer owns it, tests run without a DOM, and adding a new consumer (CLI, HTTP API, etc.) requires no duplication.
 
 ## What it is NOT
 
@@ -104,7 +104,7 @@ findUnit(unitId: string): { category: Category; unit: UnitDef } | null
 convert(value: number, fromId: string, toId: string, categoryId?: CategoryId): number
 ```
 
-Supported categories: length, mass, temperature, volume, area, speed, data, time, pressure, energy, frequency, angle, force.
+Supported categories: length, mass, temperature, area, volume, speed, data, time, pressure, energy, angle, power, force, fuel.
 
 ### colours
 
@@ -181,7 +181,7 @@ This is what the MCP server iterates to register tools. Adapters only need to im
 
 ## Tests
 
-167 test cases in `src/index.test.ts` using Vitest, including a 74-test markdown section with a 39-test XSS battery covering script injection, `javascript:` URIs, attribute injection, and HTML block passthrough.
+148 test cases in `src/index.test.ts` using Vitest, including a 58-test markdown section with a 39-test XSS battery covering script injection, `javascript:` URIs, attribute injection, and HTML block passthrough.
 
 Run:
 

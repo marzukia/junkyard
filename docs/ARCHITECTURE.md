@@ -35,7 +35,7 @@ Each app is built independently with Vite's `--base` flag set to `/<slug>/`, so 
 
 The kit is **vendored** rather than published to npm. `scripts/vendor-switcher.mjs` copies `AppSwitcher.*` into every app's `src/` tree. `scripts/vendor-mobilewarn.mjs` copies `MobileWarning.*` into the 9 heavy-AI apps. CI checks that vendored copies match the canonical source, preventing drift.
 
-This approach was chosen over a published workspace package so that parallel tool builds have no dependency on a package registry publish step. The natural extraction point to a real `@marzukia/ui` package would be after the component API has stabilised across several tools.
+This approach was chosen over a published workspace package so that parallel tool builds have no dependency on a package registry publish step. The natural extraction point to a real `@junkyard/ui` package would be after the component API has stabilised across several tools.
 
 ## @junkyard/core and the MCP server
 

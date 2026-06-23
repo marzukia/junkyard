@@ -55,7 +55,7 @@ Available scripts (same for every app):
 |--------|-------------|
 | `npm run dev` | Vite dev server |
 | `npm run build` | tsc + vite build |
-| `npm run preview` | Preview built dist on :4173 |
+| `npm run preview` | Preview built dist (port varies per app, typically 4173-4175) |
 | `npm run lint` | `biome check src/` (report only) |
 | `npm run format` | `biome check --write src/` |
 | `npm run ci` | `biome ci src/` (zero-exit required in CI) |
