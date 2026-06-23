@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# The transformers.js apps (bg, caption, depth, summarize, transcribe,
+# translate, upscale) pull onnxruntime-node, whose postinstall tries to
+# download CUDA GPU binaries and 403s on CI. These are browser apps that only
+# use onnxruntime-web in the bundle, so skip the Node CUDA EP download.
+export npm_config_onnxruntime_node_install_cuda=skip
+export ONNXRUNTIME_NODE_INSTALL_CUDA=skip
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/dist"
 
