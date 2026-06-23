@@ -50,7 +50,22 @@ function splitLines(text: string, font: PDFFont, fontSize: number, maxWidth: num
         current = candidate;
       } else {
         if (current) lines.push(current);
-        current = word;
+        // Word wider than column: break at character level
+        if (font.widthOfTextAtSize(word, fontSize) > maxWidth) {
+          let chunk = "";
+          for (const ch of word) {
+            const next = chunk + ch;
+            if (font.widthOfTextAtSize(next, fontSize) <= maxWidth) {
+              chunk = next;
+            } else {
+              if (chunk) lines.push(chunk);
+              chunk = ch;
+            }
+          }
+          current = chunk;
+        } else {
+          current = word;
+        }
       }
     }
     lines.push(current);
@@ -109,8 +124,10 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
         width: logoW,
         height: logoH,
       });
-    } catch {
-      // Logo embed failed silently
+    } catch (logoErr) {
+      throw new Error(
+        `Logo could not be embedded in the PDF: ${logoErr instanceof Error ? logoErr.message : String(logoErr)}. Remove the logo or use a valid PNG/JPEG file.`
+      );
     }
   }
 

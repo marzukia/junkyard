@@ -11,20 +11,32 @@ export interface InvoiceTotals {
   balanceDue: number;
 }
 
+/** Round to 2 decimal places, avoiding float drift (e.g. 1.005 -> 1.01). */
+const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
+
 /** Compute all monetary totals for an invoice. */
 export function calcTotals(
   items: LineItem[],
   taxRate: number,
   discountPercent: number,
   shipping = 0,
-  amountPaid = 0
+  amountPaid = 0,
+  taxOnGross = false
 ): InvoiceTotals {
-  const subtotal = items.reduce((acc, item) => acc + Math.max(0, item.qty) * item.unitPrice, 0);
-  const discountAmount = subtotal * (discountPercent / 100);
-  const taxableAmount = subtotal - discountAmount;
-  const taxAmount = taxableAmount * (taxRate / 100);
-  const total = taxableAmount + taxAmount + shipping;
-  const balanceDue = Math.max(0, total - amountPaid);
+  // Clamp rates to [0, 100]
+  const clampedTaxRate = Math.min(100, Math.max(0, taxRate));
+  const clampedDiscountPercent = Math.min(100, Math.max(0, discountPercent));
+
+  const subtotal = round2(
+    items.reduce((acc, item) => acc + Math.max(0, item.qty) * item.unitPrice, 0)
+  );
+  const discountAmount = round2(subtotal * (clampedDiscountPercent / 100));
+  const taxableAmount = round2(subtotal - discountAmount);
+  // taxOnGross: tax is applied to pre-discount subtotal; default is net (post-discount)
+  const taxBase = taxOnGross ? subtotal : taxableAmount;
+  const taxAmount = round2(taxBase * (clampedTaxRate / 100));
+  const total = round2(taxableAmount + taxAmount + shipping);
+  const balanceDue = round2(Math.max(0, total - amountPaid));
   return {
     subtotal,
     discountAmount,
@@ -40,11 +52,9 @@ export function calcTotals(
 /** Format a monetary value with the given currency code. */
 export function formatMoney(amount: number, currency: string): string {
   try {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat(undefined, {
       style: "currency",
       currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
     }).format(amount);
   } catch {
     // Fallback for unrecognised currency codes
