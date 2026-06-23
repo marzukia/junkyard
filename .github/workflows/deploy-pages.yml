@@ -50,16 +50,15 @@ jobs:
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).
-        # NOTE: this check will FAIL until the SEO-fix branch is merged; that is
-        # expected. The guard correctly detects current violations (proof below).
+        # Covers app-root index.html as well as public/ sitemap + robots.
         run: |
           if grep -rE '[a-z0-9-]+\.mrzk\.io' \
                --include='index.html' \
                --include='sitemap.xml' \
                --include='robots.txt' \
-               apps/*/public/ \
+               apps/ \
              | grep -v 'junkyard\.mrzk\.io'; then
-            echo "ERROR: stale non-junkyard mrzk.io subdomain(s) found in apps/*/public/"
+            echo "ERROR: stale non-junkyard mrzk.io subdomain(s) found in apps/ (index.html / sitemap.xml / robots.txt)"
             exit 1
           fi
           echo "SEO domain guard: OK"
