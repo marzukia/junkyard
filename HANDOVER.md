@@ -5,6 +5,7 @@ _Last updated: 2026-06-23. Maintainer: Andryo Marzuki (@marzukia, mrzk.io)._
 ---
 
 > **NOTE (superseded):** This document is a layered session log. It references 42 tools (now 44), the retired per-subdomain model (`<slug>.mrzk.io`), `@marzukia/ui` (namespace is now `@junkyard/ui`), and the `__UMAMI_ID__` placeholder (replaced by build-time injection from `umami-ids.txt`). For current deployment, contributing, and architecture information, see [README.md](./README.md), [CONTRIBUTING.md](./CONTRIBUTING.md), and [DEPLOY.md](./DEPLOY.md). **Current state:** junkyard.sh now serves the consolidated site via an nginx reverse-proxy to the GitHub Pages origin (junkyard.mrzk.io), and junkyard.sh is the canonical/primary domain. Sections below marked "old prototype" or referencing `junkyard.sh` serving a static prototype are superseded by this arrangement.
+> **Toolchain:** The package manager and runtime is now **Bun** (not npm/Node). Use `bun install`, `bun run dev`, `bun run build`, `bun run test` everywhere npm was used previously.
 
 
 # RESUME POINT (2026-06-23, late session - READ THIS FIRST)

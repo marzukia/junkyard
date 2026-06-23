@@ -187,14 +187,13 @@ Run:
 
 ```bash
 cd packages/core
-npm install
-npx vitest run
+bun install && bun run test
 ```
 
 Or from the monorepo root if Vitest is available at workspace level:
 
 ```bash
-npx vitest run packages/core/src/index.test.ts
+bunx vitest run packages/core/src/index.test.ts
 ```
 
 ## Dependencies

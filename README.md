@@ -36,13 +36,13 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full picture.
 ```bash
 # Run any single tool locally
 cd apps/<slug>
-npm ci
-npm run dev
+bun install
+bun run dev
 
 # Run the hub landing page
 cd hub
-npm ci
-npm run dev
+bun install
+bun run dev
 ```
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for adding tools, vendoring components, running tests, and lint conventions. Source is at **https://github.com/marzukia/junkyard**.

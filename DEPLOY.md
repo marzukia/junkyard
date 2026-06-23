@@ -35,7 +35,7 @@ Three checks run before the build is allowed to proceed.
 ### Catalogue drift
 
 ```bash
-cd hub && npx tsx ../scripts/gen-catalogue.ts
+cd hub && bun scripts/gen-catalogue.ts
 git diff --exit-code hub/src/catalogue.generated.ts hub/public/catalogue.json
 ```
 
@@ -66,19 +66,19 @@ Runs `bash scripts/build-site.sh`, then uploads `dist/` as a Pages artifact and 
 
 ### What build-site.sh does, step by step
 
-1. Sets two env vars to skip the onnxruntime-node CUDA binary download. Several apps (`bg, caption, depth, summarize, transcribe, translate, upscale`) depend on transformers.js which pulls in onnxruntime-node as a transitive dep. Its postinstall tries to download GPU binaries and 403s on CI. These apps only use onnxruntime-web in the browser bundle, so the Node CUDA EP is irrelevant:
+1. Sets two env vars to skip the onnxruntime-node CUDA binary download. Several apps (`bg, caption, depth, summarize, transcribe, translate, upscale`) depend on transformers.js which pulls in onnxruntime-node as a transitive dep. Its postinstall tries to download GPU binaries and 403s on CI. These apps only use onnxruntime-web in the browser bundle, so the Node CUDA EP is irrelevant. Note that Bun blocks postinstall scripts from third-party packages by default, which also prevents the download attempt:
    ```bash
    export npm_config_onnxruntime_node_install_cuda=skip
    export ONNXRUNTIME_NODE_INSTALL_CUDA=skip
    ```
 
-2. Installs hub dependencies (`npm ci` in `hub/`). This also installs `tsx`, which is a pinned devDep of the hub and is used to run gen-catalogue.
+2. Installs hub dependencies (`bun install` in `hub/`).
 
-3. Runs `npx tsx scripts/gen-catalogue.ts` to regenerate the catalogue artifacts. The hub `prebuild` hook also does this, but `build-site.sh` calls `npx vite build` directly (bypassing npm run build) to avoid running the hook twice, so the explicit generate call is required here.
+3. Runs `bun scripts/gen-catalogue.ts` to regenerate the catalogue artifacts. The hub `prebuild` hook also does this, but `build-site.sh` calls `bunx vite build` directly (bypassing `bun run build`) to avoid running the hook twice, so the explicit generate call is required here.
 
-4. Builds the hub: `npx vite build --outDir dist/ --emptyOutDir`. This produces the landing page at `dist/index.html`.
+4. Builds the hub: `bunx vite build --outDir dist/ --emptyOutDir`. This produces the landing page at `dist/index.html`.
 
-5. For each `apps/<slug>/`: installs deps (`npm ci`) then builds with `npx vite build --base=/<slug>/ --outDir dist/<slug>/ --emptyOutDir`. The `--base=/<slug>/` flag ensures all asset paths are rooted at the tool's subdirectory path.
+5. For each `apps/<slug>/`: installs deps (`bun install`) then builds with `bunx vite build --base=/<slug>/ --outDir dist/<slug>/ --emptyOutDir`. The `--base=/<slug>/` flag ensures all asset paths are rooted at the tool's subdirectory path.
 
 6. Runs `node scripts/inject-umami.mjs` to inject the Umami analytics `<script>` tag into each `dist/<slug>/index.html`. The script reads `scripts/umami.config.json` for the host (`umami.junkyard.sh`) and `umami-ids.txt` for the per-slug UUID mapping. Slugs with no entry in `umami-ids.txt` are skipped with a warning. The injection is idempotent.
 
