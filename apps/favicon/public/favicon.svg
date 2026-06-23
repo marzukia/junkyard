@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Favicon tool glyph: three squares — large/medium/small = multiple sizes metaphor -->
+  <!-- large: teal (top-left) -->
+  <rect x="2" y="2" width="17" height="17" rx="3" fill="#2f9d8d"/>
+  <!-- medium: amber (bottom-right) -->
+  <rect x="13" y="13" width="13" height="13" rx="2.5" fill="#e8b04b"/>
+  <!-- pixel: coral (top-right corner) -->
+  <rect x="24" y="2" width="6" height="6" rx="1.5" fill="#d9594c"/>
+</svg>

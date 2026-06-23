@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Top three input lines (teal) — source text -->
+  <line x1="4" y1="7" x2="28" y2="7" stroke="#2f9d8d" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="4" y1="13" x2="22" y2="13" stroke="#2f9d8d" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="4" y1="19" x2="26" y2="19" stroke="#2f9d8d" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Converging arrow (amber) — compression gesture -->
+  <polyline points="20,21 24,25 28,21" stroke="#e8b04b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <line x1="24" y1="19" x2="24" y2="25" stroke="#e8b04b" stroke-width="2" stroke-linecap="round"/>
+  <!-- Output summary line (coral) — distilled result -->
+  <line x1="4" y1="28" x2="16" y2="28" stroke="#d9594c" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

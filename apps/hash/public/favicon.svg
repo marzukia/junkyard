@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Hash # symbol as stroke line-art -->
+  <!-- Vertical bar left: teal stroke -->
+  <line x1="11.5" y1="5" x2="9.5" y2="27" stroke="#2f9d8d" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- Vertical bar right: teal stroke -->
+  <line x1="20.5" y1="5" x2="18.5" y2="27" stroke="#2f9d8d" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- Horizontal bar top: amber stroke -->
+  <line x1="7" y1="12" x2="25" y2="12" stroke="#e8b04b" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- Horizontal bar bottom: coral stroke -->
+  <line x1="6" y1="20" x2="24" y2="20" stroke="#d9594c" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

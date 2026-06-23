@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Favicon Generator, Free PNG to ICO &amp; Favicon Set</title>
+    <meta
+      name="description"
+      content="Free favicon generator. Upload any PNG or SVG and instantly get a full favicon set: 16×16, 32×32, 48×48, 180×180 Apple Touch, 192×192 and 512×512 PWA icons, favicon.ico, manifest.json, and the HTML snippet. A fast realfavicongenerator alternative, runs entirely in your browser, no upload, no signup."
+    />
+    <meta
+      name="keywords"
+      content="favicon generator free, png to favicon, ico converter, realfavicongenerator alternative, favicon.ico generator, apple touch icon generator, svg to favicon, web app manifest icon, pwa icon generator, favicon set generator, no signup favicon"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://favicon.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Favicon Generator" />
+    <meta property="og:title" content="Favicon Generator, Free PNG to ICO &amp; Favicon Set" />
+    <meta
+      property="og:description"
+      content="Upload any PNG or SVG and get a full favicon set instantly. Runs in your browser, no upload, no signup. A realfavicongenerator alternative."
+    />
+    <meta property="og:url" content="https://favicon.mrzk.io/" />
+    <meta property="og:image" content="https://favicon.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Favicon Generator, upload PNG/SVG, get a complete favicon set for your website"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Favicon Generator, Free PNG to ICO &amp; Favicon Set" />
+    <meta
+      name="twitter:description"
+      content="Upload any PNG or SVG and get a full favicon set instantly. Runs in your browser, no upload, no signup."
+    />
+    <meta name="twitter:image" content="https://favicon.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Favicon Generator",
+            "url": "https://favicon.mrzk.io/",
+            "description": "Free favicon generator. Upload any PNG or SVG and get a full favicon set: 16×16, 32×32, 48×48, 180×180, 192×192, 512×512, favicon.ico, manifest.json, and HTML snippet. Runs entirely in your browser.",
+            "applicationCategory": "DesignApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "PNG to favicon.ico converter",
+              "SVG to favicon",
+              "Apple Touch Icon 180×180",
+              "PWA icons 192×192 and 512×512",
+              "web app manifest.json generator",
+              "HTML link snippet",
+              "ZIP download",
+              "Runs offline in browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="17878c99-77d0-4c06-bb95-54ff2f094175"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

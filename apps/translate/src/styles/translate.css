@@ -1,0 +1,557 @@
+/* ─── Beta notice ───────────────────────────────────────────────────────────── */
+
+.tr-beta-note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+}
+
+.tr-beta-note strong {
+  color: var(--accent);
+}
+
+/* ─── Language selector bar ─────────────────────────────────────────────────── */
+
+.tr-lang-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.tr-lang-select-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 140px;
+}
+
+.tr-lang-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.tr-lang-select {
+  font-family: var(--font-text);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.14s, background 0.14s;
+  appearance: auto;
+}
+
+.tr-lang-select:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+/* ─── Swap button ───────────────────────────────────────────────────────────── */
+
+.tr-swap-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink-mid);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.14s, color 0.14s, background 0.14s;
+}
+
+.tr-swap-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.tr-swap-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ─── Text panel grid ───────────────────────────────────────────────────────── */
+
+.tr-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 620px) {
+  .tr-panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Individual text panel ─────────────────────────────────────────────────── */
+
+.tr-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tr-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 1.2rem;
+}
+
+.tr-panel-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.tr-clear-btn {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.14s;
+  /* ensure 40px tap target height via padding on mobile */
+}
+
+.tr-clear-btn:hover {
+  color: #d9594c;
+}
+
+.tr-clear-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+@media (pointer: coarse) {
+  .tr-clear-btn {
+    min-height: 40px;
+    padding: 0.5rem 0.6rem;
+  }
+}
+
+.tr-textarea {
+  width: 100%;
+  min-height: 200px;
+  resize: vertical;
+  font-family: var(--font-text);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  outline: none;
+  transition: border-color 0.14s, background 0.14s;
+}
+
+.tr-textarea:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.tr-textarea--output {
+  background: var(--surface);
+  color: var(--ink-mid);
+  cursor: default;
+}
+
+.tr-textarea--output.tr-textarea--has-result {
+  color: var(--ink);
+}
+
+/* ─── Character counter ─────────────────────────────────────────────────────── */
+
+.tr-char-count {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+  text-align: right;
+}
+
+.tr-char-count--warn {
+  color: #e8b04b;
+}
+
+.tr-char-count--over {
+  color: #d9594c;
+}
+
+/* ─── Action bar ────────────────────────────────────────────────────────────── */
+
+.tr-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.tr-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.42rem 0.85rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+
+.tr-copy-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.tr-copy-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ─── Progress bar ──────────────────────────────────────────────────────────── */
+
+.tr-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 0 0.5rem;
+}
+
+.tr-progress-bar-wrap {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tr-progress-track {
+  height: 6px;
+  background: var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.tr-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.tr-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-mid);
+  text-align: center;
+}
+
+.tr-progress-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  text-align: center;
+  max-width: 360px;
+}
+
+/* ─── Spinner (in-progress translation) ────────────────────────────────────── */
+
+@keyframes trSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tr-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: trSpin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+.tr-translating-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+}
+
+/* ─── Language picker (searchable replacement for native <select>) ────────── */
+
+.lp-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 140px;
+  position: relative;
+}
+
+.lp-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-family: var(--font-text);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  min-height: 40px;
+  transition: border-color 0.14s, background 0.14s;
+}
+
+.lp-trigger:hover,
+.lp-trigger--open {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.lp-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.lp-trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lp-trigger-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.lp-chevron {
+  flex-shrink: 0;
+  color: var(--ink-faint);
+  transition: transform 0.18s;
+}
+
+.lp-chevron--up {
+  transform: rotate(180deg);
+}
+
+.lp-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-pop);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* constrain height so the list scrolls */
+  max-height: min(340px, 60vh);
+}
+
+.lp-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface-sunken);
+  flex-shrink: 0;
+}
+
+.lp-search-icon {
+  flex-shrink: 0;
+  color: var(--ink-faint);
+}
+
+.lp-search {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-text);
+  font-size: 0.82rem;
+  color: var(--ink);
+  outline: none;
+  /* Keep 16px on coarse to prevent iOS zoom -- global rule covers this but
+     be explicit since this input sits in a non-standard context */
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.lp-search::placeholder {
+  color: var(--ink-faint);
+}
+
+.lp-clear-query {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: color 0.12s;
+}
+
+.lp-clear-query:hover {
+  color: var(--ink);
+}
+
+.lp-list {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.lp-option {
+  padding: 0.5rem 0.85rem;
+  font-family: var(--font-text);
+  font-size: 0.82rem;
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  /* Minimum tap target height */
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.lp-option:hover,
+.lp-option--active {
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.lp-option--selected {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.lp-option--selected.lp-option--active {
+  background: var(--accent-soft);
+}
+
+.lp-empty {
+  padding: 1rem 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+/* ─── Error ─────────────────────────────────────────────────────────────────── */
+
+.tr-error {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #d9594c;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background: rgba(217, 89, 76, 0.08);
+  border: 1px solid rgba(217, 89, 76, 0.2);
+}
+
+/* ─── Panel header actions (file load + clear) ──────────────────────────────── */
+
+.tr-panel-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+/* ─── Hidden file input ──────────────────────────────────────────────────────── */
+
+.tr-file-input {
+  display: none;
+}
+
+/* ─── Source panel footer (char count + keyboard hint) ───────────────────────── */
+
+.tr-source-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 1rem;
+}
+
+.tr-kbd-hint {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ─── Detected language badge ────────────────────────────────────────────────── */
+
+.tr-lang-picker-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 140px;
+}
+
+.tr-detected-badge {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  padding-left: 0.1rem;
+}

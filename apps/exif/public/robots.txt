@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://exif.mrzk.io/sitemap.xml

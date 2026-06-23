@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Film strip frame: teal outline, amber sprocket holes, coral play accent -->
+  <!-- Main film frame rectangle -->
+  <rect x="4" y="8" width="24" height="16" rx="2" stroke="#2f9d8d" stroke-width="2" fill="none"/>
+  <!-- Top sprocket holes -->
+  <rect x="7" y="4" width="3" height="4" rx="1" fill="#e8b04b"/>
+  <rect x="14.5" y="4" width="3" height="4" rx="1" fill="#e8b04b"/>
+  <rect x="22" y="4" width="3" height="4" rx="1" fill="#e8b04b"/>
+  <!-- Bottom sprocket holes -->
+  <rect x="7" y="24" width="3" height="4" rx="1" fill="#e8b04b"/>
+  <rect x="14.5" y="24" width="3" height="4" rx="1" fill="#e8b04b"/>
+  <rect x="22" y="24" width="3" height="4" rx="1" fill="#e8b04b"/>
+  <!-- Play triangle (coral) centered in frame -->
+  <path d="M13 12 L13 20 L21 16 Z" fill="#d9594c"/>
+</svg>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>QR Code Generator, Free QR Codes with Logo, Colours &amp; Styles</title>
+    <meta
+      name="description"
+      content="Free QR code generator, add your logo, custom colours, dot styles, and error correction. Download PNG or SVG. No watermark, no signup, runs entirely in your browser. A qr-code-generator.com alternative."
+    />
+    <meta
+      name="keywords"
+      content="free qr code generator, qr code with logo, custom qr code, qr code generator no watermark, qr code no signup, qr-code-generator.com alternative, qr code maker, qr code colors, qr code styles, offline qr code generator, browser qr code"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://qr.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="QR Code Generator" />
+    <meta property="og:title" content="QR Code Generator, Free QR Codes with Logo, Colours &amp; Styles" />
+    <meta
+      property="og:description"
+      content="Free QR code generator, add your logo, custom colours, dot styles, and error correction. Download PNG or SVG. No watermark, no signup, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://qr.mrzk.io/" />
+    <meta property="og:image" content="https://qr.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="QR Code Generator, custom QR codes with logo and colours on a clean white canvas" />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="QR Code Generator, Free QR Codes with Logo, Colours &amp; Styles" />
+    <meta
+      name="twitter:description"
+      content="Free QR code generator, add your logo, custom colours, dot styles. No watermark, no signup, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://qr.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "QR Code Generator",
+            "url": "https://qr.mrzk.io/",
+            "description": "Free QR code generator with logo overlay, custom colours, dot styles, and error correction. Download PNG or SVG. No watermark, no signup, runs entirely in your browser.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "QR code generation from text or URL",
+              "Custom foreground and background colours",
+              "Logo overlay upload",
+              "Dot style options",
+              "Error correction levels",
+              "Download as PNG",
+              "Download as SVG",
+              "No watermark",
+              "No signup required",
+              "Runs entirely in browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="b7570737-95d9-459a-985f-bfb636cf39d8"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

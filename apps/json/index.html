@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>JSON Formatter, Free JSON Beautifier, Validator &amp; Minifier</title>
+    <meta
+      name="description"
+      content="Free JSON formatter, beautifier and validator, format, minify, validate with precise error locations, and explore a collapsible tree view. No upload, no signup, runs entirely in your browser. A JSONLint alternative."
+    />
+    <meta
+      name="keywords"
+      content="json formatter, json beautifier, json validator, json minifier, jsonlint alternative, format json online, json pretty print, json tree viewer, free json formatter, json no upload, json offline, validate json online, json error checker"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://json.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="JSON Formatter" />
+    <meta
+      property="og:title"
+      content="JSON Formatter, Free JSON Beautifier, Validator &amp; Minifier"
+    />
+    <meta
+      property="og:description"
+      content="Free JSON formatter, beautifier and validator. Format, minify, validate with precise error locations. No upload, no signup, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://json.mrzk.io/" />
+    <meta property="og:image" content="https://json.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="JSON Formatter, format, validate &amp; minify JSON on a clean canvas"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="JSON Formatter, Free JSON Beautifier, Validator &amp; Minifier"
+    />
+    <meta
+      name="twitter:description"
+      content="Format, minify, validate JSON with precise error locations. No upload, no signup, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://json.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "JSON Formatter",
+            "url": "https://json.mrzk.io/",
+            "description": "Free JSON formatter, beautifier and validator. Format, minify, validate with precise error locations, explore a collapsible tree view. No upload, no signup, runs entirely in your browser.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "JSON formatting and beautification",
+              "Configurable indent (2, 4 spaces or tab)",
+              "JSON minification",
+              "JSON validation with precise line and column errors",
+              "Collapsible tree view",
+              "Copy to clipboard",
+              "Download as .json file",
+              "Handles large JSON files",
+              "No upload required",
+              "No signup required",
+              "Runs entirely in browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="1d2ed2b1-e805-40c8-8de5-e651de9e375e"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

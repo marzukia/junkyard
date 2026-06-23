@@ -1,0 +1,403 @@
+/* ─── Header controls wrapper ───────────────────────────────────────────────── */
+
+.depth-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ─── Beta notice ──────────────────────────────────────────────────────────── */
+
+.depth-beta-note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+}
+
+.depth-beta-note strong {
+  color: var(--accent);
+}
+
+/* ─── Colourmap toggle ──────────────────────────────────────────────────────── */
+
+.depth-map-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.depth-map-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ─── Example depth-map preview (empty state) ──────────────────────────────── */
+
+.depth-dropzone-outer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.depth-example {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.depth-example-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.depth-example-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.depth-example-img {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+  background: var(--surface-sunken);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 160px;
+}
+
+.depth-example-img svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.depth-example-arrow {
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+
+.depth-example-caption {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+@media (max-width: 420px) {
+  .depth-example-img {
+    max-width: 120px;
+  }
+
+  .depth-example-img svg {
+    width: 120px;
+    height: 90px;
+  }
+}
+
+/* ─── Drop zone ─────────────────────────────────────────────────────────────── */
+
+.depth-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 2rem;
+  width: 100%;
+  background: transparent;
+  border: 2px dashed var(--rule);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.16s, background 0.16s;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+}
+
+.depth-dropzone:hover,
+.depth-dropzone:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.depth-dropzone--drag {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.depth-dropzone--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.depth-dropzone-label {
+  font-family: var(--font-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.depth-dropzone-hint {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+
+/* ─── Progress bar ──────────────────────────────────────────────────────────── */
+
+.depth-status-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.depth-progress-wrap {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.depth-progress-track {
+  height: 6px;
+  background: var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.depth-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.depth-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-mid);
+  text-align: center;
+}
+
+.depth-status-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  text-align: center;
+  max-width: 360px;
+}
+
+/* ─── Spinner ───────────────────────────────────────────────────────────────── */
+
+@keyframes depthSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.depth-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: depthSpin 0.75s linear infinite;
+}
+
+.depth-status-label {
+  font-family: var(--font-text);
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+}
+
+.depth-thumb-preview {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  object-fit: contain;
+  opacity: 0.5;
+}
+
+/* ─── Result / before-after ─────────────────────────────────────────────────── */
+
+.depth-result-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.depth-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 560px) {
+  .depth-compare {
+    grid-template-columns: 1fr;
+  }
+}
+
+.depth-compare-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.depth-compare-label {
+  text-align: center;
+}
+
+.depth-compare-img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  object-fit: contain;
+  max-height: 400px;
+  background: var(--surface-sunken);
+  display: block;
+}
+
+/* ─── Actions row ───────────────────────────────────────────────────────────── */
+
+.depth-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Icon + label layout inside the download button */
+.depth-actions .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.depth-file-meta {
+  text-align: left;
+  margin-top: 0.25rem;
+}
+
+/* ─── Colourmap legend bar ──────────────────────────────────────────────────── */
+
+.depth-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.depth-legend-bar {
+  height: 8px;
+  border-radius: 999px;
+  /* gradient set via inline style per colourmap */
+}
+
+.depth-legend-labels {
+  display: flex;
+  justify-content: space-between;
+}
+
+.depth-legend-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--ink-faint);
+}
+
+/* ─── Parallax preview ──────────────────────────────────────────────────────── */
+
+.depth-parallax {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  background: var(--surface-sunken);
+  cursor: crosshair;
+  /* Prevent text selection while mousing over */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* On very small screens skip the parallax (save vertical space) */
+@media (max-width: 400px) {
+  .depth-parallax {
+    display: none;
+  }
+}
+
+.depth-parallax-layer {
+  position: absolute;
+  inset: -6%;
+  width: 112%;
+  height: 112%;
+  object-fit: cover;
+  will-change: transform;
+  transition: transform 0.04s linear;
+  pointer-events: none;
+}
+
+.depth-parallax-layer--photo {
+  z-index: 1;
+}
+
+.depth-parallax-layer--depth {
+  z-index: 2;
+}
+
+.depth-parallax-hint {
+  position: absolute;
+  bottom: 0.6rem;
+  right: 0.8rem;
+  z-index: 3;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Error state ───────────────────────────────────────────────────────────── */
+
+.depth-error-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.depth-error-msg {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #d9594c;
+  max-width: 420px;
+}

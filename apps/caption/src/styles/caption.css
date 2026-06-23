@@ -1,0 +1,649 @@
+/* ─── Beta notice ──────────────────────────────────────────────────────────── */
+
+.cap-beta-note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+}
+
+.cap-beta-note strong {
+  color: var(--accent);
+}
+
+/* ─── Sample image button ───────────────────────────────────────────────────── */
+
+.cap-sample-row {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+
+.cap-sample-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+  min-height: 40px;
+}
+
+.cap-sample-btn:hover {
+  background: var(--accent-soft);
+}
+
+.cap-sample-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ─── Drop zone ─────────────────────────────────────────────────────────────── */
+
+.cap-dropzone-outer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cap-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 2rem;
+  width: 100%;
+  background: transparent;
+  border: 2px dashed var(--rule);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.16s, background 0.16s;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+}
+
+.cap-dropzone:hover,
+.cap-dropzone:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.cap-dropzone--drag {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.cap-dropzone--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.cap-dropzone-label {
+  font-family: var(--font-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cap-dropzone-hint {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+
+.cap-dropzone-timing {
+  font-family: var(--font-mono);
+  font-size: 0.60rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
+  opacity: 0.75;
+}
+
+/* ─── Progress bar ──────────────────────────────────────────────────────────── */
+
+.cap-status-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.cap-progress-wrap {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cap-progress-track {
+  height: 6px;
+  background: var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.cap-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.cap-progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-mid);
+  text-align: center;
+}
+
+.cap-status-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  text-align: center;
+  max-width: 360px;
+}
+
+/* ─── Spinner ───────────────────────────────────────────────────────────────── */
+
+@keyframes capSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cap-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: capSpin 0.75s linear infinite;
+}
+
+.cap-status-label {
+  font-family: var(--font-text);
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+}
+
+.cap-thumb-preview {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  object-fit: contain;
+  opacity: 0.5;
+}
+
+/* ─── Result ─────────────────────────────────────────────────────────────────── */
+
+.cap-result-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cap-result-image-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.cap-result-image {
+  max-width: 100%;
+  max-height: 420px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  object-fit: contain;
+}
+
+.cap-result-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.cap-result-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cap-caption-box {
+  font-family: var(--font-text);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  word-break: break-word;
+}
+
+.cap-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cap-copy-feedback {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.cap-file-meta {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+
+/* ─── Error state ───────────────────────────────────────────────────────────── */
+
+.cap-error-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.cap-error-inline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(217, 89, 76, 0.08);
+  border: 1px solid rgba(217, 89, 76, 0.25);
+  border-radius: var(--radius-sm);
+  margin-top: 1rem;
+}
+
+.cap-error-msg {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #d9594c;
+  max-width: 420px;
+}
+
+/* ─── Card header (tabs + controls row) ────────────────────────────────────── */
+
+.cap-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ─── Input mode tabs ───────────────────────────────────────────────────────── */
+
+.cap-input-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--surface-sunken);
+  border-radius: 999px;
+}
+
+.cap-input-tab {
+  font-family: var(--font-text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.28rem 0.75rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+  line-height: 1.2;
+  min-height: 30px;
+}
+
+.cap-input-tab:hover {
+  color: var(--ink);
+}
+
+.cap-input-tab--active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(26, 37, 48, 0.12);
+}
+
+[data-mantine-color-scheme="dark"] .cap-input-tab--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+
+.cap-input-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+@media (max-width: 480px) {
+  .cap-input-tabs {
+    border-radius: var(--radius-sm);
+  }
+  .cap-input-tab {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.55rem;
+    min-height: 36px;
+  }
+}
+
+/* ─── Detail level row ──────────────────────────────────────────────────────── */
+
+.cap-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.cap-detail-hint {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
+}
+
+/* ─── URL input ─────────────────────────────────────────────────────────────── */
+
+.cap-url-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cap-url-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.cap-url-input {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  outline: none;
+  min-width: 0;
+  transition: border-color 0.14s;
+}
+
+.cap-url-input:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.cap-url-input::placeholder {
+  color: var(--ink-faint);
+}
+
+.cap-url-btn {
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 1.1rem;
+  white-space: nowrap;
+  min-height: 40px;
+}
+
+.cap-url-hint {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+
+.cap-url-paste-row {
+  display: flex;
+}
+
+/* ─── Candidate picker ──────────────────────────────────────────────────────── */
+
+.cap-candidates-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.cap-candidates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cap-candidate-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.14s, background 0.14s;
+  font-family: inherit;
+  width: 100%;
+}
+
+.cap-candidate-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.cap-candidate-btn--active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.cap-candidate-num {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 1.2rem;
+  padding-top: 0.15rem;
+}
+
+.cap-candidate-text {
+  font-family: var(--font-text);
+  font-size: 0.88rem;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* ─── Editable alt-text textarea ────────────────────────────────────────────── */
+
+.cap-alttext-area {
+  width: 100%;
+  font-family: var(--font-text);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.14s;
+}
+
+.cap-alttext-area:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+/* ─── Uncertainty badge ─────────────────────────────────────────────────────── */
+
+.cap-uncertainty-badge {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-faint);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.18rem 0.55rem;
+  cursor: help;
+  user-select: none;
+}
+
+/* ─── Inline spinner (batch) ────────────────────────────────────────────────── */
+
+.cap-spinner-inline {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: capSpin 0.75s linear infinite;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+}
+
+/* ─── Batch panel ───────────────────────────────────────────────────────────── */
+
+.cap-batch-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cap-batch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.cap-batch-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+}
+
+.cap-batch-item--done {
+  border-color: var(--accent);
+}
+
+.cap-batch-item--error {
+  border-color: rgba(217, 89, 76, 0.4);
+}
+
+.cap-batch-item--processing {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.cap-batch-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 1px solid var(--rule);
+}
+
+.cap-batch-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.cap-batch-filename {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cap-batch-status {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.cap-batch-caption {
+  font-family: var(--font-text);
+  font-size: 0.82rem;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.cap-batch-error {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: #d9594c;
+}
+
+.cap-batch-actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ─── Mobile touch targets ──────────────────────────────────────────────────── */
+
+@media (pointer: coarse) {
+  .cap-actions .btn-primary,
+  .cap-actions .btn-secondary,
+  .cap-batch-actions .btn-primary,
+  .cap-batch-actions .btn-secondary {
+    min-height: 44px;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+  }
+  .cap-input-tab {
+    min-height: 40px;
+  }
+  .cap-url-input {
+    min-height: 44px;
+  }
+  .cap-url-btn {
+    min-height: 44px;
+  }
+}

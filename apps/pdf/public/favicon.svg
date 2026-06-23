@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Document outline: teal stroke, transparent fill -->
+  <path d="M6 3 L19 3 L26 10 L26 29 L6 29 Z" fill="none" stroke="#2f9d8d" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Fold crease -->
+  <path d="M19 3 L19 10 L26 10" fill="none" stroke="#2f9d8d" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Amber fold triangle -->
+  <path d="M19 3 L19 10 L26 10 Z" fill="#e8b04b"/>
+  <!-- Coral accent bar -->
+  <rect x="10" y="21" width="12" height="2.5" rx="1.25" fill="#d9594c"/>
+  <!-- Teal line hints -->
+  <rect x="10" y="14" width="12" height="2" rx="1" fill="#2f9d8d" opacity="0.5"/>
+  <rect x="10" y="17.5" width="7" height="2" rx="1" fill="#2f9d8d" opacity="0.35"/>
+</svg>

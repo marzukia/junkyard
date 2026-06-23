@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Depth Map Generator, Free Depth-Anything Alternative, No Upload Needed</title>
+    <meta
+      name="description"
+      content="Generate depth maps from any photo instantly in your browser. Free, private, no upload. A Depth-Anything alternative that runs entirely client-side with AI. No signup, no API key, no data leaves your device."
+    />
+    <meta
+      name="keywords"
+      content="depth map generator free, depth anything browser, monocular depth estimation online free, depth map from image no upload, free depth map tool, AI depth estimation browser, depth map generator no signup, depth estimation offline, MiDaS alternative free, image depth map online"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://depth.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Depth Map Generator" />
+    <meta property="og:title" content="Depth Map Generator, Free Depth-Anything Alternative, No Upload Needed" />
+    <meta
+      property="og:description"
+      content="Generate depth maps from photos instantly in your browser. Free, private, no upload. AI-powered, no signup, no API key."
+    />
+    <meta property="og:url" content="https://depth.mrzk.io/" />
+    <meta property="og:image" content="https://depth.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Depth Map Generator, free in-browser depth estimation, no upload required"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Depth Map Generator, Free Depth-Anything Alternative, No Upload Needed" />
+    <meta
+      name="twitter:description"
+      content="Generate depth maps from photos in your browser. Free, private, no upload, no signup. AI-powered."
+    />
+    <meta name="twitter:image" content="https://depth.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Depth Map Generator",
+            "url": "https://depth.mrzk.io/",
+            "description": "Generate depth maps from any photo instantly in your browser. Free, private, no upload. AI-powered depth estimation with no signup and no API key.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "AI depth estimation in browser",
+              "No upload. fully client-side",
+              "No signup required",
+              "No API key needed",
+              "Viridis and greyscale colourmap options",
+              "Download depth map as PNG",
+              "Works offline after first load",
+              "Side-by-side original and depth map",
+              "Private. images never leave your device",
+              "Depth-Anything alternative",
+              "MiDaS alternative"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="5d0b2143-e2a6-4b80-b5dd-8ab294f5aa74"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

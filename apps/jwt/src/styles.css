@@ -1,0 +1,358 @@
+/* ─── JWT Decoder — tool-specific styles ────────────────────────────────── */
+
+/* Input area */
+
+.jwt-input-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.jwt-textarea {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  resize: vertical;
+  min-height: 96px;
+  transition: border-color 0.14s;
+  word-break: break-all;
+}
+
+.jwt-textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.jwt-textarea::placeholder {
+  color: var(--ink-faint);
+  font-size: 0.7rem;
+}
+
+/* Coloured token preview strip */
+
+.jwt-token-preview {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+  word-break: break-all;
+}
+
+/* Error */
+
+.jwt-error {
+  margin-top: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #d9594c;
+}
+
+/* Clear button */
+
+.jwt-clear-btn {
+  font-size: 0.7rem;
+  padding: 0.3rem 0.75rem;
+}
+
+/* Section heading */
+
+.jwt-section-heading {
+  font-family: var(--font-text);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--ink-mid);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+/* Claims table */
+
+.jwt-claims-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.jwt-claim-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.jwt-claim-row:last-child {
+  border-bottom: none;
+}
+
+.jwt-claim-key {
+  flex-shrink: 0;
+  min-width: 7rem;
+}
+
+.jwt-claim-value {
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+}
+
+/* Expiry badge */
+
+.jwt-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.18rem 0.65rem;
+  border-radius: 999px;
+}
+
+.jwt-badge--valid {
+  background: #eaf6f3;
+  color: #2f9d8d;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-badge--valid {
+  background: #18302c;
+  color: #41b6a6;
+}
+
+.jwt-badge--expired {
+  background: #fdecea;
+  color: #d9594c;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-badge--expired {
+  background: #2e1616;
+  color: #e07060;
+}
+
+.jwt-badge--not-yet-valid {
+  background: #fef8ec;
+  color: #b8882a;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-badge--not-yet-valid {
+  background: #2e2512;
+  color: #e8b04b;
+}
+
+.jwt-badge--no-expiry {
+  background: var(--surface-sunken);
+  color: var(--ink-faint);
+}
+
+/* Segment panels */
+
+.jwt-segment-panel {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-top-width: 3px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+}
+
+.jwt-segment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+/* Privacy note */
+
+.jwt-privacy-note {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+/* Sample hint */
+
+.jwt-sample-hint {
+  margin-top: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-faint);
+}
+
+.jwt-sample-hint strong {
+  color: var(--ink-mid);
+}
+
+.jwt-sample-hint code {
+  background: var(--surface-sunken);
+  padding: 0.05rem 0.35rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.68rem;
+}
+
+/* Signature verification */
+
+.jwt-verify-section {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.jwt-verify-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.jwt-secret-input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  transition: border-color 0.14s;
+}
+
+.jwt-secret-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.jwt-verify-result {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.jwt-verify-result--valid {
+  background: #eaf6f3;
+  color: #2f9d8d;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-verify-result--valid {
+  background: #18302c;
+  color: #41b6a6;
+}
+
+.jwt-verify-result--invalid {
+  background: #fdecea;
+  color: #d9594c;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-verify-result--invalid {
+  background: #2e1616;
+  color: #e07060;
+}
+
+.jwt-verify-result--error,
+.jwt-verify-result--unsupported {
+  background: var(--surface-sunken);
+  color: var(--ink-faint);
+}
+
+/* Mobile adjustments */
+
+@media (max-width: 640px) {
+  .jwt-claim-row {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .jwt-claim-key {
+    min-width: unset;
+  }
+
+  .jwt-verify-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Tab switcher */
+
+.jwt-tabs {
+  display: flex;
+  align-items: center;
+}
+
+/* Encode panel grid */
+
+.jwt-encode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .jwt-encode-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Textarea error state */
+
+.jwt-textarea--error {
+  border-color: #d9594c !important;
+}
+
+/* Public-key textarea */
+
+.jwt-pubkey-textarea {
+  min-height: 120px;
+  margin-bottom: 0.5rem;
+}
+
+/* Verify column layout for asymmetric */
+
+.jwt-verify-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Encode result box */
+
+.jwt-encode-result {
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+}
+
+/* UX audit: ensure textarea/select dont zoom on iOS + larger toggle tap target */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+}

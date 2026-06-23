@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Photo frame -->
+  <rect x="2" y="4" width="28" height="24" rx="2.5" stroke="#2f9d8d" stroke-width="2.2" stroke-linejoin="round"/>
+  <!-- Depth contour lines — far (faint, wide) -->
+  <path d="M7 20 Q16 14 25 20" stroke="#2f9d8d" stroke-width="1.4" stroke-linecap="round" opacity="0.4"/>
+  <!-- Mid distance -->
+  <path d="M7 17 Q16 11 25 17" stroke="#2f9d8d" stroke-width="1.6" stroke-linecap="round" opacity="0.65"/>
+  <!-- Near (bold) -->
+  <path d="M7 14 Q16 8 25 14" stroke="#e8b04b" stroke-width="1.9" stroke-linecap="round"/>
+  <!-- Focal point dot (closest) -->
+  <circle cx="16" cy="9.5" r="2" fill="#d9594c"/>
+</svg>

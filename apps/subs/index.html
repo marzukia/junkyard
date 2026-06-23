@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Subs, Free SRT Editor, Subtitle Shifter &amp; SRT to VTT Converter</title>
+    <meta
+      name="description"
+      content="Free online subtitle editor. Load .srt or .vtt files, edit lines and timings, time-shift all or selected subtitles, convert SRT to VTT or VTT to SRT, fix overlaps, and download. No upload, no signup, runs entirely in your browser."
+    />
+    <meta
+      name="keywords"
+      content="srt editor online, subtitle editor, subtitle shifter, time sync subtitles, srt to vtt converter, vtt to srt converter, fix subtitle timing, subtitle time shift, free subtitle editor, subtitle editor no signup, subtitle editor offline, subtitle editor private"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://subs.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Subs" />
+    <meta property="og:title" content="Subs, Free SRT Editor, Subtitle Shifter &amp; SRT to VTT Converter" />
+    <meta
+      property="og:description"
+      content="Free online subtitle editor. Load .srt or .vtt files, edit lines and timings, time-shift subtitles, convert SRT↔VTT, fix overlaps, download. No upload, runs in your browser."
+    />
+    <meta property="og:url" content="https://subs.mrzk.io/" />
+    <meta property="og:image" content="https://subs.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Subs, subtitle editor showing timed cue rows on a clean canvas"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Subs, Free SRT Editor, Subtitle Shifter &amp; SRT to VTT Converter" />
+    <meta
+      name="twitter:description"
+      content="Free online subtitle editor. Load .srt or .vtt files, edit lines and timings, time-shift subtitles, convert SRT↔VTT, fix overlaps, download. No upload, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://subs.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Subtitle Editor",
+            "url": "https://subs.mrzk.io/",
+            "description": "Free online subtitle editor. Load .srt or .vtt files, edit lines and timings, time-shift subtitles, convert SRT to VTT or VTT to SRT, fix overlaps, and download.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Load .srt and .vtt subtitle files",
+              "Edit subtitle text and timings",
+              "Time-shift all or selected subtitles",
+              "SRT to VTT conversion",
+              "VTT to SRT conversion",
+              "Fix overlapping subtitles",
+              "Download edited subtitles",
+              "Runs entirely in your browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="357a78d7-cb1c-4e17-aca8-d1310883128c"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

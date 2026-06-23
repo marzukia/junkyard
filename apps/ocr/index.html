@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Image to Text (OCR), Free &amp; Private, No Signup</title>
+    <meta
+      name="description"
+      content="Extract text from any image or screenshot instantly. Free OCR tool that runs entirely in your browser, no upload, no signup, 100% private. A fast alternative to Google Drive OCR, Adobe Acrobat, and NewOCR."
+    />
+    <meta
+      name="keywords"
+      content="image to text free, free OCR no signup, extract text from image, extract text from screenshot online, OCR online free, image text extractor, photo to text, screenshot to text, free OCR tool, offline OCR browser, private OCR, newocr alternative, google drive ocr alternative"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://ocr.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Image to Text (OCR)" />
+    <meta property="og:title" content="Image to Text (OCR), Free &amp; Private, No Signup" />
+    <meta
+      property="og:description"
+      content="Extract text from any image or screenshot instantly. Free OCR tool that runs entirely in your browser, no upload, no signup, 100% private."
+    />
+    <meta property="og:url" content="https://ocr.mrzk.io/" />
+    <meta property="og:image" content="https://ocr.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Image to Text (OCR), drag an image, extract text instantly in your browser"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Image to Text (OCR), Free &amp; Private, No Signup" />
+    <meta
+      name="twitter:description"
+      content="Extract text from any image or screenshot instantly. Free OCR tool that runs entirely in your browser, no upload, no signup, 100% private."
+    />
+    <meta name="twitter:image" content="https://ocr.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Image to Text (OCR)",
+            "url": "https://ocr.mrzk.io/",
+            "description": "Extract text from any image or screenshot instantly. Free OCR tool that runs entirely in your browser, no upload, no signup, 100% private.",
+            "applicationCategory": "UtilityApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Drag and drop image OCR",
+              "Multi-language support",
+              "Editable extracted text",
+              "Copy to clipboard",
+              "Download as .txt",
+              "100% in-browser, no upload",
+              "No signup required",
+              "Private and offline-capable"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="ab622e6e-42b3-4284-9457-3a83c56da9af"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

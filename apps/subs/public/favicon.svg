@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Subtitle bars -->
+  <rect x="6" y="11" width="20" height="4" rx="2" fill="#2f9d8d"/>
+  <rect x="8" y="18" width="16" height="4" rx="2" fill="#e8b04b"/>
+  <!-- Corner accent dots -->
+  <rect x="4" y="4" width="4" height="4" rx="1" fill="#d9594c"/>
+  <rect x="24" y="4" width="4" height="4" rx="1" fill="#d9594c"/>
+  <rect x="4" y="24" width="4" height="4" rx="1" fill="#d9594c"/>
+  <rect x="24" y="24" width="4" height="4" rx="1" fill="#d9594c"/>
+</svg>

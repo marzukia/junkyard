@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jwt.mrzk.io/sitemap.xml

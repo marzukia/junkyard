@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Colours, Free Colour Gradient &amp; Palette Generator</title>
+    <meta
+      name="description"
+      content="Free online colour gradient and palette generator. Create stepped gradients with LAB/RGB/HSL interpolation, generate harmonious color palettes, copy hex/CSS. A fast coolors &amp; colordesigner alternative."
+    />
+    <meta
+      name="keywords"
+      content="color gradient generator, colour gradient generator, palette generator, stepped gradient, gradient steps, LAB color interpolation, hex color palette, color scheme generator, coolors alternative, colordesigner alternative, css gradient generator"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://colours.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#FAF9F5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1814" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Colours" />
+    <meta property="og:title" content="Colours, Free Colour Gradient &amp; Palette Generator" />
+    <meta
+      property="og:description"
+      content="Free online colour gradient and palette generator. Create stepped gradients with LAB/RGB/HSL interpolation, generate harmonious color palettes, copy hex/CSS. A fast coolors &amp; colordesigner alternative."
+    />
+    <meta property="og:url" content="https://colours.mrzk.io/" />
+    <meta property="og:image" content="https://colours.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Colours app, stepped gradient bands and palette swatches on a paper-white canvas"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Colours, Free Colour Gradient &amp; Palette Generator" />
+    <meta
+      name="twitter:description"
+      content="Free online colour gradient and palette generator. Create stepped gradients with LAB/RGB/HSL interpolation, generate harmonious color palettes, copy hex/CSS. A fast coolors &amp; colordesigner alternative."
+    />
+    <meta name="twitter:image" content="https://colours.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Colours",
+            "url": "https://colours.mrzk.io/",
+            "description": "Free online colour gradient and palette generator. Create stepped gradients with LAB/RGB/HSL interpolation, generate harmonious color palettes, copy hex/CSS.",
+            "applicationCategory": "DesignApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Stepped gradient generator",
+              "Palette generator",
+              "LAB color interpolation",
+              "RGB interpolation",
+              "HSL interpolation",
+              "Hex color copy",
+              "CSS gradient copy"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="aa06ba6c-71b6-4bb1-b5ae-4390ccd89523"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

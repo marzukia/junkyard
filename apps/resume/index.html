@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>Resume Builder - Free, No Signup, Runs in Your Browser</title>
+    <meta
+      name="description"
+      content="Free resume builder. Create a professional resume or CV with contact info, summary, experience, education and skills. Export a clean PDF instantly. No signup, no upload, 100% private. A free alternative to Zety, Resume.io, and Canva resume."
+    />
+    <meta
+      name="keywords"
+      content="resume builder free, cv builder online, free resume maker, resume pdf free, resume no signup, resume builder alternative, zety alternative, resume.io alternative, canva resume alternative, free cv template, online resume creator, resume pdf download, professional resume free, job application resume"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://resume.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Theme colour (light + dark) -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Resume Builder" />
+    <meta property="og:title" content="Resume Builder - Free, No Signup, Runs in Your Browser" />
+    <meta
+      property="og:description"
+      content="Create a professional resume or CV with contact info, summary, experience, education and skills. Export a clean PDF instantly. No signup, no upload, 100% private."
+    />
+    <meta property="og:url" content="https://resume.mrzk.io/" />
+    <meta property="og:image" content="https://resume.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Resume Builder - free professional resume and CV builder in your browser"
+    />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Resume Builder - Free, No Signup, Runs in Your Browser" />
+    <meta
+      name="twitter:description"
+      content="Create a professional resume or CV. Export a clean PDF instantly. No signup, 100% private."
+    />
+    <meta name="twitter:image" content="https://resume.mrzk.io/og.png" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Resume Builder",
+            "url": "https://resume.mrzk.io/",
+            "description": "Free resume builder. Create a professional resume or CV with contact, summary, experience, education and skills sections. Export a clean PDF instantly. No signup required, runs entirely in your browser.",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Professional resume and CV creation",
+              "Contact information section",
+              "Professional summary",
+              "Work experience with bullet points",
+              "Education history",
+              "Skills section",
+              "Live preview",
+              "PDF export",
+              "No signup required",
+              "100% browser-based",
+              "No data uploaded"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- No-flash dark-mode script -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="8a0d7e46-fad7-4ded-9bc7-c603b24a7eb2"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

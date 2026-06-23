@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Timestamp Converter, Free Unix Epoch Converter, No Signup</title>
+    <meta
+      name="description"
+      content="Free Unix timestamp converter. Convert epoch (seconds or milliseconds) to human-readable dates, ISO 8601, RFC 2822, relative time, and across time zones. A free epochconverter.com alternative. No upload, no account, runs in your browser."
+    />
+    <meta
+      name="keywords"
+      content="unix timestamp converter, epoch converter, epoch to date, date to epoch, unix time, timestamp to date, epochconverter alternative, free epoch converter, iso 8601 converter, utc converter, timezone converter, unix epoch online, milliseconds to date, seconds to date, no signup timestamp tool"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://timestamp.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Timestamp Converter" />
+    <meta
+      property="og:title"
+      content="Timestamp Converter, Free Unix Epoch Converter, No Signup"
+    />
+    <meta
+      property="og:description"
+      content="Convert Unix epoch (s/ms) to human-readable dates, ISO 8601, RFC 2822, relative time, and across time zones. Free, no upload, runs in your browser."
+    />
+    <meta property="og:url" content="https://timestamp.mrzk.io/" />
+    <meta property="og:image" content="https://timestamp.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Timestamp Converter, convert Unix epoch to dates, ISO 8601, relative time"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Timestamp Converter, Free Unix Epoch Converter, No Signup"
+    />
+    <meta
+      name="twitter:description"
+      content="Convert Unix epoch to human-readable dates, ISO 8601, RFC 2822, relative time. Free, private, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://timestamp.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Timestamp Converter",
+            "url": "https://timestamp.mrzk.io/",
+            "description": "Free Unix timestamp converter. Convert epoch seconds or milliseconds to human-readable dates, ISO 8601, RFC 2822, relative time, and across time zones. No upload, no account, runs in your browser.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Unix epoch to human-readable date conversion",
+              "Date to Unix epoch conversion",
+              "Auto-detection of seconds vs milliseconds",
+              "ISO 8601 / RFC 3339 output",
+              "RFC 2822 output",
+              "UTC and local timezone display",
+              "30+ IANA timezone support",
+              "Relative time (3 hours ago, in 2 days)",
+              "Live current epoch clock",
+              "Day of week, week of year, day of year",
+              "Leap year indicator",
+              "Hex epoch",
+              "Copy to clipboard",
+              "No upload required",
+              "No signup required",
+              "Runs entirely in browser"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="1bb1a50c-74c1-42a7-8317-8b5195d4ce65"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

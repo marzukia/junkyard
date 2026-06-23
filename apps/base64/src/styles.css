@@ -1,0 +1,328 @@
+/* ── Base64 tool — tool-specific styles ──────────────────────────────────── */
+
+/* Controls in header */
+.b64-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Tab navigation */
+.b64-tab-nav {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  background: var(--surface-sunken);
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.b64-tab-btn {
+  font-family: var(--font-text);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.3rem 1rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+}
+
+.b64-tab-btn:hover {
+  color: var(--ink);
+}
+
+.b64-tab-btn--active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(26, 37, 48, 0.12);
+}
+
+[data-mantine-color-scheme="dark"] .b64-tab-btn--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+
+.b64-tab-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Text layout: two column on desktop, single on mobile */
+.b64-text-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 700px) {
+  .b64-text-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* File layout: two column on desktop */
+.b64-file-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 700px) {
+  .b64-file-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Field group */
+.b64-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.b64-field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* Textarea */
+.b64-textarea {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  resize: vertical;
+  min-height: 180px;
+  width: 100%;
+  transition: border-color 0.14s;
+}
+
+.b64-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.b64-textarea--output {
+  background: var(--surface);
+  color: var(--ink-mid);
+}
+
+.b64-textarea--compact {
+  min-height: 120px;
+}
+
+/* Error state */
+.b64-error {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #d9594c;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid rgba(217, 89, 76, 0.25);
+  border-radius: var(--radius-sm);
+  background: rgba(217, 89, 76, 0.06);
+  min-height: 180px;
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Button row (holds Copy + Clear/Example side by side) */
+.b64-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+/* Copy button */
+.b64-copy-btn {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  padding: 0.28rem 0.7rem;
+  min-width: 4.5rem;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+
+.b64-copy-btn--copied {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* File upload */
+.b64-upload-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  align-items: flex-start;
+}
+
+.b64-file-name {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+  word-break: break-all;
+}
+
+.b64-image-preview {
+  width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-sunken);
+  max-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.b64-image-preview img {
+  max-width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  display: block;
+}
+
+.b64-clear-btn {
+  font-size: 0.7rem;
+  padding: 0.28rem 0.7rem;
+}
+
+/* Hint text */
+.b64-hint {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  line-height: 1.6;
+  margin-top: 0.25rem;
+}
+
+/* Privacy note below card */
+.b64-privacy-note {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+/* Nudge banner: "looks like base64, decode instead?" */
+.b64-nudge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  flex-wrap: wrap;
+}
+
+.b64-nudge-text {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  flex: 1;
+}
+
+/* Decoded image thumbnail (shown below decoded output if it's an image) */
+.b64-decoded-image-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.b64-decoded-image-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.b64-image-preview--decoded {
+  max-height: 180px;
+  margin-top: 0;
+}
+
+/* Snippet rows in file tab */
+.b64-snippets-heading {
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+}
+
+.b64-snippets {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.b64-snippet-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.6rem;
+  overflow: hidden;
+}
+
+.b64-snippet-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+  min-width: 3.5rem;
+}
+
+.b64-snippet-code {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-mid);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Inline error (smaller, used in file tab decode panel) */
+.b64-error--inline {
+  min-height: auto;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.68rem;
+}
+
+/* iOS: prevent focus-zoom on textareas */
+@media (pointer: coarse) {
+  .b64-textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* UX audit: ensure textarea/select dont zoom on iOS + larger toggle tap target */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  /* Pill toggles + copy/clear/example buttons: min 40px tap target */
+  .space-toggle button,
+  .b64-copy-btn,
+  .b64-tab-btn {
+    min-height: 40px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

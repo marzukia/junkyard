@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Collage, Free Photo Collage Maker. No Watermark, No Upload, No Account</title>
+    <meta
+      name="description"
+      content="Free photo collage maker that runs entirely in your browser. Grid layouts, freeform pinboard, pan and zoom photos in cells, export high-res PNG or JPG. No watermark, no upload, no signup."
+    />
+    <meta
+      name="keywords"
+      content="collage maker, photo collage, free collage maker, picture collage, combine photos, photo grid maker, collage online free, photo collage no watermark, collage maker no signup, free photo grid, photo layout maker, online collage no upload, photo collage app free, make a collage online, grid photo collage"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://collage.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#FAF9F5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1814" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Collage" />
+    <meta property="og:title" content="Collage, Free Photo Collage Maker. No Watermark, No Upload, No Account" />
+    <meta
+      property="og:description"
+      content="Free photo collage maker that runs entirely in your browser. Grid layouts, freeform pinboard, pan and zoom, export high-res PNG. No watermark, no upload, no signup."
+    />
+    <meta property="og:url" content="https://collage.mrzk.io/" />
+    <meta property="og:image" content="https://collage.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Collage app, free photo collage maker running entirely in the browser"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Collage, Free Photo Collage Maker. No Watermark, No Upload, No Account" />
+    <meta
+      name="twitter:description"
+      content="Free photo collage maker that runs entirely in your browser. Grid layouts, freeform pinboard, pan and zoom, export high-res PNG. No watermark, no upload, no signup."
+    />
+    <meta name="twitter:image" content="https://collage.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Collage",
+            "url": "https://collage.mrzk.io/",
+            "description": "Free photo collage maker. Grid layouts, freeform pinboard, pan and zoom photos in cells, export high-res PNG or JPG. No watermark, no upload, no signup.",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Grid layout templates (1, 2, 3, 4, 6, 9 cell arrangements)",
+              "Freeform pinboard mode with draggable, resizable, rotatable photos",
+              "Per-cell pan and zoom with focal point adjustment",
+              "Drag and drop photo import",
+              "Gutter spacing and corner radius controls",
+              "Background colour picker including transparent",
+              "Aspect ratio presets (1:1, 4:5, 9:16, 3:2, 16:9)",
+              "High-resolution PNG and JPG export",
+              "Runs entirely in browser, no upload, no watermark"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="ebe5afc4-3a0f-4c37-9a2c-367d4e702342"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

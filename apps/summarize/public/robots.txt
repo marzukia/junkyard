@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://summarize.mrzk.io/sitemap.xml

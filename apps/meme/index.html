@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>Meme Generator - Free Meme Maker. No Watermark, No Account, No Upload</title>
+    <meta
+      name="description"
+      content="Free meme generator. Add top and bottom text to any image with Impact font, drag to reposition, export PNG. A free imgflip alternative with no watermark, no account, runs entirely in your browser."
+    />
+    <meta
+      name="keywords"
+      content="meme generator, free meme maker, imgflip alternative, meme maker no watermark, meme creator free, meme generator no signup, meme maker online free, impact font meme, make memes free, meme generator no account, browser meme maker, offline meme generator"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://meme.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Theme colour (light + dark) -->
+    <meta name="theme-color" content="#FAF9F5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1814" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Meme Generator" />
+    <meta property="og:title" content="Meme Generator - Free Meme Maker. No Watermark, No Account" />
+    <meta
+      property="og:description"
+      content="Free meme generator. Add top and bottom text with Impact font, drag to reposition, export PNG. No watermark, no account, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://meme.mrzk.io/" />
+    <meta property="og:image" content="https://meme.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Meme Generator app - free meme maker running entirely in the browser"
+    />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Meme Generator - Free Meme Maker. No Watermark, No Account" />
+    <meta
+      name="twitter:description"
+      content="Free meme generator. Add top and bottom text with Impact font, drag to reposition, export PNG. No watermark, no account, runs entirely in your browser."
+    />
+    <meta name="twitter:image" content="https://meme.mrzk.io/og.png" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Meme Generator",
+            "url": "https://meme.mrzk.io/",
+            "description": "Free meme generator. Add top and bottom text with Impact font, drag to reposition, export PNG. No watermark, no account.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Upload any image as meme base",
+              "Built-in blank meme templates",
+              "Classic Impact font with black outline",
+              "Drag text to reposition",
+              "Adjustable font size",
+              "Top and bottom text",
+              "Export as PNG with no watermark",
+              "Runs entirely in browser - no upload"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- No-flash dark-mode script -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="256fe95f-6854-41c4-98b5-8c3db1d141f6"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

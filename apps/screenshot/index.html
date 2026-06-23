@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>Screenshot Beautifier - Free shots.so Alternative. Add Backgrounds, Shadows, Frames - No Upload</title>
+    <meta
+      name="description"
+      content="Free screenshot beautifier. Add gradients, backgrounds, padding, rounded corners, drop shadows, and macOS window frames to any screenshot - all in your browser, no upload, no account. A free shots.so and screenshot.rocks alternative."
+    />
+    <meta
+      name="keywords"
+      content="screenshot beautifier, shots.so alternative, screenshot.rocks alternative, screenshot background, screenshot frame, macOS window frame, screenshot editor free, add background to screenshot, screenshot padding, screenshot shadow, iLoveIMG alternative, imgflip alternative, screenshot maker no signup, browser screenshot editor, screenshot tool no upload, free screenshot maker"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://screenshot.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Theme colour (light + dark) -->
+    <meta name="theme-color" content="#FAF9F5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1814" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Screenshot Beautifier" />
+    <meta property="og:title" content="Screenshot Beautifier - Free shots.so Alternative. Add Backgrounds, Shadows, Frames - No Upload" />
+    <meta
+      property="og:description"
+      content="Free screenshot beautifier. Add gradients, backgrounds, padding, rounded corners, drop shadows, and macOS window frames to any screenshot - all in your browser, no upload, no account."
+    />
+    <meta property="og:url" content="https://screenshot.mrzk.io/" />
+    <meta property="og:image" content="https://screenshot.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Screenshot Beautifier - add backgrounds, shadows, and frames to screenshots in your browser"
+    />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Screenshot Beautifier - Free shots.so Alternative. Add Backgrounds, Shadows, Frames - No Upload" />
+    <meta
+      name="twitter:description"
+      content="Free screenshot beautifier. Add gradients, backgrounds, padding, rounded corners, drop shadows, and macOS window frames to any screenshot - no upload, no account."
+    />
+    <meta name="twitter:image" content="https://screenshot.mrzk.io/og.png" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Screenshot Beautifier",
+            "url": "https://screenshot.mrzk.io/",
+            "description": "Free screenshot beautifier. Add gradients, backgrounds, padding, rounded corners, drop shadows, and macOS window frames to any screenshot in your browser.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Add gradient backgrounds to screenshots",
+              "Add solid color backgrounds",
+              "Add padding and inset to screenshots",
+              "Add rounded corners to screenshots",
+              "Add drop shadows to screenshots",
+              "Add macOS-style window chrome frame",
+              "Live preview with real-time updates",
+              "Export high-resolution PNG",
+              "Runs entirely in browser - no upload"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- No-flash dark-mode script -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- Umami analytics (self-hosted) -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="192b83e0-a67e-4394-b443-e80c0846373f"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

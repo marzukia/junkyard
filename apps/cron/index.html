@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ─────────────────────────────────────────────── -->
+    <title>Cron Expression Builder, Free crontab.guru Alternative, No Signup</title>
+    <meta
+      name="description"
+      content="Free cron expression builder and decoder. Edit minute/hour/day/month/weekday fields with instant human-readable descriptions and next-run previews. No upload, no signup, runs entirely in your browser. A crontab.guru alternative."
+    />
+    <meta
+      name="keywords"
+      content="cron expression builder, cron expression generator, crontab guru alternative, cron job scheduler, cron syntax, cron expression decoder, cron expression explainer, cron next run, cron human readable, free cron tool, cron no signup, cron online, crontab generator, unix cron, linux cron"
+    />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://cron.mrzk.io/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Theme colour (light + dark) ──────────────────────────────── -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- ── Open Graph ───────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Cron Expression Builder" />
+    <meta
+      property="og:title"
+      content="Cron Expression Builder, Free crontab.guru Alternative, No Signup"
+    />
+    <meta
+      property="og:description"
+      content="Free cron expression builder and decoder. Edit fields with instant human-readable descriptions and next-run previews. No upload, no signup, runs entirely in your browser."
+    />
+    <meta property="og:url" content="https://cron.mrzk.io/" />
+    <meta property="og:image" content="https://cron.mrzk.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Cron Expression Builder, build, decode and preview cron schedules in your browser"
+    />
+
+    <!-- ── Twitter card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Cron Expression Builder, Free crontab.guru Alternative, No Signup"
+    />
+    <meta
+      name="twitter:description"
+      content="Build and decode cron expressions. Instant human-readable descriptions, next-run previews, field helpers. No upload, no signup, runs in your browser."
+    />
+    <meta name="twitter:image" content="https://cron.mrzk.io/og.png" />
+
+    <!-- ── Structured data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Cron Expression Builder",
+            "url": "https://cron.mrzk.io/",
+            "description": "Free cron expression builder and decoder. Edit minute/hour/day/month/weekday fields with instant human-readable descriptions and next-run previews. No upload, no signup, runs entirely in your browser.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Cron expression builder with field editors",
+              "Human-readable description of any cron expression",
+              "Next 5 scheduled run times preview",
+              "Preset schedules (hourly, daily, weekly, etc.)",
+              "Syntax reference cheatsheet",
+              "Supports *, */n, ranges, lists and named months/weekdays",
+              "No upload required",
+              "No signup required",
+              "Runs entirely in browser",
+              "Free crontab.guru alternative"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+
+    <!-- ── Umami analytics (self-hosted) ────────────────────────────── -->
+    <script
+      defer
+      src="https://umami.junkyard.sh/script.js"
+      data-website-id="db6caa87-f91f-4521-8831-03f8a0fd85cb"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
