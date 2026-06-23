@@ -10,7 +10,7 @@
     "path": "/convert/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/convert.ts",
       "tools": []
     }
@@ -42,7 +42,7 @@
     "path": "/ocr/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/ocrUtils.ts",
       "tools": []
     }
@@ -58,7 +58,7 @@
     "path": "/og/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/ogLogic.ts",
       "tools": []
     }
@@ -74,7 +74,7 @@
     "path": "/exif/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/exif-utils.ts",
       "tools": []
     }
@@ -90,7 +90,7 @@
     "path": "/favicon/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/faviconCore.ts",
       "tools": []
     }
@@ -109,7 +109,11 @@
       "exposed": false,
       "lib": "src/lib/bgRemoval.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "collage",
@@ -122,7 +126,7 @@
     "path": "/collage/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/layouts.ts",
       "tools": []
     }
@@ -138,7 +142,7 @@
     "path": "/screenshot/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/beautifier.ts",
       "tools": []
     }
@@ -154,7 +158,7 @@
     "path": "/meme/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/meme.ts",
       "tools": []
     }
@@ -170,7 +174,7 @@
     "path": "/crop/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/crop.ts",
       "tools": []
     }
@@ -186,7 +190,7 @@
     "path": "/svg/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/svgOptimize.ts",
       "tools": []
     }
@@ -202,7 +206,7 @@
     "path": "/gif/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/gif.ts",
       "tools": []
     }
@@ -298,7 +302,7 @@
     "path": "/css/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/css.ts",
       "tools": []
     }
@@ -413,7 +417,11 @@
       "exposed": false,
       "lib": "src/lib/transcription.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "upscale",
@@ -429,7 +437,11 @@
       "exposed": false,
       "lib": "src/lib/upscale.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "depth",
@@ -445,7 +457,11 @@
       "exposed": false,
       "lib": "src/lib/depthEstimation.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "caption",
@@ -461,7 +477,11 @@
       "exposed": false,
       "lib": "src/lib/captioner.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "translate",
@@ -477,7 +497,11 @@
       "exposed": false,
       "lib": "src/lib/translator.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "summarize",
@@ -493,7 +517,11 @@
       "exposed": false,
       "lib": "src/lib/summarizer.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "on-device-ai",
+      "large-download"
+    ]
   },
   {
     "slug": "chat",
@@ -509,7 +537,11 @@
       "exposed": false,
       "lib": "src/lib/llmEngine.ts",
       "tools": []
-    }
+    },
+    "tags": [
+      "webgpu",
+      "large-download"
+    ]
   },
   {
     "slug": "pdf",
@@ -522,7 +554,7 @@
     "path": "/pdf/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/pdfUtils.ts",
       "tools": []
     }
@@ -538,7 +570,7 @@
     "path": "/subs/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/subtitle.ts",
       "tools": []
     }
@@ -634,7 +666,7 @@
     "path": "/invoice/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/invoiceCalc.ts",
       "tools": []
     }
@@ -650,7 +682,7 @@
     "path": "/resume/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/resumeUtils.ts",
       "tools": []
     }
@@ -666,9 +698,47 @@
     "path": "/sign/",
     "runtime": "client",
     "mcp": {
-      "exposed": true,
+      "exposed": false,
       "lib": "src/lib/signPdf.ts",
       "tools": []
     }
+  },
+  {
+    "slug": "video",
+    "name": "Video Toolkit",
+    "category": "image",
+    "order": 43,
+    "tagline": "Trim, convert, compress & GIF - in your browser",
+    "description": "Free in-browser video toolkit: trim, convert (mp4/webm/gif), compress, and turn video into GIF. Runs entirely client-side with ffmpeg.wasm - no upload, no signup, no watermark. A Veed / Kapwing / ezgif alternative.",
+    "incumbent": "Veed",
+    "path": "/video/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/ffmpeg.ts",
+      "tools": []
+    },
+    "tags": [
+      "large-download"
+    ]
+  },
+  {
+    "slug": "cleanup",
+    "name": "Cleanup",
+    "category": "ai",
+    "order": 44,
+    "tagline": "Erase objects from photos, on-device",
+    "description": "Free object and people remover. Brush over anything you want gone and erase it with on-device inpainting - no upload, no signup, no watermark. A Cleanup.pictures alternative that runs entirely in your browser.",
+    "incumbent": "Cleanup.pictures",
+    "path": "/cleanup/",
+    "runtime": "client",
+    "mcp": {
+      "exposed": false,
+      "lib": "src/lib/inpaint.ts",
+      "tools": []
+    },
+    "tags": [
+      "beta"
+    ]
   }
 ]

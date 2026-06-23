@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/gif/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/gif.ts",
     tools: [],
   },

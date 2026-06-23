@@ -8,6 +8,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "HEIC to JPG, WebP & PNG, compress & resize",
     incumbent: "TinyPNG",
+    mcpExposed: false,
   },
   {
     name: "QR Code",
@@ -15,6 +16,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "QR codes with logo, colours & dot styles",
     incumbent: "qr-generator",
+    mcpExposed: true,
   },
   {
     name: "Image to Text",
@@ -22,6 +24,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Pull text out of any image (OCR)",
     incumbent: "i2OCR",
+    mcpExposed: false,
   },
   {
     name: "OG Image",
@@ -29,6 +32,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Social share cards, 1200x630",
     incumbent: "Vercel OG",
+    mcpExposed: false,
   },
   {
     name: "EXIF Viewer",
@@ -36,6 +40,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "See & strip photo metadata + GPS",
     incumbent: "metadata2go",
+    mcpExposed: false,
   },
   {
     name: "Favicon",
@@ -43,6 +48,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Any image into a full favicon set",
     incumbent: "favicon.io",
+    mcpExposed: false,
   },
   {
     name: "Background Remover",
@@ -50,6 +56,8 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Erase backgrounds with on-device AI",
     incumbent: "remove.bg",
+    tags: ["on-device-ai", "large-download"],
+    mcpExposed: false,
   },
   {
     name: "Collage Maker",
@@ -57,6 +65,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Grid + freeform photo collages",
     incumbent: "Canva",
+    mcpExposed: false,
   },
   {
     name: "Screenshot Beautifier",
@@ -64,6 +73,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Frame shots with bg, padding, shadow",
     incumbent: "shots.so",
+    mcpExposed: false,
   },
   {
     name: "Meme Generator",
@@ -71,6 +81,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Top/bottom text, no watermark",
     incumbent: "imgflip",
+    mcpExposed: false,
   },
   {
     name: "Image Cropper",
@@ -78,6 +89,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Crop, rotate, flip & resize",
     incumbent: "iLoveIMG",
+    mcpExposed: false,
   },
   {
     name: "SVG Optimizer",
@@ -85,6 +97,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Shrink SVG files with SVGO",
     incumbent: "SVGOMG",
+    mcpExposed: false,
   },
   {
     name: "GIF Maker",
@@ -92,6 +105,7 @@ export const TOOLS: Tool[] = [
     yard: "image",
     tagline: "Turn images into animated GIFs",
     incumbent: "EZGIF",
+    mcpExposed: false,
   },
   {
     name: "JSON Formatter",
@@ -99,6 +113,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Format, validate & minify JSON",
     incumbent: "jsonformatter",
+    mcpExposed: true,
   },
   {
     name: "Text Diff",
@@ -106,6 +121,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Compare two texts, every change",
     incumbent: "diffchecker",
+    mcpExposed: true,
   },
   {
     name: "Markdown",
@@ -113,6 +129,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Write Markdown with live preview",
     incumbent: "StackEdit",
+    mcpExposed: true,
   },
   {
     name: "Base64",
@@ -120,6 +137,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Encode & decode text and files",
     incumbent: "base64encode",
+    mcpExposed: true,
   },
   {
     name: "Regex Tester",
@@ -127,6 +145,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Live matches, groups & explanation",
     incumbent: "regex101",
+    mcpExposed: true,
   },
   {
     name: "CSS Toolkit",
@@ -134,6 +153,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Shadow, gradient, glass & easing",
     incumbent: "cssgradient",
+    mcpExposed: false,
   },
   {
     name: "CSV / JSON",
@@ -141,6 +161,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Convert CSV to JSON and back",
     incumbent: "convertcsv",
+    mcpExposed: true,
   },
   {
     name: "Timestamp",
@@ -148,6 +169,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Unix epoch to human dates",
     incumbent: "epochconverter",
+    mcpExposed: true,
   },
   {
     name: "UUID",
@@ -155,6 +177,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "v4, v7 & nano IDs in bulk",
     incumbent: "uuidgenerator",
+    mcpExposed: true,
   },
   {
     name: "Hash",
@@ -162,6 +185,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "MD5, SHA-1, SHA-256 checksums",
     incumbent: "",
+    mcpExposed: true,
   },
   {
     name: "JWT Decoder",
@@ -169,6 +193,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Decode & inspect JWT tokens",
     incumbent: "jwt.io",
+    mcpExposed: true,
   },
   {
     name: "Lorem Ipsum",
@@ -176,6 +201,7 @@ export const TOOLS: Tool[] = [
     yard: "text",
     tagline: "Placeholder text and images",
     incumbent: "lipsum",
+    mcpExposed: true,
   },
   {
     name: "Transcribe",
@@ -183,6 +209,8 @@ export const TOOLS: Tool[] = [
     yard: "ai",
     tagline: "Whisper speech to text",
     incumbent: "Otter.ai",
+    tags: ["on-device-ai", "large-download"],
+    mcpExposed: false,
   },
   {
     name: "Upscale",
@@ -190,6 +218,8 @@ export const TOOLS: Tool[] = [
     yard: "ai",
     tagline: "AI super-resolution 2x and 4x",
     incumbent: "Upscayl",
+    tags: ["on-device-ai", "large-download"],
+    mcpExposed: false,
   },
   {
     name: "Depth Map",
@@ -197,6 +227,8 @@ export const TOOLS: Tool[] = [
     yard: "ai",
     tagline: "Turn a photo into a depth map",
     incumbent: "Depth-Anything",
+    tags: ["on-device-ai", "large-download"],
+    mcpExposed: false,
   },
   {
     name: "Caption",
@@ -204,6 +236,8 @@ export const TOOLS: Tool[] = [
     yard: "ai",
     tagline: "Describe any image for alt text",
     incumbent: "BLIP",
+    tags: ["on-device-ai", "large-download"],
+    mcpExposed: false,
   },
   {
     name: "Translate",
@@ -211,6 +245,8 @@ export const TOOLS: Tool[] = [
     yard: "ai",
     tagline: "200 languages, on your device",
     incumbent: "DeepL",
+    tags: ["on-device-ai", "large-download"],
+    mcpExposed: false,
   },
   {
     name: "Summarize",
@@ -218,6 +254,8 @@ export const TOOLS: Tool[] = [
     yard: "ai",
     tagline: "Summarize long text and articles",
     incumbent: "QuillBot",
+    tags: ["on-device-ai", "large-download"],
+    mcpExposed: false,
   },
   {
     name: "Local Chat",
@@ -225,6 +263,8 @@ export const TOOLS: Tool[] = [
     yard: "ai",
     tagline: "An LLM running in your browser",
     incumbent: "ChatGPT",
+    tags: ["webgpu", "large-download"],
+    mcpExposed: false,
   },
   {
     name: "PDF Toolkit",
@@ -232,6 +272,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Merge, split & compress PDFs",
     incumbent: "iLovePDF",
+    mcpExposed: false,
   },
   {
     name: "Subtitle Editor",
@@ -239,6 +280,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Edit, shift & convert .srt/.vtt",
     incumbent: "Subtitle Edit",
+    mcpExposed: false,
   },
   {
     name: "Password",
@@ -246,6 +288,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Strong, random passwords",
     incumbent: "1Password",
+    mcpExposed: true,
   },
   {
     name: "Unit Converter",
@@ -253,6 +296,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Length, weight, temperature & more",
     incumbent: "Google",
+    mcpExposed: true,
   },
   {
     name: "Colours",
@@ -260,6 +304,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Gradients, palettes & contrast",
     incumbent: "Coolors",
+    mcpExposed: true,
   },
   {
     name: "Cron Builder",
@@ -267,6 +312,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Build & decode cron schedules",
     incumbent: "crontab.guru",
+    mcpExposed: true,
   },
   {
     name: "Barcode",
@@ -274,6 +320,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Code128, EAN, UPC barcodes",
     incumbent: "TEC-IT",
+    mcpExposed: true,
   },
   {
     name: "Invoice",
@@ -281,6 +328,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Fill & export an invoice PDF",
     incumbent: "invoice-generator",
+    mcpExposed: false,
   },
   {
     name: "Resume",
@@ -288,6 +336,7 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Build a CV, export to PDF",
     incumbent: "Zety",
+    mcpExposed: false,
   },
   {
     name: "E-Signature",
@@ -295,5 +344,24 @@ export const TOOLS: Tool[] = [
     yard: "docs",
     tagline: "Sign a PDF in your browser",
     incumbent: "DocuSign",
+    mcpExposed: false,
+  },
+  {
+    name: "Video Toolkit",
+    slug: "video",
+    yard: "image",
+    tagline: "Trim, convert, compress & GIF - in your browser",
+    incumbent: "Veed",
+    tags: ["large-download"],
+    mcpExposed: false,
+  },
+  {
+    name: "Cleanup",
+    slug: "cleanup",
+    yard: "ai",
+    tagline: "Erase objects from photos, on-device",
+    incumbent: "Cleanup.pictures",
+    tags: ["beta"],
+    mcpExposed: false,
   },
 ];

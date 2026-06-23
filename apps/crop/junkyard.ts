@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/crop/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/crop.ts",
     tools: [],
   },

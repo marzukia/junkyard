@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/pdf/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/lib/pdfUtils.ts",
     tools: [],
   },

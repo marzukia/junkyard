@@ -11,7 +11,7 @@ export const app: JunkyardApp = {
   path: "/subs/",
   runtime: "client",
   mcp: {
-    exposed: true,
+    exposed: false,
     lib: "src/lib/subtitle.ts",
     tools: [],
   },
