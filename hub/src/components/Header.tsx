@@ -3,6 +3,7 @@ import { ThemeToggle } from "./ThemeToggle";
 export function Header() {
   return (
     <header>
+      <div className="strip" />
       <div className="wrap hbar">
         <a className="logo" href="/" aria-label="junkyard.sh home">
           <svg
