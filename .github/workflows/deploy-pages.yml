@@ -25,26 +25,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "22"
-
-      - name: Install hub deps (provides tsx)
-        run: cd hub && npm ci
+          bun-version: latest
 
       - name: Check catalogue is up to date
         # Fails if any apps/*/junkyard.ts was edited without regenerating the
         # catalogue artifacts. The generator also validates description quality
-        # and mcp.tools shape.
+        # and mcp.tools shape. Runs from repo root; bun needs no deps.
         run: |
-          (cd hub && npx tsx ../scripts/gen-catalogue.ts)
+          bun scripts/gen-catalogue.ts
           git diff --exit-code hub/src/catalogue.generated.ts hub/public/catalogue.json
 
       - name: Check vendored AppSwitcher copies are up to date
         # Fails if kit/AppSwitcher.* was changed without running vendor-switcher.mjs
         run: |
-          node scripts/vendor-switcher.mjs
+          bun scripts/vendor-switcher.mjs
           git diff --exit-code
 
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
@@ -69,10 +66,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "22"
+          bun-version: latest
 
       - name: Build consolidated site
         run: bash scripts/build-site.sh
