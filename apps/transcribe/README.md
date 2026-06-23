@@ -30,7 +30,7 @@ npx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
-Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/transcribe/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), building this app with `--base=/transcribe/` into `dist/transcribe/`. Umami analytics are injected at build from repo-root `umami-ids.txt`.
+Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/transcribe/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/transcribe/` into `dist/transcribe/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
 
 ## Tech notes
 - Model: `onnx-community/whisper-base` (~145 MB); `whisper-tiny.en` is a commented alternative (~75 MB, English-only)

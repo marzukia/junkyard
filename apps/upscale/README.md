@@ -30,7 +30,7 @@ npx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
-Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/upscale/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), building this app with `--base=/upscale/` into `dist/upscale/`. Umami analytics are injected at build from repo-root `umami-ids.txt`.
+Part of the junkyard monorepo. Live at https://junkyard.mrzk.io/upscale/ . Deploy is the consolidated `scripts/build-site.sh` (run by `.github/workflows/deploy-pages.yml` on push to `main`), which builds this app with `--base=/upscale/` into `dist/upscale/`. Umami analytics are injected at build from the repo-root `umami-ids.txt` (no hardcoded script tag).
 
 ## Tech notes
 - Model: `Xenova/swin2SR-classical-sr-x2-64` (~50 MB); Swin2SR tiles 64x64 patches so large images are processed in memory without requiring a full-resolution tensor allocation
