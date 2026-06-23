@@ -35,6 +35,50 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
   return { r: (n >> 16) & 0xff, g: (n >> 8) & 0xff, b: n & 0xff };
 }
 
+/** Describes the grid-coordinate origins of the three finder pattern regions. */
+export interface FinderRegions {
+  finderSize: number;
+  tlRow: number;
+  tlCol: number;
+  trRow: number;
+  trCol: number;
+  blRow: number;
+  blCol: number;
+}
+
+/**
+ * Computes the three 7x7 finder pattern origins in grid coordinates.
+ * Shared by both the canvas and SVG render paths so the detection logic
+ * cannot drift between them.
+ *
+ * @param margin   The quiet-zone width in modules (typically 2).
+ * @param qrModules The number of QR data modules (excludes quiet zone).
+ */
+export function computeFinderRegions(margin: number, qrModules: number): FinderRegions {
+  const finderSize = 7;
+  return {
+    finderSize,
+    tlRow: margin,
+    tlCol: margin,
+    trRow: margin,
+    trCol: margin + qrModules - finderSize,
+    blRow: margin + qrModules - finderSize,
+    blCol: margin,
+  };
+}
+
+/**
+ * Returns true if the given grid (row, col) falls inside any of the three
+ * 7x7 finder pattern blocks.
+ */
+export function isFinderModule(row: number, col: number, regions: FinderRegions): boolean {
+  const { finderSize, tlRow, tlCol, trRow, trCol, blRow, blCol } = regions;
+  const inTL = row >= tlRow && row < tlRow + finderSize && col >= tlCol && col < tlCol + finderSize;
+  const inTR = row >= trRow && row < trRow + finderSize && col >= trCol && col < trCol + finderSize;
+  const inBL = row >= blRow && row < blRow + finderSize && col >= blCol && col < blCol + finderSize;
+  return inTL || inTR || inBL;
+}
+
 /**
  * Generates a QR code onto a canvas element, applying dot-style post-processing
  * and an optional logo overlay.
@@ -166,28 +210,8 @@ function applyDotStyle(
   // Total QR modules = cols - 2*margin
   const qrModules = cols - 2 * margin;
 
-  // Finder pattern regions (in grid coordinates, which include margin):
-  //   top-left:     rows [margin, margin+7), cols [margin, margin+7)
-  //   top-right:    rows [margin, margin+7), cols [margin+qrModules-7, margin+qrModules)
-  //   bottom-left:  rows [margin+qrModules-7, margin+qrModules), cols [margin, margin+7)
-  const finderSize = 7;
-  const tlRow = margin;
-  const tlCol = margin;
-  const trRow = margin;
-  const trCol = margin + qrModules - finderSize;
-  const blRow = margin + qrModules - finderSize;
-  const blCol = margin;
-
-  /** Returns true if (row, col) is within a 7x7 finder block. */
-  function isFinderModule(row: number, col: number): boolean {
-    const inTL =
-      row >= tlRow && row < tlRow + finderSize && col >= tlCol && col < tlCol + finderSize;
-    const inTR =
-      row >= trRow && row < trRow + finderSize && col >= trCol && col < trCol + finderSize;
-    const inBL =
-      row >= blRow && row < blRow + finderSize && col >= blCol && col < blCol + finderSize;
-    return inTL || inTR || inBL;
-  }
+  const regions = computeFinderRegions(margin, qrModules);
+  const { tlRow, tlCol, trRow, trCol, blRow, blCol } = regions;
 
   // Redraw with style
   ctx.fillStyle = bgColor;
@@ -202,7 +226,7 @@ function applyDotStyle(
       if (!grid[row][col]) continue;
 
       // Finder modules are drawn as composed shapes below; skip per-module here
-      if (eyeStyle !== "square" && isFinderModule(row, col)) continue;
+      if (eyeStyle !== "square" && isFinderModule(row, col, regions)) continue;
 
       const cx = col * moduleSize + moduleSize / 2;
       const cy = row * moduleSize + moduleSize / 2;
@@ -220,7 +244,7 @@ function applyDotStyle(
         ctx.roundRect(x, y, w, w, r);
         ctx.fill();
       } else if (style === "classy") {
-        // Classy: dots where all 4 neighbours are dark → square; else circle
+        // Classy: dots where all 4 neighbours are dark -> square; else circle
         const allNeighboursDark =
           grid[row - 1]?.[col] &&
           grid[row + 1]?.[col] &&
@@ -407,94 +431,154 @@ export function canvasToPngUrl(canvas: HTMLCanvasElement): string {
 }
 
 /**
- * Generates an SVG string for the QR code. Uses the qrcode library to get
- * the raw data matrix, then renders square or rounded rectangles as SVG paths.
+ * Emits SVG elements for a single finder eye at pixel coordinates (px, py),
+ * matching the geometry of drawFinderEye on the canvas path.
+ *
+ * Returns an array of SVG element strings (no newlines between them).
+ * Exported for unit testing; not part of the public API surface.
  */
-export async function generateSvgString(opts: QROptions): Promise<string> {
-  const { text, fgColor, bgColor, errorCorrectionLevel } = opts;
+export function svgFinderEye(
+  px: number,
+  py: number,
+  cellSize: number,
+  fgColor: string,
+  bgColor: string,
+  eyeStyle: EyeStyle
+): string[] {
+  const outerSize = 7 * cellSize;
+  const innerOffset = 2 * cellSize;
+  const innerSize = 3 * cellSize;
+  const f = (n: number) => n.toFixed(3);
 
-  // Get the raw QR matrix from the lib
-  // We use a hidden canvas approach to get module positions
-  const offscreen = document.createElement("canvas");
-  offscreen.width = 512;
-  offscreen.height = 512;
-
-  await QRCode.toCanvas(offscreen, text, {
-    width: 512,
-    margin: 2,
-    color: { dark: fgColor, light: bgColor },
-    errorCorrectionLevel,
-  });
-
-  const ctx = offscreen.getContext("2d");
-  if (!ctx) throw new Error("Cannot get canvas context");
-
-  const size = 512;
-  const imageData = ctx.getImageData(0, 0, size, size);
-  const data = imageData.data;
-
-  const fg = hexToRgb(fgColor) ?? { r: 0, g: 0, b: 0 };
-  const threshold = 128;
-
-  // Detect module size
-  let firstDark = -1;
-  for (let x = 0; x < size; x++) {
-    const idx = x * 4;
-    if (
-      Math.abs(data[idx] - fg.r) < threshold &&
-      Math.abs(data[idx + 1] - fg.g) < threshold &&
-      Math.abs(data[idx + 2] - fg.b) < threshold
-    ) {
-      firstDark = x;
-      break;
-    }
+  if (eyeStyle === "rounded") {
+    const outerR = cellSize * 1.5;
+    const punchR = outerR * 0.5;
+    const innerR = cellSize * 0.6;
+    return [
+      `<rect x="${f(px)}" y="${f(py)}" width="${f(outerSize)}" height="${f(outerSize)}" rx="${f(outerR)}" fill="${fgColor}"/>`,
+      `<rect x="${f(px + cellSize)}" y="${f(py + cellSize)}" width="${f(5 * cellSize)}" height="${f(5 * cellSize)}" rx="${f(punchR)}" fill="${bgColor}"/>`,
+      `<rect x="${f(px + innerOffset)}" y="${f(py + innerOffset)}" width="${f(innerSize)}" height="${f(innerSize)}" rx="${f(innerR)}" fill="${fgColor}"/>`,
+    ];
   }
 
-  let moduleSize = 0;
-  if (firstDark >= 0) {
-    for (let x = firstDark; x < size; x++) {
-      const idx = x * 4;
-      if (
-        Math.abs(data[idx] - fg.r) < threshold &&
-        Math.abs(data[idx + 1] - fg.g) < threshold &&
-        Math.abs(data[idx + 2] - fg.b) < threshold
-      ) {
-        moduleSize++;
-      } else {
-        break;
-      }
-    }
+  if (eyeStyle === "circle") {
+    const cx = px + outerSize / 2;
+    const cy = py + outerSize / 2;
+    const outerR = outerSize / 2;
+    const gapR = outerSize / 2 - cellSize;
+    const innerR = innerSize / 2;
+    return [
+      `<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(outerR)}" fill="${fgColor}"/>`,
+      `<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(gapR)}" fill="${bgColor}"/>`,
+      `<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(innerR)}" fill="${fgColor}"/>`,
+    ];
   }
-  if (moduleSize < 1) moduleSize = 1;
 
-  const cols = Math.round(size / moduleSize);
+  if (eyeStyle === "leaf") {
+    // SVG <rect> only supports a single rx/ry, not per-corner radii.
+    // Use <path> with arc segments to replicate the canvas roundRect([r,0,r,0]) pattern:
+    // top-left and bottom-right corners are rounded; top-right and bottom-left are sharp.
+    const leafR = cellSize * 2;
+    const punchR = leafR * 0.5;
+    const innerR = leafR * 0.25;
+
+    function leafRect(x: number, y: number, w: number, h: number, r: number): string {
+      // Clamp radius to half the shorter side
+      const rr = Math.min(r, w / 2, h / 2);
+      // Path: start at top-left corner after arc, go clockwise.
+      // top-left = rounded (rr), top-right = sharp, bottom-right = rounded (rr), bottom-left = sharp
+      return (
+        `M ${f(x + rr)} ${f(y)} ` +
+        `L ${f(x + w)} ${f(y)} ` +
+        `L ${f(x + w)} ${f(y + h)} ` +
+        `L ${f(x)} ${f(y + h)} ` +
+        `L ${f(x)} ${f(y + rr)} ` +
+        `A ${f(rr)} ${f(rr)} 0 0 1 ${f(x + rr)} ${f(y)} Z`
+      );
+    }
+
+    return [
+      `<path d="${leafRect(px, py, outerSize, outerSize, leafR)}" fill="${fgColor}"/>`,
+      `<path d="${leafRect(px + cellSize, py + cellSize, 5 * cellSize, 5 * cellSize, punchR)}" fill="${bgColor}"/>`,
+      `<path d="${leafRect(px + innerOffset, py + innerOffset, innerSize, innerSize, innerR)}" fill="${fgColor}"/>`,
+    ];
+  }
+
+  // square (default): outer filled rect + bg punch + inner filled rect
+  return [
+    `<rect x="${f(px)}" y="${f(py)}" width="${f(outerSize)}" height="${f(outerSize)}" fill="${fgColor}"/>`,
+    `<rect x="${f(px + cellSize)}" y="${f(py + cellSize)}" width="${f(5 * cellSize)}" height="${f(5 * cellSize)}" fill="${bgColor}"/>`,
+    `<rect x="${f(px + innerOffset)}" y="${f(py + innerOffset)}" width="${f(innerSize)}" height="${f(innerSize)}" fill="${fgColor}"/>`,
+  ];
+}
+
+/**
+ * Generates an SVG string for the QR code. Uses QRCode.create() to get the raw
+ * module matrix directly (no canvas/pixel scanning), then renders the data modules
+ * as square rects and the three finder eyes using the selected eyeStyle.
+ *
+ * The previous canvas-pixel approach was replaced because scanning row 0 (which is
+ * always inside the quiet zone) caused module-size detection to fail for all typical
+ * QR codes, resulting in 1x1-pixel rects regardless of eye style. QRCode.create()
+ * is synchronous and gives the exact module grid without any pixel heuristics.
+ */
+export function generateSvgString(opts: QROptions): string {
+  const { text, fgColor, bgColor, errorCorrectionLevel, eyeStyle = "square" } = opts;
+
+  // QRCode.create is synchronous and returns the module matrix directly.
+  const qr = QRCode.create(text, { errorCorrectionLevel });
+  const qrModules = qr.modules.size; // number of QR data modules (no quiet zone)
+
+  // Render into a 512x512 viewBox with 2-module quiet zone on each side.
   const svgSize = 512;
-  const cellSize = svgSize / cols;
+  const margin = 2; // quiet zone in modules
+  const totalCells = qrModules + 2 * margin;
+  const cellSize = svgSize / totalCells;
 
-  const rects: string[] = [];
-  for (let row = 0; row < cols; row++) {
-    for (let col = 0; col < cols; col++) {
-      const px = Math.floor(col * moduleSize + moduleSize / 2);
-      const py = Math.floor(row * moduleSize + moduleSize / 2);
-      if (px >= size || py >= size) continue;
-      const idx = (py * size + px) * 4;
-      const isDark =
-        Math.abs(data[idx] - fg.r) < threshold &&
-        Math.abs(data[idx + 1] - fg.g) < threshold &&
-        Math.abs(data[idx + 2] - fg.b) < threshold;
-      if (!isDark) continue;
-      const x = col * cellSize;
-      const y = row * cellSize;
-      rects.push(
+  // Finder region origins in the grid that includes the quiet zone margin.
+  // In grid coordinates: module (row, col) lives at grid cell (row+margin, col+margin).
+  const regions = computeFinderRegions(margin, qrModules);
+  const { tlRow, tlCol, trRow, trCol, blRow, blCol } = regions;
+
+  const elements: string[] = [];
+
+  // Data modules: skip finder regions (drawn as composed eye shapes below).
+  for (let row = 0; row < qrModules; row++) {
+    for (let col = 0; col < qrModules; col++) {
+      if (!qr.modules.get(row, col)) continue;
+
+      const gridRow = row + margin;
+      const gridCol = col + margin;
+
+      // Finder modules are replaced by composed eye shapes below
+      if (isFinderModule(gridRow, gridCol, regions)) continue;
+
+      const x = gridCol * cellSize;
+      const y = gridRow * cellSize;
+      elements.push(
         `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${cellSize.toFixed(2)}" height="${cellSize.toFixed(2)}" fill="${fgColor}"/>`
       );
+    }
+  }
+
+  // Finder eyes: one composed shape per corner
+  const finderOrigins = [
+    { row: tlRow, col: tlCol },
+    { row: trRow, col: trCol },
+    { row: blRow, col: blCol },
+  ];
+  for (const origin of finderOrigins) {
+    const px = origin.col * cellSize;
+    const py = origin.row * cellSize;
+    for (const el of svgFinderEye(px, py, cellSize, fgColor, bgColor, eyeStyle)) {
+      elements.push(el);
     }
   }
 
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgSize} ${svgSize}" width="${svgSize}" height="${svgSize}">`,
     `<rect width="${svgSize}" height="${svgSize}" fill="${bgColor}"/>`,
-    ...rects,
+    ...elements,
     "</svg>",
   ].join("\n");
 }

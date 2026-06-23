@@ -368,12 +368,13 @@ export function App() {
   const downloadSvg = useCallback(async () => {
     if (!text.trim()) return;
     try {
-      const svg = await generateSvgString({
+      const svg = generateSvgString({
         text: text.trim(),
         fgColor,
         bgColor,
         errorCorrectionLevel,
         dotStyle,
+        eyeStyle,
       });
       const blob = new Blob([svg], { type: "image/svg+xml" });
       const url = URL.createObjectURL(blob);
@@ -385,7 +386,7 @@ export function App() {
     } catch {
       setError("SVG export failed.");
     }
-  }, [text, fgColor, bgColor, errorCorrectionLevel, dotStyle]);
+  }, [text, fgColor, bgColor, errorCorrectionLevel, dotStyle, eyeStyle]);
 
   const copyImage = useCallback(async () => {
     const canvas = canvasRef.current;
