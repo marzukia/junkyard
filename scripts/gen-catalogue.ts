@@ -7,7 +7,7 @@
 import { writeFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import type { JunkyardApp } from "./catalogue-schema.ts";
+import type { JunkyardApp, McpTool } from "./catalogue-schema.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const APPS_DIR = join(ROOT, "apps");
@@ -30,6 +30,46 @@ const REQUIRED_FIELDS: (keyof JunkyardApp)[] = [
   "mcp",
 ];
 
+const DESC_MIN_LENGTH = 40;
+const DESC_TERMINAL_RE = /[.!?]$/;
+
+function validateDescription(desc: string, tsPath: string): string[] {
+  const errs: string[] = [];
+  if (desc.length < DESC_MIN_LENGTH) {
+    errs.push(
+      `${tsPath}: description too short (${desc.length} chars, min ${DESC_MIN_LENGTH}) - "${desc}"`,
+    );
+  } else if (!DESC_TERMINAL_RE.test(desc)) {
+    errs.push(
+      `${tsPath}: description does not end with sentence-ending punctuation (.!?) - "${desc}"`,
+    );
+  }
+  return errs;
+}
+
+function validateMcpTools(tools: unknown, tsPath: string): string[] {
+  const errs: string[] = [];
+  if (!Array.isArray(tools)) {
+    errs.push(`${tsPath}: mcp.tools must be an array`);
+    return errs;
+  }
+  for (let i = 0; i < tools.length; i++) {
+    const entry = tools[i];
+    if (!entry || typeof entry !== "object") {
+      errs.push(`${tsPath}: mcp.tools[${i}] must be an object`);
+      continue;
+    }
+    const t = entry as Record<string, unknown>;
+    if (typeof t.name !== "string" || t.name.trim() === "") {
+      errs.push(`${tsPath}: mcp.tools[${i}].name must be a non-empty string`);
+    }
+    if ("summary" in t && typeof t.summary !== "string") {
+      errs.push(`${tsPath}: mcp.tools[${i}].summary must be a string if present`);
+    }
+  }
+  return errs;
+}
+
 async function main(): Promise<void> {
   // Collect all app directory names
   const appDirs = readdirSync(APPS_DIR).filter((name) => {
@@ -41,7 +81,8 @@ async function main(): Promise<void> {
   });
 
   const tools: JunkyardApp[] = [];
-  const errors: string[] = [];
+  // All errors across all apps accumulated before exit so every problem is reported
+  const allErrors: string[] = [];
 
   for (const dir of appDirs) {
     const tsPath = join(APPS_DIR, dir, "junkyard.ts");
@@ -51,61 +92,73 @@ async function main(): Promise<void> {
       mod = await import(pathToFileURL(tsPath).href);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
-      errors.push(`Failed to import ${tsPath}: ${msg}`);
+      allErrors.push(`Failed to import ${tsPath}: ${msg}`);
       continue;
     }
 
     const data = mod.app;
 
     if (!data || typeof data !== "object") {
-      errors.push(`${tsPath}: export "app" is missing or not an object`);
+      allErrors.push(`${tsPath}: export "app" is missing or not an object`);
       continue;
     }
+
+    // Per-app error list - collect ALL field errors before skipping this app
+    const appErrors: string[] = [];
 
     // Required fields
     for (const field of REQUIRED_FIELDS) {
       if (data[field] === undefined || data[field] === null) {
-        errors.push(`${tsPath}: missing required field "${field}"`);
+        appErrors.push(`${tsPath}: missing required field "${field}"`);
       }
     }
 
-    if (errors.length > 0) continue;
+    // Only run deeper validation when required fields are present
+    if (appErrors.length === 0) {
+      // Category validation
+      if (!VALID_CATEGORIES.has(data.category)) {
+        appErrors.push(
+          `${tsPath}: category "${data.category}" not in [image, text, ai, docs]`,
+        );
+      }
 
-    // Category validation
-    if (!VALID_CATEGORIES.has(data.category)) {
-      errors.push(
-        `${tsPath}: category "${data.category}" not in [image, text, ai, docs]`,
-      );
+      // Runtime validation
+      if (!VALID_RUNTIMES.has(data.runtime)) {
+        appErrors.push(
+          `${tsPath}: runtime "${data.runtime}" not in [client, client-ai]`,
+        );
+      }
+
+      // Slug must match directory name
+      if (data.slug !== dir) {
+        appErrors.push(
+          `${tsPath}: slug "${data.slug}" does not match directory name "${dir}"`,
+        );
+      }
+
+      // Order must be a positive integer
+      if (!Number.isInteger(data.order) || data.order < 1) {
+        appErrors.push(
+          `${tsPath}: order must be a positive integer, got ${JSON.stringify(data.order)}`,
+        );
+      }
+
+      // Description quality: min length and terminal punctuation
+      appErrors.push(...validateDescription(data.description, tsPath));
+
+      // mcp.tools shape validation
+      appErrors.push(...validateMcpTools(data.mcp?.tools, tsPath));
     }
 
-    // Runtime validation
-    if (!VALID_RUNTIMES.has(data.runtime)) {
-      errors.push(
-        `${tsPath}: runtime "${data.runtime}" not in [client, client-ai]`,
-      );
-    }
-
-    // Slug must match directory name
-    if (data.slug !== dir) {
-      errors.push(
-        `${tsPath}: slug "${data.slug}" does not match directory name "${dir}"`,
-      );
-    }
-
-    // Order must be a positive integer
-    if (!Number.isInteger(data.order) || data.order < 1) {
-      errors.push(
-        `${tsPath}: order must be a positive integer, got ${JSON.stringify(data.order)}`,
-      );
-    }
-
-    if (errors.length === 0) {
+    if (appErrors.length > 0) {
+      allErrors.push(...appErrors);
+    } else {
       tools.push(data);
     }
   }
 
-  if (errors.length > 0) {
-    for (const err of errors) {
+  if (allErrors.length > 0) {
+    for (const err of allErrors) {
       process.stderr.write(`ERROR: ${err}\n`);
     }
     process.exit(1);
