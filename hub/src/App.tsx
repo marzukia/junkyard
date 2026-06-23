@@ -56,7 +56,6 @@ export function App() {
 
   return (
     <>
-      <div className="strip" />
       <Header />
       <div className="wrap">
         <Hero />
