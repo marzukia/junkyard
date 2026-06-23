@@ -112,6 +112,10 @@ export function interpolateThree(
 export function useBlackText(hex: string): boolean {
   try {
     const lum = wcagLuminance(hex);
+    // wcagLuminance returns undefined for unparseable input and can return NaN
+    // for degenerate colours. Guard both: fall back to black text (true) so the
+    // UI stays readable rather than silently choosing white.
+    if (lum === undefined || Number.isNaN(lum)) return true;
     return lum > 0.179;
   } catch {
     return true;

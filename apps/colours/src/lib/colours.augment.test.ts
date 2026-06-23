@@ -6,7 +6,7 @@
  * - share.ts: encodeState/decodeState additional error paths
  */
 import { describe, expect, it } from "vitest";
-import { COLOR_SPACES, interpolateThree, interpolateTwo, normalizeHex } from "./color";
+import { COLOR_SPACES, interpolateThree, interpolateTwo, normalizeHex, useBlackText } from "./color";
 import { contrastRatio, wcagAssessment } from "./contrast";
 import { decodeState, encodeState } from "./share";
 import type { ShareableState } from "./share";
@@ -213,5 +213,28 @@ describe("encodeState / decodeState - additional error paths", () => {
       const decoded = decodeState(encodeState(state));
       expect(decoded?.space).toBe(space);
     }
+  });
+});
+
+
+// ── useBlackText - NaN/undefined guard (culori wcagLuminance) ─────────────────
+
+describe("useBlackText - degenerate input", () => {
+  it("returns true (use black text) for an invalid hex string", () => {
+    // culori wcagLuminance throws on unparseable input; useBlackText must
+    // not propagate the exception or silently return false.
+    expect(useBlackText("not-a-colour")).toBe(true);
+  });
+
+  it("returns true for empty string", () => {
+    expect(useBlackText("")).toBe(true);
+  });
+
+  it("returns false (use white text) for a very dark colour", () => {
+    expect(useBlackText("#000000")).toBe(false);
+  });
+
+  it("returns true (use black text) for a very light colour", () => {
+    expect(useBlackText("#ffffff")).toBe(true);
   });
 });
