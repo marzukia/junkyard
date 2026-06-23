@@ -35,7 +35,7 @@ Every app under `apps/<slug>/` uses the same stack:
 | State | Zustand |
 | Lint/format | Biome |
 | Test | Vitest + @testing-library/react |
-| Node | 22 |
+| Runtime | Bun |
 
 Fonts: Inter (UI/headings, 800 weight) and JetBrains Mono (mono/numbers) via `@fontsource`.
 
@@ -43,8 +43,8 @@ Fonts: Inter (UI/headings, 800 weight) and JetBrains Mono (mono/numbers) via `@f
 
 ```bash
 cd apps/<slug>
-npm ci
-npm run dev        # Vite dev server, hot-reload
+bun install
+bun run dev        # Vite dev server, hot-reload
 ```
 
 The app runs at `http://localhost:5173` by default.
@@ -53,20 +53,20 @@ Available scripts (same for every app):
 
 | Script | What it does |
 |--------|-------------|
-| `npm run dev` | Vite dev server |
-| `npm run build` | tsc + vite build |
-| `npm run preview` | Preview built dist (port varies per app, typically 4173-4175) |
-| `npm run lint` | `biome check src/` (report only) |
-| `npm run format` | `biome check --write src/` |
-| `npm run ci` | `biome ci src/` (zero-exit required in CI) |
-| `npm run test` | vitest run |
+| `bun run dev` | Vite dev server |
+| `bun run build` | tsc + vite build |
+| `bun run preview` | Preview built dist (port varies per app, typically 4173-4175) |
+| `bun run lint` | `biome check src/` (report only) |
+| `bun run format` | `biome check --write src/` |
+| `bun run ci` | `biome ci src/` (zero-exit required in CI) |
+| `bun run test` | vitest run |
 
 For the hub landing page:
 
 ```bash
 cd hub
-npm ci
-npm run dev        # runs gen-catalogue first via predev hook, then Vite on :5173
+bun install
+bun run dev        # runs gen-catalogue first via predev hook, then Vite on :5173
 ```
 
 ## Adding a new tool
@@ -133,8 +133,8 @@ After creating or editing any `apps/*/junkyard.ts` you must regenerate the catal
 
 ```bash
 cd hub
-npm ci          # provides tsx (pinned devDep)
-npx tsx ../scripts/gen-catalogue.ts
+bun install
+bun scripts/gen-catalogue.ts
 ```
 
 This writes:
@@ -175,8 +175,8 @@ Each app should have vitest tests for its core pure logic. The standard is: at l
 
 ```bash
 cd packages/core
-npm ci
-npm test
+bun install
+bun run test
 ```
 
 ### 7. Lint and typecheck
@@ -184,9 +184,9 @@ npm test
 Before committing, run from the app directory:
 
 ```bash
-npm run ci          # biome CI (must exit 0)
-npx tsc --noEmit    # must exit 0
-npm test            # must pass
+bun run ci          # biome CI (must exit 0)
+bunx tsc --noEmit   # must exit 0
+bun run test        # must pass
 ```
 
 ## Git identity
