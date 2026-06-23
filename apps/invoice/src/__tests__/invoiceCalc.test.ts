@@ -16,26 +16,26 @@ describe("calcTotals", () => {
   it("applies discount to subtotal", () => {
     const items = [item("A", 1, 200)];
     const result = calcTotals(items, 0, 10);
-    expect(result.discountAmount).toBeCloseTo(20);
-    expect(result.taxableAmount).toBeCloseTo(180);
-    expect(result.total).toBeCloseTo(180);
+    expect(result.discountAmount).toBe(20);
+    expect(result.taxableAmount).toBe(180);
+    expect(result.total).toBe(180);
   });
 
   it("applies tax to post-discount amount", () => {
     const items = [item("A", 1, 100)];
     const result = calcTotals(items, 15, 0);
-    expect(result.taxAmount).toBeCloseTo(15);
-    expect(result.total).toBeCloseTo(115);
+    expect(result.taxAmount).toBe(15);
+    expect(result.total).toBe(115);
   });
 
   it("applies discount then tax correctly", () => {
     const items = [item("A", 1, 200)];
     // 10% discount -> 180, then 15% tax on 180 = 27 -> 207
     const result = calcTotals(items, 15, 10);
-    expect(result.discountAmount).toBeCloseTo(20);
-    expect(result.taxableAmount).toBeCloseTo(180);
-    expect(result.taxAmount).toBeCloseTo(27);
-    expect(result.total).toBeCloseTo(207);
+    expect(result.discountAmount).toBe(20);
+    expect(result.taxableAmount).toBe(180);
+    expect(result.taxAmount).toBe(27);
+    expect(result.total).toBe(207);
   });
 
   it("returns zero totals for empty items", () => {
@@ -56,7 +56,80 @@ describe("calcTotals", () => {
   it("fractional quantities multiply correctly", () => {
     const items = [item("Fractional", 2.5, 40)];
     const result = calcTotals(items, 0, 0);
-    expect(result.subtotal).toBeCloseTo(100);
+    expect(result.subtotal).toBe(100);
+  });
+
+  // C1: 100 items at $9.99 with 8.5% tax -- classic float-drift scenario
+  it("C1: 100 items at 9.99 with 8.5% tax produces exact rounded total", () => {
+    const items = Array.from({ length: 100 }, (_, i) => item(`Item ${i}`, 1, 9.99));
+    const result = calcTotals(items, 8.5, 0);
+    // subtotal = 100 * 9.99 = 999.00 (exact after round2)
+    expect(result.subtotal).toBe(999);
+    // taxableAmount = 999.00
+    expect(result.taxableAmount).toBe(999);
+    // taxAmount = 999 * 0.085 = 84.915 -> round2 = 84.92
+    expect(result.taxAmount).toBe(84.92);
+    // total = 999 + 84.92 = 1083.92
+    expect(result.total).toBe(1083.92);
+  });
+
+  // H2: clamping validation
+  it("H2: taxRate above 100 is clamped to 100", () => {
+    const items = [item("A", 1, 100)];
+    const result = calcTotals(items, 150, 0);
+    // clamped to 100%: tax = 100, total = 200
+    expect(result.taxAmount).toBe(100);
+    expect(result.total).toBe(200);
+  });
+
+  it("H2: discountPercent above 100 is clamped to 100", () => {
+    const items = [item("A", 1, 100)];
+    const result = calcTotals(items, 0, 200);
+    // clamped: 100% discount = subtotal all off
+    expect(result.discountAmount).toBe(100);
+    expect(result.taxableAmount).toBe(0);
+    expect(result.total).toBe(0);
+  });
+
+  it("H2: negative taxRate is clamped to 0", () => {
+    const items = [item("A", 1, 100)];
+    const result = calcTotals(items, -10, 0);
+    expect(result.taxAmount).toBe(0);
+    expect(result.total).toBe(100);
+  });
+
+  it("H2: negative discountPercent is clamped to 0", () => {
+    const items = [item("A", 1, 100)];
+    const result = calcTotals(items, 0, -20);
+    expect(result.discountAmount).toBe(0);
+    expect(result.total).toBe(100);
+  });
+
+  // H4: taxOnGross option
+  it("H4: taxOnGross=true applies tax on pre-discount subtotal", () => {
+    const items = [item("A", 1, 200)];
+    // 10% discount -> taxable = 180, but tax base = 200 (gross)
+    // taxAmount = 200 * 0.15 = 30, total = 180 + 30 = 210
+    const result = calcTotals(items, 15, 10, 0, 0, true);
+    expect(result.discountAmount).toBe(20);
+    expect(result.taxableAmount).toBe(180);
+    expect(result.taxAmount).toBe(30);
+    expect(result.total).toBe(210);
+  });
+
+  it("H4: taxOnGross=false (default) applies tax on post-discount amount", () => {
+    const items = [item("A", 1, 200)];
+    const result = calcTotals(items, 15, 10);
+    expect(result.taxAmount).toBe(27); // 180 * 0.15
+    expect(result.total).toBe(207);
+  });
+
+  it("H4: taxOnGross with no discount is identical to net behaviour", () => {
+    const items = [item("A", 1, 100)];
+    const net = calcTotals(items, 20, 0, 0, 0, false);
+    const gross = calcTotals(items, 20, 0, 0, 0, true);
+    expect(net.taxAmount).toBe(gross.taxAmount);
+    expect(net.total).toBe(gross.total);
   });
 });
 
@@ -65,14 +138,14 @@ describe("calcTotals - shipping and amount paid", () => {
     const items = [item("A", 1, 100)];
     const result = calcTotals(items, 0, 0, 15);
     expect(result.shipping).toBe(15);
-    expect(result.total).toBeCloseTo(115);
+    expect(result.total).toBe(115);
   });
 
   it("computes balance due after partial payment", () => {
     const items = [item("A", 1, 200)];
     const result = calcTotals(items, 0, 0, 0, 50);
     expect(result.amountPaid).toBe(50);
-    expect(result.balanceDue).toBeCloseTo(150);
+    expect(result.balanceDue).toBe(150);
   });
 
   it("clamps balance due to 0 when overpaid", () => {
@@ -90,7 +163,7 @@ describe("calcTotals - shipping and amount paid", () => {
 });
 
 describe("formatMoney", () => {
-  it("formats USD amounts", () => {
+  it("formats USD amounts with 2 decimal places", () => {
     const result = formatMoney(1234.5, "USD");
     expect(result).toMatch(/1,234\.50/);
   });
@@ -106,8 +179,45 @@ describe("formatMoney", () => {
     expect(result).toContain("50.00");
   });
 
-  it("formats zero correctly", () => {
+  it("formats zero correctly for USD", () => {
     const result = formatMoney(0, "USD");
     expect(result).toMatch(/0\.00/);
+  });
+
+  // C2/H5: JPY should have no decimal places
+  it("C2: JPY formats without decimal places", () => {
+    const result = formatMoney(1000, "JPY");
+    // Intl with locale=undefined + JPY -> no fraction digits
+    expect(result).not.toMatch(/\./);
+    expect(result).toMatch(/1[,.]?000/);
+  });
+
+  it("C2: JPY zero formats without decimal places", () => {
+    const result = formatMoney(0, "JPY");
+    expect(result).not.toMatch(/\./);
+  });
+
+  it("formats negative amounts without throwing", () => {
+    const result = formatMoney(-50, "USD");
+    expect(result.length).toBeGreaterThan(0);
+  });
+
+  it("formats very large numbers without throwing", () => {
+    expect(() => formatMoney(999_999_999.99, "USD")).not.toThrow();
+  });
+});
+
+// H4 toggle wire-up: assert the toggle meaningfully changes the total
+describe("H4 taxOnGross UI toggle effect", () => {
+  it("toggling taxOnGross produces a different total when both tax and discount are set", () => {
+    const items = [{ id: "t1", description: "Widget", qty: 4, unitPrice: 50 }];
+    // subtotal = 200, 25% discount -> taxable = 150, 20% tax
+    const net = calcTotals(items, 20, 25, 0, 0, false);
+    const gross = calcTotals(items, 20, 25, 0, 0, true);
+    // net:   tax = 150 * 0.20 = 30  -> total = 180
+    // gross: tax = 200 * 0.20 = 40  -> total = 190
+    expect(net.taxAmount).toBe(30);
+    expect(gross.taxAmount).toBe(40);
+    expect(gross.total).toBeGreaterThan(net.total);
   });
 });

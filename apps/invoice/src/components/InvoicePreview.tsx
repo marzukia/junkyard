@@ -14,7 +14,8 @@ export function InvoicePreview() {
     store.taxRate,
     store.discountPercent,
     store.shipping,
-    store.amountPaid
+    store.amountPaid,
+    store.taxOnGross
   );
 
   const docTitle = DOC_TITLE[store.docType] ?? "INVOICE";
