@@ -36,6 +36,7 @@ export interface InvoiceState {
   discountPercent: number; // e.g. 10 = 10%
   shipping: number;
   amountPaid: number;
+  taxOnGross: boolean;
 
   // Extras
   notes: string;
@@ -57,6 +58,7 @@ export interface InvoiceState {
   setDiscountPercent: (v: number) => void;
   setShipping: (v: number) => void;
   setAmountPaid: (v: number) => void;
+  setTaxOnGross: (v: boolean) => void;
   setNotes: (v: string) => void;
   setLogoDataUrl: (v: string | null) => void;
 
@@ -85,6 +87,7 @@ export interface SerializableInvoice {
   discountPercent: number;
   shipping: number;
   amountPaid: number;
+  taxOnGross: boolean;
   notes: string;
   logoDataUrl: string | null;
 }
@@ -120,6 +123,7 @@ const BLANK_STATE = {
   discountPercent: 0,
   shipping: 0,
   amountPaid: 0,
+  taxOnGross: false,
   notes: "",
   logoDataUrl: null as string | null,
 };
@@ -144,6 +148,7 @@ export const useInvoiceStore = create<InvoiceState>()(
       setDiscountPercent: (v) => set({ discountPercent: v }),
       setShipping: (v) => set({ shipping: v }),
       setAmountPaid: (v) => set({ amountPaid: v }),
+      setTaxOnGross: (v) => set({ taxOnGross: v }),
       setNotes: (v) => set({ notes: v }),
       setLogoDataUrl: (v) => set({ logoDataUrl: v }),
 
@@ -199,6 +204,7 @@ export const useInvoiceStore = create<InvoiceState>()(
         discountPercent: s.discountPercent,
         shipping: s.shipping,
         amountPaid: s.amountPaid,
+        taxOnGross: s.taxOnGross,
         notes: s.notes,
         logoDataUrl: s.logoDataUrl,
       }),

@@ -206,3 +206,18 @@ describe("formatMoney", () => {
     expect(() => formatMoney(999_999_999.99, "USD")).not.toThrow();
   });
 });
+
+// H4 toggle wire-up: assert the toggle meaningfully changes the total
+describe("H4 taxOnGross UI toggle effect", () => {
+  it("toggling taxOnGross produces a different total when both tax and discount are set", () => {
+    const items = [{ id: "t1", description: "Widget", qty: 4, unitPrice: 50 }];
+    // subtotal = 200, 25% discount -> taxable = 150, 20% tax
+    const net = calcTotals(items, 20, 25, 0, 0, false);
+    const gross = calcTotals(items, 20, 25, 0, 0, true);
+    // net:   tax = 150 * 0.20 = 30  -> total = 180
+    // gross: tax = 200 * 0.20 = 40  -> total = 190
+    expect(net.taxAmount).toBe(30);
+    expect(gross.taxAmount).toBe(40);
+    expect(gross.total).toBeGreaterThan(net.total);
+  });
+});

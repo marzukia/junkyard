@@ -50,6 +50,7 @@ export function ExportButton() {
         discountPercent: store.discountPercent,
         shipping: store.shipping,
         amountPaid: store.amountPaid,
+        taxOnGross: store.taxOnGross,
         notes: store.notes,
         logoDataUrl: store.logoDataUrl,
       });
