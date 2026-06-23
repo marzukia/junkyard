@@ -11,12 +11,14 @@ export ONNXRUNTIME_NODE_INSTALL_CUDA=skip
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/dist"
 
-echo "==> Generating catalogue from apps/*/junkyard.ts"
-npx tsx "$ROOT/scripts/gen-catalogue.ts"
-
 echo "==> Building hub into $DIST"
 cd "$ROOT/hub"
 npm ci
+# Generate the catalogue after hub deps install so tsx resolves from hub/node_modules
+# (pinned devDep), not an unpinned npx auto-download. We invoke vite directly below
+# rather than `npm run build`, so the prebuild hook does not fire - generate explicitly.
+echo "==> Generating catalogue from apps/*/junkyard.ts"
+npx tsx "$ROOT/scripts/gen-catalogue.ts"
 npx vite build --outDir "$DIST" --emptyOutDir
 
 echo "==> Building apps"
