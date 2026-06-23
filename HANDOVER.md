@@ -2,6 +2,43 @@
 
 _Last updated: 2026-06-23. Maintainer: Andryo Marzuki (@marzukia, mrzk.io)._
 
+---
+
+# RESUME POINT (2026-06-23, late session — READ THIS FIRST)
+
+Marathon session. The fleet is **44 tools, live at https://junkyard.mrzk.io/<slug>/**, plus a working **MCP server**. Below is the full state + the remaining pipeline. The work director in the Discord channel is **peepercat (`108801968763305984`)** - NOT Cain (Cain = caain `215356028869541889`); don't conflate them.
+
+## What's DONE this session (all merged to `marzukia/junkyard` main + deployed unless noted)
+- **Fix wave wxm31o9oa** (10 tools) shipped; hub **productionized** (Vite/React/TS) + **consolidated**: all 42 -> then 44 apps served under `junkyard.mrzk.io/<slug>/` via `scripts/build-site.sh` (builds hub into dist root + each app `--base=/<slug>/`). Deploy = `.github/workflows/deploy-pages.yml` on push to main (paths: hub/apps/scripts/workflow). CI has a **verify job** (catalogue-drift, vendored-AppSwitcher-drift, SEO-subdomain guards) that gates the build.
+- **Self-describing apps**: each `apps/<slug>/junkyard.ts` (typed `JunkyardApp`, schema in `scripts/catalogue-schema.ts`) -> `scripts/gen-catalogue.ts` (run via **tsx**, pinned in hub devDeps; node strip-types NOT available here) emits `hub/src/catalogue.generated.ts` + `hub/public/catalogue.json` (served at `/catalogue.json`).
+- **Nav switcher** (`kit/components/AppSwitcher.*`, vendored into all 44 via `scripts/vendor-switcher.mjs`, reads `/catalogue.json`).
+- **Brand**: salvage-tag logo + all-mono wordmark (header/hero/favicon/OG); tagline "Your favourite online tools, salvaged from behind paywalls".
+- **2 NEW apps**: #43 **video** (ffmpeg.wasm single-thread CDN: trim/convert/compress/gif), #44 **cleanup** (CLASSICAL Telea/FMM object eraser - no web-viable neural model; cleanup category is now `image`, runtime `client`, tag `beta`).
+- **3 UPGRADED**: qr (batch CSV->ZIP + 4 eye styles, fixed on canvas+SVG), ocr (searchable-PDF export + per-page words + CJK error surfaced), bg (background replacement solid/gradient/image).
+- **Tags system**: `AppTag = webgpu|on-device-ai|large-download|beta` in `junkyard.ts`, badges on hub cards + auto **MCP** badge from `mcp.exposed`. `mcp.exposed` corrected to EXACTLY the 17 headless-safe tools: json, csv, hash, base64, jwt, regex, cron, uuid, timestamp, diff, units, colours, password, lorem, markdown, qr, barcode.
+- **MCP server (WORKS, verified with a real client)**: `packages/core` (`@junkyard/core` - the 17 tools' pure logic, framework-free, headless, ~169 tests incl. a 39-test markdown-XSS battery) + `packages/mcp-server` (Bun, `@modelcontextprotocol/sdk`, 25 ops over **stdio**, `junkyard_<slug>_<op>`). Run: `bun run packages/mcp-server/src/index.ts`. NOT hosted (no HTTP transport yet); `packages/**` is NOT in the web-deploy path.
+- **All 42 old `<slug>.mrzk.io` repos redirect** to junkyard paths (redirect workflow pushed to each `marzukia/<slug>`). mrzk.io `/apps` portfolio UNPUBLISHED (in `marzukia/blog`: `content/apps/_index.md` `draft:true` + "Apps" removed from `config/_default/menus.en.toml`).
+- **5-round polish audit -> CONVERGED.** Issues #1-#9 closed; deferred items filed as #10-#14. Caught + fixed 3 markdown-XSS iterations (scheme, attribute, link-label) + qr SVG color injection + units `ms` collision + video listener leak + bg blob leak + regex named-group + lots more. Charted cross-link removed from hub footer. `bun.lock` gitignored.
+- **upscale mobile-OOM FIXED** (commit on main `5cac0cc`): output-tensor-aware memory caps per device+scale (this was reloading peepercat's phone). Just merged; **deploys on next push**.
+
+## READY TO MERGE (held — peepercat said "wait")
+- **Declarative mobile-warning** DONE on branch `feat/mobilewarn2` (commit `5e2ee0a`, worktree `/home/planky/projects/jy-mw2`): `kit/components/MobileWarning.*` detects phone UA, reads `/catalogue.json`, warns on tools with a heavy tag (on-device-ai/webgpu/large-download), message derived from the tag; dismissible (sessionStorage). Injected into the 9 heavy apps (bg/caption/depth/summarize/transcribe/translate/upscale/chat/video; NOT cleanup). 11 helper tests + 14 Playwright checks pass. Also added `test:{jsdom}` to `kit/vite.config.ts`. **Merge `feat/mobilewarn2` -> push -> deploys.** (Held only because peepercat paused the run.)
+- The **upscale OOM fix** (`5cac0cc`) + gitignore are committed on main; pushing deploys them.
+
+## REMAINING PIPELINE (peepercat's explicit sequence, paused mid-stream because context is full)
+1. **Comprehensive tests** - happy path + **2 negative** per functional pathway, across the 44 tools' src/lib + `@junkyard/core`. All 44 apps already have >=1 test file (core 169, qr 126, colours has 10, etc.) - this is AUGMENTATION to the happy+2-neg standard. Fan out grouped builders (~6 apps each) off final main.
+2. **Umami backend as a CONFIG item** (peepercat's ask): make the umami host (`umami.junkyard.sh`) a single config value + use `umami-ids.txt` slug->id map, injected into each app's `<head>` at build time (instead of hardcoded in 44 index.htmls). Also wires the 2 new apps (video/cleanup currently have NO umami - issue #12).
+3. **Documentation** - production-ready: per-tool READMEs, `@junkyard/core` + MCP-server docs, contributor/dev guide, deployment instructions.
+4. **Deploy to hydrogen `junkyard.sh`** - build the consolidated dist + serve it from the hydrogen nginx/traefik box at the apex (it still serves the OLD prototype: nginx:alpine container `junkyard` serving `/opt/junkyard/index.html`, traefik labels Host(`junkyard.sh`)). The Bun MCP server can also run on hydrogen. hydrogen ssh = `andryo@122.199.31.95` (alias `hydrogen`); gh authed as marzukia there (token via `ssh hydrogen 'gh auth token'`).
+
+## Deferred/known (issues #10-#14, non-blocking)
+#10 OCR Unicode font for CJK PDF; #11 web-workers + cancel on heavy compute; #12 Umami for video/cleanup (folds into the config item above); #13 CI drift guards (sitemap-exists/umami-present/hub-sitemap-from-catalogue/core-vs-exposed contract); #14 dedup AppTag/Category into a shared module + vendor ThemeToggle. Also tiny: flip HANDOVER checkboxes for og.png (done) + per-app SEO (done).
+
+## Git/identity reminders
+Commit as `Andryo Marzuki <42439397+marzukia@users.noreply.github.com>` (NEVER the bot account). Push: `git push https://x-access-token:$(ssh hydrogen 'gh auth token')@github.com/marzukia/junkyard.git HEAD:main`. All app builds verified via `vite build --base=/<slug>/`. Playwright chromium for visual checks: `/home/planky/.cache/ms-playwright/chromium-1228/chrome-linux64/chrome`.
+
+---
+
 ## What this is
 
 **junkyard** is the consolidated home for a fleet of **42 free, 100% client-side web tools** that were "salvaged from behind paywalls." Every tool runs entirely in the browser (no server, no upload, no account) and clones a paid/ad-heavy incumbent. The pitch: a scrapyard of tools, dumped out for anyone to grab.
