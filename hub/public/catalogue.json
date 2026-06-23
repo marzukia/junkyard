@@ -725,7 +725,7 @@
   {
     "slug": "cleanup",
     "name": "Cleanup",
-    "category": "ai",
+    "category": "image",
     "order": 44,
     "tagline": "Erase objects from photos, on-device",
     "description": "Free object and people remover. Brush over anything you want gone and erase it with on-device inpainting - no upload, no signup, no watermark. A Cleanup.pictures alternative that runs entirely in your browser.",
