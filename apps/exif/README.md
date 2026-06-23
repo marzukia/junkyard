@@ -19,12 +19,12 @@ Browser-only (canvas + DOM bound for strip/download); not exposed over MCP.
 ## Local dev
 ```bash
 cd apps/exif
-npm install
-npm run dev          # vite dev server
-npm run build        # production build -> dist/
-npm test             # vitest
-npx biome ci src/    # lint
-npx tsc --noEmit     # typecheck
+bun install
+bun run dev          # vite dev server
+bun run build        # production build -> dist/
+bun run test             # vitest
+bunx biome ci src/    # lint
+bunx tsc --noEmit     # typecheck
 ```
 
 ## Deployment
