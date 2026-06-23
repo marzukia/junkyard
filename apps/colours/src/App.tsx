@@ -7,6 +7,7 @@ import { ThreePointGenerator } from "./components/ThreePointGenerator";
 import { TwoPointGenerator } from "./components/TwoPointGenerator";
 import { VisionToggle } from "./components/VisionToggle";
 import { useUrlSync } from "./lib/useUrlSync";
+import { AppSwitcher } from "./AppSwitcher";
 
 // 2×2 grid with the top-right square absent, mirrors the favicon shape.
 // Sized via CSS to track the cap-height of the "Colours" wordmark.
@@ -33,6 +34,7 @@ export function App() {
   return (
     <div className="app-root">
       <div className="utility-bar">
+        <AppSwitcher />
         <ThemeToggle />
       </div>
       <header className="site-header">

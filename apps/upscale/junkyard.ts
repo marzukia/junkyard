@@ -1,0 +1,18 @@
+import type { JunkyardApp } from "../../scripts/catalogue-schema";
+
+export const app: JunkyardApp = {
+  slug: "upscale",
+  name: "Upscale",
+  category: "ai",
+  order: 27,
+  tagline: "AI super-resolution 2x and 4x",
+  description: "Upscale and sharpen images 2x or 4x in your browser, free, private, no upload. A Let",
+  incumbent: "Upscayl",
+  path: "/upscale/",
+  runtime: "client-ai",
+  mcp: {
+    exposed: false,
+    lib: "src/lib/upscale.ts",
+    tools: [],
+  },
+};

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ThemeToggle } from "./ThemeToggle";
+import { AppSwitcher } from "./AppSwitcher";
 
 interface HeaderProps {
   /** The tool's display name */
@@ -16,6 +17,7 @@ export function Header({ title, subtitle, brandMark, controls }: HeaderProps) {
   return (
     <>
       <div className="utility-bar">
+        <AppSwitcher />
         <ThemeToggle />
       </div>
       <header className="site-header">

@@ -1,0 +1,18 @@
+import type { JunkyardApp } from "../../scripts/catalogue-schema";
+
+export const app: JunkyardApp = {
+  slug: "uuid",
+  name: "UUID",
+  category: "text",
+  order: 22,
+  tagline: "v4, v7 & nano IDs in bulk",
+  description: "Free online UUID generator. Generate UUID v4 (random), UUID v7 (time-ordered), and Nano IDs, single or bulk up to 1000. No signup, no upload, runs entirely in your browser.",
+  incumbent: "uuidgenerator",
+  path: "/uuid/",
+  runtime: "client",
+  mcp: {
+    exposed: true,
+    lib: "src/lib/uuid.ts",
+    tools: [],
+  },
+};

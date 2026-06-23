@@ -3,6 +3,7 @@ import { DropZone } from "./components/DropZone";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { Toolbar } from "./components/Toolbar";
 import { useSubsStore } from "./store/useSubsStore";
+import { AppSwitcher } from "./AppSwitcher";
 
 /** Minimalist film-strip glyph, 3 stacked bars in brand palette, distinct from the 3-square colours mark */
 function BrandMark() {
@@ -33,6 +34,7 @@ export function App() {
   return (
     <div className="app-root">
       <div className="utility-bar">
+        <AppSwitcher />
         <ThemeToggle />
       </div>
 

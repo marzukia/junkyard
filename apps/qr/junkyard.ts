@@ -1,0 +1,18 @@
+import type { JunkyardApp } from "../../scripts/catalogue-schema";
+
+export const app: JunkyardApp = {
+  slug: "qr",
+  name: "QR Code",
+  category: "image",
+  order: 2,
+  tagline: "QR codes with logo, colours & dot styles",
+  description: "Free QR code generator, add your logo, custom colours, dot styles, and error correction. Download PNG or SVG. No watermark, no signup, runs entirely in your browser. A qr-code-generator.com alternative.",
+  incumbent: "qr-generator",
+  path: "/qr/",
+  runtime: "client",
+  mcp: {
+    exposed: true,
+    lib: "src/lib/qr.ts",
+    tools: [],
+  },
+};
