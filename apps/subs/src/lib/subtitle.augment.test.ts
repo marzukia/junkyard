@@ -5,6 +5,7 @@
  */
 import { describe, expect, it } from "vitest";
 import {
+  fixOverlaps,
   formatExtension,
   parseSrt,
   parseVtt,
@@ -109,5 +110,92 @@ describe("formatExtension", () => {
       expect(typeof ext).toBe("string");
       expect(ext.length).toBeGreaterThan(0);
     }
+  });
+});
+
+
+// ── W7: genId safe fallback ───────────────────────────────────────────────────
+
+describe("genId safe ID generation (W7)", () => {
+  it("parseSrt assigns unique IDs to every cue", () => {
+    const srt = `1
+00:00:01,000 --> 00:00:03,000
+First
+
+2
+00:00:04,000 --> 00:00:06,000
+Second
+
+3
+00:00:07,000 --> 00:00:09,000
+Third`;
+    const cues = parseSrt(srt);
+    const ids = cues.map((c) => c.id);
+    // All IDs must be distinct strings
+    expect(new Set(ids).size).toBe(ids.length);
+    // Each must be a non-empty string
+    for (const id of ids) {
+      expect(typeof id).toBe("string");
+      expect(id.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("parseVtt assigns unique IDs even for cues without explicit identifiers", () => {
+    const vtt = `WEBVTT
+
+00:00:01.000 --> 00:00:03.000
+First
+
+00:00:04.000 --> 00:00:06.000
+Second`;
+    const cues = parseVtt(vtt);
+    const ids = cues.map((c) => c.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const id of ids) {
+      expect(id.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+// ── W8: fixOverlaps preserves original input order ────────────────────────────
+
+describe("fixOverlaps preserves input order (W8)", () => {
+  it("non-overlapping cues come back in input order", () => {
+    const cues: Cue[] = [
+      { id: "z", startMs: 1000, endMs: 2000, text: "Z" },
+      { id: "a", startMs: 3000, endMs: 4000, text: "A" },
+      { id: "m", startMs: 5000, endMs: 6000, text: "M" },
+    ];
+    const result = fixOverlaps(cues);
+    expect(result.map((c) => c.id)).toEqual(["z", "a", "m"]);
+  });
+
+  it("input order is preserved after an overlap is fixed", () => {
+    // cue 'b' starts before 'a' ends -- fixOverlaps should push b forward
+    // but b stays in its original position (index 1) in the output
+    const cues: Cue[] = [
+      { id: "a", startMs: 0, endMs: 3000, text: "A" },
+      { id: "b", startMs: 1000, endMs: 2000, text: "B" },
+      { id: "c", startMs: 5000, endMs: 6000, text: "C" },
+    ];
+    const result = fixOverlaps(cues);
+    // Original order: a, b, c
+    expect(result[0].id).toBe("a");
+    expect(result[1].id).toBe("b");
+    expect(result[2].id).toBe("c");
+    // b's start was pushed past a's end
+    expect(result[1].startMs).toBeGreaterThanOrEqual(result[0].endMs);
+  });
+
+  it("cues given in reverse chronological order come back in original order", () => {
+    // Input is intentionally reverse-time-order
+    const cues: Cue[] = [
+      { id: "late", startMs: 9000, endMs: 10000, text: "Late" },
+      { id: "early", startMs: 1000, endMs: 2000, text: "Early" },
+    ];
+    const result = fixOverlaps(cues);
+    // No overlaps here -- output must preserve input order
+    expect(result[0].id).toBe("late");
+    expect(result[1].id).toBe("early");
   });
 });

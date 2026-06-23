@@ -101,3 +101,81 @@ describe("resetPalette", () => {
     expect(useColoursStore.getState().palette.count).toBeGreaterThanOrEqual(MIN_PALETTE_COUNT);
   });
 });
+
+
+// ── W4: undo coverage for lock-toggle, manual-color-set, count-change ─────────
+
+describe("togglePaletteLock is undoable (W4)", () => {
+  beforeEach(() => {
+    useColoursStore.setState((s) => ({
+      palette: {
+        ...s.palette,
+        colors: ["#111111", "#222222", "#333333", "#444444", "#555555"],
+        locked: [false, false, false, false, false],
+        count: 5,
+      },
+      _undoStack: [],
+      canUndo: false,
+    }));
+  });
+
+  it("togglePaletteLock pushes to undo stack", () => {
+    const before = useColoursStore.getState().palette.locked[0];
+    useColoursStore.getState().togglePaletteLock(0);
+    expect(useColoursStore.getState().canUndo).toBe(true);
+    expect(useColoursStore.getState()._undoStack.length).toBeGreaterThan(0);
+    // Undo restores the pre-toggle state
+    useColoursStore.getState().undoPalette();
+    expect(useColoursStore.getState().palette.locked[0]).toBe(before);
+  });
+});
+
+describe("setPaletteColor is undoable (W4)", () => {
+  beforeEach(() => {
+    useColoursStore.setState((s) => ({
+      palette: {
+        ...s.palette,
+        colors: ["#111111", "#222222", "#333333", "#444444", "#555555"],
+        locked: [false, false, false, false, false],
+        count: 5,
+      },
+      _undoStack: [],
+      canUndo: false,
+    }));
+  });
+
+  it("setPaletteColor pushes to undo stack", () => {
+    const originalColor = useColoursStore.getState().palette.colors[1];
+    useColoursStore.getState().setPaletteColor(1, "#abcdef");
+    expect(useColoursStore.getState().canUndo).toBe(true);
+    // Undo reverts the color change
+    useColoursStore.getState().undoPalette();
+    expect(useColoursStore.getState().palette.colors[1]).toBe(originalColor);
+    // Undo also reverts the auto-lock
+    expect(useColoursStore.getState().palette.locked[1]).toBe(false);
+  });
+});
+
+describe("setPaletteCount is undoable (W4)", () => {
+  beforeEach(() => {
+    useColoursStore.setState((s) => ({
+      palette: {
+        ...s.palette,
+        colors: ["#111111", "#222222", "#333333", "#444444", "#555555"],
+        locked: [false, false, false, false, false],
+        count: 5,
+        harmonyMode: "analogous",
+      },
+      _undoStack: [],
+      canUndo: false,
+    }));
+  });
+
+  it("setPaletteCount pushes to undo stack", () => {
+    useColoursStore.getState().setPaletteCount(7);
+    expect(useColoursStore.getState().canUndo).toBe(true);
+    expect(useColoursStore.getState().palette.count).toBe(7);
+    useColoursStore.getState().undoPalette();
+    expect(useColoursStore.getState().palette.count).toBe(5);
+  });
+});
