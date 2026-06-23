@@ -44,6 +44,12 @@ jobs:
           bun scripts/vendor-switcher.mjs
           git diff --exit-code
 
+      - name: Check vendored ThemeToggle copies are up to date
+        # Fails if kit/ThemeToggle.tsx was changed without running vendor-themetoggle.mjs
+        run: |
+          node scripts/vendor-themetoggle.mjs
+          git diff --exit-code
+
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).
