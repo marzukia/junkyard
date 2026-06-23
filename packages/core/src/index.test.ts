@@ -9,7 +9,8 @@ import { testRegex } from "./regex.js";
 import { uuidV4, uuidV7 } from "./uuid.js";
 import { convertTimestamp } from "./timestamp.js";
 import { computeDiff } from "./diff.js";
-import { convert as convertUnit } from "./units.js";
+import { convert as convertUnit, findUnit } from "./units.js";
+import { validateSvgColor } from "./qr.js";
 import { convertColor, contrastRatio } from "./colours.js";
 import { generatePassword } from "./password.js";
 import { generateWords, generateSentences, generateParagraphs } from "./lorem.js";
@@ -348,6 +349,39 @@ describe("units", () => {
   it("converts 8 L/100km to L/100km (identity)", () => {
     expect(convertUnit(8, "l100km", "l100km")).toBeCloseTo(8, 6);
   });
+
+  // ms disambiguation regression tests
+  it("ms resolves to millisecond (time), not metre/second (speed)", () => {
+    // findUnit must return the time category for "ms"
+    const found = findUnit("ms");
+    expect(found).not.toBeNull();
+    expect(found!.category.id).toBe("time");
+    expect(found!.unit.label).toMatch(/millisecond/i);
+  });
+
+  it("convert(1, 'ms', 's') works as millisecond-to-second", () => {
+    expect(convertUnit(1, "ms", "s")).toBeCloseTo(0.001, 6);
+  });
+
+  it("convert(1000, 'ms', 's') = 1 second", () => {
+    expect(convertUnit(1000, "ms", "s")).toBeCloseTo(1, 6);
+  });
+
+  it("speed metre/second is reachable as 'mps'", () => {
+    const found = findUnit("mps");
+    expect(found).not.toBeNull();
+    expect(found!.category.id).toBe("speed");
+    expect(found!.unit.label).toMatch(/metre.second/i);
+  });
+
+  it("convert(1, 'mps', 'kmh') = 3.6 km/h", () => {
+    expect(convertUnit(1, "mps", "kmh")).toBeCloseTo(3.6, 4);
+  });
+
+  it("'ms' id does NOT resolve to the speed category", () => {
+    const found = findUnit("ms");
+    expect(found?.category.id).not.toBe("speed");
+  });
 });
 
 // ── Colours ───────────────────────────────────────────────────────────────────
@@ -480,6 +514,59 @@ describe("markdown", () => {
     const html = toHtml('<img src=x onerror="alert(1)">');
     expect(html).not.toMatch(/<img\s/i);
   });
+
+  // URI scheme XSS regression tests
+  it("neutralises javascript: URI in link href", () => {
+    const html = toHtml("[click me](javascript:alert(1))");
+    expect(html).not.toContain("javascript:");
+    expect(html).toContain('href="#"');
+  });
+
+  it("neutralises data: URI in link href", () => {
+    const html = toHtml("[click me](data:text/html,<script>alert(1)</script>)");
+    expect(html).not.toContain("data:");
+    expect(html).toContain('href="#"');
+  });
+
+  it("neutralises vbscript: URI in link href", () => {
+    const html = toHtml("[click me](vbscript:msgbox(1))");
+    expect(html).not.toContain("vbscript:");
+    expect(html).toContain('href="#"');
+  });
+
+  it("neutralises entity-obfuscated javascript: URI in link href", () => {
+    // java&#115;cript: -> javascript: after entity decode
+    const html = toHtml("[click me](java&#115;cript:alert(1))");
+    expect(html).not.toContain("javascript:");
+    expect(html).toContain('href="#"');
+  });
+
+  it("neutralises javascript: URI in image src", () => {
+    const html = toHtml("![alt](javascript:alert(1))");
+    expect(html).not.toContain("javascript:");
+    expect(html).toContain('src="#"');
+  });
+
+  it("neutralises data: URI in image src", () => {
+    const html = toHtml("![alt](data:image/png;base64,abc)");
+    expect(html).not.toContain("data:");
+    expect(html).toContain('src="#"');
+  });
+
+  it("preserves safe https: link href", () => {
+    const html = toHtml("[link](https://example.com)");
+    expect(html).toContain('href="https://example.com"');
+  });
+
+  it("preserves mailto: link href", () => {
+    const html = toHtml("[email](mailto:user@example.com)");
+    expect(html).toContain('href="mailto:user@example.com"');
+  });
+
+  it("preserves relative link href", () => {
+    const html = toHtml("[page](/about)");
+    expect(html).toContain('href="/about"');
+  });
 });
 
 // ── QR ────────────────────────────────────────────────────────────────────────
@@ -500,6 +587,45 @@ describe("qr", () => {
   it("respects fgColor in output", () => {
     const svg = generateSvgString({ text: "test", fgColor: "#ff0000" });
     expect(svg).toContain("#ff0000");
+  });
+
+  // Color injection regression tests
+  it("does NOT interpolate hostile fgColor into SVG (injection guard)", () => {
+    // A crafted color containing SVG markup must not appear literally in output
+    const hostile = '"/><script>alert(1)</script><rect fill="';
+    const svg = generateSvgString({ text: "test", fgColor: hostile });
+    expect(svg).not.toContain("<script>");
+    // The hostile value is not a valid color, so it falls back to #000000
+    expect(svg).toContain("#000000");
+  });
+
+  it("does NOT interpolate hostile bgColor into SVG (injection guard)", () => {
+    const hostile = '"/><script>alert(1)</script><rect fill="';
+    const svg = generateSvgString({ text: "test", bgColor: hostile });
+    expect(svg).not.toContain("<script>");
+    expect(svg).toContain("#ffffff");
+  });
+
+  it("validateSvgColor accepts valid #rrggbb", () => {
+    expect(validateSvgColor("#ff0000", "#000000")).toBe("#ff0000");
+  });
+
+  it("validateSvgColor accepts valid #rgb shorthand", () => {
+    expect(validateSvgColor("#f00", "#000000")).toBe("#f00");
+  });
+
+  it("validateSvgColor accepts safe CSS named color", () => {
+    expect(validateSvgColor("black", "#000000")).toBe("black");
+  });
+
+  it("validateSvgColor rejects injection string and returns fallback", () => {
+    expect(validateSvgColor('"/><script>alert(1)</script>', "#000000")).toBe("#000000");
+  });
+
+  it("generateSvgString accepts named color 'black' as fgColor", () => {
+    const svg = generateSvgString({ text: "test", fgColor: "black" });
+    expect(svg).toContain("black");
+    expect(svg).not.toContain("<script>");
   });
 });
 
