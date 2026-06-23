@@ -117,7 +117,7 @@ header {
 .logo .wm .sh {
   font-weight: 800;
   font-size: 18px;
-  letter-spacing: -.04em;
+  letter-spacing: -.1em;
   color: var(--accent);
   margin-left: -.1em;
 }
@@ -427,7 +427,7 @@ header {
   font-family: "JetBrains Mono", monospace;
   font-weight: 800;
   color: var(--accent);
-  letter-spacing: -.045em;
+  letter-spacing: -.1em;
   font-size: 1em;
   margin-left: -.1em;
 }
