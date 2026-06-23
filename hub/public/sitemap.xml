@@ -43,7 +43,7 @@
   <url><loc>https://junkyard.sh/invoice/</loc></url>
   <url><loc>https://junkyard.sh/resume/</loc></url>
   <url><loc>https://junkyard.sh/sign/</loc></url>
-  <!-- video and cleanup added 2026-06; sitemap is hand-maintained -- should eventually be generated from catalogue -->
+  <!-- video and cleanup added 2026-06; sitemap is hand-maintained; should eventually be generated from catalogue -->
   <url><loc>https://junkyard.sh/video/</loc></url>
   <url><loc>https://junkyard.sh/cleanup/</loc></url>
 </urlset>
