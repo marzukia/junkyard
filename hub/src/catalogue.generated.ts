@@ -358,7 +358,7 @@ export const TOOLS: Tool[] = [
   {
     name: "Cleanup",
     slug: "cleanup",
-    yard: "ai",
+    yard: "image",
     tagline: "Erase objects from photos, on-device",
     incumbent: "Cleanup.pictures",
     tags: ["beta"],
