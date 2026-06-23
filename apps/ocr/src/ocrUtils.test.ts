@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { scaleBboxToPdfCoords } from "./ocrPdfUtils";
 import {
   LANG_STORAGE_KEY,
   buildBatchFilename,
@@ -147,6 +148,66 @@ describe("buildBatchFilename", () => {
 
   it("sanitises filename", () => {
     expect(buildBatchFilename("my file (1).png", 0)).toBe("my_file__1__page1.txt");
+  });
+});
+
+describe("scaleBboxToPdfCoords", () => {
+  // Image and PDF are the same size -- scaling factor is 1:1.
+  // PDF y-origin is bottom-left; image y-origin is top-left.
+  // A bbox that ends at y1=20 on a 100px-tall image maps to y=80 from the PDF bottom.
+
+  it("identity when img and page are the same size", () => {
+    const bbox = { x0: 10, y0: 5, x1: 50, y1: 20 };
+    const img = { width: 200, height: 100 };
+    const page = { width: 200, height: 100 };
+    const result = scaleBboxToPdfCoords(bbox, img, page);
+    expect(result.x).toBeCloseTo(10);
+    expect(result.y).toBeCloseTo(80); // 100 - 20
+    expect(result.w).toBeCloseTo(40); // 50 - 10
+    expect(result.h).toBeCloseTo(15); // 20 - 5
+  });
+
+  it("scales x and w proportionally when page is wider than image", () => {
+    const bbox = { x0: 0, y0: 0, x1: 100, y1: 50 };
+    const img = { width: 100, height: 100 };
+    const page = { width: 200, height: 100 }; // 2x wider
+    const result = scaleBboxToPdfCoords(bbox, img, page);
+    expect(result.x).toBeCloseTo(0);
+    expect(result.w).toBeCloseTo(200); // 100 * 2
+  });
+
+  it("flips y-axis correctly for a word at the bottom of the image", () => {
+    // Word occupies the bottom 10px of a 100px image.
+    const bbox = { x0: 0, y0: 90, x1: 50, y1: 100 };
+    const img = { width: 100, height: 100 };
+    const page = { width: 100, height: 100 };
+    const result = scaleBboxToPdfCoords(bbox, img, page);
+    // pdf y = pageHeight - bbox.y1*scaleY = 100 - 100 = 0
+    expect(result.y).toBeCloseTo(0);
+    expect(result.h).toBeCloseTo(10);
+  });
+
+  it("flips y-axis correctly for a word at the top of the image", () => {
+    // Word occupies the top 10px of a 100px image.
+    const bbox = { x0: 0, y0: 0, x1: 50, y1: 10 };
+    const img = { width: 100, height: 100 };
+    const page = { width: 100, height: 100 };
+    const result = scaleBboxToPdfCoords(bbox, img, page);
+    // pdf y = 100 - 10 = 90 (near top of PDF page)
+    expect(result.y).toBeCloseTo(90);
+    expect(result.h).toBeCloseTo(10);
+  });
+
+  it("applies uniform scale when page and image differ by 2x", () => {
+    const bbox = { x0: 10, y0: 20, x1: 30, y1: 40 };
+    const img = { width: 100, height: 100 };
+    const page = { width: 200, height: 200 };
+    const result = scaleBboxToPdfCoords(bbox, img, page);
+    expect(result.x).toBeCloseTo(20); // 10 * 2
+    expect(result.w).toBeCloseTo(40); // (30-10) * 2
+    expect(result.h).toBeCloseTo(40); // (40-20) * 2
+    // y = 200 - (40 * 2) = 200 - 80 = 120
+    expect(result.y).toBeCloseTo(120);
   });
 });
 
