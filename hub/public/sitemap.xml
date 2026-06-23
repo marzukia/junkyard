@@ -43,4 +43,7 @@
   <url><loc>https://junkyard.mrzk.io/invoice/</loc></url>
   <url><loc>https://junkyard.mrzk.io/resume/</loc></url>
   <url><loc>https://junkyard.mrzk.io/sign/</loc></url>
+  <!-- video and cleanup added 2026-06; sitemap is hand-maintained -- should eventually be generated from catalogue -->
+  <url><loc>https://junkyard.mrzk.io/video/</loc></url>
+  <url><loc>https://junkyard.mrzk.io/cleanup/</loc></url>
 </urlset>

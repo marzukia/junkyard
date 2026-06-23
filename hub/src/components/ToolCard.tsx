@@ -44,7 +44,15 @@ export function ToolCard({ tool, index, animationDelay }: ToolCardProps) {
               {TAG_LABELS[tag]}
             </span>
           ))}
-          {tool.mcpExposed && <span className="tag-badge tag-badge--mcp">MCP</span>}
+          {tool.mcpExposed && (
+            <span
+              className="tag-badge tag-badge--mcp"
+              title="Exposed over the Model Context Protocol"
+              aria-label="MCP, exposed over the Model Context Protocol"
+            >
+              MCP
+            </span>
+          )}
         </div>
       )}
       <div className="foot">
