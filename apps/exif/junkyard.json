@@ -1,0 +1,16 @@
+{
+  "slug": "exif",
+  "name": "EXIF Viewer",
+  "category": "image",
+  "order": 5,
+  "tagline": "See & strip photo metadata + GPS",
+  "description": "Free online EXIF viewer and metadata remover. View GPS location, camera settings, and all hidden photo data. Strip EXIF data instantly, no upload, runs in your browser, completely private.",
+  "incumbent": "metadata2go",
+  "path": "/exif/",
+  "runtime": "client",
+  "mcp": {
+    "exposed": true,
+    "lib": "src/exif-utils.ts",
+    "tools": []
+  }
+}
