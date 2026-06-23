@@ -53,7 +53,7 @@ const TOOLS: { id: Tool; label: string; desc: string }[] = [
   { id: "extract", label: "Extract", desc: "Extract specific pages from a PDF" },
   { id: "reorder", label: "Reorder", desc: "Drag-and-drop page reordering" },
   { id: "rotate", label: "Rotate", desc: "Rotate all pages by 90, 180, or 270 degrees" },
-  { id: "compress", label: "Compress", desc: "Reduce PDF file size" },
+  { id: "compress", label: "Optimize", desc: "Remove unused objects and apply object-stream compression (does not re-encode images)" },
   { id: "pagenumbers", label: "Page Numbers", desc: "Add page numbers to every page" },
   { id: "watermark", label: "Watermark", desc: "Add a diagonal text watermark to every page" },
   { id: "img2pdf", label: "Images to PDF", desc: "Convert PNG/JPEG images to a PDF" },
@@ -112,7 +112,7 @@ export function App() {
     <div className="app-root">
       <Header
         title="PDF Toolkit"
-        subtitle="Merge · Split · Compress · Convert"
+        subtitle="Merge · Split · Optimize · Convert"
         brandMark={<PdfBrandMark />}
       />
       <main className="site-main">
