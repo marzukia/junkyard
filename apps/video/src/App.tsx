@@ -66,7 +66,11 @@ export function App() {
   useEffect(() => {
     if (!file) return;
     setCoreLoading(true);
-    getFFmpeg(() => {}).finally(() => setCoreLoading(false));
+    getFFmpeg(() => {})
+      .catch(() =>
+        setError("Couldn't load the video engine - check your connection and reload.")
+      )
+      .finally(() => setCoreLoading(false));
   }, [file]);
 
   const handleFile = useCallback(
