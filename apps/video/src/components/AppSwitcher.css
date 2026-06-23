@@ -1,0 +1,257 @@
+/* AppSwitcher - left cluster in .utility-bar
+   All selectors are namespaced under .jy-switcher to avoid collisions.
+   Uses only the shared CSS custom properties defined in kit/styles.css:
+   --canvas, --surface, --surface-sunken, --ink, --ink-mid, --ink-faint,
+   --rule, --accent, --accent-soft, --font-mono, --radius-sm, --shadow-pop.
+*/
+
+/* Ensure the utility-bar supports left-cluster + right-toggle layout.
+   kit/styles.css already sets display:flex and justify-content:flex-end;
+   we change justification to space-between so our left cluster lines up. */
+.utility-bar {
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Root wrapper */
+.jy-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+/* Dashboard back link */
+.jy-switcher__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  text-decoration: none;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  transition: color 0.13s, background 0.13s;
+  white-space: nowrap;
+}
+
+.jy-switcher__back:hover {
+  color: var(--ink);
+  background: var(--surface-sunken);
+}
+
+.jy-switcher__back:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Divider between dashboard link and trigger */
+.jy-switcher__back::after {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 0.85rem;
+  background: var(--rule);
+  margin-left: 0.4rem;
+}
+
+/* Wrapper for the trigger + popover */
+.jy-switcher__menu-wrapper {
+  position: relative;
+}
+
+/* "All tools" trigger button */
+.jy-switcher__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  padding: 0.22rem 0.55rem;
+  cursor: pointer;
+  transition: color 0.13s, background 0.13s;
+  white-space: nowrap;
+}
+
+.jy-switcher__trigger:hover {
+  color: var(--ink);
+  background: var(--surface-sunken);
+}
+
+.jy-switcher__trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Popover menu */
+.jy-switcher__menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  z-index: 9000;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-pop);
+  width: 280px;
+  max-height: 420px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Filter input row */
+.jy-switcher__filter-wrap {
+  padding: 0.55rem 0.65rem 0.4rem;
+  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+
+.jy-switcher__filter {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink);
+  background: var(--surface-sunken);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0.32rem 0.6rem;
+  outline: none;
+  transition: border-color 0.13s;
+}
+
+.jy-switcher__filter::placeholder {
+  color: var(--ink-faint);
+}
+
+.jy-switcher__filter:focus {
+  border-color: var(--accent);
+}
+
+/* Category group */
+.jy-switcher__group {
+  padding: 0.5rem 0 0.25rem;
+}
+
+.jy-switcher__group:not(:last-child) {
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.5rem;
+}
+
+/* Group labels: was --ink-faint (2.56:1, fails 4.5:1); now --ink-mid (5.86:1 light / 6.54:1 dark). */
+.jy-switcher__group-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  padding: 0 0.75rem 0.3rem;
+}
+
+/* Tool link item */
+.jy-switcher__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  padding: 0.38rem 0.75rem;
+  text-decoration: none;
+  border-radius: 0;
+  transition: background 0.1s;
+  cursor: pointer;
+}
+
+.jy-switcher__item:hover {
+  background: var(--surface-sunken);
+}
+
+.jy-switcher__item--active {
+  background: var(--accent-soft);
+}
+
+/*
+ * Active item name contrast:
+ * Light: --accent (#2f9d8d) on --accent-soft (#eaf6f3) = 3.00:1 (fails 4.5:1).
+ *        Use --ink-mid (#5b6671) on --accent-soft (#eaf6f3) = 5.29:1 (passes).
+ * Dark:  --accent (#41b6a6) on --accent-soft (#18302c) = 5.65:1 (passes, keep).
+ */
+.jy-switcher__item--active .jy-switcher__item-name {
+  color: var(--ink-mid);
+}
+
+[data-mantine-color-scheme="dark"] .jy-switcher__item--active .jy-switcher__item-name {
+  color: var(--accent);
+}
+
+.jy-switcher__item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.jy-switcher__item-name {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+/* Taglines: was --ink-faint (2.56:1, fails 4.5:1); now --ink-mid (5.86:1 light / 6.54:1 dark). */
+.jy-switcher__item-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--ink-mid);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Empty state */
+.jy-switcher__empty {
+  padding: 0.9rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+/*
+ * Mobile: full-width popover anchored just below the utility bar.
+ * position:fixed with top:auto previously detached from the bar.
+ * The utility-bar has padding-top:0.4rem at mobile + ~1.4rem button height = ~1.8rem.
+ * Use 2.5rem as a safe approximation so the menu sits immediately under the bar.
+ */
+@media (max-width: 480px) {
+  .jy-switcher__menu {
+    position: fixed;
+    top: 2.5rem;
+    left: 0.5rem;
+    right: 0.5rem;
+    width: auto;
+    max-height: 70vh;
+    border-radius: var(--radius-sm);
+  }
+
+  .jy-switcher__back span {
+    display: none;
+  }
+
+  .jy-switcher__back::after {
+    margin-left: 0;
+  }
+}
