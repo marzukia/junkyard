@@ -93,6 +93,7 @@ export function lengthLabel(maxWords: number): string {
  * Returns an array of non-empty chunk strings.
  */
 export function chunkText(text: string, maxWordsPerChunk: number = MODEL_MAX_WORDS): string[] {
+  if (!text.trim()) return [];
   const words = text.trim().split(/\s+/);
   if (words.length <= maxWordsPerChunk) return [text.trim()];
 
