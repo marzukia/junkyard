@@ -114,13 +114,20 @@ npm test             # vitest
 - **MAJOR:** `bg` result-preview `<img>` collapses to height:0px (cutout invisible) · `colours` mobile copy-actions row overflows 390px (no wrap).
 - **MINOR:** `regex` mobile horizontal overflow (~50px) · `depth`/`caption`/`pdf` swallow bad files with no error message · `convert` AVIF emitted as PNG-under-.avif with no capability check · `units` Copy-result has no "Copied!" toast · `lorem` style selection doesn't persist · `css` clipboard write throws uncaught in locked-down contexts · assorted sub-40px mobile tap targets.
 
-### ⚠️ FIRST ACTION ON RESUME
-The fix wave (`wxm31o9oa`) was still running at session end. When it completes, its builders have committed fixes **locally only** in each `tool-<slug>` dir on the planky box (`~/projects/_fleet/tool-*` and `~/projects/colours`). **Commit + push each changed tool to its `marzukia/<slug>` repo to deploy** (git identity `Andryo Marzuki <42439397+marzukia@users.noreply.github.com>`, push via `git push https://x-access-token:$(ssh hydrogen 'gh auth token')@github.com/marzukia/<slug>.git HEAD:main`). Then re-pull those fixed sources into this monorepo's `apps/`. Tools in the wave: bg, colours, regex, depth, caption, pdf, units, convert, lorem, css.
+## Session update - 2026-06-23 (later) - fix wave shipped + hub productionized
+
+**Fix wave `wxm31o9oa` SHIPPED.** All 10 tools (bg, colours, regex, depth, caption, pdf, units, convert, lorem, css) committed as Andryo, pushed to their `marzukia/<slug>` repos, deploy-pages CI green on every one, all serving 200 on `<slug>.mrzk.io`. Two builder commits (bg, regex) had been authored as the bot account and were amended to Andryo before push. Monorepo `apps/` re-synced from the fixed sources (commit `0ec164d`).
+
+**Hub PRODUCTIONIZED + LIVE at https://junkyard.mrzk.io.** The single-file prototype is now a Vite + React 18 + TS app under `hub/` (no Mantine, plain ported CSS in `hub/src/styles.css`, fontsource fonts, FOUC-safe System/Light/Dark toggle). The 42-tool list is a typed shared manifest at `hub/src/tools.ts` (this is the manifest the app-migration + MCP phases reuse). Deployed via a **monorepo-root** workflow `.github/workflows/deploy-pages.yml` (builds `hub/`, uploads `hub/dist`, `paths: hub/**`), GH Pages enabled on `marzukia/junkyard` with `build_type=workflow`, CNAME `junkyard.mrzk.io`. Playwright-verified live: 42 cards, correct chip counts (13/12/7/10), search + empty-state work, dark toggle flips `data-scheme`, 0px overflow at 390px. Cards still link to `<slug>.mrzk.io` (PHASE 2 comment in `ToolCard.tsx` marks the switch to path routing).
+
+- **Hub follow-ups (non-blocking):** generate `hub/public/og.png` (1200x630 banner; referenced in meta with a TODO); wire Umami (needs a new hub site-id; script intentionally omitted, no `__UMAMI_ID__` placeholder).
+- **`junkyard.sh` (hydrogen nginx prototype) still serves the OLD static prototype** - left untouched intentionally. When the consolidated path-routing site (`junkyard.sh/<app>`) is ready, point `junkyard.sh` at it and retire the individual `marzukia/<slug>` repos.
 
 ### Open items (updated)
-- [ ] Push + deploy the `wxm31o9oa` fix-wave results (see above) — **do this first.**
-- [ ] Re-sync `apps/` in this monorepo from the latest tool sources after the fix wave.
-- [ ] Productionize the junkyard.sh hub (Vite/React + shared tool manifest) and move to **path-based routing** `junkyard.sh/<app>`.
+- [x] Push + deploy the `wxm31o9oa` fix-wave results.
+- [x] Re-sync `apps/` from the latest tool sources after the fix wave.
+- [x] Productionize the hub (Vite/React + shared manifest) and deploy to `junkyard.mrzk.io`.
+- [ ] **Migrate the 42 apps onto one site with path-based routing `junkyard.sh/<app>`**, then point `junkyard.sh` over and delete/disable the individual repos (owner's stated next big arc).
+- [ ] Generate the hub OG banner + wire Umami on the hub.
 - [ ] Per-tool deferred features (round-2 commit messages): resume CV-import, jwt signature verify, pdf rotate/watermark/page-numbers, qr batch/eye-shapes, ocr searchable-PDF/DOCX, bg background-replacement, etc.
-- [ ] Build the MCP server (each tool's `src/lib/*` = the handler).
-- [ ] Migrate `<slug>.mrzk.io` deploys onto the consolidated junkyard server.
+- [ ] Build the MCP server (each tool's `src/lib/*` = the handler) - after the migration.
