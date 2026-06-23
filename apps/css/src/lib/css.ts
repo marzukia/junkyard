@@ -138,7 +138,7 @@ export function hexToRgba(hex: string, opacity: number): string {
   }
 
   if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) {
-    return `rgba(0,0,0,${opacity})`;
+    throw new Error(`Invalid hex colour: "${hex}"`);
   }
 
   const alpha = Math.round(Math.min(Math.max(opacity, 0), 1) * 100) / 100;

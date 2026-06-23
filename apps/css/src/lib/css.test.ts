@@ -41,9 +41,8 @@ describe("hexToRgba", () => {
     expect(hexToRgba("#000000", -1)).toBe("rgba(0, 0, 0, 0)");
   });
 
-  it("handles invalid hex gracefully", () => {
-    const result = hexToRgba("notahex", 0.5);
-    expect(result).toBe("rgba(0,0,0,0.5)");
+  it("throws on invalid hex (non-hex characters)", () => {
+    expect(() => hexToRgba("notahex", 0.5)).toThrow("Invalid hex colour");
   });
 });
 

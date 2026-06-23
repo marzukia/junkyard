@@ -34,15 +34,30 @@ export interface TextAnnotation {
 }
 
 /**
- * Parse a hex colour string like "#1a2530" into pdf-lib rgb() values.
- * Falls back to black on malformed input.
+ * Parse a hex colour string like "#1a2530" or "#fff" into pdf-lib rgb() values.
+ * Supports 6-digit (#rrggbb) and 3-digit (#rgb) forms.
+ * Throws on truly invalid input rather than silently returning black.
  */
 export function hexToRgb(hex: string): ReturnType<typeof rgb> {
-  const clean = hex.replace("#", "");
-  if (clean.length !== 6) return rgb(0, 0, 0);
-  const r = Number.parseInt(clean.slice(0, 2), 16) / 255;
-  const g = Number.parseInt(clean.slice(2, 4), 16) / 255;
-  const b = Number.parseInt(clean.slice(4, 6), 16) / 255;
+  const clean = hex.replace(/^#/, "");
+  let r: number, g: number, b: number;
+
+  if (clean.length === 3) {
+    r = Number.parseInt(clean[0] + clean[0], 16) / 255;
+    g = Number.parseInt(clean[1] + clean[1], 16) / 255;
+    b = Number.parseInt(clean[2] + clean[2], 16) / 255;
+  } else if (clean.length === 6) {
+    r = Number.parseInt(clean.slice(0, 2), 16) / 255;
+    g = Number.parseInt(clean.slice(2, 4), 16) / 255;
+    b = Number.parseInt(clean.slice(4, 6), 16) / 255;
+  } else {
+    throw new Error("Invalid hex colour: " + JSON.stringify(hex));
+  }
+
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) {
+    throw new Error("Invalid hex colour: " + JSON.stringify(hex));
+  }
+
   return rgb(r, g, b);
 }
 

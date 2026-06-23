@@ -42,12 +42,12 @@ const BASE_ANNOTATION: TextAnnotation = {
 // ── hexToRgb edge cases ───────────────────────────────────────────────────────
 
 describe("hexToRgb - edge cases", () => {
-  it("falls back to black for a 4-char hex (too short)", () => {
+  it("parses 3-digit hex #abc correctly (was: fallback to black)", () => {
+    // #abc is a valid 3-digit hex: aa bb cc
     const result = hexToRgb("#abc");
-    // 3-char clean portion length !== 6 -> fallback
-    expect(result.red).toBe(0);
-    expect(result.green).toBe(0);
-    expect(result.blue).toBe(0);
+    expect(result.red).toBeCloseTo(0xaa / 255, 3);
+    expect(result.green).toBeCloseTo(0xbb / 255, 3);
+    expect(result.blue).toBeCloseTo(0xcc / 255, 3);
   });
 
   it("handles uppercase hex correctly", () => {
@@ -65,11 +65,8 @@ describe("hexToRgb - edge cases", () => {
     expect(result.blue).toBeCloseTo(128 / 255, 3);
   });
 
-  it("returns 0 for empty string", () => {
-    const result = hexToRgb("");
-    expect(result.red).toBe(0);
-    expect(result.green).toBe(0);
-    expect(result.blue).toBe(0);
+  it("throws for empty string", () => {
+    expect(() => hexToRgb("")).toThrow("Invalid hex colour");
   });
 });
 
