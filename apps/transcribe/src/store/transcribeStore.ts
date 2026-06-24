@@ -3,6 +3,16 @@ import type { TranscriptChunk } from "../lib/transcription";
 
 export type Phase = "idle" | "model-loading" | "decoding" | "transcribing" | "done" | "error";
 
+/** Monotonic phase rank: higher = further along the pipeline. */
+const PHASE_RANK: Record<Phase, number> = {
+  idle: 0,
+  "model-loading": 1,
+  decoding: 2,
+  transcribing: 3,
+  done: 4,
+  error: 4,
+};
+
 /** ISO 639-1 language codes supported by Whisper, plus "auto" for auto-detect. */
 export type LanguageHint =
   | "auto"
@@ -129,7 +139,10 @@ export const useTranscribeStore = create<TranscribeState>((set) => ({
 
   setInputFile: (file) => set({ inputFile: file, transcript: "", chunks: [], errorMsg: null }),
 
-  setPhase: (phase) => set({ phase }),
+  setPhase: (phase) =>
+    set((s) =>
+      phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {}
+    ),
 
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
 

@@ -5,6 +5,15 @@ import type { ScaleFactor } from "../lib/upscale";
 
 export type Phase = "idle" | "model-loading" | "processing" | "done" | "error";
 
+/** Monotonic phase rank: higher = further along the pipeline. */
+const PHASE_RANK: Record<Phase, number> = {
+  idle: 0,
+  "model-loading": 1,
+  processing: 2,
+  done: 3,
+  error: 3,
+};
+
 interface ModelProgress {
   loaded: number;
   total: number;
@@ -97,7 +106,10 @@ export const useUpscaleStore = create<UpscaleState>()(
 
       setOutputFormat: (format) => set({ outputFormat: format }),
 
-      setPhase: (phase) => set({ phase }),
+      setPhase: (phase) =>
+        set((s) =>
+          phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {}
+        ),
 
       setModelProgress: (loaded, total, status) =>
         set({ modelProgress: { loaded, total, status } }),
