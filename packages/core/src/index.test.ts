@@ -1180,6 +1180,9 @@ describe("barcode: EAN-8 check digit validation (g1-barcode-8)", () => {
   it("generateBarcodeSvg auto-appends check digit for 7-digit EAN-8", () => {
     const svg = generateBarcodeSvg("9638507", "EAN8");
     expect(svg).toContain("<svg");
+  });
+});
+
 // ── password length < pools cap (gauntlet w1) ────────────────────────────────
 
 describe("password length cap when length < pool count", () => {
