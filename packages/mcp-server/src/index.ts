@@ -31,6 +31,19 @@ export function toContent(value: unknown): { type: "text"; text: string }[] {
   return [{ type: "text", text: JSON.stringify(value, null, 2) }];
 }
 
+// Default timeout per op call. Prevents catastrophic-backtracking regex or huge
+// CSV payloads from hanging the stdio connection indefinitely (H3).
+export const OP_TIMEOUT_MS = Number(process.env.JUNKYARD_OP_TIMEOUT_MS ?? 15_000);
+
+// Races op.run against a timeout. Rejects with a clear message on expiry.
+export function runWithTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`operation timed out after ${ms}ms`)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
 async function main() {
   const server = new McpServer(
     { name: "junkyard-mcp-server", version: "0.1.0" },
@@ -53,7 +66,7 @@ async function main() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async (args: any) => {
           try {
-            const result = await op.run(args);
+            const result = await runWithTimeout(op.run(args), OP_TIMEOUT_MS);
             return { content: toContent(result) };
           } catch (err) {
             const message = err instanceof Error ? err.message : String(err);

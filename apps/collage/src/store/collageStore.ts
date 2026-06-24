@@ -87,6 +87,7 @@ export interface CollageStore {
   // Global photo library (for the drop zone)
   library: { url: string; file: File }[];
   addPhotos: (files: File[]) => void;
+  removeFromLibrary: (url: string) => void;
   clearLibrary: () => void;
 
   // Freeform cards
@@ -347,6 +348,13 @@ export const useCollageStore = create<CollageStore>((set, get) => ({
     const newEntries = files.map((f) => ({ url: URL.createObjectURL(f), file: f }));
     set((s) => ({ library: [...s.library, ...newEntries] }));
   },
+  // Revoke the object URL before dropping the entry so it is not held in memory (H2).
+  removeFromLibrary: (url) =>
+    set((s) => {
+      const entry = s.library.find((e) => e.url === url);
+      if (entry) URL.revokeObjectURL(entry.url);
+      return { library: s.library.filter((e) => e.url !== url) };
+    }),
   clearLibrary: () =>
     set((s) => {
       for (const e of s.library) URL.revokeObjectURL(e.url);
