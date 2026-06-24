@@ -394,15 +394,33 @@ function FileTab() {
       setDecodeError("Could not decode. Paste a valid Base64 string or data-URI.");
       return;
     }
-    const mime = fileMime ?? "application/octet-stream";
-    const blob = new Blob([bytes.buffer as ArrayBuffer], { type: mime });
+    // Derive mime and filename from the decode input itself, not from the unrelated
+    // upload panel state (fileMime/fileName belong to the encoded-file panel).
+    const dataUriMatch = /^data:([^;,]+)/.exec(raw);
+    const decodedMime = dataUriMatch ? dataUriMatch[1] : "application/octet-stream";
+    // Map common image/text mimes to sensible extensions; fall back to .bin
+    const ext =
+      decodedMime === "image/png"
+        ? ".png"
+        : decodedMime === "image/jpeg"
+          ? ".jpg"
+          : decodedMime === "image/gif"
+            ? ".gif"
+            : decodedMime === "image/webp"
+              ? ".webp"
+              : decodedMime === "image/svg+xml"
+                ? ".svg"
+                : decodedMime.startsWith("text/")
+                  ? ".txt"
+                  : ".bin";
+    const blob = new Blob([bytes.buffer as ArrayBuffer], { type: decodedMime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = fileName ?? "download";
+    a.download = `decoded${ext}`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 10000);
-  }, [fileMime, fileName]);
+  }, []);
 
   // When the decode textarea changes, attempt to detect an image for live preview
   const handleDecodeInput = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {

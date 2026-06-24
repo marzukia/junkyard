@@ -467,13 +467,19 @@ export function withClassicStart(
     const first = paras[0];
     // Strip first sentence (up to first period) and prepend classic.
     const rest = first.replace(/^[^.]+\.\s*/, "");
-    paras[0] = rest ? `${CLASSIC_START} ${rest}` : CLASSIC_START;
+    // When the first paragraph has only one sentence, rest is empty and we would
+    // silently discard the generated content. Preserve it by appending it instead.
+    paras[0] = rest ? `${CLASSIC_START} ${rest}` : `${CLASSIC_START} ${first}`;
     return paras.join("\n\n");
   }
   if (mode === "sentences") {
-    // Replace first sentence.
+    // Replace the first generated sentence with the classic start.
+    // When only one sentence was generated there is nothing left after stripping
+    // it, so append the generated sentence rather than silently dropping it.
     const rest = output.replace(/^[^.]+\.\s*/, "");
-    return rest ? `${CLASSIC_START} ${rest}` : CLASSIC_START;
+    if (rest) return `${CLASSIC_START} ${rest}`;
+    // Single sentence: prepend classic start, keep the generated content too.
+    return `${CLASSIC_START} ${output}`;
   }
   return output;
 }
