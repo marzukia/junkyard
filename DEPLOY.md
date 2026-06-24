@@ -103,4 +103,4 @@ To add analytics for a new tool: create the Umami website in the admin, then add
 
 ## Pending: hydrogen apex
 
-`junkyard.sh` is currently served from an nginx container on hydrogen (`andryo@REDACTED`) at the apex, hosting the old prototype. Migrating to serve the consolidated Pages-built `dist/` from hydrogen is an open item. The Bun-based MCP server (`packages/mcp-server`) is also intended to run on hydrogen. See HANDOVER.md for details.
+`junkyard.sh` is currently served from an nginx container on hydrogen at the apex, hosting the old prototype. Migrating to serve the consolidated Pages-built `dist/` from hydrogen is an open item. The Bun-based MCP server (`packages/mcp-server`) is also intended to run on hydrogen.
