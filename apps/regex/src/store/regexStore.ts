@@ -1,8 +1,15 @@
 import { create } from "zustand";
-import { execRegex, execReplace } from "../lib/regex";
+// Vite worker import — statically analysable so Vite compiles this to a real chunk,
+// not an inlined data URL. `new RegexWorker()` at the call site is required for
+// Vite to detect the worker and emit it as a separate chunk.
+import RegexWorker from "../regex.worker.ts?worker";
+import type { WorkerRequest, WorkerResponse } from "../regex.worker";
 import type { CommonPattern, RegexFlag, RegexOutcome } from "../lib/regex";
 
 export type ActiveTab = "matches" | "replace" | "explain" | "export" | "library";
+
+/** How long (ms) we wait for the worker before declaring catastrophic backtracking. */
+const WORKER_TIMEOUT_MS = 2500;
 
 interface RegexState {
   pattern: string;
@@ -10,9 +17,13 @@ interface RegexState {
   testText: string;
   replacement: string;
   activeTab: ActiveTab;
-  // derived (computed on every change)
+  // derived (populated asynchronously by the worker)
   result: RegexOutcome;
   replaceOutput: string;
+  /** True while the worker is computing a result */
+  isMatching: boolean;
+  /** Set when the worker times out (catastrophic backtracking guard) */
+  timeoutError: string | null;
   // actions
   setPattern: (p: string) => void;
   toggleFlag: (f: RegexFlag) => void;
@@ -29,6 +40,8 @@ const DEFAULT_TEXT =
   "The quick brown fox jumps over the lazy dog.\nContact us at hello@example.com, version 2.4.1 released on 2024-06-15.";
 const LS_FLAGS_KEY = "rx-flags";
 
+const EMPTY_RESULT: RegexOutcome = { ok: true, matches: [], matchCount: 0, flags: "" };
+
 // ── Persist flags to/from localStorage ───────────────────────────────────────
 
 function loadStoredFlags(): Set<RegexFlag> {
@@ -39,7 +52,6 @@ function loadStoredFlags(): Set<RegexFlag> {
     if (!Array.isArray(arr)) return new Set(DEFAULT_FLAGS);
     const valid = arr.filter((f): f is RegexFlag => ALL_FLAGS.includes(f as RegexFlag));
     const s = new Set<RegexFlag>(valid);
-    // g must always be present
     s.add("g");
     return s;
   } catch {
@@ -55,59 +67,161 @@ function saveFlags(flags: Set<RegexFlag>): void {
   }
 }
 
-// ── Derive computed state ─────────────────────────────────────────────────────
+// ── Worker singleton + request sequencing ────────────────────────────────────
+//
+// One worker stays alive; only recreated after a timeout-terminate.
+// A monotonically increasing request ID lets us discard stale responses
+// when the user types faster than the worker responds.
 
-function derive(
+let worker: Worker = new RegexWorker();
+let pendingRequestId = 0;
+let pendingTimer: ReturnType<typeof setTimeout> | null = null;
+
+function cancelPending() {
+  if (pendingTimer !== null) {
+    clearTimeout(pendingTimer);
+    pendingTimer = null;
+  }
+  // Advance ID so any in-flight response is treated as stale
+  pendingRequestId++;
+}
+
+function recreateWorker() {
+  try {
+    worker.terminate();
+  } catch {
+    // ignore if already dead
+  }
+  worker = new RegexWorker();
+}
+
+// ── Dispatch a match+replace job to the worker ────────────────────────────────
+
+function dispatchToWorker(
   pattern: string,
   flags: Set<RegexFlag>,
-  testText: string,
-  replacement: string
-): { result: RegexOutcome; replaceOutput: string } {
-  const result = execRegex(pattern, flags, testText);
-  const replaceOutput = execReplace(pattern, flags, testText, replacement);
-  return { result, replaceOutput };
+  text: string,
+  replacement: string,
+  onResult: (result: RegexOutcome, replaceOutput: string) => void,
+  onTimeout: () => void
+) {
+  cancelPending();
+  const id = ++pendingRequestId;
+
+  pendingTimer = setTimeout(() => {
+    if (pendingRequestId !== id) return;
+    recreateWorker();
+    onTimeout();
+  }, WORKER_TIMEOUT_MS);
+
+  const request: WorkerRequest = {
+    id,
+    pattern,
+    flags: [...flags] as RegexFlag[],
+    text,
+    replacement,
+  };
+
+  // Re-assign onmessage rather than addEventListener to avoid accumulating
+  // stale listeners across recreate cycles.
+  worker.onmessage = (e: MessageEvent<WorkerResponse>) => {
+    const resp = e.data;
+    if (resp.id !== id) return; // stale response
+    if (pendingTimer !== null) {
+      clearTimeout(pendingTimer);
+      pendingTimer = null;
+    }
+    onResult(resp.result, resp.replaceOutput);
+  };
+
+  worker.postMessage(request);
 }
 
 // ── Store ─────────────────────────────────────────────────────────────────────
 
 export const useRegexStore = create<RegexState>((set, get) => {
   const storedFlags = loadStoredFlags();
-  const initial = derive("", storedFlags, DEFAULT_TEXT, "");
+
+  function runMatch(
+    pattern: string,
+    flags: Set<RegexFlag>,
+    testText: string,
+    replacement: string
+  ) {
+    if (!pattern) {
+      cancelPending();
+      set({
+        result: EMPTY_RESULT,
+        replaceOutput: testText,
+        isMatching: false,
+        timeoutError: null,
+      });
+      return;
+    }
+
+    set({ isMatching: true, timeoutError: null });
+
+    dispatchToWorker(
+      pattern,
+      flags,
+      testText,
+      replacement,
+      (result, replaceOutput) => {
+        set({ result, replaceOutput, isMatching: false, timeoutError: null });
+      },
+      () => {
+        set({
+          result: EMPTY_RESULT,
+          replaceOutput: "",
+          isMatching: false,
+          timeoutError:
+            "This pattern is too slow on this input (possible catastrophic backtracking). Simplify the pattern.",
+        });
+      }
+    );
+  }
+
   return {
     pattern: "",
     flags: storedFlags,
     testText: DEFAULT_TEXT,
     replacement: "",
     activeTab: "matches",
-    ...initial,
+    result: EMPTY_RESULT,
+    replaceOutput: DEFAULT_TEXT,
+    isMatching: false,
+    timeoutError: null,
 
     setPattern: (pattern) => {
       const { flags, testText, replacement } = get();
-      set({ pattern, ...derive(pattern, flags, testText, replacement) });
+      set({ pattern });
+      runMatch(pattern, flags, testText, replacement);
     },
 
     toggleFlag: (flag) => {
       const { pattern, flags, testText, replacement } = get();
       const next = new Set(flags);
       if (next.has(flag)) {
-        // Never remove g, it must stay on so matchAll works
         if (flag === "g") return;
         next.delete(flag);
       } else {
         next.add(flag);
       }
       saveFlags(next);
-      set({ flags: next, ...derive(pattern, next, testText, replacement) });
+      set({ flags: next });
+      runMatch(pattern, next, testText, replacement);
     },
 
     setTestText: (testText) => {
       const { pattern, flags, replacement } = get();
-      set({ testText, ...derive(pattern, flags, testText, replacement) });
+      set({ testText });
+      runMatch(pattern, flags, testText, replacement);
     },
 
     setReplacement: (replacement) => {
       const { pattern, flags, testText } = get();
-      set({ replacement, ...derive(pattern, flags, testText, replacement) });
+      set({ replacement });
+      runMatch(pattern, flags, testText, replacement);
     },
 
     setActiveTab: (activeTab) => set({ activeTab }),
@@ -116,14 +230,23 @@ export const useRegexStore = create<RegexState>((set, get) => {
       const flags = new Set<RegexFlag>(p.flags.length > 0 ? p.flags : ["g"]);
       if (!flags.has("g")) flags.add("g");
       saveFlags(flags);
-      const derived = derive(p.pattern, flags, p.example, "");
-      set({ pattern: p.pattern, flags, testText: p.example, replacement: "", ...derived });
+      set({ pattern: p.pattern, flags, testText: p.example, replacement: "" });
+      runMatch(p.pattern, flags, p.example, "");
     },
 
     clearAll: () => {
       const { flags } = get();
-      const derived = derive("", flags, "", "");
-      set({ pattern: "", testText: "", replacement: "", ...derived });
+      cancelPending();
+      set({
+        pattern: "",
+        testText: "",
+        replacement: "",
+        result: EMPTY_RESULT,
+        replaceOutput: "",
+        isMatching: false,
+        timeoutError: null,
+      });
+      void flags; // flags persist between clears
     },
   };
 });

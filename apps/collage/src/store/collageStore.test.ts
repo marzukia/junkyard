@@ -314,3 +314,57 @@ describe("cell/freeform: object-URL leak guard (gauntlet w3)", () => {
     revoke.mockRestore();
   });
 });
+
+// ── Bug regression: freeform top-strip upload routes through addFreeformCard ──
+// Guards that the store action wired by App.tsx's addFilesAsFreeformCards
+// actually populates freeformCards (the path that was bypassed before the fix).
+describe("freeform: addFreeformCard populates freeformCards (bug regression)", () => {
+  beforeEach(() => {
+    useCollageStore.setState({ freeformCards: [] });
+  });
+
+  it("addFreeformCard adds a card with the expected shape", () => {
+    const card = {
+      id: "card-test-1",
+      photoUrl: "blob:freeform-photo",
+      x: 0.1,
+      y: 0.1,
+      w: 0.3,
+      h: 0.3,
+      rotation: 5,
+    };
+    useCollageStore.getState().addFreeformCard(card);
+
+    const { freeformCards } = useCollageStore.getState();
+    expect(freeformCards).toHaveLength(1);
+    expect(freeformCards[0]).toMatchObject(card);
+  });
+
+  it("adding multiple cards stacks them all in freeformCards", () => {
+    for (let i = 0; i < 3; i++) {
+      useCollageStore.getState().addFreeformCard({
+        id: `card-${i}`,
+        photoUrl: `blob:photo-${i}`,
+        x: 0.1 + i * 0.04,
+        y: 0.1 + i * 0.04,
+        w: 0.3,
+        h: 0.3,
+        rotation: 0,
+      });
+    }
+    expect(useCollageStore.getState().freeformCards).toHaveLength(3);
+  });
+
+  it("freeformCards stays empty when only grid cells are assigned (mode boundary check)", () => {
+    // Simulates the pre-fix behaviour: fillEmptyCells assigns to cells, not freeformCards.
+    // After the fix, freeform mode takes the addFreeformCard path instead.
+    // This test confirms both store actions remain independent.
+    useCollageStore.setState({
+      cells: [{ id: "cell-0", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 }],
+    });
+    useCollageStore.getState().assignPhotoToCell("cell-0", "blob:grid-photo", new File(["x"], "a.jpg"));
+
+    expect(useCollageStore.getState().freeformCards).toHaveLength(0);
+    expect(useCollageStore.getState().cells[0].photoUrl).toBe("blob:grid-photo");
+  });
+});

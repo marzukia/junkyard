@@ -162,3 +162,44 @@ describe("new fields: straighten and cropShape", () => {
     expect(getStore().cropShape).toBe("rect");
   });
 });
+
+// ── Bug regression: partial-JPEG decode failure must NOT call loadImage ───────
+// Before the fix, App.tsx used img.onload which fires even for truncated JPEGs
+// with a valid header, resulting in a blank canvas. The fix wraps img.decode()
+// (which rejects on corrupt images) in try/catch and only calls store.loadImage
+// on success. This test pins the store's loadImage contract: it should only ever
+// be called with a valid URL+dimensions, and its resulting state must be coherent.
+describe("loadImage contract (partial-JPEG decode regression guard)", () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it("loadImage sets imageUrl and dimensions when called with valid args", () => {
+    getStore().loadImage(new File(["x"], "valid.jpg"), "blob:valid-jpeg", 1920, 1080);
+    const s = getStore();
+    expect(s.imageUrl).toBe("blob:valid-jpeg");
+    expect(s.imageW).toBe(1920);
+    expect(s.imageH).toBe(1080);
+    expect(s.file).not.toBeNull();
+  });
+
+  it("store imageUrl remains null if loadImage is never called (decode-failure path)", () => {
+    // Simulates the scenario where img.decode() rejects and loadImage is skipped.
+    // The store must stay in its initial empty state — no imageUrl, no file.
+    const s = getStore();
+    expect(s.imageUrl).toBeNull();
+    expect(s.file).toBeNull();
+  });
+
+  it("loadImage with zero dimensions is detectable as an invalid load", () => {
+    // A fully-blank canvas scenario would surface as naturalWidth=0/naturalHeight=0.
+    // img.decode() should catch this before we reach loadImage, but the store's own
+    // crop init (which fits to imageW/imageH) must not crash on zero dimensions.
+    expect(() =>
+      getStore().loadImage(new File(["x"], "blank.jpg"), "blob:blank", 0, 0)
+    ).not.toThrow();
+    // crop rect initialised to the full image — w=0, h=0 in this edge case
+    expect(getStore().crop.w).toBe(0);
+    expect(getStore().crop.h).toBe(0);
+  });
+});

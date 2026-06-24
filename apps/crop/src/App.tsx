@@ -57,20 +57,22 @@ export function App() {
   }, [store, processing]);
 
   const loadFile = useCallback(
-    (file: File) => {
+    async (file: File) => {
       setLoadError(null);
       const url = URL.createObjectURL(file);
       const img = new Image();
-      img.onload = () => {
+      img.src = url;
+      try {
+        // img.decode() rejects on corrupt/truncated images that img.onload accepts,
+        // preventing a blank canvas from a partial JPEG with a valid header.
+        await img.decode();
         store.loadImage(file, url, img.naturalWidth, img.naturalHeight);
         setResizeWStr("");
         setResizeHStr("");
-      };
-      img.onerror = () => {
+      } catch {
         URL.revokeObjectURL(url);
         setLoadError(`Could not load "${file.name}" as an image.`);
-      };
-      img.src = url;
+      }
     },
     [store]
   );

@@ -57,7 +57,27 @@ describe("parseJson", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       // line must be >= 2 since the bad char is after a newline
-      expect(result.error.line).toBeGreaterThanOrEqual(1);
+      expect(result.error.line).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("reports line 2 for missing value after colon on second line", () => {
+    // {"a": 1,\n  "b": ,\n  "c": 3} — the bare comma where a value is expected is on line 2
+    const raw = '{"a": 1,\n  "b": ,\n  "c": 3}';
+    const result = parseJson(raw);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.line).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("reports non-(1,1) location for trailing comma in array", () => {
+    // [1,2,3,] — error is the ] where a value is expected (last char, col 8 on line 1)
+    const result = parseJson("[1,2,3,]");
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      // Error is at col 8 (the ] on line 1) — col must be > 1
+      expect(result.error.col).toBeGreaterThan(1);
     }
   });
 });
