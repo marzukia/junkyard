@@ -187,7 +187,7 @@ export function relativeTime(epochMs: number, nowMs: number): string {
  * tz: a valid IANA timezone string (e.g. "America/New_York") or "" for UTC.
  */
 export function convertEpoch(epochMs: number, tz: string, nowMs: number): ConversionResult {
-  if (!Number.isFinite(epochMs) || isNaN(new Date(epochMs).getTime())) {
+  if (!Number.isFinite(epochMs) || isNaN(new Date(epochMs).getTime()) || Math.abs(epochMs) > 8.64e15) {
     throw new Error(`Cannot parse timestamp: out-of-range epoch ${epochMs}`);
   }
   const d = new Date(epochMs);
@@ -474,13 +474,23 @@ export function batchConvert(raw: string): BatchRow[] {
           error: "Not a valid epoch number",
         };
       }
-      return {
-        raw: line,
-        epochMs: parsed.epochMs,
-        unit: parsed.unit,
-        iso8601: new Date(parsed.epochMs).toISOString(),
-        error: null,
-      };
+      try {
+        return {
+          raw: line,
+          epochMs: parsed.epochMs,
+          unit: parsed.unit,
+          iso8601: new Date(parsed.epochMs).toISOString(),
+          error: null,
+        };
+      } catch {
+        return {
+          raw: line,
+          epochMs: null,
+          unit: null,
+          iso8601: null,
+          error: "Timestamp out of range",
+        };
+      }
     });
 }
 

@@ -50,6 +50,7 @@ export function App() {
   const [outputUrl, setOutputUrl] = useState<string | null>(null);
   const [outputSize, setOutputSize] = useState<number | null>(null);
   const [encodeError, setEncodeError] = useState<string | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [importingVideo, setImportingVideo] = useState(false);
   const [singleFrameWarning, setSingleFrameWarning] = useState(false);
@@ -108,9 +109,14 @@ export function App() {
       const videos = all.filter((f) => f.type.startsWith("video/"));
       if (images.length === 0 && videos.length === 0) return;
 
+      setImportError(null);
       if (videos.length > 0) setImportingVideo(true);
       try {
         await addFrames([...images, ...videos]);
+      } catch (err) {
+        setImportError(
+          `Import failed: ${err instanceof Error ? err.message : "Could not load file"}`
+        );
       } finally {
         setImportingVideo(false);
       }
@@ -290,6 +296,13 @@ export function App() {
             style={{ position: "absolute", opacity: 0, width: 0, height: 0, overflow: "hidden" }}
           />
         </label>
+
+        {/* Import error */}
+        {importError && (
+          <p className="encode-error" role="alert">
+            {importError}
+          </p>
+        )}
 
         {/* Single-frame warning */}
         {singleFrameWarning && (

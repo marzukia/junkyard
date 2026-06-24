@@ -38,6 +38,7 @@ export function ExportBar({ onRegisterTrigger }: ExportBarProps) {
 
   const [exporting, setExporting] = useState(false);
   const [flash, setFlash] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const currentAspect = ASPECT_PRESETS.find((p) => p.id === aspectId) ?? ASPECT_PRESETS[0];
   const currentTemplate = LAYOUT_TEMPLATES.find((t) => t.id === templateId) ?? LAYOUT_TEMPLATES[0];
@@ -98,6 +99,7 @@ export function ExportBar({ onRegisterTrigger }: ExportBarProps) {
   const handleExport = useCallback(async () => {
     if (exporting) return;
     setExporting(true);
+    setExportError(null);
     try {
       const blob = await buildBlob("png");
       downloadBlob(blob, exportFilename("png"));
@@ -105,6 +107,7 @@ export function ExportBar({ onRegisterTrigger }: ExportBarProps) {
       setTimeout(() => setFlash(false), 1400);
     } catch (err) {
       console.error("Export failed:", err);
+      setExportError(`Download failed: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setExporting(false);
     }
@@ -122,6 +125,11 @@ export function ExportBar({ onRegisterTrigger }: ExportBarProps) {
       <span className="export-bar-meta mono-label">
         {currentAspect.exportWidth} x {currentAspect.exportHeight}px
       </span>
+      {exportError && (
+        <span className="export-bar-error" role="alert" aria-live="polite">
+          {exportError}
+        </span>
+      )}
       <button
         type="button"
         className={`btn-accent export-bar-btn${flash ? " export-bar-btn--flash" : ""}`}

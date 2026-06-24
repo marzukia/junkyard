@@ -27,6 +27,7 @@ export function App() {
   const [processing, setProcessing] = useState(false);
   const [copying, setCopying] = useState(false);
   const [copyFlash, setCopyFlash] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const [resizeWStr, setResizeWStr] = useState("");
   const [resizeHStr, setResizeHStr] = useState("");
   const [socialOpen, setSocialOpen] = useState(false);
@@ -142,6 +143,7 @@ export function App() {
   const handleExport = useCallback(async () => {
     if (!store.imageUrl || !store.file) return;
     setProcessing(true);
+    setExportError(null);
     try {
       // Build a canvas with the source image
       const img = new Image();
@@ -246,6 +248,8 @@ export function App() {
       const shapeSuffix = store.cropShape === "circle" ? "-circle" : "-crop";
       const outName = `${baseName}${shapeSuffix}.${ext}`;
       store.setResult(dataUrl, outName);
+    } catch (err) {
+      setExportError(`Export failed: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setProcessing(false);
     }
@@ -654,6 +658,21 @@ export function App() {
                     </div>
                   )}
               </div>
+
+              {exportError && (
+                <p
+                  role="alert"
+                  aria-live="assertive"
+                  style={{
+                    color: "var(--error, #c0392b)",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.8rem",
+                    marginTop: "1rem",
+                  }}
+                >
+                  {exportError}
+                </p>
+              )}
 
               {/* Action bar */}
               <div className="action-bar" style={{ marginTop: "1.5rem" }}>

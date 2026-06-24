@@ -10,6 +10,8 @@ Push to `main` with changes under any of these paths:
 hub/**
 apps/**
 scripts/**
+packages/**
+kit/**
 .github/workflows/deploy-pages.yml
 ```
 

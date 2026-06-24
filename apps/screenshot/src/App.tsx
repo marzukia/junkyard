@@ -29,12 +29,14 @@ export function App() {
 
   const [dragging, setDragging] = useState(false);
   const [copyState, setCopyState] = useState<"idle" | "copying" | "copied" | "error">("idle");
+  const [loadError, setLoadError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
   const bgImgRef = useRef<HTMLImageElement | null>(null);
 
   const loadFile = useCallback(
     (file: File) => {
+      setLoadError(null);
       const url = URL.createObjectURL(file);
       setSourceFile(file, url);
     },
@@ -115,9 +117,13 @@ export function App() {
         setIsRendering(false);
       }
     };
-    img.onerror = () => setIsRendering(false);
+    img.onerror = () => {
+      setIsRendering(false);
+      setLoadError("Could not decode image. The file may be corrupted or an unsupported format.");
+      clearSource();
+    };
     img.src = sourceUrl;
-  }, [sourceUrl, settings, setPreviewUrl, setIsRendering]);
+  }, [sourceUrl, settings, setPreviewUrl, setIsRendering, clearSource]);
 
   const download = () => {
     if (!previewUrl || !sourceFile) return;
@@ -166,6 +172,20 @@ export function App() {
       />
 
       <main className="site-main">
+        {loadError && (
+          <p
+            role="alert"
+            aria-live="assertive"
+            style={{
+              color: "var(--error, #c0392b)",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.8rem",
+              marginBottom: "1rem",
+            }}
+          >
+            {loadError}
+          </p>
+        )}
         {!sourceUrl ? (
           <DropZone
             dragging={dragging}

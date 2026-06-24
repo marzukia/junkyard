@@ -433,3 +433,55 @@ describe("dateStringToEpoch", () => {
     expect(result?.iso8601).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   });
 });
+
+// ── out-of-range epoch guards (TDD for findings #2 and #3) ────────────────────
+
+const JS_MAX_EPOCH_MS = 8.64e15;
+
+describe("convertEpoch — out-of-range guard", () => {
+  const now = 1700000000000;
+
+  it("throws for a 16-digit epoch (9999999999999999 ms) that exceeds JS Date range", () => {
+    // Before the fix this throws RangeError from toISOString(); after the fix it
+    // should throw with a readable message (not a silent swallow).
+    // We assert the throw so the store can wrap it into parseError.
+    expect(() => convertEpoch(9999999999999999, "UTC", now)).toThrow();
+  });
+
+  it("throws for epochMs exactly at JS_MAX_EPOCH_MS + 1", () => {
+    expect(() => convertEpoch(JS_MAX_EPOCH_MS + 1, "UTC", now)).toThrow();
+  });
+
+  it("does NOT throw for epochMs exactly at JS_MAX_EPOCH_MS", () => {
+    expect(() => convertEpoch(JS_MAX_EPOCH_MS, "UTC", now)).not.toThrow();
+  });
+
+  it("does NOT throw for a normal epoch (1700000000000)", () => {
+    expect(() => convertEpoch(1700000000000, "UTC", now)).not.toThrow();
+  });
+});
+
+describe("batchConvert — out-of-range rows go to error column, not throw", () => {
+  it("16-digit epoch produces error row, not a thrown exception", () => {
+    // 9999999999999999 is parsed as a valid integer by parseEpochString (it's finite)
+    // but new Date(epochMs).toISOString() throws RangeError before fix.
+    let result: ReturnType<typeof batchConvert> | undefined;
+    expect(() => {
+      result = batchConvert("9999999999999999");
+    }).not.toThrow();
+    expect(result).toBeDefined();
+    expect(result![0].error).not.toBeNull();
+    expect(result![0].iso8601).toBeNull();
+  });
+
+  it("valid rows are unaffected when mixed with an out-of-range row", () => {
+    let result: ReturnType<typeof batchConvert> | undefined;
+    expect(() => {
+      result = batchConvert("1700000000\n9999999999999999\n1710000000");
+    }).not.toThrow();
+    expect(result).toBeDefined();
+    expect(result![0].error).toBeNull();
+    expect(result![1].error).not.toBeNull();
+    expect(result![2].error).toBeNull();
+  });
+});
