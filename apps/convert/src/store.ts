@@ -1,4 +1,12 @@
 import { create } from "zustand";
+
+/** Collision-safe ID (crypto.randomUUID with Date.now+random fallback for insecure contexts). */
+function genId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+}
 import { persist } from "zustand/middleware";
 import { isHeic, validateImageFile } from "./convert";
 import type { OutputFormat } from "./convert";
@@ -63,7 +71,7 @@ export const useConverterStore = create<ConverterState>()(
           const existingNames = new Set(state.files.map((f) => f.file.name));
           const novel = incoming.filter((f) => !existingNames.has(f.name));
           const newEntries: ConvertFile[] = novel.map((f) => ({
-            id: `${f.name}-${f.size}-${Date.now()}-${Math.random()}`,
+            id: genId(),
             file: f,
             previewUrl: f.type.startsWith("image/") && !isHeic(f) ? URL.createObjectURL(f) : null,
             status: "pending",

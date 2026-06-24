@@ -48,8 +48,22 @@ describe("parsePageRange", () => {
     expect(parsePageRange("", 10)).toEqual([]);
   });
 
-  it("ignores non-numeric input", () => {
-    expect(parsePageRange("abc", 10)).toEqual([]);
+  it("throws for a non-numeric token", () => {
+    expect(() => parsePageRange("abc", 10)).toThrow('Invalid page range token: "abc"');
+  });
+
+  it("throws for a non-numeric range token", () => {
+    expect(() => parsePageRange("x-y", 10)).toThrow("Invalid page range token");
+  });
+
+  it("throws naming all invalid tokens when multiple are bad", () => {
+    expect(() => parsePageRange("foo,2,bar", 10)).toThrow("Invalid page range tokens");
+  });
+
+  it("includes valid pages before throwing when mix of valid and invalid", () => {
+    // The function collects all invalids and throws at the end; valid tokens that
+    // accumulated before/after are discarded to prevent silent partial results.
+    expect(() => parsePageRange("1,abc,3", 10)).toThrow("Invalid page range token");
   });
 
   it("handles a range where start equals end", () => {
