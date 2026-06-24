@@ -47,6 +47,10 @@ function relativeTime(epochMs: number, nowMs: number): string {
 export function convertTimestamp(input: string | number, nowMs?: number): ConversionResult {
   let epochMs: number;
   if (typeof input === "number") {
+    // Heuristic: values >= 1e12 are treated as milliseconds (post year 2001),
+    // values < 1e12 are treated as seconds. This cannot distinguish genuine
+    // ms values before 2001 (< 1e12 ms) from second values; callers with known
+    // units should multiply/divide before passing in.
     epochMs = Math.abs(input) >= 1e12 ? input : input * 1000;
   } else {
     const trimmed = input.trim();
@@ -58,6 +62,9 @@ export function convertTimestamp(input: string | number, nowMs?: number): Conver
       if (Number.isNaN(d.getTime())) throw new Error(`Cannot parse timestamp: ${input}`);
       epochMs = d.getTime();
     }
+  }
+  if (!Number.isFinite(epochMs) || isNaN(new Date(epochMs).getTime())) {
+    throw new Error(`Cannot parse timestamp: ${input}`);
   }
   const d = new Date(epochMs);
   return {

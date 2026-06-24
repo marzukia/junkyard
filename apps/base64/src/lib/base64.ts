@@ -23,7 +23,13 @@ export function encodeBase64(text: string): string {
 
 /** Decode a standard Base64 string to UTF-8. Throws on invalid input. */
 export function decodeBase64(encoded: string): string {
-  const binary = atob(encoded.trim());
+  const trimmed = encoded.trim();
+  if (trimmed.length === 0) return "";
+  const stripped = trimmed.replace(/\s/g, "");
+  if (!/^[A-Za-z0-9+/]*={0,2}$/.test(stripped) || stripped.length % 4 !== 0) {
+    throw new Error("Cannot decode base64: invalid characters or padding");
+  }
+  const binary = atob(stripped);
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) {
     bytes[i] = binary.charCodeAt(i);
@@ -41,9 +47,15 @@ export function encodeBase64Url(text: string): string {
 
 /** Decode a URL-safe Base64 string to UTF-8. Throws on invalid input. */
 export function decodeBase64Url(encoded: string): string {
+  const trimmed = encoded.trim();
+  if (trimmed.length === 0) return "";
+  // Validate base64url charset (no + / or =)
+  if (!/^[A-Za-z0-9_-]*$/.test(trimmed)) {
+    throw new Error("Cannot decode base64url: invalid characters");
+  }
   // Restore standard Base64 alphabet and padding
   const standard =
-    encoded.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - (encoded.length % 4)) % 4);
+    trimmed.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - (trimmed.length % 4)) % 4);
   return decodeBase64(standard);
 }
 

@@ -1,7 +1,3 @@
-/**
- * Lifted directly from apps/cron/src/lib/cron.ts.
- * Pure logic: no browser globals used.
- */
 import { z } from "zod";
 import type { ToolDef } from "./types.js";
 
@@ -76,6 +72,10 @@ function validateSinglePart(raw: string, spec: FieldSpec): string | null {
     if (lo < spec.min || lo > spec.max) return `${lo} out of range ${spec.min}-${spec.max}`;
     if (hi < spec.min || hi > spec.max) return `${hi} out of range ${spec.min}-${spec.max}`;
     if (lo > hi) return `Range start ${lo} > end ${hi}`;
+    if (rangeMatch[3]) {
+      const step = Number(rangeMatch[3]);
+      if (step < 1) return "Step must be >= 1";
+    }
     return null;
   }
   if (/^\d+$/.test(part)) {
@@ -113,7 +113,7 @@ function expandField(raw: string, spec: FieldSpec): number[] {
     if (rangeMatch) {
       const lo = Number(rangeMatch[1]);
       const hi = Number(rangeMatch[2]);
-      const step = rangeMatch[3] ? Number(rangeMatch[3]) : 1;
+      const step = rangeMatch[3] ? Math.max(1, Number(rangeMatch[3])) : 1;
       for (let i = lo; i <= hi; i += step) result.add(i);
       continue;
     }
@@ -211,47 +211,50 @@ function nextRuns(fields: CronFields, count = 5, after?: Date): Date[] {
   const domIsWild = fields.dom === "*";
   const dowIsWild = fields.dow === "*";
 
+  // All field comparisons use UTC getters so that the emitted ISO strings
+  // (which are always UTC) correctly match the cron field values regardless
+  // of the host's local timezone.
   const start = after ? new Date(after) : new Date();
-  start.setSeconds(0, 0);
-  start.setMinutes(start.getMinutes() + 1);
+  start.setUTCSeconds(0, 0);
+  start.setUTCMinutes(start.getUTCMinutes() + 1);
 
   const results: Date[] = [];
   const limit = new Date(start);
-  limit.setFullYear(limit.getFullYear() + 4);
+  limit.setUTCFullYear(limit.getUTCFullYear() + 4);
 
   const d = new Date(start);
-  d.setSeconds(0, 0);
+  d.setUTCSeconds(0, 0);
 
   while (results.length < count && d < limit) {
-    if (!months.includes(d.getMonth() + 1)) {
-      d.setDate(1); d.setHours(0, 0, 0, 0); d.setMonth(d.getMonth() + 1); continue;
+    if (!months.includes(d.getUTCMonth() + 1)) {
+      d.setUTCDate(1); d.setUTCHours(0, 0, 0, 0); d.setUTCMonth(d.getUTCMonth() + 1); continue;
     }
     const dayMatch = domIsWild
-      ? dows.includes(d.getDay())
+      ? dows.includes(d.getUTCDay())
       : dowIsWild
-        ? doms.includes(d.getDate())
-        : doms.includes(d.getDate()) || dows.includes(d.getDay());
+        ? doms.includes(d.getUTCDate())
+        : doms.includes(d.getUTCDate()) || dows.includes(d.getUTCDay());
 
     if (!dayMatch) {
-      d.setDate(d.getDate() + 1); d.setHours(0, 0, 0, 0); continue;
+      d.setUTCDate(d.getUTCDate() + 1); d.setUTCHours(0, 0, 0, 0); continue;
     }
-    if (!hours.includes(d.getHours())) {
-      const nextHour = hours.find((h) => h > d.getHours());
-      if (nextHour === undefined) { d.setDate(d.getDate() + 1); d.setHours(0, 0, 0, 0); }
-      else d.setHours(nextHour, 0, 0, 0);
+    if (!hours.includes(d.getUTCHours())) {
+      const nextHour = hours.find((h) => h > d.getUTCHours());
+      if (nextHour === undefined) { d.setUTCDate(d.getUTCDate() + 1); d.setUTCHours(0, 0, 0, 0); }
+      else d.setUTCHours(nextHour, 0, 0, 0);
       continue;
     }
-    if (!minutes.includes(d.getMinutes())) {
-      const nextMin = minutes.find((m) => m > d.getMinutes());
+    if (!minutes.includes(d.getUTCMinutes())) {
+      const nextMin = minutes.find((m) => m > d.getUTCMinutes());
       if (nextMin === undefined) {
-        const nextHour = hours.find((h) => h > d.getHours());
-        if (nextHour === undefined) { d.setDate(d.getDate() + 1); d.setHours(0, 0, 0, 0); }
-        else d.setHours(nextHour, 0, 0, 0);
-      } else d.setMinutes(nextMin, 0, 0);
+        const nextHour = hours.find((h) => h > d.getUTCHours());
+        if (nextHour === undefined) { d.setUTCDate(d.getUTCDate() + 1); d.setUTCHours(0, 0, 0, 0); }
+        else d.setUTCHours(nextHour, 0, 0, 0);
+      } else d.setUTCMinutes(nextMin, 0, 0);
       continue;
     }
     results.push(new Date(d));
-    d.setMinutes(d.getMinutes() + 1, 0, 0);
+    d.setUTCMinutes(d.getUTCMinutes() + 1, 0, 0);
   }
 
   return results;
