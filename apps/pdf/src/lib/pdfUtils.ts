@@ -1,4 +1,5 @@
 import { PDFDocument, StandardFonts, degrees, rgb } from "pdf-lib";
+import { sanitizeWinAnsi } from "./unicodeFont";
 
 /** Parse a compact page range string like "1,3-5,7" into 0-based indices.
  * Throws if any token is not a valid page number or range (e.g. "abc", "x-y").
@@ -252,12 +253,14 @@ export async function addWatermark(
   const { opacity = 0.15, fontSize = 48, color = [0.5, 0.5, 0.5] } = opts;
   const doc = await PDFDocument.load(pdfBytes);
   const font = await doc.embedFont(StandardFonts.HelveticaBold);
+  // Sanitize: StandardFont (Helvetica) is WinAnsi-only; replace non-encodable chars.
+  const safeText = sanitizeWinAnsi(text);
   const total = doc.getPageCount();
   for (let i = 0; i < total; i++) {
     const page = doc.getPage(i);
     const { width, height } = page.getSize();
-    const textWidth = font.widthOfTextAtSize(text, fontSize);
-    page.drawText(text, {
+    const textWidth = font.widthOfTextAtSize(safeText, fontSize);
+    page.drawText(safeText, {
       x: (width - textWidth) / 2,
       y: height / 2 - fontSize / 2,
       size: fontSize,

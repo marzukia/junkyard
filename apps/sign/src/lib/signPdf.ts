@@ -1,4 +1,5 @@
 import { PDFDocument, type PDFPage, rgb } from "pdf-lib";
+import { embedUnicodeFonts, sanitizeWinAnsi } from "./unicodeFont";
 
 export interface SignaturePlacement {
   /** Data URL of the signature PNG */
@@ -8,7 +9,8 @@ export interface SignaturePlacement {
   /**
    * Position and size as fractions of the rendered canvas dimensions.
    * x/y are top-left corner; w/h are width/height.
-   * These are in canvas-space; we convert to PDF-space below.
+   * These are in canvas-space (which matches the upright/rotated display from PDF.js);
+   * we convert to PDF-space (unrotated coordinates) below.
    */
   xFrac: number;
   yFrac: number;
@@ -43,9 +45,9 @@ export function hexToRgb(hex: string): ReturnType<typeof rgb> {
   let r: number, g: number, b: number;
 
   if (clean.length === 3) {
-    r = Number.parseInt(clean[0] + clean[0], 16) / 255;
-    g = Number.parseInt(clean[1] + clean[1], 16) / 255;
-    b = Number.parseInt(clean[2] + clean[2], 16) / 255;
+    r = Number.parseInt(clean[0]! + clean[0], 16) / 255;
+    g = Number.parseInt(clean[1]! + clean[1], 16) / 255;
+    b = Number.parseInt(clean[2]! + clean[2], 16) / 255;
   } else if (clean.length === 6) {
     r = Number.parseInt(clean.slice(0, 2), 16) / 255;
     g = Number.parseInt(clean.slice(2, 4), 16) / 255;
@@ -93,64 +95,130 @@ export function imageFileToDataUrl(file: File): Promise<string> {
   });
 }
 
+/**
+ * Convert canvas-space fractional coordinates to PDF-space points,
+ * accounting for the page's /Rotate value.
+ *
+ * PDF.js applies /Rotate when rendering to canvas, so the user places
+ * signatures on the visually-upright canvas. The underlying PDF coordinate
+ * system is unrotated. We undo the rotation here so the drawn image lands
+ * in the correct physical location.
+ *
+ * @param xFrac     fraction of canvas width (left edge of placement)
+ * @param yFrac     fraction of canvas height (top edge of placement)
+ * @param wFrac     fraction of canvas width (placement width)
+ * @param hFrac     fraction of canvas height (placement height)
+ * @param rotation  page /Rotate angle in degrees (0, 90, 180, 270)
+ * @param pageW     unrotated page width in PDF points
+ * @param pageH     unrotated page height in PDF points
+ * @returns         { x, y, w, h } in PDF points with origin at bottom-left
+ */
+export function canvasToPageCoords(
+  xFrac: number,
+  yFrac: number,
+  wFrac: number,
+  hFrac: number,
+  rotation: number,
+  pageW: number,
+  pageH: number,
+): { x: number; y: number; w: number; h: number } {
+  const angle = ((rotation % 360) + 360) % 360;
+
+  // Canvas dimensions as seen by PDF.js (post-rotation)
+  const canvasW = angle === 90 || angle === 270 ? pageH : pageW;
+  const canvasH = angle === 90 || angle === 270 ? pageW : pageH;
+
+  // Convert fractions to absolute canvas pixels (points scale 1:1 here)
+  const cxLeft = xFrac * canvasW;
+  const cyTop = yFrac * canvasH;
+  const cw = wFrac * canvasW;
+  const ch = hFrac * canvasH;
+
+  // Transform canvas-space top-left -> PDF-space bottom-left origin
+  switch (angle) {
+    case 0: {
+      // No rotation: canvas x = pdf x, canvas y-from-top -> pdf y-from-bottom
+      const x = cxLeft;
+      const y = pageH - cyTop - ch;
+      return { x, y, w: cw, h: ch };
+    }
+    case 90: {
+      // PDF.js rotates page 90deg CW to display upright.
+      // Canvas (0,0) maps to PDF bottom-left corner of unrotated page.
+      // canvas x -> pdf y (from bottom), canvas y -> pdf x (from left, mirrored)
+      const x = cyTop;
+      const y = cxLeft;
+      return { x, y, w: ch, h: cw };
+    }
+    case 180: {
+      // Canvas (0,0) maps to PDF top-right of unrotated page.
+      const x = pageW - cxLeft - cw;
+      const y = cyTop;
+      return { x, y, w: cw, h: ch };
+    }
+    case 270: {
+      // PDF.js rotates page 90deg CCW to display upright.
+      // canvas x -> pdf y (from top = pageH - ...), canvas y -> pdf x (from right)
+      const x = pageH - cyTop - ch;
+      const y = pageW - cxLeft - cw;
+      return { x, y, w: ch, h: cw };
+    }
+    default:
+      // Unexpected angle; fall through to 0 behaviour
+      return { x: cxLeft, y: pageH - cyTop - ch, w: cw, h: ch };
+  }
+}
+
 function drawPlacementOnPage(
   page: PDFPage,
   pngImage: Awaited<ReturnType<PDFDocument["embedPng"]>>,
-  placement: Omit<SignaturePlacement, "dataUrl" | "pageIndex">
-) {
-  const { width: pageWidth, height: pageHeight } = page.getSize();
-  const sigWidthPt = placement.wFrac * pageWidth;
-  const sigHeightPt = placement.hFrac * pageHeight;
-  const scaleX = pageWidth / placement.canvasWidth;
-  const scaleY = pageHeight / placement.canvasHeight;
-  const xPt = placement.xFrac * placement.canvasWidth * scaleX;
-  const yTopPt = placement.yFrac * placement.canvasHeight * scaleY;
-  const yPt = pageHeight - yTopPt - sigHeightPt;
-  page.drawImage(pngImage, { x: xPt, y: yPt, width: sigWidthPt, height: sigHeightPt });
+  placement: Omit<SignaturePlacement, "dataUrl" | "pageIndex">,
+): void {
+  const rotation = page.getRotation().angle;
+  const { width: pageW, height: pageH } = page.getSize();
+
+  const { x, y, w, h } = canvasToPageCoords(
+    placement.xFrac,
+    placement.yFrac,
+    placement.wFrac,
+    placement.hFrac,
+    rotation,
+    pageW,
+    pageH,
+  );
+
+  page.drawImage(pngImage, { x, y, width: w, height: h });
 }
 
 /**
  * Embed a signature image into a PDF page using pdf-lib.
  * Returns the modified PDF as a Uint8Array.
  *
- * PDF coordinate origin is bottom-left; canvas origin is top-left.
- * We convert: pdfY = pageHeight - (canvasY_px + sigHeight_px) * scale
- * where scale = pageWidth_pt / canvasWidth_px.
+ * Respects page /Rotate: the user places the signature on the visually-upright
+ * canvas (as rendered by PDF.js), and we transform the coordinates back to the
+ * unrotated PDF coordinate system so the signature lands in the right place.
  */
 export async function embedSignatureInPdf(
   pdfBytes: ArrayBuffer,
   placement: SignaturePlacement,
-  annotations?: TextAnnotation[]
+  annotations?: TextAnnotation[],
 ): Promise<Uint8Array> {
   const pdfDoc = await PDFDocument.load(pdfBytes);
   const pages = pdfDoc.getPages();
   const page: PDFPage | undefined = pages[placement.pageIndex];
   if (!page) throw new Error(`Page ${placement.pageIndex} not found`);
 
-  const { width: pageWidth, height: pageHeight } = page.getSize();
-  const sigWidthPt = placement.wFrac * pageWidth;
-  const sigHeightPt = placement.hFrac * pageHeight;
-  const scaleX = pageWidth / placement.canvasWidth;
-  const scaleY = pageHeight / placement.canvasHeight;
-  const xPt = placement.xFrac * placement.canvasWidth * scaleX;
-  const yTopPt = placement.yFrac * placement.canvasHeight * scaleY;
-  const yPt = pageHeight - yTopPt - sigHeightPt;
-
   // Decode data URL to bytes
   const base64 = placement.dataUrl.replace(/^data:image\/png;base64,/, "");
   const imgBytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
   const pngImage = await pdfDoc.embedPng(imgBytes);
 
-  page.drawImage(pngImage, {
-    x: xPt,
-    y: yPt,
-    width: sigWidthPt,
-    height: sigHeightPt,
-  });
+  drawPlacementOnPage(page, pngImage, placement);
 
-  if (annotations) {
+  if (annotations && annotations.length > 0) {
+    const unicodeFonts = await embedUnicodeFonts(pdfDoc);
     for (const ann of annotations) {
-      embedTextAnnotation(page, ann);
+      await embedTextAnnotation(pdfDoc, page, ann, unicodeFonts?.regular ?? null);
     }
   }
 
@@ -160,13 +228,14 @@ export async function embedSignatureInPdf(
 /**
  * Embed a signature onto multiple pages in one pass.
  * pageIndices: which pages (0-based) to receive the signature.
- * The overlay position/size fractions are applied identically to each page.
+ * The overlay position/size fractions are applied identically to each page
+ * (each page's own /Rotate is respected independently).
  */
 export async function embedSignatureOnPages(
   pdfBytes: ArrayBuffer,
   placement: SignaturePlacement,
   pageIndices: number[],
-  annotations?: TextAnnotation[]
+  annotations?: TextAnnotation[],
 ): Promise<Uint8Array> {
   if (pageIndices.length === 0) return embedSignatureInPdf(pdfBytes, placement, annotations);
 
@@ -177,13 +246,16 @@ export async function embedSignatureOnPages(
   const imgBytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
   const pngImage = await pdfDoc.embedPng(imgBytes);
 
+  const unicodeFonts =
+    annotations && annotations.length > 0 ? await embedUnicodeFonts(pdfDoc) : null;
+
   for (const idx of pageIndices) {
     const page = pages[idx];
     if (!page) continue;
     drawPlacementOnPage(page, pngImage, placement);
     if (annotations) {
       for (const ann of annotations) {
-        embedTextAnnotation(page, ann);
+        await embedTextAnnotation(pdfDoc, page, ann, unicodeFonts?.regular ?? null);
       }
     }
   }
@@ -191,17 +263,38 @@ export async function embedSignatureOnPages(
   return pdfDoc.save();
 }
 
-function embedTextAnnotation(page: PDFPage, ann: TextAnnotation) {
-  const { width: pageWidth, height: pageHeight } = page.getSize();
-  const scaleX = pageWidth / ann.canvasWidth;
-  const scaleY = pageHeight / ann.canvasHeight;
-  const xPt = ann.xFrac * ann.canvasWidth * scaleX;
-  const yTopPt = ann.yFrac * ann.canvasHeight * scaleY;
+async function embedTextAnnotation(
+  pdfDoc: PDFDocument,
+  page: PDFPage,
+  ann: TextAnnotation,
+  unicodeFont: Awaited<ReturnType<PDFDocument["embedFont"]>> | null,
+): Promise<void> {
+  const { width: pageW, height: pageH } = page.getSize();
+  const rotation = page.getRotation().angle;
   const fontSize = ann.fontSize ?? 11;
-  // Offset down by roughly one line so the text sits below the anchor point
-  const yPt = pageHeight - yTopPt - fontSize;
   const color = ann.color ? hexToRgb(ann.color) : rgb(0.1, 0.14, 0.19);
-  page.drawText(ann.text, { x: xPt, y: yPt, size: fontSize, color });
+
+  // Use the same coordinate transform as images but treat the annotation as a
+  // zero-height element at the anchor point (h=0 -> just flip y).
+  const { x, y } = canvasToPageCoords(
+    ann.xFrac,
+    ann.yFrac,
+    0,
+    fontSize / (rotation === 90 || rotation === 270 ? pageH : pageH),
+    rotation,
+    pageW,
+    pageH,
+  );
+
+  const safeText = unicodeFont ? ann.text : sanitizeWinAnsi(ann.text);
+
+  if (unicodeFont) {
+    page.drawText(safeText, { x, y, size: fontSize, font: unicodeFont, color });
+  } else {
+    // StandardFont fallback: embed Helvetica if not already done
+    const fallbackFont = await pdfDoc.embedFont("Helvetica");
+    page.drawText(safeText, { x, y, size: fontSize, font: fallbackFont, color });
+  }
 }
 
 /**
@@ -265,7 +358,7 @@ export function textToPngDataUrl(
   text: string,
   inkColor: string,
   fontSize = 72,
-  fontSpec?: string
+  fontSpec?: string,
 ): string | null {
   if (!text.trim()) return null;
 

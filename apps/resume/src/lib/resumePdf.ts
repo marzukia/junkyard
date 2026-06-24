@@ -1,4 +1,4 @@
-import { PDFDocument, PageSizes, StandardFonts, rgb } from "pdf-lib";
+import { PDFDocument, PageSizes, StandardFonts, type PDFFont, rgb } from "pdf-lib";
 import type {
   CertificationEntry,
   EducationEntry,
@@ -8,6 +8,7 @@ import type {
 } from "../store/useResumeStore";
 import { tokenizeLine } from "./mdInline";
 import { filteredBullets, formatDateRange, parseSkills } from "./resumeUtils";
+import { embedUnicodeFonts, sanitizeWinAnsi } from "./unicodeFont";
 
 export interface ResumePdfInput {
   fullName: string;
@@ -74,12 +75,19 @@ const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
 interface DrawCtx {
   page: ReturnType<PDFDocument["addPage"]>;
   doc: PDFDocument;
-  boldFont: Awaited<ReturnType<PDFDocument["embedFont"]>>;
-  regularFont: Awaited<ReturnType<PDFDocument["embedFont"]>>;
-  italicFont: Awaited<ReturnType<PDFDocument["embedFont"]>>;
+  boldFont: PDFFont;
+  regularFont: PDFFont;
+  italicFont: PDFFont;
   y: number;
   pages: ReturnType<PDFDocument["addPage"]>[];
   palette: TemplatePalette;
+  /** True when boldFont/regularFont/italicFont support full Unicode */
+  unicodeMode: boolean;
+}
+
+/** Sanitize text if not in Unicode mode */
+function enc(ctx: DrawCtx, text: string): string {
+  return ctx.unicodeMode ? text : sanitizeWinAnsi(text);
 }
 
 function newPage(ctx: DrawCtx): void {
@@ -104,15 +112,16 @@ function drawText(
     font?: "bold" | "regular";
     color?: ReturnType<typeof rgb>;
     maxWidth?: number;
-  }
+  },
 ): void {
   const font = opts.font === "bold" ? ctx.boldFont : ctx.regularFont;
   const color = opts.color ?? INK;
   const x = opts.x ?? MARGIN;
   const maxWidth = opts.maxWidth ?? CONTENT_WIDTH;
+  const safeText = enc(ctx, text);
 
   // Word-wrap
-  const words = text.split(" ");
+  const words = safeText.split(" ");
   let line = "";
   const lines: string[] = [];
   for (const word of words) {
@@ -147,16 +156,16 @@ function drawMdText(
     size: number;
     color?: ReturnType<typeof rgb>;
     maxWidth?: number;
-  }
+  },
 ): void {
   const startX = opts.x ?? MARGIN;
   const maxWidth = opts.maxWidth ?? CONTENT_WIDTH;
   const size = opts.size;
   const color = opts.color ?? INK;
 
-  type Atom = { text: string; font: Awaited<ReturnType<PDFDocument["embedFont"]>> };
+  type Atom = { text: string; font: PDFFont };
 
-  function fontFor(type: string): Awaited<ReturnType<PDFDocument["embedFont"]>> {
+  function fontFor(type: string): PDFFont {
     if (type === "bold") return ctx.boldFont;
     if (type === "italic") return ctx.italicFont;
     return ctx.regularFont;
@@ -166,14 +175,14 @@ function drawMdText(
   const atoms: Atom[] = [];
 
   for (const token of tokens) {
-    const words = token.text.split(/(\s+)/); // split keeping separators
+    const words = enc(ctx, token.text).split(/(\s+)/); // split keeping separators
     const f = fontFor(token.type);
     for (const w of words) {
       if (w.length > 0) atoms.push({ text: w, font: f });
     }
   }
 
-  type LineSegment = { text: string; font: Awaited<ReturnType<PDFDocument["embedFont"]>> };
+  type LineSegment = { text: string; font: PDFFont };
   type Line = LineSegment[];
 
   const lines: Line[] = [];
@@ -192,7 +201,7 @@ function drawMdText(
 
     const w = atom.font.widthOfTextAtSize(atom.text, size);
     if (currentWidth + w > maxWidth && currentLine.length > 0) {
-      while (currentLine.length > 0 && /^\s+$/.test(currentLine[currentLine.length - 1].text)) {
+      while (currentLine.length > 0 && /^\s+$/.test(currentLine[currentLine.length - 1]!.text)) {
         currentLine.pop();
       }
       lines.push(currentLine);
@@ -203,7 +212,7 @@ function drawMdText(
     currentWidth += w;
   }
   if (currentLine.length > 0) {
-    while (currentLine.length > 0 && /^\s+$/.test(currentLine[currentLine.length - 1].text)) {
+    while (currentLine.length > 0 && /^\s+$/.test(currentLine[currentLine.length - 1]!.text)) {
       currentLine.pop();
     }
     lines.push(currentLine);
@@ -258,20 +267,21 @@ function drawTwoCol(
     leftFont?: "bold" | "regular";
     leftColor?: ReturnType<typeof rgb>;
     rightColor?: ReturnType<typeof rgb>;
-  }
+  },
 ): void {
   ensureSpace(ctx, opts.leftSize + 6);
   const leftFont = opts.leftFont === "bold" ? ctx.boldFont : ctx.regularFont;
   const rightFont = ctx.regularFont;
-  ctx.page.drawText(left, {
+  ctx.page.drawText(enc(ctx, left), {
     x: MARGIN,
     y: ctx.y,
     size: opts.leftSize,
     font: leftFont,
     color: opts.leftColor ?? INK,
   });
-  const rw = rightFont.widthOfTextAtSize(right, opts.rightSize);
-  ctx.page.drawText(right, {
+  const safeRight = enc(ctx, right);
+  const rw = rightFont.widthOfTextAtSize(safeRight, opts.rightSize);
+  ctx.page.drawText(safeRight, {
     x: PAGE_WIDTH - MARGIN - rw,
     y: ctx.y,
     size: opts.rightSize,
@@ -283,9 +293,29 @@ function drawTwoCol(
 
 export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
-  const boldFont = await doc.embedFont(StandardFonts.HelveticaBold);
-  const regularFont = await doc.embedFont(StandardFonts.Helvetica);
-  const italicFont = await doc.embedFont(StandardFonts.HelveticaOblique);
+
+  // Attempt Unicode fonts; fall back to Helvetica variants on failure.
+  const unicodeFonts = await embedUnicodeFonts(doc);
+
+  let boldFont: PDFFont;
+  let regularFont: PDFFont;
+  let italicFont: PDFFont;
+  let unicodeMode: boolean;
+
+  if (unicodeFonts) {
+    boldFont = unicodeFonts.bold;
+    regularFont = unicodeFonts.regular;
+    // Noto Sans doesn't have a separate italic in the same CDN file;
+    // use regular as fallback -- acceptable for resume body text.
+    italicFont = unicodeFonts.regular;
+    unicodeMode = true;
+  } else {
+    console.warn("[resume-pdf] Unicode font unavailable; falling back to Helvetica (non-Latin chars will be sanitized)");
+    boldFont = await doc.embedFont(StandardFonts.HelveticaBold);
+    regularFont = await doc.embedFont(StandardFonts.Helvetica);
+    italicFont = await doc.embedFont(StandardFonts.HelveticaOblique);
+    unicodeMode = false;
+  }
 
   const palette = getPalette(input.template);
 
@@ -299,6 +329,7 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
     y: PAGE_HEIGHT - MARGIN,
     pages: [firstPage],
     palette,
+    unicodeMode,
   };
 
   // ---- Accent bar ----
@@ -314,7 +345,7 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
   // ---- Name ----
   if (input.fullName.trim()) {
     ensureSpace(ctx, palette.nameSize + 8);
-    ctx.page.drawText(input.fullName.trim(), {
+    ctx.page.drawText(enc(ctx, input.fullName.trim()), {
       x: MARGIN,
       y: ctx.y,
       size: palette.nameSize,
@@ -351,7 +382,7 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
 
   // ---- Experience ----
   const expEntries = input.experience.filter(
-    (e) => e.company.trim() || e.title.trim() || filteredBullets(e.bullets).length > 0
+    (e) => e.company.trim() || e.title.trim() || filteredBullets(e.bullets).length > 0,
   );
   if (expEntries.length > 0) {
     drawSectionHeading(ctx, "Experience");
@@ -373,7 +404,7 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
       for (const bullet of bullets) {
         ctx.y -= 1;
         ensureSpace(ctx, 12);
-        ctx.page.drawText("•", {
+        ctx.page.drawText("*", {
           x: MARGIN + 6,
           y: ctx.y,
           size: 9,
@@ -393,7 +424,7 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
 
   // ---- Education ----
   const eduEntries = input.education.filter(
-    (e) => e.institution.trim() || e.degree.trim() || e.field.trim()
+    (e) => e.institution.trim() || e.degree.trim() || e.field.trim(),
   );
   if (eduEntries.length > 0) {
     drawSectionHeading(ctx, "Education");
@@ -420,7 +451,7 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
   const skillList = parseSkills(input.skills);
   if (skillList.length > 0) {
     drawSectionHeading(ctx, "Skills");
-    drawText(ctx, skillList.join("  ·  "), {
+    drawText(ctx, skillList.join("  *  "), {
       size: 9,
       font: "regular",
       color: INK,
@@ -475,7 +506,7 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
   const langList = parseSkills(input.languages);
   if (langList.length > 0) {
     drawSectionHeading(ctx, "Languages");
-    drawText(ctx, langList.join("  ·  "), {
+    drawText(ctx, langList.join("  *  "), {
       size: 9,
       font: "regular",
       color: INK,
@@ -486,7 +517,7 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
   const totalPages = ctx.pages.length;
   if (totalPages > 1) {
     for (let i = 0; i < totalPages; i++) {
-      const pg = ctx.pages[i];
+      const pg = ctx.pages[i]!;
       const label = `${i + 1} / ${totalPages}`;
       const lw = regularFont.widthOfTextAtSize(label, 8);
       pg.drawText(label, {
