@@ -170,6 +170,8 @@ export function App() {
     activeTab,
     result,
     replaceOutput,
+    isMatching,
+    timeoutError,
     setPattern,
     toggleFlag,
     setTestText,
@@ -182,7 +184,7 @@ export function App() {
   const matchCount = result.ok ? result.matchCount : 0;
   const matches = result.ok ? result.matches : [];
   const hasPattern = pattern.trim().length > 0;
-  const hasError = !result.ok;
+  const hasError = !result.ok && !isMatching && !timeoutError;
   const hasCaptures = matches.some((m) => m.groups.length > 0);
 
   const explanation = hasPattern ? explainPattern(pattern) : [];
@@ -305,6 +307,12 @@ export function App() {
               <span>{result.message}</span>
             </div>
           )}
+          {timeoutError && hasPattern && (
+            <div className="rx-error" role="alert" aria-live="polite">
+              <span style={{ flexShrink: 0, fontWeight: 700 }}>Timeout</span>
+              <span>{timeoutError}</span>
+            </div>
+          )}
         </div>
 
         {/* ── Two-panel layout: test text + output ── */}
@@ -313,12 +321,17 @@ export function App() {
           <div className="card rx-panel">
             <div className="rx-panel-header">
               <span className="rx-panel-label">Test string</span>
-              {hasPattern && result.ok && matchCount > 0 && (
+              {hasPattern && isMatching && (
+                <span className="rx-stat" aria-live="polite" aria-label="Matching in progress">
+                  matching…
+                </span>
+              )}
+              {hasPattern && !isMatching && result.ok && matchCount > 0 && (
                 <span className="rx-stat rx-stat--matches">
                   {matchCount} {matchCount === 1 ? "match" : "matches"}
                 </span>
               )}
-              {hasPattern && result.ok && matchCount === 0 && (
+              {hasPattern && !isMatching && result.ok && matchCount === 0 && !timeoutError && (
                 <span className="rx-stat">no matches</span>
               )}
             </div>
