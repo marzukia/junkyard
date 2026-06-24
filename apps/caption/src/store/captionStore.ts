@@ -77,10 +77,13 @@ const INITIAL: Pick<
   numCaptions: 1,
 };
 
-export const useCaptionStore = create<CaptionState>((set) => ({
+export const useCaptionStore = create<CaptionState>((set, get) => ({
   ...INITIAL,
 
-  setInputFile: (file, url) =>
+  setInputFile: (file, url) => {
+    // Revoke the prior input blob before replacing to prevent object-URL leaks.
+    const prior = get().inputUrl;
+    if (prior) URL.revokeObjectURL(prior);
     set({
       inputFile: file,
       inputUrl: url,
@@ -91,7 +94,8 @@ export const useCaptionStore = create<CaptionState>((set) => ({
       errorMsg: null,
       copied: false,
       copiedAlt: false,
-    }),
+    });
+  },
 
   setInputMode: (mode) => set({ inputMode: mode }),
 
