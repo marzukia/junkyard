@@ -56,3 +56,13 @@ The remaining 27 tools are browser-only and cannot be made headless:
 - **Rich editor tools** (DOM, contenteditable, interactive state): `collage, css, invoice, resume, subs, video`
 
 These are catalogued with `runtime: "client"` or `runtime: "client-ai"` and `mcp.exposed: false`. They participate in the self-describing-app model and appear in the hub and nav switcher, but have no headless counterpart in `@junkyard/core`.
+
+## Build model: independent apps (no root workspace)
+
+junkyard deliberately has **no root `package.json` / monorepo workspace**. Each `apps/<slug>` is a fully standalone Vite app with its own `package.json` + `bun.lock`, installed and built independently. This is intentional:
+
+- The 44 apps have divergent, sometimes conflicting dependency versions (different transformers.js / pdf-lib / ffmpeg pins). A single hoisted workspace `node_modules` risks cross-app version bleed and breaking individual vite builds.
+- Each app stays portable (can be lifted out or deployed on its own).
+- `scripts/build-site.sh` already parallelizes the per-app `bun install` phase, so there is no single `bun install` for everything but the install cost is bounded.
+
+Trade-off: there is no one-shot `bun install` at the root, and shared code is vendored (AppSwitcher, ThemeToggle, MobileWarning, transformersEnv) via `scripts/vendor-*.mjs` rather than imported from a shared package. A future migration to a real workspace is tracked as a known item but is not planned, since it would change install hoisting across all 44 apps and must be full-build-verified.
