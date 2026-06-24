@@ -137,6 +137,15 @@ async function main(): Promise<void> {
         );
       }
 
+      // Path must be the canonical derivative of slug: "/<slug>/"
+      // Guards against fat-fingered paths and stale paths after a slug rename.
+      const expectedPath = `/${data.slug}/`;
+      if (data.path !== expectedPath) {
+        appErrors.push(
+          `${tsPath}: path "${data.path}" must be "${expectedPath}"`,
+        );
+      }
+
       // Order must be a positive integer
       if (!Number.isInteger(data.order) || data.order < 1) {
         appErrors.push(
