@@ -89,7 +89,11 @@
     <!-- ── No-flash dark-mode script ────────────────────────────────── -->
     <!-- Reads the Mantine colour-scheme preference from localStorage before
          React hydrates, sets data-mantine-color-scheme on <html> immediately
-         so there is zero flash of wrong background. -->
+         so there is zero flash of wrong background.
+         KEY COUPLING: "mantine-color-scheme-value" and the light/dark/auto
+         vocabulary are shared with ThemeToggle.tsx and Mantine's colour-scheme
+         manager. If either changes the key or values, this script must change
+         too (and vice-versa) — they cannot share a TS const. -->
     <script>
       try {
         var _cs = window.localStorage.getItem("mantine-color-scheme-value");

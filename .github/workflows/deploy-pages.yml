@@ -146,6 +146,13 @@ jobs:
           fi
           echo "SEO domain guard: OK (CNAME=$cname)"
 
+      - name: Check theme-bootstrap inline scripts are up to date
+        # Fails if any apps/*/index.html bootstrap <script> (the no-flash
+        # dark-mode block) diverges from the canonical in kit/seo/index-template.html.
+        # Edit the canonical template first, then reconcile all apps with the
+        # same Python one-liner used in the original reconciliation commit.
+        run: bun scripts/check-bootstrap.mjs
+
       - name: Sitemap and robots existence guard
         # Fails if any apps/<slug>/public/sitemap.xml or robots.txt is missing,
         # or if hub/public/sitemap.xml is missing.

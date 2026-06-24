@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Prevent FOUC: apply stored colour scheme before React hydration -->
+    <!-- Prevent FOUC: apply stored colour scheme before React hydration.
+         Hub-specific: sets data-scheme (not data-mantine-color-scheme) with
+         a jy-scheme legacy fallback. Intentionally different from app bootstraps. -->
     <script>
       try {
         var _v = window.localStorage.getItem("mantine-color-scheme-value");
