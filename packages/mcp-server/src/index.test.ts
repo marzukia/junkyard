@@ -127,6 +127,37 @@ describe("checkInputLimits", () => {
   it("accepts json at exactly the limit (no off-by-one)", () => {
     expect(checkInputLimits({ json: "a".repeat(100_000) })).toBeNull();
   });
+
+  it("rejects diff `a` field over 100 000 chars (gauntlet w3: diff args were previously uncapped)", () => {
+    const err = checkInputLimits({ a: "x".repeat(100_001) });
+    expect(err).not.toBeNull();
+    expect(err).toContain("a");
+  });
+
+  it("rejects diff `b` field over 100 000 chars", () => {
+    const err = checkInputLimits({ b: "x".repeat(100_001) });
+    expect(err).not.toBeNull();
+    expect(err).toContain("b");
+  });
+
+  it("rejects markdown field over 100 000 chars", () => {
+    const err = checkInputLimits({ markdown: "x".repeat(100_001) });
+    expect(err).not.toBeNull();
+    expect(err).toContain("markdown");
+  });
+
+  it("rejects base64 `encoded` field over 100 000 chars", () => {
+    const err = checkInputLimits({ encoded: "x".repeat(100_001) });
+    expect(err).not.toBeNull();
+    expect(err).toContain("encoded");
+  });
+
+  it("accepts all new fields at exactly the limit", () => {
+    expect(checkInputLimits({ a: "x".repeat(100_000) })).toBeNull();
+    expect(checkInputLimits({ b: "x".repeat(100_000) })).toBeNull();
+    expect(checkInputLimits({ markdown: "x".repeat(100_000) })).toBeNull();
+    expect(checkInputLimits({ encoded: "x".repeat(100_000) })).toBeNull();
+  });
 });
 
 // ── WorkerSemaphore unit tests ────────────────────────────────────────────────

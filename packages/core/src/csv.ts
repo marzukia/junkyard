@@ -122,7 +122,7 @@ export function csvToJsonString(csvText: string, delimiter?: Delimiter): string 
   const parsed = parseCsv(csvText, { delimiter: delim, hasHeader: true });
   if (!parsed.ok) throw new Error(parsed.error);
   const objects = parsed.value.rows.map((row) => {
-    const obj: Record<string, unknown> = {};
+    const obj = Object.create(null) as Record<string, unknown>;
     parsed.value.headers.forEach((header, i) => { obj[header] = coerceValue(row[i] ?? ""); });
     return obj;
   });

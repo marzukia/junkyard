@@ -108,6 +108,13 @@ describe("csv", () => {
     expect(back).toContain("x,y");
     expect(back).toContain("1,2");
   });
+
+  it("__proto__ column is preserved as data, not merged into prototype (gauntlet w3)", () => {
+    const rows = JSON.parse(csvToJsonString("__proto__,name\npolluted,Alice")) as Array<Record<string, unknown>>;
+    expect(rows[0]["__proto__"]).toBe("polluted");
+    expect(rows[0]["name"]).toBe("Alice");
+    expect(({} as Record<string, unknown>)["polluted"]).toBeUndefined();
+  });
 });
 
 // ── Hash ──────────────────────────────────────────────────────────────────────
@@ -257,6 +264,13 @@ describe("cron", () => {
     const op = TOOLS.find((t) => t.slug === "cron")!.ops[0];
     const result = await Promise.resolve(op.run({ expr: "@daily", nextCount: 1 })) as { human: string };
     expect(result.human).toBeTruthy();
+  });
+
+  it("step-wild guard: */1 produces all values in range (Math.max guard defence-in-depth)", async () => {
+    // */1 must expand without looping forever; validates the Math.max(1,...) guard
+    const op = TOOLS.find((t) => t.slug === "cron")!.ops[0];
+    const result = await Promise.resolve(op.run({ expr: "*/1 * * * *", nextCount: 5 })) as { nextRuns: string[] };
+    expect(result.nextRuns).toHaveLength(5);
   });
 });
 
