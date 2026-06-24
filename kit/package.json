@@ -7,19 +7,14 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview --port 4173",
-    "lint": "biome check src/",
-    "format": "biome check --write src/",
-    "ci": "biome ci src/",
+    "lint": "biome check components/ theme.ts",
+    "format": "biome check --write components/ theme.ts",
+    "ci": "biome ci components/ theme.ts",
     "test": "vitest run"
   },
   "dependencies": {
-    "@fontsource/inter": "^5.2.8",
-    "@fontsource/jetbrains-mono": "^5.1.2",
     "@mantine/core": "^7.17.4",
-    "@mantine/hooks": "^7.17.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "zustand": "^5.0.5"
+    "react": "^18.3.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

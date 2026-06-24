@@ -51,7 +51,7 @@ Each is exported as a `ToolDef` with a `slug`, a description, and an array of `T
 
 The remaining 27 tools are browser-only and cannot be made headless:
 
-- **Browser API tools** (file reading, Canvas, Blob URLs): `convert, crop, exif, favicon, gif, meme, og, pdf, screenshot, sign, svg`
+- **Browser API tools** (file reading, Canvas, Blob URLs): `convert, crop, exif, favicon, gif, meme, ocr, og, pdf, screenshot, sign, svg`
 - **In-browser AI** (transformers.js WASM, WebLLM/WebGPU): `bg, caption, chat, cleanup, depth, summarize, transcribe, translate, upscale`
 - **Rich editor tools** (DOM, contenteditable, interactive state): `collage, css, invoice, resume, subs, video`
 
