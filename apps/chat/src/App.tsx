@@ -162,6 +162,7 @@ function Sidebar() {
             type="button"
             className="chat-sidebar-new-btn"
             onClick={newConversation}
+            disabled={generating}
             title="New chat"
           >
             + New
@@ -180,6 +181,7 @@ function Sidebar() {
                     type="button"
                     className={`chat-sidebar-item-btn${convo.id === activeConversationId ? " chat-sidebar-item-btn--active" : ""}`}
                     onClick={() => loadConversation(convo.id)}
+                    disabled={generating}
                     title={convo.title}
                   >
                     {convo.title}
@@ -191,6 +193,7 @@ function Sidebar() {
                       e.stopPropagation();
                       deleteConversation(convo.id);
                     }}
+                    disabled={generating}
                     aria-label="Delete conversation"
                     title="Delete"
                   >
