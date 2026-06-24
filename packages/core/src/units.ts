@@ -206,8 +206,7 @@ export function findUnit(unitId: string): { category: Category; unit: UnitDef } 
 }
 
 export function convert(value: number, fromId: string, toId: string, categoryId?: CategoryId): number {
-  if (!Number.isFinite(value)) return Number.NaN;
-  if (fromId === toId) return value;
+  if (!Number.isFinite(value)) throw new Error(`Cannot convert non-finite value: ${value}`);
 
   // Resolve category from unit IDs if not provided
   let cat: Category | undefined;
@@ -220,18 +219,31 @@ export function convert(value: number, fromId: string, toId: string, categoryId?
   }
   if (!cat) throw new Error(`Unknown category: ${String(categoryId)}`);
 
+  // Validate both units exist in this category before early-returning same-unit
+  if (cat.id !== "temperature" && cat.id !== "fuel") {
+    const from = cat.units.find((u) => u.id === fromId);
+    const to = cat.units.find((u) => u.id === toId);
+    if (!from) throw new Error(`Unknown unit: ${fromId}`);
+    if (!to) throw new Error(`Unknown unit: ${toId}`);
+    if (fromId === toId) return value;
+    const result = (value * from.toBase) / to.toBase;
+    if (!Number.isFinite(result)) throw new Error(`Conversion produced non-finite result for ${value} ${fromId} -> ${toId}`);
+    return result;
+  }
+
+  if (fromId === toId) return value;
+
   if (cat.id === "temperature") {
     return kelvinToUnit(tempToKelvin(value, fromId), toId);
   }
 
   if (cat.id === "fuel") {
-    return kmLToFuel(fuelToKmL(value, fromId), toId);
+    const result = kmLToFuel(fuelToKmL(value, fromId), toId);
+    if (!Number.isFinite(result)) throw new Error(`Conversion produced non-finite result: ${value} ${fromId} -> ${toId} (check for zero division)`);
+    return result;
   }
 
-  const from = cat.units.find((u) => u.id === fromId);
-  const to = cat.units.find((u) => u.id === toId);
-  if (!from || !to) throw new Error(`Unknown unit ${fromId} or ${toId} in ${cat.id}`);
-  return (value * from.toBase) / to.toBase;
+  throw new Error("Unreachable");
 }
 
 // ── ToolDef ──────────────────────────────────────────────────────────────────
