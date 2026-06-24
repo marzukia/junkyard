@@ -1,6 +1,12 @@
+// SYNC: cronGrammar — grammar functions below (expandMacro, normaliseNames,
+// validateSinglePart, expandField) are canonical in kit/lib/cronGrammar.ts and
+// vendored to apps/cron/src/lib/cronGrammar.ts. core keeps its own copy so it
+// remains a standalone package with no kit dependency. When cronGrammar.ts
+// changes, reconcile this file manually and bump validateSinglePart in step.
 import { z } from "zod";
 import type { ToolDef } from "./types.js";
 
+// SYNC: cronGrammar
 const CRON_MACROS: Record<string, string> = {
   "@yearly": "0 0 1 1 *",
   "@annually": "0 0 1 1 *",
@@ -11,6 +17,7 @@ const CRON_MACROS: Record<string, string> = {
   "@hourly": "0 * * * *",
 };
 
+// SYNC: cronGrammar
 interface CronFields {
   minute: string;
   hour: string;
@@ -19,12 +26,14 @@ interface CronFields {
   dow: string;
 }
 
+// SYNC: cronGrammar
 interface FieldSpec {
   min: number;
   max: number;
   names?: readonly string[];
 }
 
+// SYNC: cronGrammar
 const FIELD_SPECS: Record<keyof CronFields, FieldSpec> = {
   minute: { min: 0, max: 59 },
   hour: { min: 0, max: 23 },
@@ -33,13 +42,16 @@ const FIELD_SPECS: Record<keyof CronFields, FieldSpec> = {
   dow: { min: 0, max: 6, names: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] },
 };
 
+// SYNC: cronGrammar
 const FIELD_ORDER: (keyof CronFields)[] = ["minute", "hour", "dom", "month", "dow"];
 
+// SYNC: cronGrammar
 function expandMacro(expr: string): string {
   const key = expr.trim().toLowerCase();
   return CRON_MACROS[key] ?? expr.trim();
 }
 
+// SYNC: cronGrammar
 function normaliseNames(value: string, spec: FieldSpec): string {
   if (!spec.names) return value;
   let v = value;
@@ -49,6 +61,7 @@ function normaliseNames(value: string, spec: FieldSpec): string {
   return v;
 }
 
+// SYNC: cronGrammar
 function validateSinglePart(raw: string, spec: FieldSpec): string | null {
   const part = normaliseNames(raw, spec);
   if (part === "*") return null;
@@ -56,6 +69,7 @@ function validateSinglePart(raw: string, spec: FieldSpec): string | null {
   if (stepWild) {
     const step = Number(stepWild[1]);
     if (step < 1) return "Step must be >= 1";
+    if (step > spec.max - spec.min) return `Step ${step} exceeds range`;
     return null;
   }
   if (part.includes(",")) {
@@ -103,6 +117,7 @@ function validateFields(fields: CronFields): string | null {
   return null;
 }
 
+// SYNC: cronGrammar
 function expandField(raw: string, spec: FieldSpec): number[] {
   const part = normaliseNames(raw, spec);
   if (part === "*") {

@@ -3,23 +3,35 @@
  * Supports standard 5-field unix cron (minute hour dom month dow),
  * @-macros (@daily, @hourly, etc.), and 6-field Quartz-style detection.
  * No external dependencies, runs entirely in the browser.
+ *
+ * The field-grammar (CRON_MACROS, FIELD_SPECS, FIELD_ORDER, normaliseNames,
+ * validateSinglePart, expandField) is canonical in kit/lib/cronGrammar.ts and
+ * vendored here via `node scripts/vendor-cron-grammar.mjs`. Do not edit the
+ * grammar inline — edit the canonical and re-vendor.
  */
+
+// ─── Re-export grammar primitives ─────────────────────────────────────────────
+
+export {
+  CRON_MACROS,
+  FIELD_SPECS,
+  FIELD_ORDER,
+  normaliseNames,
+  validateSinglePart,
+  expandField,
+} from "./cronGrammar";
+export type { CronFields, FieldSpec } from "./cronGrammar";
+
+import {
+  CRON_MACROS,
+  FIELD_SPECS,
+  FIELD_ORDER,
+  validateSinglePart,
+  expandField,
+} from "./cronGrammar";
+import type { CronFields, FieldSpec } from "./cronGrammar";
 
 // ─── @-macro expansion ────────────────────────────────────────────────────────
-
-/**
- * Map of cron @-macros to their 5-field equivalents.
- * @reboot is intentionally excluded -- it has no meaningful next-run preview.
- */
-export const CRON_MACROS: Record<string, string> = {
-  "@yearly": "0 0 1 1 *",
-  "@annually": "0 0 1 1 *",
-  "@monthly": "0 0 1 * *",
-  "@weekly": "0 0 * * 0",
-  "@daily": "0 0 * * *",
-  "@midnight": "0 0 * * *",
-  "@hourly": "0 * * * *",
-};
 
 /**
  * If the expression is a known @-macro, return its 5-field equivalent.
@@ -45,41 +57,13 @@ export function macroLabel(expr: string): string | null {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export interface CronFields {
-  minute: string;
-  hour: string;
-  dom: string; // day of month
-  month: string;
-  dow: string; // day of week
-}
-
 export interface ParseResult {
   ok: boolean;
   fields: CronFields;
   error?: string;
 }
 
-export interface FieldSpec {
-  min: number;
-  max: number;
-  names?: readonly string[]; // Jan..Dec, Sun..Sat
-}
-
-// ─── Field metadata ────────────────────────────────────────────────────────────
-
-export const FIELD_SPECS: Record<keyof CronFields, FieldSpec> = {
-  minute: { min: 0, max: 59 },
-  hour: { min: 0, max: 23 },
-  dom: { min: 1, max: 31 },
-  month: {
-    min: 1,
-    max: 12,
-    names: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  },
-  dow: { min: 0, max: 6, names: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] },
-};
-
-export const FIELD_ORDER: (keyof CronFields)[] = ["minute", "hour", "dom", "month", "dow"];
+// ─── Field metadata helpers ────────────────────────────────────────────────────
 
 const FIELD_LABELS: Record<keyof CronFields, string> = {
   minute: "Minute",
@@ -221,67 +205,6 @@ export function fieldsToExpression(f: CronFields): string {
 
 // ─── Validate ─────────────────────────────────────────────────────────────────
 
-function normaliseNames(value: string, spec: FieldSpec): string {
-  if (!spec.names) return value;
-  let v = value;
-  for (let i = 0; i < spec.names.length; i++) {
-    v = v.replace(new RegExp(spec.names[i], "gi"), String(spec.min + i));
-  }
-  return v;
-}
-
-function validateSinglePart(raw: string, spec: FieldSpec): string | null {
-  const part = normaliseNames(raw, spec);
-  // * wildcard
-  if (part === "*") return null;
-  // */n step
-  const stepWild = part.match(/^\*\/(\d+)$/);
-  if (stepWild) {
-    const step = Number(stepWild[1]);
-    if (step < 1) return "Step must be >= 1";
-    if (step > spec.max - spec.min) return `Step ${step} exceeds range`;
-    return null;
-  }
-  // Comma-separated list
-  if (part.includes(",")) {
-    for (const item of part.split(",")) {
-      const e = validateSinglePart(item, spec);
-      if (e) return e;
-    }
-    return null;
-  }
-  // Range: n-m or n-m/step
-  const rangeMatch = part.match(/^(\d+)-(\d+)(?:\/(\d+))?$/);
-  if (rangeMatch) {
-    const lo = Number(rangeMatch[1]);
-    const hi = Number(rangeMatch[2]);
-    if (lo < spec.min || lo > spec.max) return `${lo} out of range ${spec.min}-${spec.max}`;
-    if (hi < spec.min || hi > spec.max) return `${hi} out of range ${spec.min}-${spec.max}`;
-    if (lo > hi) return `Range start ${lo} > end ${hi}`;
-    if (rangeMatch[3]) {
-      const step = Number(rangeMatch[3]);
-      if (step < 1) return "Step must be >= 1";
-    }
-    return null;
-  }
-  // N/step: start value + step (Vixie-cron form, e.g. 0/15 = 0,15,30,45)
-  const nStepMatch = part.match(/^(\d+)\/(\d+)$/);
-  if (nStepMatch) {
-    const start = Number(nStepMatch[1]);
-    const step = Number(nStepMatch[2]);
-    if (start < spec.min || start > spec.max) return `${start} out of range ${spec.min}-${spec.max}`;
-    if (step < 1) return "Step must be >= 1";
-    return null;
-  }
-  // Plain number
-  if (/^\d+$/.test(part)) {
-    const n = Number(part);
-    if (n < spec.min || n > spec.max) return `${n} out of range ${spec.min}-${spec.max}`;
-    return null;
-  }
-  return `Invalid value: ${raw}`;
-}
-
 export function validateField(field: keyof CronFields, value: string): string | null {
   const spec = FIELD_SPECS[field];
   return validateSinglePart(value, spec);
@@ -297,44 +220,9 @@ export function validateFields(fields: CronFields): string | null {
 
 // ─── Expand a field to a sorted set of matching values ────────────────────────
 
-function expandField(raw: string, spec: FieldSpec): number[] {
-  const part = normaliseNames(raw, spec);
-  const all: number[] = [];
-
-  for (let i = spec.min; i <= spec.max; i++) all.push(i);
-
-  if (part === "*") return all;
-
-  const result = new Set<number>();
-
-  for (const segment of part.split(",")) {
-    const stepWild = segment.match(/^\*\/(\d+)$/);
-    if (stepWild) {
-      const step = Number(stepWild[1]);
-      for (let i = spec.min; i <= spec.max; i += step) result.add(i);
-      continue;
-    }
-    const rangeMatch = segment.match(/^(\d+)-(\d+)(?:\/(\d+))?$/);
-    if (rangeMatch) {
-      const lo = Number(rangeMatch[1]);
-      const hi = Number(rangeMatch[2]);
-      const step = rangeMatch[3] ? Math.max(1, Number(rangeMatch[3])) : 1;
-      for (let i = lo; i <= hi; i += step) result.add(i);
-      continue;
-    }
-    const nStepMatch = segment.match(/^(\d+)\/(\d+)$/);
-    if (nStepMatch) {
-      const start = Number(nStepMatch[1]);
-      const step = Math.max(1, Number(nStepMatch[2]));
-      for (let i = start; i <= spec.max; i += step) result.add(i);
-      continue;
-    }
-    if (/^\d+$/.test(segment)) {
-      result.add(Number(segment));
-    }
-  }
-
-  return [...result].sort((a, b) => a - b);
+function describeRaw(raw: string, spec: FieldSpec): string {
+  const values = expandField(raw, spec);
+  return values.join(", ");
 }
 
 // ─── Next N run times ─────────────────────────────────────────────────────────
@@ -343,6 +231,10 @@ function expandField(raw: string, spec: FieldSpec): number[] {
  * Compute the next `count` scheduled times after `after` (default: now).
  * Returns an array of Date objects.
  * Aborts after 4 years of searching to prevent infinite loops (unreachable schedule).
+ *
+ * Uses LOCAL date getters (getMonth, getDate, getDay, getHours, getMinutes) so
+ * the displayed run times match the user's browser timezone. See packages/core
+ * for the UTC-getter variant used by the MCP tool.
  */
 export function nextRuns(fields: CronFields, count = 5, after?: Date): Date[] {
   const err = validateFields(fields);
@@ -450,11 +342,6 @@ function ordinal(n: number): string {
   const s = ["th", "st", "nd", "rd"];
   const v = n % 100;
   return n + (s[(v - 20) % 10] ?? s[v] ?? s[0]);
-}
-
-function describeRaw(raw: string, spec: FieldSpec): string {
-  const values = expandField(raw, spec);
-  return values.join(", ");
 }
 
 export function describeCron(fields: CronFields): string {
