@@ -70,10 +70,16 @@ const INITIAL: Pick<
 
 export const useUpscaleStore = create<UpscaleState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...INITIAL,
 
-      setInputFile: (file, url) =>
+      setInputFile: (file, url) => {
+        // Revoke prior blobs before replacing to prevent object-URL leaks.
+        // handleProceedClamped calls setInputFile twice in sequence, making
+        // this revoke essential on the second call.
+        const { inputUrl, resultUrl } = get();
+        if (inputUrl) URL.revokeObjectURL(inputUrl);
+        if (resultUrl) URL.revokeObjectURL(resultUrl);
         set({
           inputFile: file,
           inputUrl: url,
@@ -82,7 +88,8 @@ export const useUpscaleStore = create<UpscaleState>()(
           resultUrl: null,
           resultSize: null,
           errorMsg: null,
-        }),
+        });
+      },
 
       setInputDimensions: (width, height) => set({ inputWidth: width, inputHeight: height }),
 
@@ -95,14 +102,18 @@ export const useUpscaleStore = create<UpscaleState>()(
       setModelProgress: (loaded, total, status) =>
         set({ modelProgress: { loaded, total, status } }),
 
-      setResult: (url, width, height, size) =>
+      setResult: (url, width, height, size) => {
+        // Revoke the prior result blob (a new upscale result is being stored).
+        const prior = get().resultUrl;
+        if (prior) URL.revokeObjectURL(prior);
         set({
           resultUrl: url,
           resultWidth: width,
           resultHeight: height,
           resultSize: size,
           phase: "done",
-        }),
+        });
+      },
 
       setError: (msg) => set({ errorMsg: msg, phase: "error" }),
 

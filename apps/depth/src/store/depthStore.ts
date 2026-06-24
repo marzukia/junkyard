@@ -48,13 +48,20 @@ const INITIAL: Pick<
 
 export const useDepthStore = create<DepthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...INITIAL,
       colourMap: "viridis",
       invert: false,
 
-      setInputFile: (file, url) =>
-        set({ inputFile: file, inputUrl: url, resultUrl: null, errorMsg: null, depthCache: null }),
+      setInputFile: (file, url) => {
+        // Revoke prior blobs before replacing to prevent object-URL leaks.
+        // setResultUrl (colourmap re-render path at App.tsx:464) correctly
+        // revokes the old resultUrl itself before calling this -- leave it alone.
+        const { inputUrl, resultUrl } = get();
+        if (inputUrl) URL.revokeObjectURL(inputUrl);
+        if (resultUrl) URL.revokeObjectURL(resultUrl);
+        set({ inputFile: file, inputUrl: url, resultUrl: null, errorMsg: null, depthCache: null });
+      },
 
       setPhase: (phase) => set({ phase }),
 
