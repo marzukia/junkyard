@@ -123,6 +123,13 @@ jobs:
           node scripts/vendor-unicodefont.mjs
           git diff --exit-code -- kit/lib/unicodeFont.ts apps/invoice/src/lib/unicodeFont.ts apps/pdf/src/lib/unicodeFont.ts apps/resume/src/lib/unicodeFont.ts apps/sign/src/lib/unicodeFont.ts
 
+      - name: Check vendored base64url.ts copies are up to date
+        # Fails if kit/lib/base64url.ts was changed without running vendor-base64url.mjs.
+        # Targets: apps/base64/jwt/colours src/lib/base64url.ts.
+        run: |
+          node scripts/vendor-base64url.mjs
+          git diff --exit-code -- kit/lib/base64url.ts apps/base64/src/lib/base64url.ts apps/jwt/src/lib/base64url.ts apps/colours/src/lib/base64url.ts
+
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).

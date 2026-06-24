@@ -4,6 +4,10 @@
  * No verification — this is an inspector, not a validator.
  * The token never leaves the browser; all processing is synchronous JS.
  */
+import {
+  decodeBase64Url as decodeBase64UrlCanonical,
+  encodeBase64Url as encodeBase64UrlString,
+} from "./base64url";
 
 export interface JwtHeader {
   alg?: string;
@@ -42,22 +46,11 @@ export type DecodeResult = { ok: true; value: DecodedJwt } | { ok: false; error:
 
 /**
  * Decode a base64url-encoded string to a UTF-8 string.
- * Handles missing `=` padding and the `-`/`_` → `+`/`/` substitution.
- *
- * Throws on invalid input so the caller can classify the error.
+ * Delegates to the canonical base64url codec (kit/lib/base64url.ts, vendored).
+ * Validates charset and throws on invalid input so the caller can classify the error.
  */
 export function decodeBase64Url(input: string): string {
-  // Normalise to standard base64
-  const b64 = input.replace(/-/g, "+").replace(/_/g, "/");
-  // Re-add padding
-  const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
-  // atob gives a binary string of bytes; decode as UTF-8 via TextDecoder
-  const binary = atob(padded);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return new TextDecoder().decode(bytes);
+  return decodeBase64UrlCanonical(input);
 }
 
 /**
@@ -349,13 +342,13 @@ export async function verifyAsymmetricSignature(
 export const HMAC_SIGN_ALGS = ["HS256", "HS384", "HS512"] as const;
 export type HmacSignAlg = (typeof HMAC_SIGN_ALGS)[number];
 
-/** Encode a JS object as a base64url string (UTF-8 JSON). */
+/**
+ * Encode a JS object as a base64url string (UTF-8 JSON).
+ * JSON-serializes the object then delegates to the canonical string encoder
+ * (kit/lib/base64url.ts, vendored).
+ */
 export function encodeBase64Url(obj: unknown): string {
-  const json = JSON.stringify(obj);
-  const bytes = new TextEncoder().encode(json);
-  let binary = "";
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+  return encodeBase64UrlString(JSON.stringify(obj));
 }
 
 export type SignResult = { ok: true; token: string } | { ok: false; error: string };
