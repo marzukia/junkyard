@@ -1,0 +1,4 @@
+[test]
+# bun's test runner has no native DOM environment; we inject jsdom globals via
+# this preload so tests that mock HTMLCanvasElement/HTMLImageElement work correctly.
+preload = ["./src/test-setup.ts"]
