@@ -30,7 +30,7 @@ export function Footer({ blurb }: FooterProps) {
         rel="noreferrer"
         className="site-footer-link"
       >
-        more tools
+        More tools
       </a>
     </footer>
   );
