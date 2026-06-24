@@ -1,7 +1,7 @@
-# marzukia fleet — shared kit
+# junkyard — shared kit
 
-Vendored shared code for every tool at `*.mrzk.io`. Not an npm package — copy the files
-and fill the placeholders. When `@marzukia/ui` is eventually extracted, this kit becomes
+Vendored shared code for every tool at `junkyard.sh`. Not an npm package — copy the files
+and fill the placeholders. When `@junkyard/ui` is eventually extracted, this kit becomes
 the source of truth for that package.
 
 ## Kit contents
@@ -214,4 +214,4 @@ Brand palette (use for glyphs/accents): teal `#2f9d8d`, amber `#e8b04b`, coral `
 The kit is vendored (copy-paste) rather than published to npm so that parallel tool builds
 don't block on a package registry publish step. The next natural extraction point is after
 2–3 tools are live and the component API has stabilised — at that point, move `src/kit/`
-into a proper `@marzukia/ui` workspace package and update each tool's imports.
+into a proper `@junkyard/ui` workspace package and update each tool's imports.

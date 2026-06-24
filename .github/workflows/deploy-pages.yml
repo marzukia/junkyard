@@ -107,7 +107,7 @@ jobs:
           bun ./scripts/check-core-vs-exposed.mjs
 
       - name: Typecheck and test packages/core
-        # Ensures @junkyard/core stays type-clean and its 151 unit tests pass.
+        # Ensures @junkyard/core stays type-clean and its 195 unit tests pass.
         # Deps are already installed by the core-vs-exposed step above.
         run: |
           cd packages/core

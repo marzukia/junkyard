@@ -17,7 +17,6 @@ junkyard/
     gen-catalogue.ts    # reads apps/*/junkyard.ts, emits catalogue artifacts
     catalogue-schema.ts # JunkyardApp type + enums (Category, Runtime, AppTag)
     vendor-switcher.mjs # copies AppSwitcher into every app (idempotent)
-    vendor-mobilewarn.mjs # copies MobileWarning into heavy-AI apps (idempotent)
     inject-umami.mjs    # injects Umami <script> into dist/<slug>/index.html
     umami.config.json   # { "host": "umami.junkyard.sh" }
   umami-ids.txt       # slug -> Umami website-id map (one line per tool)
@@ -153,15 +152,7 @@ node scripts/vendor-switcher.mjs
 
 This copies the canonical files into every `apps/<slug>/src/` directory that contains a `utility-bar` div. The script is idempotent and safe to re-run.
 
-Similarly, if you edit `kit/components/MobileWarning.tsx` or `MobileWarning.css`:
-
-```bash
-node scripts/vendor-mobilewarn.mjs
-```
-
-MobileWarning is only vendored into the heavy-AI apps (`bg, caption, depth, summarize, transcribe, translate, upscale, chat, video`).
-
-CI checks that all vendored copies match the canonical source via `git diff --exit-code` after re-running the vendor script.
+MobileWarning is hand-maintained per app (no vendor script — `scripts/vendor-mobilewarn.mjs` was removed after it generated malformed imports). If you edit `kit/components/MobileWarning.tsx` or `MobileWarning.css`, propagate the change manually to each heavy-AI app (`bg, caption, depth, summarize, transcribe, translate, upscale, chat, video`). There is no CI guard for MobileWarning drift.
 
 ### 5. SEO and domain rules
 
