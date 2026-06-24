@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { SIZE_PRESETS, TEMPLATES, clamp, estimateTitleLines } from "../ogLogic";
 import type { BgType, FontPreset, Layout } from "../ogLogic";
 import { useOgStore } from "../store";
@@ -98,6 +98,7 @@ export function Controls() {
   const { config, activeTemplate, canvasWidth, canvasHeight } = store;
   const fileRef = useRef<HTMLInputElement>(null);
   const logoRef = useRef<HTMLInputElement>(null);
+  const [bgImageError, setBgImageError] = useState<string | null>(null);
 
   // Title overflow warning: more than 2 lines is a problem
   const titleFontSize = Math.round(canvasHeight * 0.113);
@@ -105,16 +106,31 @@ export function Controls() {
   const titleOverflow = titleLines > 2;
   const titleTooLong = config.title.length > CHAR_BUDGET;
 
-  function handleBgImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  const handleBgImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    // Reset the input value so re-uploading the same file re-triggers onChange
+    e.target.value = "";
     if (!file) return;
+    setBgImageError(null);
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const result = ev.target?.result;
-      if (typeof result === "string") store.setBgImage(result);
+      const dataUrl = ev.target?.result;
+      if (typeof dataUrl !== "string") return;
+      // Validate that the data URL is actually a decodable image before storing it.
+      // This catches non-image files (e.g. .txt renamed to .png) that the
+      // browser's file picker would otherwise accept via accept="image/*".
+      const img = new window.Image();
+      img.onload = () => {
+        setBgImageError(null);
+        store.setBgImage(dataUrl);
+      };
+      img.onerror = () => {
+        setBgImageError("File could not be decoded as an image. Please upload a valid image file (JPEG, PNG, WebP, etc.).");
+      };
+      img.src = dataUrl;
     };
     reader.readAsDataURL(file);
-  }
+  }, [store]);
 
   function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -296,7 +312,7 @@ export function Controls() {
                   <button
                     type="button"
                     className="og-upload-clear"
-                    onClick={() => store.setBgImage(null)}
+                    onClick={() => { store.setBgImage(null); setBgImageError(null); }}
                     aria-label="Remove background image"
                   >
                     remove
@@ -329,6 +345,11 @@ export function Controls() {
               onChange={handleBgImageUpload}
               aria-label="Upload background image"
             />
+            {bgImageError && (
+              <p className="og-field-warn" role="alert">
+                {bgImageError}
+              </p>
+            )}
           </div>
 
           {/* Logo overlay */}

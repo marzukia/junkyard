@@ -360,7 +360,10 @@ export function App() {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Generation failed");
     }
-  }, [mode, count, passwordOptions, passphraseOpts]);
+    // Include concrete option values so changing length/charsets/passphrase settings
+    // gives `generate` a new identity and triggers the auto-generate effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, count, length, upper, lower, digits, symbols, excludeAmbiguous, minDigits, minSymbols, wordCount, separator, capitalize, appendNumber]);
 
   // Auto-generate on settings change.
   useEffect(() => {

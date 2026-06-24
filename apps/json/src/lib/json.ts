@@ -84,8 +84,126 @@ function extractErrorLocation(raw: string, msg: string): { line: number; col: nu
     return { line: Number.parseInt(spiderMatch[1], 10), col: Number.parseInt(spiderMatch[2], 10) };
   }
 
-  // Last resort: scan the raw string to find where it first diverges
-  return { line: 1, col: 1 };
+  // Last resort: scan the raw string to find the first offset that causes a
+  // parse failure via binary search, then convert to line/col.
+  const pos = findErrorOffset(raw);
+  return positionToLineCol(raw, pos);
+}
+
+/**
+ * Find the approximate character offset of a JSON parse error using a
+ * recursive-descent parser that mirrors the JSON grammar. Returns the offset
+ * of the first character that violates the grammar, or the length of the raw
+ * string if the input is truncated/unclosed.
+ *
+ * This is the last-resort path (fires only when the JS engine doesn't embed
+ * position info in the SyntaxError message), so correctness matters more than
+ * speed; the inputs are small editor strings, not streaming data.
+ */
+function findErrorOffset(raw: string): number {
+  const n = raw.length;
+  // `cursor` is a mutable box so recursive helpers can advance it.
+  const c = { i: 0 };
+
+  function skipWs(): void {
+    while (c.i < n && " \t\r\n".includes(raw[c.i])) c.i++;
+  }
+
+  /** Consume a complete string token.  Returns false if malformed. */
+  function consumeString(): boolean {
+    if (raw[c.i] !== '"') return false;
+    c.i++;
+    while (c.i < n) {
+      if (raw[c.i] === "\\") {
+        c.i += 2;
+      } else if (raw[c.i] === '"') {
+        c.i++;
+        return true;
+      } else {
+        c.i++;
+      }
+    }
+    return false; // unterminated
+  }
+
+  /** Consume a number. Returns false if the current char isn't a digit/minus. */
+  function consumeNumber(): boolean {
+    const start = c.i;
+    if (c.i < n && raw[c.i] === "-") c.i++;
+    if (c.i >= n || raw[c.i] < "0" || raw[c.i] > "9") { c.i = start; return false; }
+    while (c.i < n && raw[c.i] >= "0" && raw[c.i] <= "9") c.i++;
+    if (c.i < n && raw[c.i] === ".") {
+      c.i++;
+      while (c.i < n && raw[c.i] >= "0" && raw[c.i] <= "9") c.i++;
+    }
+    if (c.i < n && (raw[c.i] === "e" || raw[c.i] === "E")) {
+      c.i++;
+      if (c.i < n && (raw[c.i] === "+" || raw[c.i] === "-")) c.i++;
+      while (c.i < n && raw[c.i] >= "0" && raw[c.i] <= "9") c.i++;
+    }
+    return true;
+  }
+
+  /** Parse a JSON value.  Returns true on success, false on failure.
+   *  On failure, c.i points at (or just past) the offending character. */
+  function parseValue(): boolean {
+    skipWs();
+    if (c.i >= n) return false; // truncated
+
+    const ch = raw[c.i];
+
+    if (ch === '"') return consumeString();
+    if (ch === "{") return parseObject();
+    if (ch === "[") return parseArray();
+    if (raw.startsWith("true", c.i)) { c.i += 4; return true; }
+    if (raw.startsWith("false", c.i)) { c.i += 5; return true; }
+    if (raw.startsWith("null", c.i)) { c.i += 4; return true; }
+    if (ch === "-" || (ch >= "0" && ch <= "9")) return consumeNumber();
+
+    return false; // unexpected character
+  }
+
+  function parseObject(): boolean {
+    c.i++; // consume '{'
+    skipWs();
+    if (c.i < n && raw[c.i] === "}") { c.i++; return true; } // empty object
+
+    while (c.i < n) {
+      skipWs();
+      if (!consumeString()) return false; // expected key
+      skipWs();
+      if (c.i >= n || raw[c.i] !== ":") return false; // expected colon
+      c.i++;
+      if (!parseValue()) return false;
+      skipWs();
+      if (c.i >= n) return false;
+      if (raw[c.i] === "}") { c.i++; return true; }
+      if (raw[c.i] !== ",") return false; // expected comma or }
+      c.i++;
+    }
+    return false; // unterminated
+  }
+
+  function parseArray(): boolean {
+    c.i++; // consume '['
+    skipWs();
+    if (c.i < n && raw[c.i] === "]") { c.i++; return true; } // empty array
+
+    while (c.i < n) {
+      if (!parseValue()) return false;
+      skipWs();
+      if (c.i >= n) return false;
+      if (raw[c.i] === "]") { c.i++; return true; }
+      if (raw[c.i] !== ",") return false; // expected comma or ]
+      c.i++;
+    }
+    return false; // unterminated
+  }
+
+  parseValue();
+  // c.i now points at the position where parsing stopped (the offending char,
+  // or just past it if we consumed a bad char).  Return it clamped to valid range.
+  return Math.min(c.i, Math.max(0, n - 1));
 }
 
 export function positionToLineCol(raw: string, pos: number): { line: number; col: number } {
