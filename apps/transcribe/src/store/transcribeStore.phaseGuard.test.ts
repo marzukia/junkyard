@@ -76,6 +76,28 @@ describe("transcribeStore monotonic phase guard", () => {
     expect(phase()).toBe("idle");
   });
 
+  it("re-run from done: idle reset allows model-loading (done->idle->model-loading)", () => {
+    // Simulate a complete transcription run
+    sp("model-loading");
+    sp("decoding");
+    sp("transcribing");
+    sp("done");
+    expect(phase()).toBe("done");
+    // Re-run sequence: runTranscription calls setPhase("idle") then setPhase("model-loading")
+    sp("idle");
+    sp("model-loading");
+    expect(phase()).toBe("model-loading");
+  });
+
+  it("re-run from error: idle reset allows model-loading (error->idle->model-loading)", () => {
+    sp("model-loading");
+    sp("error");
+    expect(phase()).toBe("error");
+    sp("idle");
+    sp("model-loading");
+    expect(phase()).toBe("model-loading");
+  });
+
   it("trailing progress after transcribing is ignored", () => {
     sp("model-loading");
     sp("decoding");

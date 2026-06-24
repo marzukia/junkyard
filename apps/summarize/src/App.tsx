@@ -175,6 +175,7 @@ export function App() {
 
   const handleSummarize = useCallback(async () => {
     if (!inputText.trim() || busy || inputWords < MIN_INPUT_WORDS) return;
+    setPhase("idle");
     setPhase("model-loading");
     setChunkProgress(0, 1);
     await runWorker(
