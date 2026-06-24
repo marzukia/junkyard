@@ -119,6 +119,20 @@ describe("describeCron", () => {
     const { fields } = expressionToFields("0 0 1 * *");
     expect(describeCron(fields)).toMatch(/1st/);
   });
+
+  // ── describeDows exact-set guard (gauntlet w5 finding 1) ────────────────
+  it("describes 0 9 * * 1,2,3,4,5 as Monday through Friday (explicit list)", () => {
+    const { fields } = expressionToFields("0 9 * * 1,2,3,4,5");
+    expect(describeCron(fields)).toContain("Monday through Friday");
+  });
+
+  it("does NOT describe 0 9 * * 1,2,3,5,6 (Mon,Tue,Wed,Fri,Sat) as Monday through Friday", () => {
+    const { fields } = expressionToFields("0 9 * * 1,2,3,5,6");
+    const desc = describeCron(fields);
+    expect(desc).not.toContain("Monday through Friday");
+    expect(desc).toMatch(/Monday|Mon/i);
+    expect(desc).toMatch(/Saturday|Sat/i);
+  });
 });
 
 // ─── nextRuns ──────────────────────────────────────────────────────────────────

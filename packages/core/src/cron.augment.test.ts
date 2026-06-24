@@ -80,3 +80,24 @@ describe("cronTool existing behaviour unchanged", () => {
     expect(err).toMatch(/out of range/);
   });
 });
+
+// ── describeDows exact-set guard (gauntlet w5 finding 1) ──────────────────
+describe("cronTool describeDows exact Mon-Fri set", () => {
+  it("describes 0 9 * * 1-5 as Monday through Friday (genuine case)", () => {
+    const result = parse("0 9 * * 1-5");
+    expect(result.human).toContain("Monday through Friday");
+  });
+
+  it("describes 0 9 * * 1,2,3,4,5 as Monday through Friday (explicit list)", () => {
+    const result = parse("0 9 * * 1,2,3,4,5");
+    expect(result.human).toContain("Monday through Friday");
+  });
+
+  it("does NOT describe 0 9 * * 1,2,3,5,6 (Mon,Tue,Wed,Fri,Sat) as Monday through Friday", () => {
+    const result = parse("0 9 * * 1,2,3,5,6");
+    expect(result.human).not.toContain("Monday through Friday");
+    // Should name the actual days (Mon, Tue, Wed, Fri, Sat)
+    expect(result.human).toMatch(/Monday|Mon/i);
+    expect(result.human).toMatch(/Saturday|Sat/i);
+  });
+});
