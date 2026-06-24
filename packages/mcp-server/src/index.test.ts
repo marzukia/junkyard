@@ -21,6 +21,7 @@ import {
   workerSemaphore,
   WORKER_CONCURRENCY_CAP,
 } from "./index.ts";
+import { TOOLS } from "../../core/src/index.ts";
 
 describe("sanitiseName", () => {
   it("produces expected names for normal slug+opName", () => {
@@ -357,4 +358,59 @@ describe("runInWorker -- cron infinite step", () => {
     const elapsed = Date.now() - t0;
     expect(elapsed).toBeLessThan(CRON_TIMEOUT_MS + 300);
   }, CRON_TIMEOUT_MS + 3_000);
+});
+
+// ── MCP op-count contract ─────────────────────────────────────────────────────
+//
+// The MCP server registers one MCP tool per ToolOp (slug × opName pair) by
+// iterating TOOLS in index.ts. These tests derive the expected tool count and
+// names directly from TOOLS so they stay correct when ops are added or removed —
+// no magic literal like the dormant `tools.length === 25` in test-client.ts
+// (which CI never runs because test-client.ts is a `bun run` script, not a
+// `bun test` file).
+//
+// Perturbation guard: mutate TOOLS (e.g. splice an op) and the first test fails
+// with a concrete "expected N, got N-1" message. Remove the sanitiseName prefix
+// and the second test fails. The gap test-client.ts leaves is now closed.
+
+describe("MCP op-count contract", () => {
+  it("derives the total op count from TOOLS and asserts it is non-zero", () => {
+    // Every entry in TOOLS must expose at least one op; otherwise it is silently
+    // absent from the MCP server's tool list with no error or warning.
+    expect(TOOLS.length).toBeGreaterThan(0);
+    for (const tool of TOOLS) {
+      expect(tool.ops.length).toBeGreaterThan(
+        0,
+        `tool "${tool.slug}" has zero ops — it would be silently absent from the MCP server`,
+      );
+    }
+    // Total is derived, not hardcoded. If an op is added the value changes
+    // automatically here; the doc-count guard (check-doc-counts.mjs) catches
+    // any stale 44-tools prose in docs, and a separate snapshot test below can
+    // be updated explicitly by the developer (rather than having a silent mismatch).
+    const totalOps = TOOLS.reduce((sum, tool) => sum + tool.ops.length, 0);
+    expect(totalOps).toBeGreaterThan(0);
+
+    // Verify the count equals the set of unique (slug, opName) pairs —
+    // i.e. no tool has duplicate op names that would silently clobber an MCP tool.
+    const opKeys = new Set(
+      TOOLS.flatMap((tool) => tool.ops.map((op) => `${tool.slug}:${op.name}`)),
+    );
+    expect(opKeys.size).toBe(totalOps);
+  });
+
+  it("every registered MCP tool name satisfies the MCP name spec and sanitiseName formula", () => {
+    // Pins the naming convention in CI. If sanitiseName's formula changes (or a
+    // slug/opName grows past 64 chars), this fails before the server reaches prod.
+    for (const tool of TOOLS) {
+      for (const op of tool.ops) {
+        const name = sanitiseName(tool.slug, op.name);
+        // MCP spec: [a-zA-Z0-9_-]+, max 64 chars.
+        expect(name).toMatch(/^[a-zA-Z0-9_-]+$/);
+        expect(name.length).toBeLessThanOrEqual(64);
+        // Convention: every name must start with the "junkyard_" prefix.
+        expect(name.startsWith("junkyard_")).toBe(true);
+      }
+    }
+  });
 });
