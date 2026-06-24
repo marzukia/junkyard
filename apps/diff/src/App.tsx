@@ -155,6 +155,7 @@ interface FileDropInputProps {
 function FileDropInput({ id, label, value, onChange, placeholder, ariaLabel }: FileDropInputProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [fileError, setFileError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback(
     (file: File) => {
@@ -204,21 +205,31 @@ function FileDropInput({ id, label, value, onChange, placeholder, ariaLabel }: F
         <label className="diff-input-label" htmlFor={id}>
           {label}
         </label>
-        <label className="diff-file-btn" title="Load from file">
+        <>
+          {/* Visually hidden file input; triggered by button below so keyboard users can reach it */}
           <input
+            ref={fileInputRef}
             type="file"
             accept="text/*,.patch,.diff,.json,.md,.csv,.ts,.tsx,.js,.jsx,.py,.rb,.go,.rs,.java,.c,.cpp,.h"
             style={{ position: "absolute", opacity: 0, width: 0, height: 0, overflow: "hidden" }}
+            aria-hidden="true"
+            tabIndex={-1}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) handleFile(file);
               // Reset so the same file can be re-selected
               e.target.value = "";
             }}
-            tabIndex={-1}
           />
-          Load file
-        </label>
+          <button
+            type="button"
+            className="diff-file-btn"
+            title="Load from file"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Load file
+          </button>
+        </>
       </div>
       {fileError != null && (
         <span className="diff-file-error" role="alert">
@@ -277,7 +288,7 @@ function Toolbar({
       <div className="diff-toolbar-left">
         <div className="space-toggle-wrapper">
           <span className="space-toggle-label">View</span>
-          <div className="space-toggle" role="radiogroup" aria-label="View mode">
+          <div className="space-toggle" role="group" aria-label="View mode">
             <button
               type="button"
               className={`space-btn${viewMode === "split" ? " space-btn--active" : ""}`}
@@ -298,7 +309,7 @@ function Toolbar({
         </div>
         <div className="space-toggle-wrapper">
           <span className="space-toggle-label">Level</span>
-          <div className="space-toggle" role="radiogroup" aria-label="Diff level">
+          <div className="space-toggle" role="group" aria-label="Diff level">
             <button
               type="button"
               className={`space-btn${diffLevel === "word" ? " space-btn--active" : ""}`}

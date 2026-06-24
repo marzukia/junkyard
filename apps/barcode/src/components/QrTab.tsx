@@ -71,7 +71,7 @@ function WifiForm() {
       </label>
       <div className="qr-field qr-field--row">
         <span className="mono-label">Security</span>
-        <div className="space-toggle" role="radiogroup" aria-label="WiFi security">
+        <div className="space-toggle" role="group" aria-label="WiFi security">
           {(["WPA", "WEP", "nopass"] as const).map((s) => (
             <button
               key={s}
@@ -236,7 +236,7 @@ export function QrTab() {
         <div className="bc-section">
           <div className="space-toggle-wrapper">
             <span className="space-toggle-label">Type</span>
-            <div className="space-toggle" role="radiogroup" aria-label="QR content type">
+            <div className="space-toggle" role="group" aria-label="QR content type">
               {PRESETS.map((p) => (
                 <button
                   key={p}
@@ -286,7 +286,7 @@ export function QrTab() {
         <div className="bc-section">
           <div className="space-toggle-wrapper">
             <span className="space-toggle-label">Error correction</span>
-            <div className="space-toggle" role="radiogroup" aria-label="Error correction level">
+            <div className="space-toggle" role="group" aria-label="Error correction level">
               {(["L", "M", "Q", "H"] as const).map((l) => (
                 <button
                   key={l}

@@ -385,7 +385,11 @@ function StripPanel({
           {entry.stripping ? "Stripping..." : "Strip & Download"}
         </button>
       )}
-      {entry.stripError && <p className="strip-error">{entry.stripError}</p>}
+      {entry.stripError && (
+        <p className="strip-error" role="alert" aria-live="assertive">
+          {entry.stripError}
+        </p>
+      )}
     </div>
   );
 }
@@ -499,7 +503,7 @@ function DetailPane() {
 
   if (entry.loading) {
     return (
-      <div className="detail-empty">
+      <div className="detail-empty" role="status" aria-live="polite">
         <p>Reading metadata...</p>
       </div>
     );

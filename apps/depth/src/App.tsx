@@ -625,7 +625,7 @@ export function App() {
 
           {/* Model loading */}
           {phase === "model-loading" && (
-            <div className="depth-status-wrap">
+            <div className="depth-status-wrap" role="status" aria-live="polite">
               <ProgressBar
                 loaded={modelProgress.loaded}
                 total={modelProgress.total}
@@ -642,7 +642,7 @@ export function App() {
 
           {/* Processing */}
           {phase === "processing" && (
-            <div className="depth-status-wrap">
+            <div className="depth-status-wrap" role="status" aria-live="polite">
               <div className="depth-spinner" aria-label="Processing..." />
               <p className="depth-status-label">Generating depth map...</p>
               {inputUrl && <img src={inputUrl} alt="Source" className="depth-thumb-preview" />}
@@ -727,7 +727,7 @@ export function App() {
 
           {/* Error */}
           {phase === "error" && (
-            <div className="depth-error-wrap">
+            <div className="depth-error-wrap" role="alert" aria-live="assertive">
               <svg
                 width="24"
                 height="24"

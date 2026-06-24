@@ -703,7 +703,7 @@ export function App() {
 
           {/* Erasing in progress */}
           {phase === "erasing" && (
-            <div className="cl-status-wrap">
+            <div className="cl-status-wrap" role="status" aria-live="polite">
               <div className="cl-spinner" aria-hidden="true" />
               <span className="cl-status-label">Erasing...</span>
               <p className="cl-status-sub">
@@ -752,7 +752,7 @@ export function App() {
 
           {/* Error */}
           {phase === "error" && (
-            <div className="cl-error-wrap">
+            <div className="cl-error-wrap" role="alert" aria-live="assertive">
               <svg
                 width="24"
                 height="24"

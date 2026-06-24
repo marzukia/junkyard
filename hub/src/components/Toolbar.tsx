@@ -53,6 +53,7 @@ export function Toolbar({ query, onQuery, active, onFilter, searchRef }: Toolbar
             type="button"
             className={`chip${active === chip.id ? " on" : ""}`}
             onClick={() => onFilter(chip.id)}
+            aria-pressed={active === chip.id}
           >
             {chip.label}
             <span className="n">{chip.count}</span>

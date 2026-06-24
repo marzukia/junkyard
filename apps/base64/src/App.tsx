@@ -591,7 +591,7 @@ export function App() {
       {/* Mode selector */}
       <div className="space-toggle-wrapper">
         <span className="space-toggle-label">Mode</span>
-        <div className="space-toggle" role="radiogroup" aria-label="Encoding mode">
+        <div className="space-toggle" role="group" aria-label="Encoding mode">
           {MODES.map(({ id, label }) => (
             <button
               key={id}
@@ -609,7 +609,7 @@ export function App() {
       {/* Encode / Decode direction (only shown on text tab) */}
       {activeTab === "text" && (
         <div className="space-toggle-wrapper">
-          <div className="space-toggle" role="radiogroup" aria-label="Encode or decode">
+          <div className="space-toggle" role="group" aria-label="Encode or decode">
             {DIRECTIONS.map(({ id, label }) => (
               <button
                 key={id}

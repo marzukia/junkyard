@@ -192,7 +192,7 @@ export function BatchTab() {
         <div className="bc-section">
           <div className="space-toggle-wrapper" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
             <span className="space-toggle-label">Format</span>
-            <div className="space-toggle" role="radiogroup" aria-label="Batch barcode format">
+            <div className="space-toggle" role="group" aria-label="Batch barcode format">
               {FORMAT_ORDER.map((fmt) => (
                 <button
                   key={fmt}
