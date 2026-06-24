@@ -155,6 +155,16 @@ jobs:
           node scripts/vendor-qrcontent.mjs
           git diff --exit-code -- kit/lib/qrContent.ts apps/qr/src/lib/qrContent.ts apps/barcode/src/lib/qrContent.ts
 
+      - name: Check vendored cronGrammar.ts copies are up to date
+        # Fails if kit/lib/cronGrammar.ts was changed without running vendor-cron-grammar.mjs.
+        # cronGrammar.ts is the canonical cron field-grammar (CRON_MACROS, FIELD_SPECS,
+        # FIELD_ORDER, expandMacro, normaliseNames, validateSinglePart, expandField).
+        # apps/cron vendors this file; packages/core keeps its own reconciled copy
+        # (SYNC: cronGrammar comments) so core stays standalone. Fixed in #53.
+        run: |
+          node scripts/vendor-cron-grammar.mjs
+          git diff --exit-code -- kit/lib/cronGrammar.ts apps/cron/src/lib/cronGrammar.ts
+
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).
