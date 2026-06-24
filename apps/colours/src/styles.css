@@ -1369,6 +1369,7 @@ body {
 
 [data-mantine-color-scheme="dark"] .image-palette-drop--error {
   background: color-mix(in srgb, #ef9a9a 8%, transparent);
+  border-color: #ef9a9a;
 }
 
 .image-palette-icon {

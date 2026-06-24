@@ -3,7 +3,11 @@ import { baseName, formatBytes } from "../lib/pdfUtils";
 import { DropZone } from "./DropZone";
 import { Spinner } from "./Spinner";
 
-async function renderPdfPages(file: File, dpi: number): Promise<void> {
+async function renderPdfPages(
+  file: File,
+  dpi: number,
+  onProgress: (current: number, total: number) => void
+): Promise<void> {
   // Dynamically import pdfjs-dist to avoid SSR issues.
   const pdfjsLib = await import("pdfjs-dist");
   // Use local worker copy shipped by pdfjs-dist
@@ -18,6 +22,7 @@ async function renderPdfPages(file: File, dpi: number): Promise<void> {
   const name = baseName(file.name);
 
   for (let i = 1; i <= pdf.numPages; i++) {
+    onProgress(i, pdf.numPages);
     const page = await pdf.getPage(i);
     const viewport = page.getViewport({ scale });
     const canvas = document.createElement("canvas");
@@ -67,7 +72,9 @@ export function Pdf2ImgTool() {
     setDone(false);
     setProgress("Rendering pages…");
     try {
-      await renderPdfPages(file, dpi);
+      await renderPdfPages(file, dpi, (i, total) => {
+        setProgress(`Rendering page ${i} / ${total}`);
+      });
       setDone(true);
       setProgress("");
     } catch (err) {

@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { extractPaletteFromFile, isImageFile } from "../lib/imageExtract";
 import { MAX_PALETTE_COUNT, MIN_PALETTE_COUNT, useColoursStore } from "../store";
 
-type ExtractState = "idle" | "loading" | "error";
+type ExtractState = "idle" | "loading" | "error" | "corrupt";
 
 function UploadIcon() {
   return (
@@ -85,7 +85,7 @@ export function ImagePalette() {
         loadImagePalette(colors);
         setState("idle");
       } catch {
-        setState("error");
+        setState("corrupt");
         setPreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
         setTimeout(() => setState("idle"), 2500);
       }
@@ -139,12 +139,14 @@ export function ImagePalette() {
       ? "Extracting..."
       : state === "error"
         ? "Not an image file"
-        : "Extract from image";
+        : state === "corrupt"
+          ? "Couldn't read that image — it may be corrupt."
+          : "Extract from image";
 
   return (
     <button
       type="button"
-      className={`image-palette-drop${isDragOver ? " image-palette-drop--over" : ""}${state === "loading" ? " image-palette-drop--loading" : ""}${state === "error" ? " image-palette-drop--error" : ""}`}
+      className={`image-palette-drop${isDragOver ? " image-palette-drop--over" : ""}${state === "loading" ? " image-palette-drop--loading" : ""}${state === "error" || state === "corrupt" ? " image-palette-drop--error" : ""}`}
       aria-label="Upload image to extract palette colors. Drag and drop or click to browse."
       onClick={handleClick}
       onKeyDown={handleKeyDown}
