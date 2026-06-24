@@ -97,8 +97,8 @@ jobs:
         run: bun scripts/check-sitemap-exists.mjs
 
       - name: Umami analytics id guard
-        # Fails if any app slug (except the known-excluded video and cleanup)
-        # is absent from umami-ids.txt or has an invalid UUID.
+        # Fails if ANY app slug is absent from umami-ids.txt or has an invalid UUID.
+        # (All 44 slugs required; the former video/cleanup exclusion was removed in the script.)
         run: bun scripts/check-umami-present.mjs
 
       - name: Hub sitemap vs catalogue drift guard

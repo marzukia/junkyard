@@ -4,6 +4,7 @@ import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { formatBytes, formatTime, getFFmpeg, parseTime, runFFmpeg } from "./lib/ffmpeg";
+import { isVideoFile } from "./lib/dropGuard";
 import { MobileWarning } from "./components/MobileWarning";
 
 // Warn when file exceeds this size
@@ -92,7 +93,12 @@ export function App() {
     e.preventDefault();
     setDragging(false);
     const f = e.dataTransfer.files[0];
-    if (f) handleFile(f);
+    if (!f) return;
+    if (!isVideoFile(f)) {
+      setError("Please drop a video file.");
+      return;
+    }
+    handleFile(f);
   };
 
   const onDragOver = (e: React.DragEvent) => {
@@ -304,6 +310,7 @@ export function App() {
                 controls
                 className="video-preview"
                 onLoadedMetadata={onVideoLoaded}
+                onError={() => setError("Couldn't read this video file.")}
               />
               <div className="video-meta">
                 <span className="mono-label">{file.name}</span>
