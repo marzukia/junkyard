@@ -7,6 +7,7 @@ import {
   renderDepthFromCache,
   revokeResult,
 } from "./lib/depthEstimation";
+import InferWorker from "./infer.worker.ts?worker";
 import { useWorkerTask } from "./lib/workerTask";
 
 type DepthWorkerResult = {
@@ -508,7 +509,7 @@ export function App() {
       setPhase("idle");
       setPhase("model-loading");
       await runWorker(
-        new URL("./infer.worker.ts", import.meta.url),
+        () => new InferWorker(),
         { file, colourMap, invert },
         {
           onProgress: (loaded, total, status) => {

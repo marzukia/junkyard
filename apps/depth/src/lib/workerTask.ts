@@ -8,7 +8,15 @@
  *   - Re-creating the worker on next run re-downloads nothing: the browser
  *     cache (set via env.useBrowserCache = true in each worker) retains the model.
  *
- * Each app provides its own worker URL via Vite's new URL(..., import.meta.url).
+ * Each app provides a worker factory via a Vite ?worker import:
+ *   import InferWorker from "./infer.worker.ts?worker";
+ *   run(() => new InferWorker(), args, handlers)
+ *
+ * Using ?worker (not new URL(..., import.meta.url)) ensures Vite compiles the
+ * worker into a real JS chunk — passing a URL through a helper defeats static
+ * analysis and causes Vite to inline the raw TypeScript as an unexecutable
+ * data:video/mp2t URL.
+ *
  * The message protocol is typed generically so the hook works for any tool.
  */
 import { useCallback, useRef } from "react";
@@ -34,12 +42,16 @@ export interface WorkerTaskHandlers<TResult> {
 /**
  * Returns { run, cancel }.
  *
- * run(workerUrl, args, handlers) - starts the worker with args; resolves when
- *   result or error is received.
+ * run(createWorker, args, handlers) - creates a worker via the factory,
+ *   starts it with args, and resolves when result or error is received.
  * cancel() - terminates the running worker immediately.
  *
- * The workerUrl must be a `new URL('./infer.worker.ts', import.meta.url)`
- * expression so Vite bundles it as a separate chunk.
+ * createWorker must be a factory from a Vite ?worker import, e.g.:
+ *   import InferWorker from "./infer.worker.ts?worker";
+ *   run(() => new InferWorker(), args, handlers)
+ *
+ * This ensures Vite compiles the worker into a real JS chunk rather than
+ * inlining the raw TypeScript as an unexecutable data: URL.
  */
 export function useWorkerTask<TArgs, TResult>() {
   const workerRef = useRef<Worker | null>(null);
@@ -53,7 +65,7 @@ export function useWorkerTask<TArgs, TResult>() {
 
   const run = useCallback(
     (
-      workerUrl: URL,
+      createWorker: () => Worker,
       args: TArgs,
       handlers: WorkerTaskHandlers<TResult>
     ): Promise<void> => {
@@ -64,7 +76,7 @@ export function useWorkerTask<TArgs, TResult>() {
       }
 
       return new Promise<void>((resolve) => {
-        const worker = new Worker(workerUrl, { type: "module" });
+        const worker = createWorker();
         workerRef.current = worker;
 
         worker.onmessage = (e: MessageEvent<WorkerMsg<TResult>>) => {
@@ -94,7 +106,11 @@ export function useWorkerTask<TArgs, TResult>() {
         worker.onerror = (e) => {
           workerRef.current = null;
           worker.terminate();
-          handlers.onError(e.message ?? "Worker error");
+          handlers.onError(
+            e.message
+              ? `Worker error: ${e.message}`
+              : "Worker failed to load or initialise — check that your browser supports ES module workers and that the model files are accessible."
+          );
           resolve();
         };
 

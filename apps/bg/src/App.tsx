@@ -3,6 +3,7 @@ import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { revokeResult } from "./lib/bgRemoval";
+import InferWorker from "./infer.worker.ts?worker";
 import { useWorkerTask } from "./lib/workerTask";
 
 type BgWorkerResult = { imageBytes: ArrayBuffer; width: number; height: number };
@@ -877,7 +878,7 @@ export function App() {
       setPhase("idle");
       setPhase("model-loading");
       await runWorker(
-        new URL("./infer.worker.ts", import.meta.url),
+        () => new InferWorker(),
         { file },
         {
           onProgress: (loaded, total, status) => {

@@ -16,6 +16,7 @@ import {
 import type { OutputFormat } from "./lib/imageHelpers";
 import { MODEL_SIZE_MB, revokeResult } from "./lib/upscale";
 import type { ScaleFactor } from "./lib/upscale";
+import InferWorker from "./infer.worker.ts?worker";
 import { useWorkerTask } from "./lib/workerTask";
 
 /** Shape returned by infer.worker.ts for upscale. */
@@ -611,7 +612,7 @@ export function App() {
       setPhase("idle");
       setPhase("model-loading");
       await runWorker(
-        new URL("./infer.worker.ts", import.meta.url),
+        () => new InferWorker(),
         { file, scale, format: outputFormat, quality: 0.88 },
         {
           onProgress: (loaded, total, status) => {

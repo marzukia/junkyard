@@ -16,6 +16,7 @@ import {
 } from "./lib/audioHelpers";
 import { MODEL_SIZE_MB } from "./lib/transcription";
 import type { TranscriptionResult } from "./lib/transcription";
+import InferWorker from "./infer.worker.ts?worker";
 import { useWorkerTask } from "./lib/workerTask";
 
 /** Track whether the model has been loaded at least once (persists across re-renders). */
@@ -536,7 +537,7 @@ export function App() {
       setPhase("model-loading");
       startElapsedTimer();
       await runWorker(
-        new URL("./infer.worker.ts", import.meta.url),
+        () => new InferWorker(),
         { file, language: language !== "auto" ? language : undefined, translateToEnglish },
         {
           onProgress: (loaded, total, status) => {
