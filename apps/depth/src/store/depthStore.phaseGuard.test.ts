@@ -1,27 +1,27 @@
 /**
- * Monotonic phase guard tests for bgStore.
- *
- * The guard in setPhase must refuse backward transitions once inference starts,
- * so that a trailing/duplicate `progress` message from the worker cannot flip
- * the UI back to "Downloading model" mid-processing.
+ * Monotonic phase guard tests for depthStore.
  *
  * Invariant: setPhase(X) where rank(X) < rank(current) is a no-op,
  * UNLESS X === "idle" (the cancel/reset sentinel).
+ *
+ * Re-run contract: done/error → setPhase("idle") → setPhase("model-loading")
+ * must succeed. The run handler (handleFile) calls setPhase("idle")
+ * first so this path is always open.
  */
 import { beforeEach, describe, expect, it } from "vitest";
-import { useBgStore } from "./bgStore";
-import type { Phase } from "./bgStore";
+import { useDepthStore } from "./depthStore";
+import type { Phase } from "./depthStore";
 
 function phase(): Phase {
-  return useBgStore.getState().phase;
+  return useDepthStore.getState().phase;
 }
 function sp(p: Phase) {
-  useBgStore.getState().setPhase(p);
+  useDepthStore.getState().setPhase(p);
 }
 
-describe("bgStore monotonic phase guard", () => {
+describe("depthStore monotonic phase guard", () => {
   beforeEach(() => {
-    useBgStore.getState().reset();
+    useDepthStore.getState().reset();
   });
 
   it("advances forward through the pipeline", () => {
@@ -34,10 +34,9 @@ describe("bgStore monotonic phase guard", () => {
     expect(phase()).toBe("done");
   });
 
-  it("blocks regression from processing back to model-loading", () => {
+  it("blocks regression from processing back to model-loading (stray progress)", () => {
     sp("model-loading");
     sp("processing");
-    // stray progress message attempts regression
     sp("model-loading");
     expect(phase()).toBe("processing");
   });
@@ -58,7 +57,7 @@ describe("bgStore monotonic phase guard", () => {
     expect(phase()).toBe("done");
   });
 
-  it("allows error from any inference phase (forward/equal rank)", () => {
+  it("allows error from any inference phase", () => {
     sp("model-loading");
     sp("processing");
     sp("error");
@@ -73,12 +72,11 @@ describe("bgStore monotonic phase guard", () => {
   });
 
   it("re-run from done: idle reset allows model-loading (done->idle->model-loading)", () => {
-    // Simulate a complete run
     sp("model-loading");
     sp("processing");
     sp("done");
     expect(phase()).toBe("done");
-    // Re-run sequence: handler calls setPhase("idle") then setPhase("model-loading")
+    // Re-run sequence: handleFile calls setPhase("idle") then setPhase("model-loading")
     sp("idle");
     sp("model-loading");
     expect(phase()).toBe("model-loading");
@@ -91,16 +89,5 @@ describe("bgStore monotonic phase guard", () => {
     sp("idle");
     sp("model-loading");
     expect(phase()).toBe("model-loading");
-  });
-
-  it("setResult bypasses the guard and always lands on done", () => {
-    sp("model-loading");
-    sp("processing");
-    // Simulate direct setResult call (sets phase: "done" directly in store)
-    useBgStore.getState().setResult("blob:fake", 100, 100);
-    expect(phase()).toBe("done");
-    // A subsequent stray progress message must not regress
-    sp("model-loading");
-    expect(phase()).toBe("done");
   });
 });

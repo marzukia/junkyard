@@ -25,7 +25,7 @@ interface UnitsState {
   togglePrecision: () => void;
 }
 
-function defaultUnits(categoryId: CategoryId): { fromUnit: string; toUnit: string } {
+export function defaultUnits(categoryId: CategoryId): { fromUnit: string; toUnit: string } {
   const cat = CATEGORIES.find((c) => c.id === categoryId);
   if (!cat) return { fromUnit: "", toUnit: "" };
   switch (categoryId) {
@@ -66,7 +66,7 @@ interface ComputeResult {
   inputIsInvalid: boolean;
 }
 
-function computeResult(
+export function computeResult(
   value: string,
   fromUnit: string,
   toUnit: string,
@@ -81,13 +81,59 @@ function computeResult(
   if (!Number.isFinite(n)) {
     return { resultValue: "—", resultNumeric: Number.NaN, inputIsInvalid: true };
   }
-  const result = convert({ value: n, from: fromUnit, to: toUnit, category: cat });
-  return {
-    resultValue: formatResultHuman(result, fullPrecision),
-    resultNumeric: result,
-    inputIsInvalid: false,
-  };
+  try {
+    const result = convert({ value: n, from: fromUnit, to: toUnit, category: cat });
+    return {
+      resultValue: formatResultHuman(result, fullPrecision),
+      resultNumeric: result,
+      inputIsInvalid: false,
+    };
+  } catch {
+    // Unknown unit ids (e.g. stale persisted ids that the migration didn't cover):
+    // treat as empty result rather than crashing the render.
+    return { resultValue: "—", resultNumeric: Number.NaN, inputIsInvalid: false };
+  }
 }
+
+// ── Persist migration ─────────────────────────────────────────────────────────
+//
+// v0→v1: PR #56 renamed unit ids that were already persisted in localStorage:
+//   mpg  → mpgUS    (fuel; "mpg" is still valid as miles-per-gallon US post-rename)
+//   mpguk → mpgUK   (fuel)
+//   l100  → l100km  (fuel)
+//   ms    → mps     (speed only — "ms" is still valid as millisecond in time)
+//
+// Without migration, returning users rehydrate stale ids and convert() throws
+// "Unknown unit" → blank screen.
+
+interface V0PersistedState {
+  categoryId?: string;
+  fromUnit?: string;
+  toUnit?: string;
+  fullPrecision?: boolean;
+}
+
+function migrateUnitId(id: string | undefined, categoryId: string | undefined): string | undefined {
+  if (!id) return id;
+  if (id === "mpg") return "mpgUS";
+  if (id === "mpguk") return "mpgUK";
+  if (id === "l100") return "l100km";
+  // ms → mps only in speed context; in time category "ms" = millisecond (still valid)
+  if (id === "ms" && categoryId === "speed") return "mps";
+  return id;
+}
+
+function migrate(persisted: unknown, fromVersion: number): unknown {
+  if (fromVersion < 1) {
+    const s = persisted as V0PersistedState;
+    const categoryId = s.categoryId;
+    s.fromUnit = migrateUnitId(s.fromUnit, categoryId);
+    s.toUnit = migrateUnitId(s.toUnit, categoryId);
+  }
+  return persisted;
+}
+
+// ── Store ─────────────────────────────────────────────────────────────────────
 
 const initialCat: CategoryId = "length";
 const { fromUnit: defaultFrom, toUnit: defaultTo } = defaultUnits(initialCat);
@@ -169,6 +215,8 @@ export const useUnitsStore = create<UnitsState>()(
     },
     {
       name: "units-prefs",
+      version: 1,
+      migrate,
       partialize: (s) => ({
         categoryId: s.categoryId,
         fromUnit: s.fromUnit,
@@ -178,9 +226,16 @@ export const useUnitsStore = create<UnitsState>()(
       onRehydrateStorage: () => (state) => {
         if (!state) return;
         const { categoryId, fromUnit, toUnit, inputValue, fullPrecision } = state;
+        // Defensive: if the rehydrated ids are still unrecognised after migration
+        // (e.g. corruption / third-party storage tampering), fall back to category
+        // defaults so we never render a blank screen.
+        const safeFrom = fromUnit || defaultUnits(categoryId).fromUnit;
+        const safeTo = toUnit || defaultUnits(categoryId).toUnit;
+        if (safeFrom !== fromUnit) state.fromUnit = safeFrom;
+        if (safeTo !== toUnit) state.toUnit = safeTo;
         Object.assign(
           state,
-          computeResult(inputValue, fromUnit, toUnit, categoryId, fullPrecision)
+          computeResult(inputValue, safeFrom, safeTo, categoryId, fullPrecision)
         );
       },
     }

@@ -608,6 +608,7 @@ export function App() {
 
   const runUpscale = useCallback(
     async (file: File) => {
+      setPhase("idle");
       setPhase("model-loading");
       await runWorker(
         new URL("./infer.worker.ts", import.meta.url),

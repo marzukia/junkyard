@@ -532,6 +532,7 @@ export function App() {
       setMediaUrl(URL.createObjectURL(file));
       setSeekingTo(null);
 
+      setPhase("idle");
       setPhase("model-loading");
       startElapsedTimer();
       await runWorker(

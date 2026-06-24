@@ -217,6 +217,7 @@ export function App() {
       return;
     }
 
+    setPhase("idle");
     setPhase("model-loading");
     await runWorker(
       new URL("./infer.worker.ts", import.meta.url),
