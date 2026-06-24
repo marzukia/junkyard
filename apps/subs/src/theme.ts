@@ -1,5 +1,10 @@
 import { createTheme } from "@mantine/core";
 
+/**
+ * Shared Mantine theme for the marzukia free-tools fleet.
+ * Every tool imports this and passes it to <MantineProvider theme={fleetTheme}>.
+ * Do not modify per-tool — extend via MantineProvider's `theme` merge if needed.
+ */
 export const fleetTheme = createTheme({
   fontFamily: "'Inter', system-ui, sans-serif",
   fontFamilyMonospace: "'JetBrains Mono', 'Courier New', monospace",
@@ -10,6 +15,7 @@ export const fleetTheme = createTheme({
   primaryColor: "teal",
   defaultRadius: "md",
   colors: {
+    // Calibrated teal accent — used sparingly for active/focus states.
     teal: [
       "#eef7f5",
       "#dcefeb",
