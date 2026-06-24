@@ -49,18 +49,27 @@ const INITIAL: Pick<
   resultDimensions: { width: 0, height: 0 },
 };
 
-export const useBgStore = create<BgState>((set) => ({
+export const useBgStore = create<BgState>((set, get) => ({
   ...INITIAL,
 
-  setInputFile: (file, url) =>
-    set({ inputFile: file, inputUrl: url, resultUrl: null, errorMsg: null }),
+  setInputFile: (file, url) => {
+    // Revoke prior blobs before replacing to prevent object-URL leaks.
+    const { inputUrl, resultUrl } = get();
+    if (inputUrl) URL.revokeObjectURL(inputUrl);
+    if (resultUrl) URL.revokeObjectURL(resultUrl);
+    set({ inputFile: file, inputUrl: url, resultUrl: null, errorMsg: null });
+  },
 
   setPhase: (phase) => set({ phase }),
 
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
 
-  setResult: (url, width, height) =>
-    set({ resultUrl: url, phase: "done", resultDimensions: { width, height } }),
+  setResult: (url, width, height) => {
+    // Revoke the prior result blob (a new one is being stored).
+    const prior = get().resultUrl;
+    if (prior) URL.revokeObjectURL(prior);
+    set({ resultUrl: url, phase: "done", resultDimensions: { width, height } });
+  },
 
   setError: (msg) => set({ errorMsg: msg, phase: "error" }),
 

@@ -43,7 +43,7 @@ function saveSettings(s: PersistedSettings) {
   try {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
   } catch {
-    // storage quota or private mode — silently ignore
+    // storage quota or private mode -- silently ignore
   }
 }
 
@@ -165,14 +165,24 @@ export const useCollageStore = create<CollageStore>((set, get) => ({
   setCells: (cells) => set({ cells }),
   updateCell: (id, patch) =>
     set((s) => ({ cells: s.cells.map((c) => (c.id === id ? { ...c, ...patch } : c)) })),
-  assignPhotoToCell: (cellId, url, file) =>
+  assignPhotoToCell: (cellId, url, file) => {
+    // Revoke the prior cell blob when overwriting a filled cell.
+    // Cell photoUrls are always distinct blobs (created fresh at drop time);
+    // they are never shared with library entries, so revoking here is safe.
+    const existing = get().cells.find((c) => c.id === cellId);
+    if (existing?.photoUrl) URL.revokeObjectURL(existing.photoUrl);
     set((s) => ({
       cells: s.cells.map((c) =>
         c.id === cellId ? { ...c, photoUrl: url, photoFile: file, panX: 0, panY: 0, zoom: 1 } : c
       ),
-    })),
+    }));
+  },
   removePhotoFromCell: (cellId) => {
     const s = get();
+    // Revoke the blob being dropped before pushing the undo snapshot,
+    // so undo cannot accidentally use a revoked URL.
+    const cell = s.cells.find((c) => c.id === cellId);
+    if (cell?.photoUrl) URL.revokeObjectURL(cell.photoUrl);
     // Push undo before mutating
     const snapshot = s.cells.map((c) => ({ ...c }));
     set((st) => ({
@@ -368,8 +378,19 @@ export const useCollageStore = create<CollageStore>((set, get) => ({
       freeformCards: s.freeformCards.map((c) => (c.id === id ? { ...c, ...patch } : c)),
     })),
   removeFreeformCard: (id) =>
-    set((s) => ({ freeformCards: s.freeformCards.filter((c) => c.id !== id) })),
-  clearFreeformCards: () => set({ freeformCards: [] }),
+    set((s) => {
+      // Revoke the blob being dropped. Freeform card URLs are always distinct
+      // blobs (created fresh in FreeformCanvas at drop time) and are never
+      // shared with library entries, so revoking here is safe.
+      const card = s.freeformCards.find((c) => c.id === id);
+      if (card) URL.revokeObjectURL(card.photoUrl);
+      return { freeformCards: s.freeformCards.filter((c) => c.id !== id) };
+    }),
+  clearFreeformCards: () =>
+    set((s) => {
+      for (const card of s.freeformCards) URL.revokeObjectURL(card.photoUrl);
+      return { freeformCards: [] };
+    }),
 
   selectedCellId: null,
   setSelectedCellId: (id) => set({ selectedCellId: id }),

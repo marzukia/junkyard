@@ -1,7 +1,7 @@
 /**
  * Tests for collageStore undo behaviour and localStorage persistence.
  */
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock localStorage before importing the store
 const localStorageMock = (() => {
@@ -213,5 +213,104 @@ describe("library: blob URL lifecycle (H2)", () => {
 
     URL.revokeObjectURL = originalRevoke;
     URL.createObjectURL = originalCreate;
+  });
+});
+
+describe("cell/freeform: object-URL leak guard (gauntlet w3)", () => {
+  beforeEach(() => {
+    useCollageStore.setState({
+      cells: [
+        { id: "cell-0", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 },
+        { id: "cell-1", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 },
+        { id: "cell-2", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 },
+        { id: "cell-3", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 },
+      ],
+      freeformCards: [],
+      undoStack: [],
+      canUndo: false,
+    });
+  });
+
+  it("assignPhotoToCell revokes the old photoUrl when overwriting a filled cell", () => {
+    const revoke = vi.spyOn(URL, "revokeObjectURL");
+
+    useCollageStore.setState({
+      cells: [
+        { id: "cell-0", photoUrl: "blob:old-photo", photoFile: null, panX: 0, panY: 0, zoom: 1 },
+        { id: "cell-1", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 },
+        { id: "cell-2", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 },
+        { id: "cell-3", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 },
+      ],
+    });
+
+    useCollageStore.getState().assignPhotoToCell("cell-0", "blob:new-photo", new File(["x"], "a.jpg"));
+
+    expect(revoke).toHaveBeenCalledWith("blob:old-photo");
+    expect(useCollageStore.getState().cells[0].photoUrl).toBe("blob:new-photo");
+    revoke.mockRestore();
+  });
+
+  it("assignPhotoToCell does NOT revoke when cell was empty", () => {
+    const revoke = vi.spyOn(URL, "revokeObjectURL");
+
+    useCollageStore.getState().assignPhotoToCell("cell-0", "blob:first-photo", new File(["x"], "a.jpg"));
+
+    expect(revoke).not.toHaveBeenCalled();
+    revoke.mockRestore();
+  });
+
+  it("removePhotoFromCell revokes the cell photoUrl", () => {
+    const revoke = vi.spyOn(URL, "revokeObjectURL");
+
+    useCollageStore.setState({
+      cells: [
+        { id: "cell-0", photoUrl: "blob:to-remove", photoFile: null, panX: 0, panY: 0, zoom: 1 },
+        { id: "cell-1", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 },
+        { id: "cell-2", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 },
+        { id: "cell-3", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 },
+      ],
+    });
+
+    useCollageStore.getState().removePhotoFromCell("cell-0");
+
+    expect(revoke).toHaveBeenCalledWith("blob:to-remove");
+    expect(useCollageStore.getState().cells[0].photoUrl).toBeNull();
+    revoke.mockRestore();
+  });
+
+  it("removeFreeformCard revokes the card photoUrl", () => {
+    const revoke = vi.spyOn(URL, "revokeObjectURL");
+
+    useCollageStore.setState({
+      freeformCards: [
+        { id: "fc-1", photoUrl: "blob:fc-photo", x: 0, y: 0, w: 0.5, h: 0.5, rotation: 0 },
+        { id: "fc-2", photoUrl: "blob:fc-other", x: 0.5, y: 0.5, w: 0.5, h: 0.5, rotation: 0 },
+      ],
+    });
+
+    useCollageStore.getState().removeFreeformCard("fc-1");
+
+    expect(revoke).toHaveBeenCalledWith("blob:fc-photo");
+    expect(revoke).not.toHaveBeenCalledWith("blob:fc-other");
+    expect(useCollageStore.getState().freeformCards).toHaveLength(1);
+    revoke.mockRestore();
+  });
+
+  it("clearFreeformCards revokes all card photoUrls", () => {
+    const revoke = vi.spyOn(URL, "revokeObjectURL");
+
+    useCollageStore.setState({
+      freeformCards: [
+        { id: "fc-1", photoUrl: "blob:fc-a", x: 0, y: 0, w: 0.5, h: 0.5, rotation: 0 },
+        { id: "fc-2", photoUrl: "blob:fc-b", x: 0.5, y: 0.5, w: 0.5, h: 0.5, rotation: 0 },
+      ],
+    });
+
+    useCollageStore.getState().clearFreeformCards();
+
+    expect(revoke).toHaveBeenCalledWith("blob:fc-a");
+    expect(revoke).toHaveBeenCalledWith("blob:fc-b");
+    expect(useCollageStore.getState().freeformCards).toHaveLength(0);
+    revoke.mockRestore();
   });
 });
