@@ -1,8 +1,7 @@
 /**
  * Neural machine translation using @huggingface/transformers.
  *
- * Model: Xenova/nllb-200-distilled-600M
- * Size: ~600 MB on first download, cached in browser thereafter.
+ * Model: see MODEL_ID const below (~600 MB on first download, cached in browser thereafter).
  *
  * COOP/COEP note: GitHub Pages cannot send cross-origin isolation headers, so
  * SharedArrayBuffer is unavailable. We force numThreads=1 before any ONNX

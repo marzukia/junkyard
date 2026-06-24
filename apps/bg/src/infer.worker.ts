@@ -5,9 +5,7 @@
 import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
 import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface/transformers";
 import { configureTransformersEnv } from "./lib/transformersEnv";
-
-const MODEL_ID = "briaai/RMBG-1.4";
-const MAX_INFER_SIDE = 1024;
+import { MODEL_ID, MAX_INFER_SIDE } from "./lib/bgConstants";
 
 type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
 

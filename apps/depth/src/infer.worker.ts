@@ -7,9 +7,7 @@ import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
 import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/transformers";
 import { configureTransformersEnv } from "./lib/transformersEnv";
 import type { ColourMap } from "./lib/depthEstimation";
-import { applyColourMap } from "./lib/depthEstimation";
-
-const MODEL_ID = "onnx-community/depth-anything-v2-small";
+import { applyColourMap, MODEL_ID } from "./lib/depthEstimation";
 
 type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
 

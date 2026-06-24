@@ -1,8 +1,7 @@
 /**
  * AI super-resolution upscaling using @huggingface/transformers.
  *
- * Model: Xenova/swin2SR-classical-sr-x2-64 (~50 MB)
- * This is a Swin2SR model trained for classical super-resolution at 2x scale.
+ * Model: see MODEL_ID const below (~50 MB). Swin2SR trained for classical super-resolution at 2x scale.
  * For 4x we run two 2x passes.
  *
  * COOP/COEP note: GitHub Pages cannot send cross-origin isolation headers, so
