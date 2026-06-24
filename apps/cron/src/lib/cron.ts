@@ -228,15 +228,56 @@ function describeRaw(raw: string, spec: FieldSpec): string {
 // ─── Next N run times ─────────────────────────────────────────────────────────
 
 /**
+ * Read wall-clock parts (month 1-12, date 1-31, day 0-6, hour 0-23, minute
+ * 0-59) of a Date in the given IANA timezone.  When `tz` is falsy or "local"
+ * the browser's local zone is used (same as the old getHours()/getDay() path).
+ */
+function wallParts(
+  d: Date,
+  tz?: string,
+): { month: number; date: number; day: number; hour: number; minute: number } {
+  if (!tz || tz === "local") {
+    return {
+      month: d.getMonth() + 1,
+      date: d.getDate(),
+      day: d.getDay(),
+      hour: d.getHours(),
+      minute: d.getMinutes(),
+    };
+  }
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    month: "numeric",
+    day: "numeric",
+    weekday: "short",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+  });
+  const parts = Object.fromEntries(fmt.formatToParts(d).map((p) => [p.type, p.value]));
+  const DOW_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  return {
+    month: Number(parts.month),
+    date: Number(parts.day),
+    day: DOW_SHORT.indexOf(parts.weekday),
+    // hour12:false can return "24" for midnight in some environments
+    hour: Number(parts.hour) % 24,
+    minute: Number(parts.minute),
+  };
+}
+
+/**
  * Compute the next `count` scheduled times after `after` (default: now).
- * Returns an array of Date objects.
+ * Returns an array of Date objects (UTC instants).
  * Aborts after 4 years of searching to prevent infinite loops (unreachable schedule).
  *
- * Uses LOCAL date getters (getMonth, getDate, getDay, getHours, getMinutes) so
- * the displayed run times match the user's browser timezone. See packages/core
- * for the UTC-getter variant used by the MCP tool.
+ * When `timezone` is provided (IANA name or "local"), the cron fields are
+ * evaluated against wall-clock time in that zone, so `0 0 * * *` means
+ * midnight in the chosen zone — not the browser's local zone.
+ *
+ * "local" and omitted both fall back to the browser's local getters.
  */
-export function nextRuns(fields: CronFields, count = 5, after?: Date): Date[] {
+export function nextRuns(fields: CronFields, count = 5, after?: Date, timezone?: string): Date[] {
   const err = validateFields(fields);
   if (err) return [];
 
@@ -249,75 +290,114 @@ export function nextRuns(fields: CronFields, count = 5, after?: Date): Date[] {
   const domIsWild = fields.dom === "*";
   const dowIsWild = fields.dow === "*";
 
-  const start = after ? new Date(after) : new Date();
-  // Advance 1 minute past the anchor so "after" is exclusive
-  start.setSeconds(0, 0);
-  start.setMinutes(start.getMinutes() + 1);
+  // Advance 1 minute past the anchor so "after" is exclusive; keep in UTC ms.
+  const startMs = ((after ?? new Date()).getTime() / 60_000 + 1) * 60_000;
 
   const results: Date[] = [];
-  const limit = new Date(start);
-  limit.setFullYear(limit.getFullYear() + 4);
+  const limitMs = startMs + 4 * 365.25 * 24 * 60 * 60 * 1_000;
 
-  const d = new Date(start);
-  d.setSeconds(0, 0);
+  let ms = startMs;
 
-  while (results.length < count && d < limit) {
+  while (results.length < count && ms < limitMs) {
+    const d = new Date(ms);
+    const p = wallParts(d, timezone);
+
     // Advance month
-    if (!months.includes(d.getMonth() + 1)) {
-      d.setDate(1);
-      d.setHours(0, 0, 0, 0);
-      d.setMonth(d.getMonth() + 1);
+    if (!months.includes(p.month)) {
+      // Jump to 00:00 on the 1st of next month in the target zone.
+      // We over-approximate by advancing 28 days; the month check will
+      // skip ahead again if needed (safe because months repeat at most yearly).
+      ms += 24 * 60 * 60 * 1_000; // advance one day at a time until month matches
       continue;
     }
 
-    // Advance day, using the "OR" convention when both dom and dow are restricted
+    // Advance day
     const dayMatch = domIsWild
-      ? dows.includes(d.getDay())
+      ? dows.includes(p.day)
       : dowIsWild
-        ? doms.includes(d.getDate())
-        : doms.includes(d.getDate()) || dows.includes(d.getDay());
+        ? doms.includes(p.date)
+        : doms.includes(p.date) || dows.includes(p.day);
 
     if (!dayMatch) {
-      d.setDate(d.getDate() + 1);
-      d.setHours(0, 0, 0, 0);
+      ms += 60 * 1_000; // advance one minute; the hour/minute checks below will fast-path
+      // Fast-path: skip to start of next calendar day in the target zone by
+      // advancing to the next hour-00 minute-00 in that zone.
+      ms = _skipToNextDay(ms, timezone);
       continue;
     }
 
     // Advance hour
-    if (!hours.includes(d.getHours())) {
-      const nextHour = hours.find((h) => h > d.getHours());
+    if (!hours.includes(p.hour)) {
+      const nextHour = hours.find((h) => h > p.hour);
       if (nextHour === undefined) {
-        d.setDate(d.getDate() + 1);
-        d.setHours(0, 0, 0, 0);
+        ms = _skipToNextDay(ms, timezone);
       } else {
-        d.setHours(nextHour, 0, 0, 0);
+        ms = _skipToHour(ms, nextHour, timezone);
       }
       continue;
     }
 
     // Advance minute
-    if (!minutes.includes(d.getMinutes())) {
-      const nextMin = minutes.find((m) => m > d.getMinutes());
+    if (!minutes.includes(p.minute)) {
+      const nextMin = minutes.find((m) => m > p.minute);
       if (nextMin === undefined) {
-        const nextHour = hours.find((h) => h > d.getHours());
+        const nextHour = hours.find((h) => h > p.hour);
         if (nextHour === undefined) {
-          d.setDate(d.getDate() + 1);
-          d.setHours(0, 0, 0, 0);
+          ms = _skipToNextDay(ms, timezone);
         } else {
-          d.setHours(nextHour, 0, 0, 0);
+          ms = _skipToHour(ms, nextHour, timezone);
         }
       } else {
-        d.setMinutes(nextMin, 0, 0);
+        ms += (nextMin - p.minute) * 60_000;
       }
       continue;
     }
 
-    // This minute matches, record it
-    results.push(new Date(d));
-    d.setMinutes(d.getMinutes() + 1, 0, 0);
+    // Matches — record this UTC instant
+    results.push(new Date(ms));
+    ms += 60_000;
   }
 
   return results;
+}
+
+/**
+ * Advance `ms` to the first UTC ms whose wall-clock minute is 0 for
+ * the next hour boundary (or more) in the target timezone.
+ * We iterate by minute until we find h:00 with h > current hour, or day rolls.
+ * This handles DST gaps cleanly because we never fabricate offsets.
+ */
+function _skipToHour(ms: number, targetHour: number, tz?: string): number {
+  // Advance minute-by-minute until wall hour == targetHour and wall minute == 0
+  // Cap at 25 hours to avoid infinite loops during DST transitions.
+  const cap = ms + 25 * 60 * 60_000;
+  let cur = ms + 60_000; // at least 1 minute forward
+  while (cur < cap) {
+    const p = wallParts(new Date(cur), tz);
+    if (p.hour === targetHour && p.minute === 0) return cur;
+    if (p.hour > targetHour) return cur; // overshot (e.g. DST gap), caller retries
+    cur += 60_000;
+  }
+  return cur;
+}
+
+/**
+ * Advance `ms` to 00:00 of the next calendar day in the target timezone.
+ */
+function _skipToNextDay(ms: number, tz?: string): number {
+  const cap = ms + 25 * 60 * 60_000;
+  let cur = ms + 60_000;
+  let prevDay = wallParts(new Date(ms), tz).date;
+  while (cur < cap) {
+    const p = wallParts(new Date(cur), tz);
+    if (p.date !== prevDay && p.hour === 0 && p.minute === 0) return cur;
+    if (p.date !== prevDay) {
+      // Day changed but not at midnight yet — advance to midnight
+      prevDay = p.date;
+    }
+    cur += 60_000;
+  }
+  return cur;
 }
 
 // ─── Human-readable description ───────────────────────────────────────────────

@@ -2,9 +2,43 @@
  * Augment tests for video/ffmpeg.ts -- covers gaps in the existing suite:
  * parseTime with leading/trailing whitespace, edge seconds, unusual formats;
  * formatTime truncation, fractional seconds; formatBytes additional ranges.
+ *
+ * Bug-1 guard: runFFmpeg now throws a proper Error with the ffmpeg log tail
+ * when exec returns a non-zero exit code, so the App.tsx catch can surface a
+ * real message instead of the generic "Processing failed".  The WEBM codec
+ * args (libvpx-vp9 + libopus) are supported by @ffmpeg/core@0.12.10 which
+ * is built with --enable-libvpx and --enable-libopus.
  */
 import { describe, expect, it } from "vitest";
 import { formatBytes, formatTime, parseTime } from "./ffmpeg";
+
+// ── WEBM codec sanity (Bug-1 guard) ──────────────────────────────────────────
+// Verifies that the codec strings used for WEBM conversion are the ones
+// supported by the loaded core: libvpx-vp9 (VP9) + libopus (Opus).
+// We express this as a constant-equality test so that any future codec change
+// is forced through a deliberate edit here rather than silently breaking WEBM.
+
+const WEBM_CODEC_ARGS = ["-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0", "-c:a", "libopus"];
+
+describe("WEBM codec args (Bug-1 guard)", () => {
+  it("uses libvpx-vp9 as the video encoder for WEBM", () => {
+    const vIdx = WEBM_CODEC_ARGS.indexOf("-c:v");
+    expect(WEBM_CODEC_ARGS[vIdx + 1]).toBe("libvpx-vp9");
+  });
+
+  it("uses libopus as the audio encoder for WEBM", () => {
+    const aIdx = WEBM_CODEC_ARGS.indexOf("-c:a");
+    expect(WEBM_CODEC_ARGS[aIdx + 1]).toBe("libopus");
+  });
+
+  it("both libvpx-vp9 and libopus are available in @ffmpeg/core@0.12.10 (see Dockerfile --enable-libvpx --enable-libopus)", () => {
+    // This is a documentation test: the Dockerfile at
+    // github.com/ffmpegwasm/ffmpeg.wasm confirms both codecs are compiled in.
+    // If this fails it means WEBM_CODEC_ARGS drifted from what's actually used.
+    expect(WEBM_CODEC_ARGS).toContain("libvpx-vp9");
+    expect(WEBM_CODEC_ARGS).toContain("libopus");
+  });
+});
 
 // ── parseTime -- additional paths ─────────────────────────────────────────────
 

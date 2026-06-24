@@ -252,6 +252,82 @@ describe("nextRuns dom+dow OR semantics", () => {
   });
 });
 
+// ── nextRuns timezone support (Bug-2 guard) ───────────────────────────────
+//
+// `0 0 * * *` (midnight daily) must fire at 00:00 in the selected timezone,
+// not at 00:00 in the browser's local zone.  We use a fixed UTC anchor and
+// verify the wall-clock hour in each target zone.
+
+describe("nextRuns timezone support (Bug-2 guard)", () => {
+  // Anchor: 2024-06-15T12:00:00Z (noon UTC, Saturday)
+  // UTC offset map for this date:
+  //   UTC             = +0    → midnight at 2024-06-16T00:00:00Z
+  //   America/New_York = -4h  → midnight at 2024-06-16T04:00:00Z
+  //   Asia/Tokyo       = +9h  → midnight at 2024-06-15T15:00:00Z (already past anchor)
+  //                           → next midnight is 2024-06-16T15:00:00Z
+  const anchor = new Date("2024-06-15T12:00:00Z");
+
+  function wallHourIn(d: Date, tz: string): number {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: tz,
+      hour: "numeric",
+      hour12: false,
+    }).formatToParts(d);
+    return Number(parts.find((p) => p.type === "hour")?.value ?? "0") % 24;
+  }
+
+  it("UTC: `0 0 * * *` fires at 00:00 UTC", () => {
+    const { fields } = expressionToFields("0 0 * * *");
+    const runs = nextRuns(fields, 1, anchor, "UTC");
+    expect(runs).toHaveLength(1);
+    expect(wallHourIn(runs[0], "UTC")).toBe(0);
+    // Minute should also be 0
+    const minPart = new Intl.DateTimeFormat("en-US", {
+      timeZone: "UTC",
+      minute: "numeric",
+    }).formatToParts(runs[0]);
+    expect(Number(minPart.find((p) => p.type === "minute")?.value)).toBe(0);
+  });
+
+  it("America/New_York: `0 0 * * *` fires at 00:00 Eastern, not 00:00 UTC", () => {
+    const { fields } = expressionToFields("0 0 * * *");
+    const runs = nextRuns(fields, 1, anchor, "America/New_York");
+    expect(runs).toHaveLength(1);
+    // Wall-clock hour in NY should be 0
+    expect(wallHourIn(runs[0], "America/New_York")).toBe(0);
+    // This is NOT 00:00 UTC (NY midnight is 04:00 UTC in summer)
+    expect(runs[0].getUTCHours()).not.toBe(0);
+  });
+
+  it("Asia/Tokyo: `0 0 * * *` fires at 00:00 Japan time", () => {
+    const { fields } = expressionToFields("0 0 * * *");
+    const runs = nextRuns(fields, 1, anchor, "Asia/Tokyo");
+    expect(runs).toHaveLength(1);
+    expect(wallHourIn(runs[0], "Asia/Tokyo")).toBe(0);
+    // Not 00:00 UTC (Tokyo midnight is 15:00 UTC)
+    expect(runs[0].getUTCHours()).not.toBe(0);
+  });
+
+  it("local (no tz arg) still returns 5 results for `*/15`", () => {
+    const { fields } = expressionToFields("*/15 * * * *");
+    const runs = nextRuns(fields, 5, anchor);
+    expect(runs).toHaveLength(5);
+    // All runs are spaced exactly 15 minutes apart
+    for (let i = 1; i < runs.length; i++) {
+      expect(runs[i].getTime() - runs[i - 1].getTime()).toBe(15 * 60_000);
+    }
+  });
+
+  it("UTC: `*/15 * * * *` produces runs spaced 15 min apart", () => {
+    const { fields } = expressionToFields("*/15 * * * *");
+    const runs = nextRuns(fields, 5, anchor, "UTC");
+    expect(runs).toHaveLength(5);
+    for (let i = 1; i < runs.length; i++) {
+      expect(runs[i].getTime() - runs[i - 1].getTime()).toBe(15 * 60_000);
+    }
+  });
+});
+
 // ── describeCron special cases ─────────────────────────────────────────────
 
 describe("describeCron special cases", () => {

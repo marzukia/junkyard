@@ -84,6 +84,9 @@ export function SignTool() {
   });
 
   const pdfViewerContainerRef = useRef<HTMLDivElement>(null);
+  // Synchronous in-flight guard: prevents a native double-click from firing two
+  // downloads before the first `await` yields and `setDownloading(true)` renders.
+  const downloadInFlightRef = useRef(false);
 
   // Wrap setOverlay to track undo history
   const updateOverlay = useCallback(
@@ -186,6 +189,10 @@ export function SignTool() {
 
   const handleDownload = useCallback(async () => {
     if (!pdfBytes || !sigDataUrl) return;
+    // Synchronous guard checked before any await so a second native click
+    // (which arrives before the first render cycle) is dropped.
+    if (downloadInFlightRef.current) return;
+    downloadInFlightRef.current = true;
     setDownloading(true);
     setDownloadDone(false);
     setDownloadError(null);
@@ -245,6 +252,7 @@ export function SignTool() {
       setDownloadError(err instanceof Error ? err.message : String(err));
     } finally {
       setDownloading(false);
+      downloadInFlightRef.current = false;
     }
   }, [
     pdfBytes,

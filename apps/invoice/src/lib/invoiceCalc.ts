@@ -14,6 +14,16 @@ export interface InvoiceTotals {
 /** Round to 2 decimal places, avoiding float drift (e.g. 1.005 -> 1.01). */
 const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
 
+// Maximum representable monetary value: beyond this, arithmetic results are
+// clamped to avoid Infinity/NaN leaking into PDF output.
+const MAX_MONEY = 1e15;
+
+/** Clamp a computed monetary value to a finite range. */
+function clampMoney(n: number): number {
+  if (!Number.isFinite(n)) return 0;
+  return Math.min(MAX_MONEY, Math.max(-MAX_MONEY, n));
+}
+
 /** Compute all monetary totals for an invoice. */
 export function calcTotals(
   items: LineItem[],
@@ -28,23 +38,25 @@ export function calcTotals(
   const clampedDiscountPercent = Math.min(100, Math.max(0, discountPercent));
 
   const subtotal = round2(
-    items.reduce((acc, item) => acc + Math.max(0, item.qty) * item.unitPrice, 0)
+    clampMoney(items.reduce((acc, item) => acc + Math.max(0, item.qty) * item.unitPrice, 0))
   );
-  const discountAmount = round2(subtotal * (clampedDiscountPercent / 100));
-  const taxableAmount = round2(subtotal - discountAmount);
+  const discountAmount = round2(clampMoney(subtotal * (clampedDiscountPercent / 100)));
+  const taxableAmount = round2(clampMoney(subtotal - discountAmount));
   // taxOnGross: tax is applied to pre-discount subtotal; default is net (post-discount)
   const taxBase = taxOnGross ? subtotal : taxableAmount;
-  const taxAmount = round2(taxBase * (clampedTaxRate / 100));
-  const total = round2(taxableAmount + taxAmount + shipping);
-  const balanceDue = round2(Math.max(0, total - amountPaid));
+  const taxAmount = round2(clampMoney(taxBase * (clampedTaxRate / 100)));
+  const clampedShipping = clampMoney(shipping);
+  const total = round2(clampMoney(taxableAmount + taxAmount + clampedShipping));
+  const clampedAmountPaid = clampMoney(amountPaid);
+  const balanceDue = round2(Math.max(0, clampMoney(total - clampedAmountPaid)));
   return {
     subtotal,
     discountAmount,
     taxableAmount,
     taxAmount,
-    shipping,
+    shipping: clampedShipping,
     total,
-    amountPaid,
+    amountPaid: clampedAmountPaid,
     balanceDue,
   };
 }
