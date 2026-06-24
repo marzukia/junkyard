@@ -100,12 +100,17 @@ function DropZone({
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files ?? []);
-      if (files.length) onFiles(files);
+      const all = Array.from(e.target.files ?? []);
+      const images = all.filter((f) => f.type.startsWith("image/"));
+      if (images.length) {
+        onFiles(images);
+      } else if (all.length > 0) {
+        onUnsupported?.();
+      }
       // Reset so same file can be re-added
       if (inputRef.current) inputRef.current.value = "";
     },
-    [onFiles]
+    [onFiles, onUnsupported]
   );
 
   return (

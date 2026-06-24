@@ -19,7 +19,7 @@ const PREVIEW_MAX_W = 720;
 const PREVIEW_MAX_H = 580;
 
 export function App() {
-  const { mode, setMode, aspectId, templateId, addPhotos, cells, undo, canUndo } =
+  const { mode, setMode, aspectId, templateId, addPhotos, addFreeformCard, cells, undo, canUndo } =
     useCollageStore();
 
   const currentAspect = ASPECT_PRESETS.find((p) => p.id === aspectId) ?? ASPECT_PRESETS[0];
@@ -70,6 +70,33 @@ export function App() {
     [mode]
   );
 
+  // Place files onto the freeform pinboard — same card geometry as FreeformCanvas.handleFileAdd.
+  const addFilesAsFreeformCards = useCallback(
+    (files: File[]) => {
+      let x = 0.1;
+      let y = 0.1;
+      for (const file of files) {
+        const url = URL.createObjectURL(file);
+        const id =
+          typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+            ? `card-${crypto.randomUUID()}`
+            : `card-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        addFreeformCard({
+          id,
+          photoUrl: url,
+          x,
+          y,
+          w: 0.3,
+          h: 0.3,
+          rotation: (Math.random() - 0.5) * 10,
+        });
+        x = Math.min(0.6, x + 0.04);
+        y = Math.min(0.6, y + 0.04);
+      }
+    },
+    [addFreeformCard]
+  );
+
   const handleGlobalDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
@@ -77,10 +104,14 @@ export function App() {
       const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith("image/"));
       if (files.length > 0) {
         addPhotos(files);
-        fillEmptyCells(files);
+        if (mode === "freeform") {
+          addFilesAsFreeformCards(files);
+        } else {
+          fillEmptyCells(files);
+        }
       }
     },
-    [addPhotos, fillEmptyCells]
+    [addPhotos, addFilesAsFreeformCards, fillEmptyCells, mode]
   );
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -97,7 +128,11 @@ export function App() {
     const files = Array.from(e.target.files ?? []).filter((f) => f.type.startsWith("image/"));
     if (files.length === 0) return;
     addPhotos(files);
-    fillEmptyCells(files);
+    if (mode === "freeform") {
+      addFilesAsFreeformCards(files);
+    } else {
+      fillEmptyCells(files);
+    }
     e.target.value = "";
   };
 

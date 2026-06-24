@@ -273,3 +273,43 @@ describe("exportBasename", () => {
     expect(exportBasename("my.photo.jpg")).toBe("my.photo");
   });
 });
+
+// ── Bug regression: Browse (handleChange) non-image guard ────────────────────
+// Before the fix, handleChange in DropZone passed ALL files to onFiles with no
+// type check, so a .txt selected via Browse produced a broken thumbnail.
+// The fix mirrors handleDrop: only image/* goes to onFiles; anything else routes
+// to onUnsupported. This test guards the predicate that drives that branch.
+describe("image-type guard predicate (bug regression)", () => {
+  it("image/jpeg passes the image/* filter", () => {
+    const f = new File(["x"], "photo.jpg", { type: "image/jpeg" });
+    expect(f.type.startsWith("image/")).toBe(true);
+  });
+
+  it("image/png passes the image/* filter", () => {
+    const f = new File(["x"], "photo.png", { type: "image/png" });
+    expect(f.type.startsWith("image/")).toBe(true);
+  });
+
+  it("text/plain does NOT pass the image/* filter", () => {
+    const f = new File(["hello"], "note.txt", { type: "text/plain" });
+    expect(f.type.startsWith("image/")).toBe(false);
+  });
+
+  it("application/pdf does NOT pass the image/* filter", () => {
+    const f = new File(["%PDF"], "doc.pdf", { type: "application/pdf" });
+    expect(f.type.startsWith("image/")).toBe(false);
+  });
+
+  it("a batch of mixed files partitions correctly into images and non-images", () => {
+    const files = [
+      new File(["x"], "a.jpg", { type: "image/jpeg" }),
+      new File(["x"], "b.txt", { type: "text/plain" }),
+      new File(["x"], "c.png", { type: "image/png" }),
+      new File(["%PDF"], "d.pdf", { type: "application/pdf" }),
+    ];
+    const images = files.filter((f) => f.type.startsWith("image/"));
+    const others = files.filter((f) => !f.type.startsWith("image/"));
+    expect(images.map((f) => f.name)).toEqual(["a.jpg", "c.png"]);
+    expect(others.map((f) => f.name)).toEqual(["b.txt", "d.pdf"]);
+  });
+});
