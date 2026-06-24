@@ -166,7 +166,7 @@ function describeHours(hrs: number[]): string {
 
 function describeDows(dows: number[]): string {
   if (dows.length === 7) return "every day of the week";
-  if (dows.length === 5 && dows.includes(1) && dows.includes(5) && !dows.includes(0)) return "Monday through Friday";
+  if (dows.length === 5 && [1, 2, 3, 4, 5].every((d) => dows.includes(d))) return "Monday through Friday";
   if (dows.length === 2 && dows.includes(0) && dows.includes(6)) return "Saturday and Sunday";
   if (dows.length === 1) return DOW_NAMES[dows[0]];
   const names = dows.map((d) => DOW_NAMES[d]);

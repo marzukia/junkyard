@@ -519,7 +519,7 @@ function describeHours(hrs: number[]): string {
 
 function describeDows(dows: number[]): string {
   if (dows.length === 7) return "every day of the week";
-  if (dows.length === 5 && dows.includes(1) && dows.includes(5) && !dows.includes(0)) {
+  if (dows.length === 5 && [1, 2, 3, 4, 5].every((d) => dows.includes(d))) {
     return "Monday through Friday";
   }
   if (dows.length === 2 && dows.includes(0) && dows.includes(6)) {

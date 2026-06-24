@@ -24,15 +24,25 @@ const INITIAL: Pick<CleanupState, "phase" | "inputFile" | "inputUrl" | "resultUr
   errorMsg: null,
 };
 
-export const useCleanupStore = create<CleanupState>((set) => ({
+export const useCleanupStore = create<CleanupState>((set, get) => ({
   ...INITIAL,
 
-  setInputFile: (file, url) =>
-    set({ inputFile: file, inputUrl: url, resultUrl: null, errorMsg: null }),
+  setInputFile: (file, url) => {
+    // Revoke prior blobs before replacing to prevent object-URL leaks.
+    const { inputUrl, resultUrl } = get();
+    if (inputUrl) URL.revokeObjectURL(inputUrl);
+    if (resultUrl) URL.revokeObjectURL(resultUrl);
+    set({ inputFile: file, inputUrl: url, resultUrl: null, errorMsg: null });
+  },
 
   setPhase: (phase) => set({ phase }),
 
-  setResult: (url) => set({ resultUrl: url, phase: "done" }),
+  setResult: (url) => {
+    // Revoke the prior result blob (a new one is being stored).
+    const prior = get().resultUrl;
+    if (prior) URL.revokeObjectURL(prior);
+    set({ resultUrl: url, phase: "done" });
+  },
 
   setError: (msg) => set({ errorMsg: msg, phase: "error" }),
 
