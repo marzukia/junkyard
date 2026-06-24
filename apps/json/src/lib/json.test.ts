@@ -226,6 +226,30 @@ describe("repairJson", () => {
   it("throws on deeply malformed JSON that cannot be repaired", () => {
     expect(() => repairJson("not json at all >>>")).toThrow();
   });
+
+  // Regression: repair passes must not mutate content inside double-quoted strings
+  it("preserves comma inside a string value", () => {
+    const input = '{"a":"x ,] y"}';
+    const result = repairJson(input);
+    expect(JSON.parse(result)).toEqual({ a: "x ,] y" });
+  });
+
+  it("preserves apostrophes inside string values without throwing", () => {
+    const input = '{"a":"it\'s","b":"don\'t"}';
+    const result = repairJson(input);
+    expect(JSON.parse(result)).toEqual({ a: "it's", b: "don't" });
+  });
+
+  it("preserves colon and comma inside a string value (see-foo-bar pattern)", () => {
+    const input = '{"note":"see, foo: bar"}';
+    const result = repairJson(input);
+    expect(JSON.parse(result)).toEqual({ note: "see, foo: bar" });
+  });
+
+  it("returns valid JSON unchanged (fast path)", () => {
+    const valid = '{"x":1,"y":[1,2]}';
+    expect(repairJson(valid)).toBe(valid);
+  });
 });
 
 describe("queryJsonPath", () => {
@@ -272,6 +296,20 @@ describe("queryJsonPath", () => {
   it("returns empty array for no matches", () => {
     const results = queryJsonPath(data, "$.store.missing");
     expect(results).toHaveLength(0);
+  });
+
+  // Regression: $..*$ must return descendants only, not include the root itself
+  it("$..*$ returns descendants only (not the root)", () => {
+    const obj = { x: 1, y: { z: 2 } };
+    const results = queryJsonPath(obj, "$..*");
+    // Expected values: 1 (x), {z:2} (y value), 2 (z) = 3 results
+    expect(results).toHaveLength(3);
+    const values = results.map((r) => r.value);
+    expect(values).toContain(1);
+    expect(values).toContain(2);
+    expect(values).toContainEqual({ z: 2 });
+    // Root must not be in results
+    expect(values).not.toContainEqual({ x: 1, y: { z: 2 } });
   });
 
   it("returns root for empty expression", () => {

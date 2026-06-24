@@ -28,11 +28,28 @@ function escHtml(str: string): string {
 }
 
 function renderInline(text: string): string {
-  // Inline code first (highest priority, prevents nested processing inside backticks)
-  return escHtml(text)
-    .replace(/`([^`\n]+)`/g, "<code>$1</code>")
+  const escaped = escHtml(text);
+
+  // Tokenise inline code spans to placeholders before any emphasis pass so
+  // asterisks inside code spans are never treated as emphasis markers.
+  const codePlaceholders: string[] = [];
+  const withoutCode = escaped.replace(/`([^`\n]+)`/g, (_: string, inner: string) => {
+    const idx = codePlaceholders.length;
+    codePlaceholders.push(`<code>${inner}</code>`);
+    return `\x00code${idx}\x00`;
+  });
+
+  // Handle bold+italic (***) before bold (**) so tags nest correctly:
+  //   ***x*** -> <strong><em>x</em></strong>  not  <strong><em>x</strong></em>
+  const withEmphasis = withoutCode
+    .replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+  // Restore code placeholders
+  return withEmphasis.replace(/\x00code(\d+)\x00/g, (_: string, idx: string) => {
+    return codePlaceholders[Number(idx)];
+  });
 }
 
 /** Render a list block. listLines should be the raw lines without the leading marker. */

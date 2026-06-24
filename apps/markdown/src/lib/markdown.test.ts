@@ -236,4 +236,37 @@ describe("extractToc", () => {
   it("returns empty for empty input", () => {
     expect(extractToc("")).toEqual([]);
   });
+
+  // Regression: duplicate heading texts must get deduped slugs so TOC links work
+  it("deduplicates slugs for repeated heading texts", () => {
+    const md = "## Setup\n## Setup\n## Setup";
+    const toc = extractToc(md);
+    expect(toc).toHaveLength(3);
+    expect(toc[0].slug).toBe("setup");
+    expect(toc[1].slug).toBe("setup-1");
+    expect(toc[2].slug).toBe("setup-2");
+  });
+});
+
+// Regression: renderMarkdown must emit id attributes on headings so TOC anchors resolve
+describe("renderMarkdown heading ids", () => {
+  it("emits id on h1", () => {
+    const html = renderMarkdown("# Hello World");
+    expect(html).toMatch(/id="hello-world"/);
+  });
+
+  it("emits deduped ids for repeated headings", () => {
+    const html = renderMarkdown("## Setup\n\n## Setup");
+    expect(html).toContain('id="setup"');
+    expect(html).toContain('id="setup-1"');
+  });
+
+  it("heading ids match extractToc slugs", () => {
+    const md = "# Overview\n## Details\n## Details";
+    const toc = extractToc(md);
+    const html = renderMarkdown(md);
+    for (const entry of toc) {
+      expect(html).toContain(`id="${entry.slug}"`);
+    }
+  });
 });

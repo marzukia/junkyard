@@ -83,4 +83,19 @@ describe("renderMarkdown", () => {
   it("handles blank-line-only input", () => {
     expect(renderMarkdown("\n\n\n")).toBe("");
   });
+
+  // Regression: ***x*** must produce well-nested <strong><em>x</em></strong>
+  it("renders bold-italic (***) with correct tag nesting", () => {
+    const out = renderMarkdown("***hello***");
+    expect(out).toContain("<strong><em>hello</em></strong>");
+    expect(out).not.toContain("<strong><em>hello</strong></em>");
+  });
+
+  // Regression: asterisks inside inline code must not become emphasis
+  it("does not treat asterisks inside inline code as emphasis", () => {
+    const out = renderMarkdown("`a**b**c`");
+    // Should produce a <code> containing literal a**b**c, no <strong> inside
+    expect(out).toContain("<code>a**b**c</code>");
+    expect(out).not.toContain("<strong>");
+  });
 });
