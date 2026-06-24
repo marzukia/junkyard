@@ -53,7 +53,9 @@ export function generatePassword(opts: PasswordOptions): string {
   if (pools.length === 0) throw new Error("At least one character set must be selected");
 
   const alphabet = pools.join("");
-  const required = pools.map((pool) => randomPick(pool.split("")));
+  // Cap required picks at length so we never exceed the requested output size.
+  const requiredPools = pools.slice(0, length);
+  const required = requiredPools.map((pool) => randomPick(pool.split("")));
   const rest: string[] = [];
   for (let i = required.length; i < length; i++) {
     rest.push(randomPick(alphabet.split("")));

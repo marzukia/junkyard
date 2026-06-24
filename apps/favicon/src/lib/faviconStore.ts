@@ -59,19 +59,34 @@ export const useFaviconStore = create<FaviconState>()(
       errorMsg: null,
       progress: 0,
 
-      setSourceMode: (mode) =>
-        set({ sourceMode: mode, previews: [], zipUrl: null, status: "idle" }),
-      setSource: (file, url) =>
-        set({ sourceFile: file, sourceUrl: url, previews: [], zipUrl: null, status: "idle" }),
+      setSourceMode: (mode) => {
+        const prev = get();
+        if (prev.sourceUrl) URL.revokeObjectURL(prev.sourceUrl);
+        if (prev.zipUrl) URL.revokeObjectURL(prev.zipUrl);
+        set({ sourceMode: mode, sourceUrl: null, previews: [], zipUrl: null, status: "idle" });
+      },
+      setSource: (file, url) => {
+        const prev = get();
+        if (prev.sourceUrl) URL.revokeObjectURL(prev.sourceUrl);
+        if (prev.zipUrl) URL.revokeObjectURL(prev.zipUrl);
+        set({ sourceFile: file, sourceUrl: url, previews: [], zipUrl: null, status: "idle" });
+      },
       setSourceText: (text) =>
         set({ sourceText: text, previews: [], zipUrl: null, status: "idle" }),
       setAppName: (name) => set({ appName: name }),
       setCanvasOptions: (opts) => set({ canvasOptions: { ...get().canvasOptions, ...opts } }),
       setPreviews: (previews) => set({ previews }),
-      setZipUrl: (url) => set({ zipUrl: url }),
+      setZipUrl: (url) => {
+        const prev = get();
+        if (prev.zipUrl) URL.revokeObjectURL(prev.zipUrl);
+        set({ zipUrl: url });
+      },
       setStatus: (status, msg) => set({ status, errorMsg: msg ?? null }),
       setProgress: (n) => set({ progress: n }),
-      reset: () =>
+      reset: () => {
+        const prev = get();
+        if (prev.sourceUrl) URL.revokeObjectURL(prev.sourceUrl);
+        if (prev.zipUrl) URL.revokeObjectURL(prev.zipUrl);
         set({
           sourceFile: null,
           sourceUrl: null,
@@ -81,7 +96,8 @@ export const useFaviconStore = create<FaviconState>()(
           status: "idle",
           errorMsg: null,
           progress: 0,
-        }),
+        });
+      },
     }),
     {
       name: "favicon-tool-state",
