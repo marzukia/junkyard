@@ -14,6 +14,12 @@ interface HeaderProps {
    * toggle pills, share buttons). ThemeToggle lives in the utility bar above, not here.
    */
   controls?: ReactNode;
+  /**
+   * Optional full-width vision/accessibility bar rendered below the title block inside
+   * <header>. Wraps in .site-header-vision > .site-header-inner. Used by colours for
+   * its colour-blindness simulation toggle.
+   */
+  visionBar?: ReactNode;
 }
 
 /**
@@ -26,7 +32,7 @@ interface HeaderProps {
  *     <Footer ... />
  *   </div>
  */
-export function Header({ title, subtitle, brandMark, controls }: HeaderProps) {
+export function Header({ title, subtitle, brandMark, controls, visionBar }: HeaderProps) {
   return (
     <>
       <div className="utility-bar">
@@ -44,6 +50,11 @@ export function Header({ title, subtitle, brandMark, controls }: HeaderProps) {
           </h1>
           {controls != null && <div className="header-controls">{controls}</div>}
         </div>
+        {visionBar != null && (
+          <div className="site-header-vision">
+            <div className="site-header-inner">{visionBar}</div>
+          </div>
+        )}
       </header>
     </>
   );
