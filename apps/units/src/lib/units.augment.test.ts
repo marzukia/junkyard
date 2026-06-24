@@ -23,15 +23,15 @@ function approx(a: number, b: number, tol = 1e-6): boolean {
 
 describe("convert -- error paths", () => {
   it("throws for an unknown fromUnit in length", () => {
-    expect(() => convert(1, "zz", "m", "length")).toThrow();
+    expect(() => convert({ value: 1, from: "zz", to: "m", category: "length" })).toThrow();
   });
 
   it("throws for an unknown toUnit in mass", () => {
-    expect(() => convert(1, "kg", "zz", "mass")).toThrow();
+    expect(() => convert({ value: 1, from: "kg", to: "zz", category: "mass" })).toThrow();
   });
 
   it("throws for an unknown temperature unit", () => {
-    expect(() => convert(100, "X", "C", "temperature")).toThrow();
+    expect(() => convert({ value: 100, from: "X", to: "C", category: "temperature" })).toThrow();
   });
 });
 
@@ -39,20 +39,20 @@ describe("convert -- error paths", () => {
 
 describe("convert -- zero input", () => {
   it("0 m to ft is 0", () => {
-    expect(convert(0, "m", "ft", "length")).toBe(0);
+    expect(convert({ value: 0, from: "m", to: "ft", category: "length" })).toBe(0);
   });
 
   it("0 kg to lb is 0", () => {
-    expect(convert(0, "kg", "lb", "mass")).toBe(0);
+    expect(convert({ value: 0, from: "kg", to: "lb", category: "mass" })).toBe(0);
   });
 
   it("0 C to K is 273.15", () => {
     // 0 Celsius = 273.15 Kelvin
-    expect(approx(convert(0, "C", "K", "temperature"), 273.15)).toBe(true);
+    expect(approx(convert({ value: 0, from: "C", to: "K", category: "temperature" }), 273.15)).toBe(true);
   });
 
   it("0 J to cal is 0", () => {
-    expect(convert(0, "J", "cal", "energy")).toBe(0);
+    expect(convert({ value: 0, from: "J", to: "cal", category: "energy" })).toBe(0);
   });
 });
 
@@ -60,15 +60,15 @@ describe("convert -- zero input", () => {
 
 describe("convert -- negative values", () => {
   it("-1 m is -100 cm", () => {
-    expect(approx(convert(-1, "m", "cm", "length"), -100)).toBe(true);
+    expect(approx(convert({ value: -1, from: "m", to: "cm", category: "length" }), -100)).toBe(true);
   });
 
   it("-40 C = -40 F (the crossover)", () => {
-    expect(approx(convert(-40, "C", "F", "temperature"), -40)).toBe(true);
+    expect(approx(convert({ value: -40, from: "C", to: "F", category: "temperature" }), -40)).toBe(true);
   });
 
   it("-273.15 C = 0 K (absolute zero)", () => {
-    expect(approx(convert(-273.15, "C", "K", "temperature"), 0, 1e-9)).toBe(true);
+    expect(approx(convert({ value: -273.15, from: "C", to: "K", category: "temperature" }), 0, 1e-9)).toBe(true);
   });
 });
 
@@ -76,26 +76,26 @@ describe("convert -- negative values", () => {
 
 describe("convert -- roundtrip", () => {
   it("length: ft -> m -> ft", () => {
-    const m = convert(1, "ft", "m", "length");
-    const back = convert(m, "m", "ft", "length");
+    const m = convert({ value: 1, from: "ft", to: "m", category: "length" });
+    const back = convert({ value: m, from: "m", to: "ft", category: "length" });
     expect(approx(back, 1)).toBe(true);
   });
 
   it("temperature: C -> F -> C", () => {
-    const f = convert(25, "C", "F", "temperature");
-    const back = convert(f, "F", "C", "temperature");
+    const f = convert({ value: 25, from: "C", to: "F", category: "temperature" });
+    const back = convert({ value: f, from: "F", to: "C", category: "temperature" });
     expect(approx(back, 25)).toBe(true);
   });
 
   it("data: MB -> bit -> MB", () => {
-    const bits = convert(1, "MB", "bit", "data");
-    const back = convert(bits, "bit", "MB", "data");
+    const bits = convert({ value: 1, from: "MB", to: "bit", category: "data" });
+    const back = convert({ value: bits, from: "bit", to: "MB", category: "data" });
     expect(approx(back, 1)).toBe(true);
   });
 
   it("energy: kWh -> J -> kWh", () => {
-    const j = convert(1, "kWh", "J", "energy");
-    const back = convert(j, "J", "kWh", "energy");
+    const j = convert({ value: 1, from: "kWh", to: "J", category: "energy" });
+    const back = convert({ value: j, from: "J", to: "kWh", category: "energy" });
     expect(approx(back, 1)).toBe(true);
   });
 });
@@ -104,12 +104,12 @@ describe("convert -- roundtrip", () => {
 
 describe("convert -- Rankine", () => {
   it("0 K = 0 R", () => {
-    expect(approx(convert(0, "K", "R", "temperature"), 0)).toBe(true);
+    expect(approx(convert({ value: 0, from: "K", to: "R", category: "temperature" }), 0)).toBe(true);
   });
 
   it("Rankine -> K -> Rankine roundtrip", () => {
-    const k = convert(500, "R", "K", "temperature");
-    const back = convert(k, "K", "R", "temperature");
+    const k = convert({ value: 500, from: "R", to: "K", category: "temperature" });
+    const back = convert({ value: k, from: "K", to: "R", category: "temperature" });
     expect(approx(back, 500)).toBe(true);
   });
 });
@@ -187,9 +187,31 @@ describe("CATEGORIES -- structural invariants", () => {
   it("the base unit's toBase factor is 1 (for non-temperature)", () => {
     for (const cat of CATEGORIES) {
       if (cat.id === "temperature") continue; // toBase unused for temp
+      if (cat.id === "fuel") continue; // l100km has toBase:1 but is inverse-handled
       const base = cat.units.find((u) => u.id === cat.baseUnit);
       expect(base?.toBase).toBe(1);
     }
+  });
+
+  it("speed base unit is mps (not ms)", () => {
+    const speedCat = CATEGORIES.find((c) => c.id === "speed");
+    expect(speedCat?.baseUnit).toBe("mps");
+    const mpsUnit = speedCat?.units.find((u) => u.id === "mps");
+    expect(mpsUnit).toBeDefined();
+    // ms should NOT be in speed category
+    const msUnit = speedCat?.units.find((u) => u.id === "ms");
+    expect(msUnit).toBeUndefined();
+  });
+
+  it("fuel uses canonical ids: mpgUS, mpgUK, l100km (not mpg/mpguk/l100)", () => {
+    const fuelCat = CATEGORIES.find((c) => c.id === "fuel");
+    const ids = fuelCat?.units.map((u) => u.id) ?? [];
+    expect(ids).toContain("mpgUS");
+    expect(ids).toContain("mpgUK");
+    expect(ids).toContain("l100km");
+    expect(ids).not.toContain("mpg");
+    expect(ids).not.toContain("mpguk");
+    expect(ids).not.toContain("l100");
   });
 });
 

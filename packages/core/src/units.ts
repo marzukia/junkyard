@@ -1,5 +1,16 @@
 /**
- * Lifted from apps/units/src/lib/units.ts. Pure math, no browser globals.
+ * Standalone unit conversion tables and convert() for @junkyard/core.
+ *
+ * This file is an independent copy — it does NOT import from kit/lib.
+ * The canonical source for ids, factors, and the convert signature is
+ * kit/lib/unitsData.ts (vendored to apps/units). When changing ids, factors,
+ * or function signatures here, reconcile kit/lib/unitsData.ts in the same PR
+ * and note the sync in that file's header comment.
+ *
+ * Sync-note: convert() uses a NAMED-OPTIONS signature matching kit/lib/unitsData.ts:
+ *   convert({ value, from, to, category })
+ * Fuel ids: kml / mpgUS / mpgUK / l100km (matching canonical, more-precise factors).
+ * Speed base unit: mps (not ms, which is millisecond in time).
  */
 import { z } from "zod";
 import type { ToolDef } from "./types.js";
@@ -205,45 +216,47 @@ export function findUnit(unitId: string): { category: Category; unit: UnitDef } 
   return null;
 }
 
-export function convert(value: number, fromId: string, toId: string, categoryId?: CategoryId): number {
+export interface ConvertOptions {
+  value: number;
+  from: string;
+  to: string;
+  category?: CategoryId;
+}
+
+export function convert({ value, from, to, category }: ConvertOptions): number {
   if (!Number.isFinite(value)) throw new Error(`Cannot convert non-finite value: ${value}`);
 
   // Resolve category from unit IDs if not provided
   let cat: Category | undefined;
-  if (categoryId) {
-    cat = CATEGORIES.find((c) => c.id === categoryId);
+  if (category) {
+    cat = CATEGORIES.find((c) => c.id === category);
   } else {
-    const found = findUnit(fromId);
-    if (!found) throw new Error(`Unknown unit: ${fromId}`);
+    const found = findUnit(from);
+    if (!found) throw new Error(`Unknown unit: ${from}`);
     cat = found.category;
   }
-  if (!cat) throw new Error(`Unknown category: ${String(categoryId)}`);
-
-  // Validate both units exist in this category before early-returning same-unit
-  if (cat.id !== "temperature" && cat.id !== "fuel") {
-    const from = cat.units.find((u) => u.id === fromId);
-    const to = cat.units.find((u) => u.id === toId);
-    if (!from) throw new Error(`Unknown unit: ${fromId}`);
-    if (!to) throw new Error(`Unknown unit: ${toId}`);
-    if (fromId === toId) return value;
-    const result = (value * from.toBase) / to.toBase;
-    if (!Number.isFinite(result)) throw new Error(`Conversion produced non-finite result for ${value} ${fromId} -> ${toId}`);
-    return result;
-  }
-
-  if (fromId === toId) return value;
+  if (!cat) throw new Error(`Unknown category: ${String(category)}`);
 
   if (cat.id === "temperature") {
-    return kelvinToUnit(tempToKelvin(value, fromId), toId);
+    if (from === to) return value;
+    return kelvinToUnit(tempToKelvin(value, from), to);
   }
 
   if (cat.id === "fuel") {
-    const result = kmLToFuel(fuelToKmL(value, fromId), toId);
-    if (!Number.isFinite(result)) throw new Error(`Conversion produced non-finite result: ${value} ${fromId} -> ${toId} (check for zero division)`);
+    if (from === to) return value;
+    const result = kmLToFuel(fuelToKmL(value, from), to);
+    if (!Number.isFinite(result)) throw new Error(`Conversion produced non-finite result: ${value} ${from} -> ${to} (check for zero division)`);
     return result;
   }
 
-  throw new Error("Unreachable");
+  const fromUnit = cat.units.find((u) => u.id === from);
+  const toUnit = cat.units.find((u) => u.id === to);
+  if (!fromUnit) throw new Error(`Unknown unit: ${from}`);
+  if (!toUnit) throw new Error(`Unknown unit: ${to}`);
+  if (from === to) return value;
+  const result = (value * fromUnit.toBase) / toUnit.toBase;
+  if (!Number.isFinite(result)) throw new Error(`Conversion produced non-finite result for ${value} ${from} -> ${to}`);
+  return result;
 }
 
 // ── ToolDef ──────────────────────────────────────────────────────────────────
@@ -262,7 +275,7 @@ export const unitsTool: ToolDef = {
         category: z.string().optional(),
       }),
       run({ value, from, to, category }) {
-        const result = convert(value, from, to, category as CategoryId | undefined);
+        const result = convert({ value, from, to, category: category as CategoryId | undefined });
         return { result, from, to, value };
       },
     },
