@@ -207,7 +207,7 @@ function LoremPanel() {
           {/* Mode toggle */}
           <div className="space-toggle-wrapper">
             <span className="space-toggle-label">Type</span>
-            <div className="space-toggle" role="radiogroup" aria-label="Output type">
+            <div className="space-toggle" role="group" aria-label="Output type">
               {MODE_OPTIONS.map(({ value, label }) => (
                 <button
                   key={value}
@@ -226,7 +226,7 @@ function LoremPanel() {
           {mode === "list" && (
             <div className="space-toggle-wrapper">
               <span className="space-toggle-label">Style</span>
-              <div className="space-toggle" role="radiogroup" aria-label="List style">
+              <div className="space-toggle" role="group" aria-label="List style">
                 <button
                   type="button"
                   className={`space-btn${listStyle === "unordered" ? " space-btn--active" : ""}`}
@@ -275,7 +275,7 @@ function LoremPanel() {
           {/* Word bank */}
           <div className="space-toggle-wrapper space-toggle-wrapper--wrap">
             <span className="space-toggle-label">Style</span>
-            <div className="space-toggle" role="radiogroup" aria-label="Word bank">
+            <div className="space-toggle" role="group" aria-label="Word bank">
               {WORD_BANK_OPTIONS.map(({ value, label }) => (
                 <button
                   key={value}
@@ -566,7 +566,7 @@ function PlaceholderPanel() {
           <div className="placeholder-actions">
             <div className="space-toggle-wrapper">
               <span className="space-toggle-label">Format</span>
-              <div className="space-toggle" role="radiogroup" aria-label="Download format">
+              <div className="space-toggle" role="group" aria-label="Download format">
                 <button
                   type="button"
                   className={`space-btn${format === "svg" ? " space-btn--active" : ""}`}

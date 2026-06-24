@@ -519,7 +519,7 @@ export function App() {
             {/* Preview toggle + panes */}
             <div className="svg-preview-section">
               <div className="svg-preview-toggle-row">
-                <div className="space-toggle" role="radiogroup" aria-label="Preview layout">
+                <div className="space-toggle" role="group" aria-label="Preview layout">
                   {previewMode === "side-by-side" ? (
                     <>
                       <button
@@ -562,7 +562,7 @@ export function App() {
                 {previewMode === "toggle" && (
                   <div
                     className="space-toggle"
-                    role="radiogroup"
+                    role="group"
                     aria-label="Preview mode"
                     style={{ marginLeft: "0.75rem" }}
                   >

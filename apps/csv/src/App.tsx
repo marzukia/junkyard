@@ -325,7 +325,7 @@ export function App() {
             {/* Mode toggle */}
             <div className="space-toggle-wrapper">
               <span className="space-toggle-label">Mode</span>
-              <div className="space-toggle" role="radiogroup" aria-label="Conversion mode">
+              <div className="space-toggle" role="group" aria-label="Conversion mode">
                 <button
                   type="button"
                   className={`space-btn${mode === "csv-to-json" ? " space-btn--active" : ""}`}
@@ -348,7 +348,7 @@ export function App() {
             {/* Delimiter controls (CSV-relevant in both modes) */}
             <div className="space-toggle-wrapper">
               <span className="space-toggle-label">Delim</span>
-              <div className="space-toggle" role="radiogroup" aria-label="CSV delimiter">
+              <div className="space-toggle" role="group" aria-label="CSV delimiter">
                 {mode === "csv-to-json" && (
                   <button
                     type="button"
@@ -377,7 +377,7 @@ export function App() {
             {mode === "csv-to-json" && (
               <div className="space-toggle-wrapper">
                 <span className="space-toggle-label">Header</span>
-                <div className="space-toggle" role="radiogroup" aria-label="Header row">
+                <div className="space-toggle" role="group" aria-label="Header row">
                   <button
                     type="button"
                     className={`space-btn${hasHeader ? " space-btn--active" : ""}`}
@@ -497,7 +497,7 @@ export function App() {
               <span className="csv-panel-label">{outputLabel} output</span>
               {mode === "csv-to-json" && (
                 <div className="space-toggle-wrapper">
-                  <div className="space-toggle" role="radiogroup" aria-label="Output format">
+                  <div className="space-toggle" role="group" aria-label="Output format">
                     {OUTPUT_FORMAT_OPTIONS.map(({ value, label }) => (
                       <button
                         key={value}
@@ -514,7 +514,7 @@ export function App() {
               )}
               {mode === "csv-to-json" && parsed && outputFormat === "json" && (
                 <div className="space-toggle-wrapper">
-                  <div className="space-toggle" role="radiogroup" aria-label="Output view">
+                  <div className="space-toggle" role="group" aria-label="Output view">
                     <button
                       type="button"
                       className={`space-btn${viewMode === "table" ? " space-btn--active" : ""}`}

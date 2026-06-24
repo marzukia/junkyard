@@ -388,7 +388,7 @@ export function App() {
         controls={
           <div className="space-toggle-wrapper">
             <span className="space-toggle-label">Mode</span>
-            <div className="space-toggle" role="radiogroup" aria-label="Input mode">
+            <div className="space-toggle" role="group" aria-label="Input mode">
               <button
                 type="button"
                 className={`space-btn${inputMode === "epoch" ? " space-btn--active" : ""}`}
