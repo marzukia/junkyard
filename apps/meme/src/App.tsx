@@ -104,14 +104,18 @@ export function App() {
         pendingSourceRef.current = img;
         setImage(dataUrl);
       };
+      img.onerror = () => showToast("Couldn't load that image");
       img.src = dataUrl;
     },
-    [setImage]
+    [setImage, showToast]
   );
 
   const handleFileInput = useCallback(
     (file: File) => {
-      if (!file.type.startsWith("image/")) return;
+      if (!file.type.startsWith("image/")) {
+        showToast("Image files only");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result;

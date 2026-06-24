@@ -1,9 +1,7 @@
 # umami-ids.txt
 # Format: <slug> <uuid>  (one entry per line; blank lines and # comments are ignored)
-# Each uuid must be minted in the Umami admin before analytics will be collected.
-#
-# absent from this file. Mint their ids in the Umami admin first, then add them here.
-# See issue #12 for tracking this.
+# Each line: <slug> <umami-website-id>. Every app slug must have an id
+# (CI gate: check-umami-present.mjs). Mint new ids in the Umami admin, then add the line here.
 #
 pdf 337c089f-0511-469b-afd0-8030fb0bdfd8
 convert 18d7beb3-bb22-4ce8-8dd7-49f68d522f85

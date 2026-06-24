@@ -78,9 +78,9 @@ Copy the structure of an existing simple app (e.g. `apps/json/`) as a starting p
 apps/<slug>/
   src/
   public/
-    CNAME          # GH Pages custom domain (see DEPLOY.md for the value)
     favicon.svg
     og.png         # 1200x630
+    og-dark.png    # dark-mode variant
     robots.txt
     sitemap.xml
   index.html

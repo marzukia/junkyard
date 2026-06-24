@@ -97,7 +97,7 @@ Analytics are injected at build time rather than baked into each app's source `i
 - Host configured in `scripts/umami.config.json`: `{ "host": "umami.junkyard.sh" }`
 - Slug-to-UUID mapping in `umami-ids.txt` (one `<slug> <uuid>` pair per line; blank lines and `#` comments are ignored)
 - The injected tag format: `<script defer src="https://umami.junkyard.sh/script.js" data-website-id="<uuid>"></script>`
-- Slugs absent from `umami-ids.txt` (currently `video` and `cleanup`) are skipped; see issue #12
+- Slugs absent from `umami-ids.txt` are skipped with a warning
 
 To add analytics for a new tool: create the Umami website in the admin, then add a `<slug> <uuid>` line to `umami-ids.txt`.
 
