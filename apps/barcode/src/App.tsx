@@ -30,7 +30,7 @@ function ModeSelector({
   return (
     <div className="space-toggle-wrapper">
       <span className="space-toggle-label">Mode</span>
-      <div className="space-toggle" role="radiogroup" aria-label="Tool mode">
+      <div className="space-toggle" role="group" aria-label="Tool mode">
         {(["barcode", "qr", "batch"] as AppMode[]).map((m) => (
           <button
             key={m}
@@ -162,7 +162,7 @@ function FormatSelector({
   return (
     <div className="space-toggle-wrapper">
       <span className="space-toggle-label">Format</span>
-      <div className="space-toggle" role="radiogroup" aria-label="Barcode format">
+      <div className="space-toggle" role="group" aria-label="Barcode format">
         {FORMAT_ORDER.map((fmt) => (
           <button
             key={fmt}

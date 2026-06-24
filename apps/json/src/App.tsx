@@ -403,7 +403,7 @@ export function App() {
             {/* View mode toggle */}
             <div className="space-toggle-wrapper">
               <span className="space-toggle-label">Mode</span>
-              <div className="space-toggle" role="radiogroup" aria-label="Output mode">
+              <div className="space-toggle" role="group" aria-label="Output mode">
                 {VIEW_MODES.map(({ value, label }) => (
                   <button
                     key={value}
@@ -422,7 +422,7 @@ export function App() {
             {viewMode !== "minified" && (
               <div className="space-toggle-wrapper">
                 <span className="space-toggle-label">Indent</span>
-                <div className="space-toggle" role="radiogroup" aria-label="Indent size">
+                <div className="space-toggle" role="group" aria-label="Indent size">
                   {INDENT_OPTIONS.map(({ value, label }) => (
                     <button
                       key={String(value)}

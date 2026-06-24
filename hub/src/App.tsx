@@ -67,6 +67,13 @@ export function App() {
           searchRef={searchRef}
         />
         <main id="yard">
+          <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+            {q
+              ? totalShown === 0
+                ? `No results for "${q}"`
+                : `${totalShown} tool${totalShown !== 1 ? "s" : ""} found for "${q}"`
+              : `${totalShown} tool${totalShown !== 1 ? "s" : ""} shown`}
+          </div>
           {totalShown === 0 ? (
             <div className="empty">
               nothing matches <b>&quot;{q}&quot;</b> - try another search.

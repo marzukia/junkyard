@@ -734,14 +734,18 @@ export function App() {
 
         {/* Loading */}
         {loading && (
-          <div className="hash-status">
+          <div className="hash-status" role="status" aria-live="polite">
             <span className="hash-status-dot hash-status-dot--loading" />
             <span>Computing...</span>
           </div>
         )}
 
         {/* Error */}
-        {error && !loading && <div className="hash-status hash-status--error">{error}</div>}
+        {error && !loading && (
+          <div className="hash-status hash-status--error" role="alert" aria-live="assertive">
+            {error}
+          </div>
+        )}
 
         {/* Results card */}
         {result && !loading && !error && toolMode === "hash" && (

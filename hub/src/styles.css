@@ -5,7 +5,7 @@
   --surface-sunken: #f4f5f6;
   --ink: #1a2530;
   --ink-mid: #5b6671;
-  --ink-faint: #9aa3ac;
+  --ink-faint: #6b747d;
   --rule: #e8eaed;
   --accent: #2f9d8d;
   --accent-ink: #fff;
@@ -13,6 +13,8 @@
   /* darker teal for MCP badge text: #1a6b60 on #eaf6f3 = 5.72:1 (WCAG AA pass) */
   --mcp-badge-ink: #1a6b60;
   --amber: #e8b04b;
+  /* amber-text: dark amber for text on light bg (#8a6a24 on #fafafa = 4.83:1 WCAG AA) */
+  --amber-text: #8a6a24;
   --coral: #d9594c;
   --shadow-card: 0 1px 2px rgba(26, 37, 48, 0.04), 0 8px 28px rgba(26, 37, 48, 0.06);
   --shadow-pop: 0 10px 34px rgba(26, 37, 48, 0.12);
@@ -23,7 +25,7 @@
   --surface-sunken: #161b1f;
   --ink: #e9eef1;
   --ink-mid: #9aa6b0;
-  --ink-faint: #5f6e78;
+  --ink-faint: #7e8f99;
   --rule: #283037;
   --accent: #41b6a6;
   --accent-ink: #0e1518;
@@ -31,6 +33,8 @@
   /* dark mode: use accent directly -- #41b6a6 on #18302c already passes AA */
   --mcp-badge-ink: var(--accent);
   --amber: #e8b04b;
+  /* amber-text: in dark mode amber on dark surface = 8.31:1, fine as-is */
+  --amber-text: #e8b04b;
   --coral: #d9594c;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
   --shadow-pop: 0 10px 34px rgba(0, 0, 0, 0.5);
@@ -456,7 +460,9 @@ header {
   font-weight: 700;
 }
 .pill.warn b {
-  color: var(--amber);
+  /* amber-text is darkened for light mode to meet WCAG AA (4.83:1 on #fafafa);
+     in dark mode it stays #e8b04b (8.31:1 on surface) */
+  color: var(--amber-text);
 }
 .pill.coral b {
   color: var(--coral);
@@ -548,6 +554,11 @@ header {
   color: var(--accent-ink);
   border-color: var(--accent);
   font-weight: 600;
+}
+/* Light mode: #fff on --accent (#2f9d8d) = 3.32:1 (fails AA).
+   Override to dark ink: #1a2530 on #2f9d8d = 4.68:1 (WCAG AA pass). */
+[data-scheme="light"] .chip.on {
+  color: var(--ink);
 }
 .chip .n {
   opacity: 0.6;

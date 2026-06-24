@@ -294,7 +294,7 @@ function BgPicker({ value, customColor, onChange, onCustomColor }: BgPickerProps
   return (
     <div className="bg-bg-picker">
       <span className="bg-bg-picker-label">Background</span>
-      <div className="bg-swatch-group" role="radiogroup" aria-label="Background fill">
+      <div className="bg-swatch-group" role="group" aria-label="Background fill">
         {swatches.map((opt) => (
           <button
             key={opt.id}

@@ -577,7 +577,7 @@ export function App() {
                 {/* Dot style */}
                 <div className="qr-field-group">
                   <span className="qr-field-label">Dot style</span>
-                  <div className="qr-dot-grid" role="radiogroup" aria-label="Dot style">
+                  <div className="qr-dot-grid" role="group" aria-label="Dot style">
                     {DOT_STYLES.map(({ id, label }) => (
                       <button
                         key={id}
@@ -600,7 +600,7 @@ export function App() {
                 {/* Eye style */}
                 <div className="qr-field-group">
                   <span className="qr-field-label">Eye style</span>
-                  <div className="qr-dot-grid" role="radiogroup" aria-label="Eye style">
+                  <div className="qr-dot-grid" role="group" aria-label="Eye style">
                     {EYE_STYLES.map(({ id, label }) => (
                       <button
                         key={id}
@@ -623,7 +623,7 @@ export function App() {
                 {/* Error correction */}
                 <div className="qr-field-group">
                   <span className="qr-field-label">Error correction</span>
-                  <div className="qr-ec-row" role="radiogroup" aria-label="Error correction level">
+                  <div className="qr-ec-row" role="group" aria-label="Error correction level">
                     {EC_LEVELS.map((level) => (
                       <button
                         key={level}
