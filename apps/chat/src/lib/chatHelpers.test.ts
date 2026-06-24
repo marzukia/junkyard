@@ -50,9 +50,9 @@ describe("formatProgress", () => {
 });
 
 describe("hasWebGpu", () => {
-  it("returns false in jsdom (no gpu on navigator)", () => {
+  it("returns false in jsdom (no gpu on navigator)", async () => {
     // jsdom does not expose navigator.gpu
-    expect(hasWebGpu()).toBe(false);
+    expect(await hasWebGpu()).toBe(false);
   });
 });
 

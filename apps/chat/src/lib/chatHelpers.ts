@@ -62,9 +62,20 @@ export function formatProgress(loaded: number, total: number): string {
   return `${Math.min(100, Math.round((loaded / total) * 100))}%`;
 }
 
-/** True if the browser exposes navigator.gpu (WebGPU). */
-export function hasWebGpu(): boolean {
-  return typeof navigator !== "undefined" && "gpu" in navigator;
+/**
+ * True if WebGPU is available AND a GPU adapter can be obtained.
+ * navigator.gpu existing is necessary but not sufficient: Linux Chrome on a
+ * blocklisted GPU passes the property check but requestAdapter() returns null,
+ * causing CreateMLCEngine to throw a raw error instead of showing the banner.
+ */
+export async function hasWebGpu(): Promise<boolean> {
+  if (typeof navigator === "undefined" || !("gpu" in navigator)) return false;
+  try {
+    const adapter = await navigator.gpu.requestAdapter();
+    return adapter !== null;
+  } catch {
+    return false;
+  }
 }
 
 /**

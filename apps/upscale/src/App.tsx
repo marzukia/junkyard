@@ -615,7 +615,11 @@ export function App() {
         {
           onProgress: (loaded, total, status) => {
             setModelProgress(loaded, total, status);
-            setPhase("model-loading");
+            if (status === "done") {
+              setPhase("processing");
+            } else {
+              setPhase("model-loading");
+            }
           },
           onResult: ({ imageBytes, width, height, resultSize: size, format }) => {
             const blob = new Blob([imageBytes], {

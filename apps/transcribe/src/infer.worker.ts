@@ -25,6 +25,9 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
       });
     }
 
+    // Signal that audio decode is starting (runs inside transcribeFile before inference)
+    self.postMessage({ type: "progress", loaded: 0, total: 1, status: "decoding" } as WorkerMsg<TranscriptionResult>);
+
     let chunksProcessed = 0;
     const result = await transcribeFile(
       file,

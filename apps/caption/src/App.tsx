@@ -359,6 +359,7 @@ function BatchPanel({ onStart, disabled, onSample }: BatchPanelProps) {
   const [done, setDone] = useState(false);
   const [batchError, setBatchError] = useState<string | null>(null);
   const cancelRef = useRef(false);
+  const [batchDownloadProgress, setBatchDownloadProgress] = useState<{ loaded: number; total: number } | null>(null);
 
   const handleFiles = useCallback((files: File[]) => {
     const valid = files.filter(isSupportedImage);
@@ -397,7 +398,14 @@ function BatchPanel({ onStart, disabled, onSample }: BatchPanelProps) {
       setItems((prev) => prev.map((it, i) => (i === idx ? { ...it, status: "processing" } : it)));
       try {
         if (!isModelLoaded()) {
-          await loadModel();
+          await loadModel((loaded, total, status) => {
+            if (status !== "done") {
+              setBatchDownloadProgress({ loaded, total });
+            } else {
+              setBatchDownloadProgress(null);
+            }
+          });
+          setBatchDownloadProgress(null);
         }
         const { caption } = await captionImage(items[idx].file, 1);
         const formatted = formatCaption(caption);
@@ -488,7 +496,12 @@ function BatchPanel({ onStart, disabled, onSample }: BatchPanelProps) {
                 Generate captions ({items.length} images)
               </button>
             )}
-            {running && (
+            {running && batchDownloadProgress && (
+              <span className="cap-status-label" aria-live="polite">
+                Downloading model ({formatProgress(batchDownloadProgress.loaded, batchDownloadProgress.total)})...
+              </span>
+            )}
+            {running && !batchDownloadProgress && (
               <span className="cap-status-label">
                 <span className="cap-spinner-inline" aria-label="Processing" /> Captioning...
               </span>
@@ -596,6 +609,8 @@ export function App() {
 
   // "batch" is a local UI mode (not in Phase)
   const [uiMode, setUiMode] = useState<"file" | "url" | "batch">("file");
+  // true while fetchImageFromUrl is in-flight (URL mode only); cleared once we have the File
+  const [urlFetching, setUrlFetching] = useState(false);
   const busy = phase === "model-loading" || phase === "processing";
 
   const { run: runWorker, cancel: cancelWorker } = useWorkerTask<
@@ -649,8 +664,10 @@ export function App() {
     const url = urlInput.trim();
     if (!url) return;
     try {
+      setUrlFetching(true);
       setPhase("processing");
       const file = await fetchImageFromUrl(url);
+      setUrlFetching(false);
       if (!isSupportedImage(file)) {
         setError(`The URL did not return a supported image type. Got: ${file.type}`);
         return;
@@ -659,6 +676,7 @@ export function App() {
       setInputFile(file, blobUrl);
       await runCaptionPipeline(file);
     } catch (err) {
+      setUrlFetching(false);
       const msg = err instanceof Error ? err.message : "Could not load image from URL.";
       setError(msg);
     }
@@ -819,8 +837,8 @@ export function App() {
         {phase === "processing" && (
           <div className="card">
             <div className="cap-status-wrap" role="status" aria-live="polite">
-              <div className="cap-spinner" aria-label="Generating caption..." />
-              <p className="cap-status-label">Generating caption...</p>
+              <div className="cap-spinner" aria-label={urlFetching ? "Fetching image..." : "Generating caption..."} />
+              <p className="cap-status-label">{urlFetching ? "Fetching image..." : "Generating caption..."}</p>
               {inputUrl && (
                 <img
                   src={inputUrl}
