@@ -11,7 +11,7 @@ import { MobileWarning } from "./components/MobileWarning";
 const LARGE_FILE_THRESHOLD = 500 * 1024 * 1024; // 500 MB
 
 type Mode = "trim" | "convert" | "compress" | "gif";
-type ConvertFormat = "mp4" | "webm" | "mov" | "gif";
+type ConvertFormat = "mp4" | "mov" | "gif";
 type ScalePreset = "original" | "1080p" | "720p" | "480p" | "360p";
 
 interface Result {
@@ -142,8 +142,6 @@ export function App() {
       const args: string[] = [];
       if (ext === "gif") {
         args.push("-vf", "fps=10,scale=480:-1:flags=lanczos", "-loop", "0");
-      } else if (ext === "webm") {
-        args.push("-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0", "-c:a", "libopus");
       } else if (ext === "mp4") {
         args.push("-c:v", "libx264", "-crf", "23", "-preset", "fast", "-c:a", "aac");
       } else if (ext === "mov") {
@@ -544,7 +542,7 @@ function ConvertPanel({
   format: ConvertFormat;
   onFormat: (f: ConvertFormat) => void;
 }) {
-  const FORMATS: ConvertFormat[] = ["mp4", "webm", "mov", "gif"];
+  const FORMATS: ConvertFormat[] = ["mp4", "mov", "gif"];
   return (
     <div className="panel-grid">
       <div className="control-group">
@@ -569,7 +567,6 @@ function ConvertPanel({
       </div>
       <p className="panel-hint">
         {format === "mp4" && "H.264 + AAC. Widest compatibility across browsers and devices."}
-        {format === "webm" && "VP9 + Opus. Best for web delivery, smaller files."}
         {format === "mov" && "H.264 + AAC in a QuickTime container. Apple-native."}
         {format === "gif" && "Animated GIF at 10 fps, 480px wide. Lossy palette reduction."}
       </p>

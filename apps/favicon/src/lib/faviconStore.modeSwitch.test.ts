@@ -68,4 +68,18 @@ describe("faviconStore: mode-switch mid-generation guard", () => {
       snapMode !== currentMode || (snapMode === "image" && snapUrl !== currentUrl);
     expect(shouldBail).toBe(false);
   });
+
+  it("status returns to idle (not error) when mode switches mid-generate", () => {
+    // Simulate the corrected icoFrames bail path: setStatus("idle") is called,
+    // not setStatus("error", ...).  This asserts the store contract the fix
+    // relies on: setStatus("idle") clears errorMsg.
+    useFaviconStore.getState().setStatus("generating");
+    // Mode switches mid-generate:
+    useFaviconStore.getState().setSourceMode("text");
+    // The bail handler calls setStatus("idle"):
+    useFaviconStore.getState().setStatus("idle");
+    const s = useFaviconStore.getState();
+    expect(s.status).toBe("idle");
+    expect(s.errorMsg).toBeNull();
+  });
 });

@@ -100,22 +100,40 @@ export function FaviconGenerator() {
 
       setPreviews(previews);
 
-      // Build favicon.ico from 16, 32, 48 frames
+      // Build favicon.ico from 16, 32, 48 frames.
+      // The Promise.all is wrapped in its own try/catch: if the source URL was
+      // revoked mid-await (mode switch), loadImage rejects with "Failed to load
+      // image".  We treat that as a stale-run bail, not an error.
       const icoSizes = [16, 32, 48];
-      const icoFrames = await Promise.all(
-        icoSizes.map(async (sz) => {
-          let canvas: HTMLCanvasElement;
-          if (snapMode === "image" && snapUrl) {
-            const img = await loadImage(snapUrl);
-            canvas = drawToCanvas(img, sz, canvasOptions);
-          } else {
-            canvas = drawTextToCanvas(sourceText.trim(), sz, canvasOptions);
-          }
-          const blob = await canvasToBlob(canvas);
-          const buf = await blob.arrayBuffer();
-          return { size: sz, data: new Uint8Array(buf) };
-        })
-      );
+      let icoFrames: { size: number; data: Uint8Array }[];
+      try {
+        icoFrames = await Promise.all(
+          icoSizes.map(async (sz) => {
+            let canvas: HTMLCanvasElement;
+            if (snapMode === "image" && snapUrl) {
+              const img = await loadImage(snapUrl);
+              canvas = drawToCanvas(img, sz, canvasOptions);
+            } else {
+              canvas = drawTextToCanvas(sourceText.trim(), sz, canvasOptions);
+            }
+            const blob = await canvasToBlob(canvas);
+            const buf = await blob.arrayBuffer();
+            return { size: sz, data: new Uint8Array(buf) };
+          })
+        );
+      } catch (icoErr) {
+        // If source/mode changed during the ico frames build, bail quietly.
+        if (snapMode !== sourceMode || (snapMode === "image" && snapUrl !== sourceUrl)) {
+          setStatus("idle");
+          return;
+        }
+        throw icoErr; // Re-throw genuine errors (unexpected canvas/blob failures).
+      }
+      // Post-Promise.all bail: source may have changed while awaiting frames.
+      if (snapMode !== sourceMode || (snapMode === "image" && snapUrl !== sourceUrl)) {
+        setStatus("idle");
+        return;
+      }
       const icoBytes = buildIco(icoFrames);
       tick();
 

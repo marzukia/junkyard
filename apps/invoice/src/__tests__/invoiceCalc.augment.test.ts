@@ -93,6 +93,36 @@ describe("formatMoney — additional edge and negative cases", () => {
   });
 });
 
+// formatMoney extreme-value / non-finite guard (wave-3 bug #3)
+
+describe("formatMoney — non-finite line-item amounts must never render $∞", () => {
+  it("Infinity renders as $0.00 (clamped), not '$∞'", () => {
+    const result = formatMoney(Infinity, "USD");
+    expect(result).not.toContain("∞");
+    // Must render a valid currency string for zero
+    expect(result).toMatch(/0/);
+  });
+
+  it("-Infinity renders as $0.00 (clamped), not '-$∞'", () => {
+    const result = formatMoney(-Infinity, "USD");
+    expect(result).not.toContain("∞");
+    expect(result).toMatch(/0/);
+  });
+
+  it("NaN renders as $0.00 (clamped), not 'NaN' or '$NaN'", () => {
+    const result = formatMoney(NaN, "USD");
+    expect(result).not.toMatch(/NaN/i);
+    expect(result).toMatch(/0/);
+  });
+
+  it("extreme line-item (qty=1e308, price=1e308) never leaks Infinity into output", () => {
+    // effectiveQty * unitPrice = Infinity; formatMoney must guard this.
+    const result = formatMoney(1e308 * 1e308, "USD");
+    expect(result).not.toContain("∞");
+    expect(result).toMatch(/0/);
+  });
+});
+
 // CURRENCIES constant
 
 describe("CURRENCIES", () => {
