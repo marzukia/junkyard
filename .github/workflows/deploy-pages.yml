@@ -130,6 +130,22 @@ jobs:
           node scripts/vendor-base64url.mjs
           git diff --exit-code -- kit/lib/base64url.ts apps/base64/src/lib/base64url.ts apps/jwt/src/lib/base64url.ts apps/colours/src/lib/base64url.ts
 
+      - name: Check vendored unitsData.ts copies are up to date
+        # Fails if kit/lib/unitsData.ts was changed without running vendor-units.mjs.
+        # unitsData.ts is the canonical unit-ids/factors + convert({value,from,to,category}).
+        # Editing the canonical source without re-vendoring leaves apps/units diverged from kit.
+        run: |
+          node scripts/vendor-units.mjs
+          git diff --exit-code -- kit/lib/unitsData.ts apps/units/src/lib/unitsData.ts
+
+      - name: Check vendored csvParse.ts copies are up to date
+        # Fails if kit/lib/csvParse.ts was changed without running vendor-csvparse.mjs.
+        # csvParse.ts is the canonical RFC 4180 parser + delimiter-detection heuristic.
+        # Editing the canonical source without re-vendoring leaves apps/csv diverged from kit.
+        run: |
+          node scripts/vendor-csvparse.mjs
+          git diff --exit-code -- kit/lib/csvParse.ts apps/csv/src/lib/csvParse.ts
+
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).

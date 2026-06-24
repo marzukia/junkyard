@@ -355,7 +355,7 @@ function AllUnitsCard() {
       <div className="units-allunits-grid">
         {cat.units.map((u) => {
           if (u.id === fromUnit) return null;
-          const result = convert(n, fromUnit, u.id, categoryId);
+          const result = convert({ value: n, from: fromUnit, to: u.id, category: categoryId });
           const formatted = formatResultHuman(result, fullPrecision);
           return (
             <button

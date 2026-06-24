@@ -1,3 +1,16 @@
+/**
+ * Standalone CSV parser for @junkyard/core.
+ *
+ * This file is an independent copy — it does NOT import from kit/lib.
+ * The canonical source for splitCsvRows and detectDelimiter is
+ * kit/lib/csvParse.ts (vendored to apps/csv). When changing parser logic or
+ * the delimiter-detection heuristic here, reconcile kit/lib/csvParse.ts in
+ * the same PR and note the sync in that file's header comment.
+ *
+ * What is canonical in kit/lib/csvParse.ts:
+ *   - splitCsvRows: RFC 4180 quote-state-machine parser
+ *   - detectDelimiter: mean - variance*0.1 heuristic over 5-line sample
+ */
 import { z } from "zod";
 import type { ToolDef } from "./types.js";
 

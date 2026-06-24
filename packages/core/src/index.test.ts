@@ -347,47 +347,47 @@ describe("diff", () => {
 
 describe("units", () => {
   it("converts km to miles", () => {
-    const result = convertUnit(1, "km", "mi");
+    const result = convertUnit({ value: 1, from: "km", to: "mi" });
     expect(result).toBeCloseTo(0.621371, 4);
   });
 
   it("converts Celsius to Fahrenheit", () => {
-    expect(convertUnit(100, "C", "F")).toBeCloseTo(212, 2);
+    expect(convertUnit({ value: 100, from: "C", to: "F" })).toBeCloseTo(212, 2);
   });
 
   it("converts bytes to kilobytes", () => {
-    expect(convertUnit(1000, "B", "KB")).toBeCloseTo(1, 3);
+    expect(convertUnit({ value: 1000, from: "B", to: "KB" })).toBeCloseTo(1, 3);
   });
 
   // Power category (newly added)
   it("converts 1000 W to kW", () => {
-    expect(convertUnit(1000, "W", "kW")).toBeCloseTo(1, 6);
+    expect(convertUnit({ value: 1000, from: "W", to: "kW" })).toBeCloseTo(1, 6);
   });
 
   it("converts 1 hp to watts", () => {
-    expect(convertUnit(1, "hp", "W")).toBeCloseTo(745.69987, 3);
+    expect(convertUnit({ value: 1, from: "hp", to: "W" })).toBeCloseTo(745.69987, 3);
   });
 
   // Force category (newly added)
   it("converts 1 N to lbf", () => {
-    expect(convertUnit(1, "N", "lbf")).toBeCloseTo(0.22481, 3);
+    expect(convertUnit({ value: 1, from: "N", to: "lbf" })).toBeCloseTo(0.22481, 3);
   });
 
   it("converts 1 kgf to N", () => {
-    expect(convertUnit(1, "kgf", "N")).toBeCloseTo(9.80665, 4);
+    expect(convertUnit({ value: 1, from: "kgf", to: "N" })).toBeCloseTo(9.80665, 4);
   });
 
-  // Fuel category (newly added)
+  // Fuel category (canonical ids: mpgUS, mpgUK, l100km)
   it("converts 8 L/100km to km/L (100/8 = 12.5)", () => {
-    expect(convertUnit(8, "l100km", "kml")).toBeCloseTo(12.5, 4);
+    expect(convertUnit({ value: 8, from: "l100km", to: "kml" })).toBeCloseTo(12.5, 4);
   });
 
   it("converts 1 mpg(US) to km/L", () => {
-    expect(convertUnit(1, "mpgUS", "kml")).toBeCloseTo(0.42514371, 5);
+    expect(convertUnit({ value: 1, from: "mpgUS", to: "kml" })).toBeCloseTo(0.42514371, 5);
   });
 
   it("converts 8 L/100km to L/100km (identity)", () => {
-    expect(convertUnit(8, "l100km", "l100km")).toBeCloseTo(8, 6);
+    expect(convertUnit({ value: 8, from: "l100km", to: "l100km" })).toBeCloseTo(8, 6);
   });
 
   // ms disambiguation regression tests
@@ -399,12 +399,12 @@ describe("units", () => {
     expect(found!.unit.label).toMatch(/millisecond/i);
   });
 
-  it("convert(1, 'ms', 's') works as millisecond-to-second", () => {
-    expect(convertUnit(1, "ms", "s")).toBeCloseTo(0.001, 6);
+  it("convert ms->s works as millisecond-to-second", () => {
+    expect(convertUnit({ value: 1, from: "ms", to: "s" })).toBeCloseTo(0.001, 6);
   });
 
-  it("convert(1000, 'ms', 's') = 1 second", () => {
-    expect(convertUnit(1000, "ms", "s")).toBeCloseTo(1, 6);
+  it("convert 1000 ms->s = 1 second", () => {
+    expect(convertUnit({ value: 1000, from: "ms", to: "s" })).toBeCloseTo(1, 6);
   });
 
   it("speed metre/second is reachable as 'mps'", () => {
@@ -414,8 +414,8 @@ describe("units", () => {
     expect(found!.unit.label).toMatch(/metre.second/i);
   });
 
-  it("convert(1, 'mps', 'kmh') = 3.6 km/h", () => {
-    expect(convertUnit(1, "mps", "kmh")).toBeCloseTo(3.6, 4);
+  it("convert 1 mps->kmh = 3.6 km/h", () => {
+    expect(convertUnit({ value: 1, from: "mps", to: "kmh" })).toBeCloseTo(3.6, 4);
   });
 
   it("'ms' id does NOT resolve to the speed category", () => {
@@ -1121,27 +1121,27 @@ describe("base64: reject invalid input (g1-b64-5)", () => {
 
 describe("units: non-finite and unknown unit errors (g1-units-6)", () => {
   it("throws on NaN input", () => {
-    expect(() => convertUnit(NaN, "km", "mi")).toThrow(/non-finite/i);
+    expect(() => convertUnit({ value: NaN, from: "km", to: "mi" })).toThrow(/non-finite/i);
   });
 
   it("throws on Infinity input", () => {
-    expect(() => convertUnit(Infinity, "km", "mi")).toThrow(/non-finite/i);
+    expect(() => convertUnit({ value: Infinity, from: "km", to: "mi" })).toThrow(/non-finite/i);
   });
 
   it("throws on -Infinity input", () => {
-    expect(() => convertUnit(-Infinity, "km", "mi")).toThrow(/non-finite/i);
+    expect(() => convertUnit({ value: -Infinity, from: "km", to: "mi" })).toThrow(/non-finite/i);
   });
 
   it("throws when converting l/100km with value 0 (division by zero)", () => {
-    expect(() => convertUnit(0, "l100km", "kml")).toThrow(/non-finite/);
+    expect(() => convertUnit({ value: 0, from: "l100km", to: "kml" })).toThrow(/non-finite/);
   });
 
   it("throws on unknown unit", () => {
-    expect(() => convertUnit(1, "km", "unknownUnit")).toThrow(/Unknown unit/);
+    expect(() => convertUnit({ value: 1, from: "km", to: "unknownUnit" })).toThrow(/Unknown unit/);
   });
 
   it("same-unit with validation still works", () => {
-    expect(convertUnit(5, "km", "km")).toBe(5);
+    expect(convertUnit({ value: 5, from: "km", to: "km" })).toBe(5);
   });
 });
 

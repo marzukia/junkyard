@@ -1,6 +1,12 @@
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ── Parser (vendored from kit/lib/csvParse.ts) ────────────────────────────────
+// splitCsvRows and detectDelimiter are vendored via scripts/vendor-csvparse.mjs.
+// Do NOT edit csvParse.ts here — edit kit/lib/csvParse.ts and re-run the script.
+export { splitCsvRows, detectDelimiter } from "./csvParse";
+export type { Delimiter } from "./csvParse";
+import { splitCsvRows, detectDelimiter } from "./csvParse";
+import type { Delimiter } from "./csvParse";
 
-export type Delimiter = "," | "\t" | ";" | "|";
+// ── Types ─────────────────────────────────────────────────────────────────────
 export type ConvertMode = "csv-to-json" | "json-to-csv";
 export type OutputFormat = "json" | "markdown" | "sql" | "xml" | "yaml";
 
@@ -44,60 +50,6 @@ export interface ConvertFailure {
 }
 
 export type ConvertResult<T> = ConvertSuccess<T> | ConvertFailure;
-
-// ── Delimiter detection ────────────────────────────────────────────────────────
-
-/**
- * Heuristically detect the delimiter in a CSV string by counting occurrences
- * in the first few lines. Returns the delimiter with the most consistent count.
- */
-export function detectDelimiter(text: string): Delimiter {
-  const sample = text.split("\n").slice(0, 5).join("\n");
-  const candidates: Delimiter[] = [",", "\t", ";", "|"];
-
-  // For each candidate, count occurrences in each line and score by consistency
-  let bestDelim: Delimiter = ",";
-  let bestScore = -1;
-
-  for (const delim of candidates) {
-    const counts = sample
-      .split("\n")
-      .filter((l) => l.trim().length > 0)
-      .map((line) => countDelimiter(line, delim));
-
-    if (counts.length === 0) continue;
-
-    const max = Math.max(...counts);
-    if (max === 0) continue;
-
-    // Score: mean count weighted by consistency (low variance = good)
-    const mean = counts.reduce((a, b) => a + b, 0) / counts.length;
-    const variance = counts.reduce((a, b) => a + (b - mean) ** 2, 0) / counts.length;
-    const score = mean - variance * 0.1;
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestDelim = delim;
-    }
-  }
-
-  return bestDelim;
-}
-
-/** Count how many times a delimiter appears in a line, respecting quoted fields. */
-function countDelimiter(line: string, delim: string): number {
-  let count = 0;
-  let inQuote = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (ch === '"') {
-      inQuote = !inQuote;
-    } else if (!inQuote && ch === delim) {
-      count++;
-    }
-  }
-  return count;
-}
 
 // ── CSV parser ────────────────────────────────────────────────────────────────
 
@@ -171,71 +123,6 @@ function columnLabel(idx: number): string {
     n = Math.floor(n / 26) - 1;
   } while (n >= 0);
   return label;
-}
-
-/**
- * Split a CSV string into an array of rows, each row being an array of field strings.
- * Handles RFC 4180 quoting and embedded newlines.
- */
-export function splitCsvRows(text: string, delimiter: Delimiter): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let field = "";
-  let inQuote = false;
-  const delim = delimiter;
-  let i = 0;
-
-  // Normalise line endings
-  const src = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-
-  while (i < src.length) {
-    const ch = src[i];
-
-    if (inQuote) {
-      if (ch === '"') {
-        // Peek next char: double-quote inside quotes = escaped quote
-        if (src[i + 1] === '"') {
-          field += '"';
-          i += 2;
-        } else {
-          inQuote = false;
-          i++;
-        }
-      } else {
-        field += ch;
-        i++;
-      }
-    } else {
-      if (ch === '"') {
-        inQuote = true;
-        i++;
-      } else if (ch === delim) {
-        row.push(field);
-        field = "";
-        i++;
-      } else if (ch === "\n") {
-        row.push(field);
-        field = "";
-        // Skip empty trailing rows
-        if (row.length > 1 || row[0] !== "") {
-          rows.push(row);
-        }
-        row = [];
-        i++;
-      } else {
-        field += ch;
-        i++;
-      }
-    }
-  }
-
-  // Flush last field/row
-  row.push(field);
-  if (row.length > 1 || row[0] !== "") {
-    rows.push(row);
-  }
-
-  return rows;
 }
 
 // ── CSV -> JSON ───────────────────────────────────────────────────────────────

@@ -56,7 +56,7 @@ function defaultUnits(categoryId: CategoryId): { fromUnit: string; toUnit: strin
     case "force":
       return { fromUnit: "N", toUnit: "lbf" };
     case "fuel":
-      return { fromUnit: "mpg", toUnit: "kml" };
+      return { fromUnit: "mpgUS", toUnit: "kml" };  // canonical: mpgUS (not mpg)
   }
 }
 
@@ -81,7 +81,7 @@ function computeResult(
   if (!Number.isFinite(n)) {
     return { resultValue: "—", resultNumeric: Number.NaN, inputIsInvalid: true };
   }
-  const result = convert(n, fromUnit, toUnit, cat);
+  const result = convert({ value: n, from: fromUnit, to: toUnit, category: cat });
   return {
     resultValue: formatResultHuman(result, fullPrecision),
     resultNumeric: result,

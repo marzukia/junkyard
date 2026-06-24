@@ -19,136 +19,143 @@ function approx(a: number, b: number, tol = 1e-6): boolean {
 
 describe("convert — length", () => {
   it("1 mile = 1.609344 km", () => {
-    expect(approx(convert(1, "mi", "km", "length"), 1.609344)).toBe(true);
+    expect(approx(convert({ value: 1, from: "mi", to: "km", category: "length" }), 1.609344)).toBe(true);
   });
   it("1 foot = 0.3048 m", () => {
-    expect(approx(convert(1, "ft", "m", "length"), 0.3048)).toBe(true);
+    expect(approx(convert({ value: 1, from: "ft", to: "m", category: "length" }), 0.3048)).toBe(true);
   });
   it("1 inch = 2.54 cm", () => {
-    expect(approx(convert(1, "in", "cm", "length"), 2.54)).toBe(true);
+    expect(approx(convert({ value: 1, from: "in", to: "cm", category: "length" }), 2.54)).toBe(true);
   });
   it("same unit returns same value", () => {
-    expect(convert(42, "m", "m", "length")).toBe(42);
+    expect(convert({ value: 42, from: "m", to: "m", category: "length" })).toBe(42);
   });
   it("1 nmi = 1852 m", () => {
-    expect(approx(convert(1, "nmi", "m", "length"), 1852)).toBe(true);
+    expect(approx(convert({ value: 1, from: "nmi", to: "m", category: "length" }), 1852)).toBe(true);
   });
 });
 
 describe("convert — mass", () => {
   it("1 lb = 0.45359237 kg", () => {
-    expect(approx(convert(1, "lb", "kg", "mass"), 0.45359237)).toBe(true);
+    expect(approx(convert({ value: 1, from: "lb", to: "kg", category: "mass" }), 0.45359237)).toBe(true);
   });
   it("1 oz ≈ 28.3495 g", () => {
-    expect(approx(convert(1, "oz", "g", "mass"), 28.34952, 1e-5)).toBe(true);
+    expect(approx(convert({ value: 1, from: "oz", to: "g", category: "mass" }), 28.34952, 1e-5)).toBe(true);
   });
   it("1 stone = 14 lb", () => {
-    expect(approx(convert(1, "st", "lb", "mass"), 14, 1e-5)).toBe(true);
+    expect(approx(convert({ value: 1, from: "st", to: "lb", category: "mass" }), 14, 1e-5)).toBe(true);
   });
 });
 
 describe("convert — temperature", () => {
   it("0°C = 32°F", () => {
-    expect(approx(convert(0, "C", "F", "temperature"), 32)).toBe(true);
+    expect(approx(convert({ value: 0, from: "C", to: "F", category: "temperature" }), 32)).toBe(true);
   });
   it("100°C = 212°F", () => {
-    expect(approx(convert(100, "C", "F", "temperature"), 212)).toBe(true);
+    expect(approx(convert({ value: 100, from: "C", to: "F", category: "temperature" }), 212)).toBe(true);
   });
   it("0°C = 273.15K", () => {
-    expect(approx(convert(0, "C", "K", "temperature"), 273.15)).toBe(true);
+    expect(approx(convert({ value: 0, from: "C", to: "K", category: "temperature" }), 273.15)).toBe(true);
   });
   it("-40°C = -40°F", () => {
-    expect(approx(convert(-40, "C", "F", "temperature"), -40)).toBe(true);
+    expect(approx(convert({ value: -40, from: "C", to: "F", category: "temperature" }), -40)).toBe(true);
   });
   it("32°F = 0°C", () => {
-    expect(approx(convert(32, "F", "C", "temperature"), 0)).toBe(true);
+    expect(approx(convert({ value: 32, from: "F", to: "C", category: "temperature" }), 0)).toBe(true);
   });
   it("0K = -273.15°C", () => {
-    expect(approx(convert(0, "K", "C", "temperature"), -273.15)).toBe(true);
+    expect(approx(convert({ value: 0, from: "K", to: "C", category: "temperature" }), -273.15)).toBe(true);
   });
   it("491.67°R = 32°F", () => {
-    expect(approx(convert(491.67, "R", "F", "temperature"), 32, 1e-4)).toBe(true);
+    expect(approx(convert({ value: 491.67, from: "R", to: "F", category: "temperature" }), 32, 1e-4)).toBe(true);
   });
 });
 
 describe("convert — area", () => {
   it("1 ha = 10000 m²", () => {
-    expect(approx(convert(1, "ha", "m2", "area"), 10000)).toBe(true);
+    expect(approx(convert({ value: 1, from: "ha", to: "m2", category: "area" }), 10000)).toBe(true);
   });
   it("1 ac ≈ 0.404686 ha", () => {
-    expect(approx(convert(1, "ac", "ha", "area"), 0.404686, 1e-5)).toBe(true);
+    expect(approx(convert({ value: 1, from: "ac", to: "ha", category: "area" }), 0.404686, 1e-5)).toBe(true);
   });
 });
 
 describe("convert — volume", () => {
   it("1 gal = 3.785412 l", () => {
-    expect(approx(convert(1, "gal", "l", "volume"), 3.785412)).toBe(true);
+    expect(approx(convert({ value: 1, from: "gal", to: "l", category: "volume" }), 3.785412)).toBe(true);
   });
   it("1 cup = 236.5882 ml", () => {
-    expect(approx(convert(1, "cup", "ml", "volume"), 236.5882, 1e-4)).toBe(true);
+    expect(approx(convert({ value: 1, from: "cup", to: "ml", category: "volume" }), 236.5882, 1e-4)).toBe(true);
   });
 });
 
 describe("convert — speed", () => {
   it("1 mph ≈ 1.60934 km/h", () => {
-    expect(approx(convert(1, "mph", "kmh", "speed"), 1.60934, 1e-4)).toBe(true);
+    expect(approx(convert({ value: 1, from: "mph", to: "kmh", category: "speed" }), 1.60934, 1e-4)).toBe(true);
   });
   it("1 knot ≈ 1.852 km/h", () => {
-    expect(approx(convert(1, "kn", "kmh", "speed"), 1.852, 1e-4)).toBe(true);
+    expect(approx(convert({ value: 1, from: "kn", to: "kmh", category: "speed" }), 1.852, 1e-4)).toBe(true);
+  });
+  it("1 mps = 3.6 kmh (canonical speed base unit)", () => {
+    expect(approx(convert({ value: 1, from: "mps", to: "kmh", category: "speed" }), 3.6, 1e-5)).toBe(true);
   });
 });
 
 describe("convert — data", () => {
   it("1 GB = 1000 MB", () => {
-    expect(approx(convert(1, "GB", "MB", "data"), 1000)).toBe(true);
+    expect(approx(convert({ value: 1, from: "GB", to: "MB", category: "data" }), 1000)).toBe(true);
   });
   it("1 GiB ≈ 1.07374 GB", () => {
-    expect(approx(convert(1, "GiB", "GB", "data"), 1.073741824)).toBe(true);
+    expect(approx(convert({ value: 1, from: "GiB", to: "GB", category: "data" }), 1.073741824)).toBe(true);
   });
   it("1 B = 8 bits", () => {
-    expect(approx(convert(1, "B", "bit", "data"), 8)).toBe(true);
+    expect(approx(convert({ value: 1, from: "B", to: "bit", category: "data" }), 8)).toBe(true);
   });
 });
 
 describe("convert — time", () => {
   it("1 day = 24 hours", () => {
-    expect(approx(convert(1, "d", "h", "time"), 24)).toBe(true);
+    expect(approx(convert({ value: 1, from: "d", to: "h", category: "time" }), 24)).toBe(true);
   });
   it("1 week = 7 days", () => {
-    expect(approx(convert(1, "wk", "d", "time"), 7)).toBe(true);
+    expect(approx(convert({ value: 1, from: "wk", to: "d", category: "time" }), 7)).toBe(true);
   });
   it("1 hour = 60 minutes", () => {
-    expect(approx(convert(1, "h", "min", "time"), 60)).toBe(true);
+    expect(approx(convert({ value: 1, from: "h", to: "min", category: "time" }), 60)).toBe(true);
+  });
+  it("ms is millisecond (time category), not speed", () => {
+    // ms = 0.001 seconds
+    expect(approx(convert({ value: 1000, from: "ms", to: "s", category: "time" }), 1)).toBe(true);
   });
 });
 
 describe("convert — pressure", () => {
   it("1 atm = 101.325 kPa", () => {
-    expect(approx(convert(1, "atm", "kPa", "pressure"), 101.325)).toBe(true);
+    expect(approx(convert({ value: 1, from: "atm", to: "kPa", category: "pressure" }), 101.325)).toBe(true);
   });
   it("1 bar ≈ 14.5038 psi", () => {
-    expect(approx(convert(1, "bar", "psi", "pressure"), 14.5038, 1e-4)).toBe(true);
+    expect(approx(convert({ value: 1, from: "bar", to: "psi", category: "pressure" }), 14.5038, 1e-4)).toBe(true);
   });
 });
 
 describe("convert — energy", () => {
   it("1 kcal = 4.184 kJ", () => {
-    expect(approx(convert(1, "kcal", "kJ", "energy"), 4.184)).toBe(true);
+    expect(approx(convert({ value: 1, from: "kcal", to: "kJ", category: "energy" }), 4.184)).toBe(true);
   });
   it("1 kWh = 3.6 MJ", () => {
-    expect(approx(convert(1, "kWh", "MJ", "energy"), 3.6)).toBe(true);
+    expect(approx(convert({ value: 1, from: "kWh", to: "MJ", category: "energy" }), 3.6)).toBe(true);
   });
   it("1 BTU ≈ 1.05506 kJ", () => {
-    expect(approx(convert(1, "BTU", "kJ", "energy"), 1.05506, 1e-4)).toBe(true);
+    expect(approx(convert({ value: 1, from: "BTU", to: "kJ", category: "energy" }), 1.05506, 1e-4)).toBe(true);
   });
 });
 
 describe("convert — edge cases", () => {
   it("NaN input throws a clear error", () => {
-    expect(() => convert(Number.NaN, "m", "ft", "length")).toThrow(/non-finite/i);
+    expect(() => convert({ value: Number.NaN, from: "m", to: "ft", category: "length" })).toThrow(/non-finite/i);
   });
   it("Infinity input throws a clear error", () => {
-    expect(() => convert(Number.POSITIVE_INFINITY, "m", "ft", "length")).toThrow(/non-finite/i);
+    expect(() => convert({ value: Number.POSITIVE_INFINITY, from: "m", to: "ft", category: "length" })).toThrow(/non-finite/i);
   });
 });
 
@@ -179,55 +186,59 @@ describe("formatResult", () => {
 
 describe("convert — angle", () => {
   it("180 degrees = pi radians", () => {
-    expect(approx(convert(180, "deg", "rad", "angle"), Math.PI, 1e-9)).toBe(true);
+    expect(approx(convert({ value: 180, from: "deg", to: "rad", category: "angle" }), Math.PI, 1e-9)).toBe(true);
   });
   it("1 revolution = 360 degrees", () => {
-    expect(approx(convert(1, "rev", "deg", "angle"), 360)).toBe(true);
+    expect(approx(convert({ value: 1, from: "rev", to: "deg", category: "angle" }), 360)).toBe(true);
   });
   it("90 degrees = 100 gradians", () => {
-    expect(approx(convert(90, "deg", "grad", "angle"), 100)).toBe(true);
+    expect(approx(convert({ value: 90, from: "deg", to: "grad", category: "angle" }), 100)).toBe(true);
   });
   it("1 degree = 60 arcminutes", () => {
-    expect(approx(convert(1, "deg", "arcmin", "angle"), 60)).toBe(true);
+    expect(approx(convert({ value: 1, from: "deg", to: "arcmin", category: "angle" }), 60)).toBe(true);
   });
 });
 
 describe("convert — power", () => {
   it("1 hp ~= 0.74570 kW", () => {
-    expect(approx(convert(1, "hp", "kW", "power"), 0.74569987, 1e-5)).toBe(true);
+    expect(approx(convert({ value: 1, from: "hp", to: "kW", category: "power" }), 0.74569987, 1e-5)).toBe(true);
   });
   it("1 kW = 1000 W", () => {
-    expect(approx(convert(1, "kW", "W", "power"), 1000)).toBe(true);
+    expect(approx(convert({ value: 1, from: "kW", to: "W", category: "power" }), 1000)).toBe(true);
   });
 });
 
 describe("convert — force", () => {
   it("1 lbf ~= 4.44822 N", () => {
-    expect(approx(convert(1, "lbf", "N", "force"), 4.4482216, 1e-5)).toBe(true);
+    expect(approx(convert({ value: 1, from: "lbf", to: "N", category: "force" }), 4.4482216, 1e-5)).toBe(true);
   });
   it("1 kgf ~= 9.80665 N", () => {
-    expect(approx(convert(1, "kgf", "N", "force"), 9.80665, 1e-5)).toBe(true);
+    expect(approx(convert({ value: 1, from: "kgf", to: "N", category: "force" }), 9.80665, 1e-5)).toBe(true);
   });
 });
 
 describe("convert — fuel economy", () => {
-  it("1 mpg (US) ~= 0.425144 km/L", () => {
-    expect(approx(convert(1, "mpg", "kml", "fuel"), 0.425144, 1e-5)).toBe(true);
+  it("1 mpgUS ~= 0.42514371 km/L (canonical factor)", () => {
+    // canonical id: mpgUS (not mpg); canonical factor: 0.42514371
+    expect(approx(convert({ value: 1, from: "mpgUS", to: "kml", category: "fuel" }), 0.42514371, 1e-6)).toBe(true);
   });
   it("10 L/100km = 10 km/L inverse", () => {
-    // 10 L/100km = 100/10 = 10 km/L
-    expect(approx(convert(10, "l100", "kml", "fuel"), 10)).toBe(true);
+    // canonical id: l100km (not l100)
+    expect(approx(convert({ value: 10, from: "l100km", to: "kml", category: "fuel" }), 10)).toBe(true);
   });
-  it("30 mpg -> L/100km roundtrip", () => {
-    const kml = convert(30, "mpg", "kml", "fuel");
-    const back = convert(kml, "kml", "mpg", "fuel");
+  it("30 mpgUS -> L/100km roundtrip", () => {
+    const kml = convert({ value: 30, from: "mpgUS", to: "kml", category: "fuel" });
+    const back = convert({ value: kml, from: "kml", to: "mpgUS", category: "fuel" });
     expect(approx(back, 30, 1e-5)).toBe(true);
   });
   it("L/100km with 0 throws (division by zero)", () => {
-    expect(() => convert(0, "l100", "kml", "fuel")).toThrow(/non-finite/i);
+    expect(() => convert({ value: 0, from: "l100km", to: "kml", category: "fuel" })).toThrow(/non-finite/i);
   });
   it("same unit returns same value", () => {
-    expect(convert(25, "mpg", "mpg", "fuel")).toBe(25);
+    expect(convert({ value: 25, from: "mpgUS", to: "mpgUS", category: "fuel" })).toBe(25);
+  });
+  it("1 mpgUK ~= 0.35400620 km/L (canonical factor)", () => {
+    expect(approx(convert({ value: 1, from: "mpgUK", to: "kml", category: "fuel" }), 0.35400620, 1e-6)).toBe(true);
   });
 });
 
