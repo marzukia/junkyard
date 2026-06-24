@@ -4,7 +4,7 @@
 
 Each tool declares itself in a single file: `apps/<slug>/junkyard.ts`. This file exports a typed `JunkyardApp` object (schema in `scripts/catalogue-schema.ts`) containing the tool's metadata, category, runtime type, and MCP exposure information.
 
-`scripts/gen-catalogue.ts` reads all 44 of these files, validates them, and emits two artifacts:
+`scripts/gen-catalogue.ts` reads all 45 of these files, validates them, and emits two artifacts:
 
 - `hub/src/catalogue.generated.ts` - a typed `TOOLS` array imported by the hub React app
 - `hub/public/catalogue.json` - the full catalogue served at `/catalogue.json`, consumed by the AppSwitcher nav component at runtime
@@ -49,9 +49,9 @@ Each is exported as a `ToolDef` with a `slug`, a description, and an array of `T
 
 ## Client-only tools
 
-The remaining 27 tools are browser-only and cannot be made headless:
+The remaining 28 tools are browser-only and cannot be made headless:
 
-- **Browser API tools** (file reading, Canvas, Blob URLs): `convert, crop, exif, favicon, gif, meme, ocr, og, pdf, screenshot, sign, svg`
+- **Browser API tools** (file reading, Canvas, Blob URLs, screen capture): `convert, crop, exif, favicon, gif, meme, ocr, og, pdf, screenshot, screen-recorder, sign, svg`
 - **In-browser AI** (transformers.js WASM, WebLLM/WebGPU): `bg, caption, chat, cleanup, depth, summarize, transcribe, translate, upscale`
 - **Rich editor tools** (DOM, contenteditable, interactive state): `collage, css, invoice, resume, subs, video`
 
@@ -61,8 +61,8 @@ These are catalogued with `runtime: "client"` or `runtime: "client-ai"` and `mcp
 
 junkyard deliberately has **no root `package.json` / monorepo workspace**. Each `apps/<slug>` is a fully standalone Vite app with its own `package.json` + `bun.lock`, installed and built independently. This is intentional:
 
-- The 44 apps have divergent, sometimes conflicting dependency versions (different transformers.js / pdf-lib / ffmpeg pins). A single hoisted workspace `node_modules` risks cross-app version bleed and breaking individual vite builds.
+- The 45 apps have divergent, sometimes conflicting dependency versions (different transformers.js / pdf-lib / ffmpeg pins). A single hoisted workspace `node_modules` risks cross-app version bleed and breaking individual vite builds.
 - Each app stays portable (can be lifted out or deployed on its own).
 - `scripts/build-site.sh` already parallelizes the per-app `bun install` phase, so there is no single `bun install` for everything but the install cost is bounded.
 
-Trade-off: there is no one-shot `bun install` at the root, and shared code is vendored (AppSwitcher, ThemeToggle, MobileWarning, transformersEnv) via `scripts/vendor-*.mjs` rather than imported from a shared package. A future migration to a real workspace is tracked as a known item but is not planned, since it would change install hoisting across all 44 apps and must be full-build-verified.
+Trade-off: there is no one-shot `bun install` at the root, and shared code is vendored (AppSwitcher, ThemeToggle, MobileWarning, transformersEnv) via `scripts/vendor-*.mjs` rather than imported from a shared package. A future migration to a real workspace is tracked as a known item but is not planned, since it would change install hoisting across all 45 apps and must be full-build-verified.
