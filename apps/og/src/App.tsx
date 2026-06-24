@@ -8,17 +8,21 @@ import { OgCanvas, exportToPng } from "./components/OgCanvas";
 import { useOgStore } from "./store";
 
 type CopyState = "idle" | "copying" | "copied" | "error";
+type DownloadState = "idle" | "downloading" | "error";
 
 export function App() {
   const config = useOgStore((s) => s.config);
   const canvasWidth = useOgStore((s) => s.canvasWidth);
   const canvasHeight = useOgStore((s) => s.canvasHeight);
-  const [downloading, setDownloading] = useState(false);
+  const [downloadState, setDownloadState] = useState<DownloadState>("idle");
   const [copyState, setCopyState] = useState<CopyState>("idle");
   const [showMeta, setShowMeta] = useState(false);
 
+  const downloading = downloadState === "downloading";
+
   async function handleDownload() {
-    setDownloading(true);
+    if (downloadState !== "idle") return;
+    setDownloadState("downloading");
     try {
       const blob = await exportToPng(config, canvasWidth, canvasHeight);
       const url = URL.createObjectURL(blob);
@@ -29,10 +33,11 @@ export function App() {
       setTimeout(() => URL.revokeObjectURL(url), 10000);
       // Reveal the meta snippet on first successful export
       setShowMeta(true);
+      setDownloadState("idle");
     } catch (err) {
       console.error("Export failed", err);
-    } finally {
-      setDownloading(false);
+      setDownloadState("error");
+      setTimeout(() => setDownloadState("idle"), 2500);
     }
   }
 
@@ -108,13 +113,18 @@ export function App() {
                 </button>
                 <button
                   type="button"
-                  className="btn-primary"
+                  className={`btn-primary${downloadState === "error" ? " og-copy-btn--err" : ""}`}
                   onClick={handleDownload}
                   disabled={downloading}
                   aria-busy={downloading}
+                  aria-live="polite"
                   title="Download PNG (Ctrl+Enter / Cmd+Enter)"
                 >
-                  {downloading ? "Generating..." : "Download PNG"}
+                  {downloadState === "downloading"
+                    ? "Generating..."
+                    : downloadState === "error"
+                      ? "Download failed"
+                      : "Download PNG"}
                 </button>
               </div>
             </div>

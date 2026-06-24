@@ -48,6 +48,7 @@ export function ControlPanel() {
   const [copying, setCopying] = useState(false);
   const [copyFlash, setCopyFlash] = useState(false);
   const [exportFormat, setExportFormat] = useState<"png" | "jpg">("png");
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const currentAspect = ASPECT_PRESETS.find((p) => p.id === aspectId) ?? ASPECT_PRESETS[0];
   const currentTemplate = LAYOUT_TEMPLATES.find((t) => t.id === templateId) ?? LAYOUT_TEMPLATES[0];
@@ -108,11 +109,13 @@ export function ControlPanel() {
   const handleExport = async () => {
     if (exporting) return;
     setExporting(true);
+    setExportError(null);
     try {
       const blob = await buildBlob(exportFormat);
       downloadBlob(blob, exportFilename(exportFormat));
     } catch (err) {
       console.error("Export failed:", err);
+      setExportError(`Download failed: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setExporting(false);
     }
@@ -370,6 +373,20 @@ export function ControlPanel() {
             </button>
           )}
         </div>
+        {exportError && (
+          <p
+            role="alert"
+            aria-live="polite"
+            style={{
+              fontSize: "0.72rem",
+              color: "var(--error, #c0392b)",
+              marginTop: "0.5rem",
+              fontFamily: "var(--font-mono)",
+            }}
+          >
+            {exportError}
+          </p>
+        )}
         <p
           style={{
             fontSize: "0.68rem",

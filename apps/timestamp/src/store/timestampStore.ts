@@ -50,8 +50,12 @@ function deriveFromEpoch(
   if (epochInput.trim() === "") return { result: null, parseError: null };
   const parsed = parseEpochString(epochInput);
   if (!parsed) return { result: null, parseError: "Not a valid epoch number." };
-  const result = convertEpoch(parsed.epochMs, timezone, nowMs);
-  return { result, parseError: null };
+  try {
+    const result = convertEpoch(parsed.epochMs, timezone, nowMs);
+    return { result, parseError: null };
+  } catch {
+    return { result: null, parseError: "Timestamp out of range." };
+  }
 }
 
 function deriveFromDate(

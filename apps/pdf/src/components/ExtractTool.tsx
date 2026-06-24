@@ -37,17 +37,17 @@ export function ExtractTool() {
 
   const extract = async () => {
     if (!file) return;
-    const indices = parsePageRange(rangeStr, totalPages);
-    if (indices.length === 0) {
-      setError(
-        `No valid pages in range "${rangeStr}". Enter e.g. "1,3-5" (max page: ${totalPages}).`
-      );
-      return;
-    }
     setBusy(true);
     setError(null);
     setDone(false);
     try {
+      const indices = parsePageRange(rangeStr, totalPages);
+      if (indices.length === 0) {
+        setError(
+          `No valid pages in range "${rangeStr}". Enter e.g. "1,3-5" (max page: ${totalPages}).`
+        );
+        return;
+      }
       const bytes = new Uint8Array(await file.arrayBuffer());
       const result = await extractPages(bytes, indices);
       downloadBytes(result, `${baseName(file.name)}-extract.pdf`);
