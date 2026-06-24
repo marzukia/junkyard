@@ -129,7 +129,39 @@ export const INPUT_LIMITS: Record<string, number> = {
   markdown: 100_000,
   // base64.decode takes an `encoded` argument
   encoded: 100_000,
+  // jwt ops take a `token` argument; real JWTs are tiny but a rogue caller could
+  // send multi-MB payloads. Cap matches the other general-text fields (100 KB).
+  token: 100_000,
 };
+
+// String fields that are genuinely short by nature and do NOT need a byte cap.
+// Each entry is a z.string() field-name from some core-op inputSchema that is
+// intentionally excluded from INPUT_LIMITS because:
+//   (a) the value is structurally bounded (unit identifier, hex colour code,
+//       short key, regex flag char) — no realistic payload exceeds a few dozen bytes, and
+//   (b) the 15-second worker-terminate + WORKER_CONCURRENCY_CAP=8 envelope already
+//       limits the worst-case memory a malicious caller can commit.
+//
+// Rationale for each member:
+//   secret     — HMAC signing key; anything useful fits in a tweet
+//   flags      — regex flags string (e.g. "gi"); max ~6 chars in practice
+//   from / to / category — unit conversion identifiers (e.g. "km", "mph")
+//   color / fgColor / bgColor — CSS color or hex code; < 30 chars always
+//
+// IMPORTANT: this set is the authoritative opt-out list.  The coverage test in
+// index.test.ts asserts that every z.string() field across all TOOLS is EITHER
+// in INPUT_LIMITS OR in UNCAPPED_ALLOWLIST — adding a new op whose string
+// field is neither will be caught in CI.
+export const UNCAPPED_ALLOWLIST: ReadonlySet<string> = new Set([
+  "secret",    // hash.hmac + jwt.verifyHmac: short symmetric key
+  "flags",     // regex.test: regex flag chars like "gi"
+  "from",      // units.convert: source unit identifier
+  "to",        // units.convert: target unit identifier (z.string, not z.enum)
+  "category",  // units.convert: optional category hint
+  "color",     // colours.convert: CSS / hex color string
+  "fgColor",   // qr.generate: foreground hex color
+  "bgColor",   // qr.generate: background hex color
+]);
 
 // Returns an error string if any arg exceeds its limit, otherwise null.
 export function checkInputLimits(args: unknown): string | null {

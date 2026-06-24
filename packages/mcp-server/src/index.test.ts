@@ -20,6 +20,8 @@ import {
   WorkerSemaphore,
   workerSemaphore,
   WORKER_CONCURRENCY_CAP,
+  INPUT_LIMITS,
+  UNCAPPED_ALLOWLIST,
 } from "./index.ts";
 import { TOOLS } from "../../core/src/index.ts";
 
@@ -412,5 +414,81 @@ describe("MCP op-count contract", () => {
         expect(name.startsWith("junkyard_")).toBe(true);
       }
     }
+  });
+});
+
+// ── INPUT_LIMITS coverage vs TOOLS schema (CoValue/CoName drift guard) ─────────
+//
+// Every z.string() field in every TOOLS op inputSchema must be EITHER:
+//   (a) present as a key in INPUT_LIMITS (has an explicit byte cap), OR
+//   (b) present in UNCAPPED_ALLOWLIST (documented as short-by-nature, opted out).
+//
+// If a field is in neither set, this test fails — CI catches the drift
+// immediately rather than silently leaving the pre-spawn guard with a hole.
+//
+// How we introspect Zod schemas without instanceof (multiple-zod-instance trap):
+// We walk ._def.typeName and unwrap ZodOptional / ZodDefault layers, then check
+// if the innermost typeName is 'ZodString'.  This is stable across zod 3.x.
+
+function unwrapDef(def: Record<string, unknown>): Record<string, unknown> {
+  if (!def) return def;
+  if (def.typeName === "ZodOptional" || def.typeName === "ZodDefault") {
+    return unwrapDef(((def.innerType ?? def.schema) as { _def: Record<string, unknown> })._def);
+  }
+  return def;
+}
+
+function getZodStringFieldNames(schema: { _def?: Record<string, unknown> }): string[] {
+  const def = schema._def;
+  if (!def || def.typeName !== "ZodObject") return [];
+  const shape =
+    typeof def.shape === "function"
+      ? (def.shape as () => Record<string, { _def: Record<string, unknown> }>)()
+      : (def.shape as Record<string, { _def: Record<string, unknown> }>);
+  const fields: string[] = [];
+  for (const [key, fieldSchema] of Object.entries(shape)) {
+    const inner = unwrapDef(fieldSchema._def);
+    if (inner?.typeName === "ZodString") fields.push(key);
+  }
+  return fields;
+}
+
+describe("INPUT_LIMITS coverage vs TOOLS schema (CoValue/CoName drift guard)", () => {
+  it("every z.string() field in TOOLS ops is either capped in INPUT_LIMITS or in UNCAPPED_ALLOWLIST", () => {
+    const uncovered: string[] = [];
+
+    for (const tool of TOOLS) {
+      for (const op of tool.ops) {
+        const fields = getZodStringFieldNames(
+          op.inputSchema as { _def?: Record<string, unknown> },
+        );
+        for (const field of fields) {
+          if (!(field in INPUT_LIMITS) && !UNCAPPED_ALLOWLIST.has(field)) {
+            uncovered.push(`${tool.slug}.${op.name}: '${field}'`);
+          }
+        }
+      }
+    }
+
+    expect(uncovered).toEqual(
+      [],
+      `These z.string() fields are neither in INPUT_LIMITS nor UNCAPPED_ALLOWLIST — add a cap or an explicit allowlist entry:\n  ${uncovered.join("\n  ")}`,
+    );
+  });
+
+  it("jwt token is capped (the original CoValue/CoName drift that prompted this guard)", () => {
+    // Regression test: before this fix, jwt.decode and jwt.verifyHmac had a
+    // `token: z.string()` field that was absent from INPUT_LIMITS, so a
+    // multi-MB JWT bypassed the pre-spawn length check entirely.
+    expect(INPUT_LIMITS).toHaveProperty("token");
+    expect(INPUT_LIMITS.token).toBeGreaterThan(0);
+
+    // Confirm the cap is actually enforced by checkInputLimits.
+    const err = checkInputLimits({ token: "x".repeat(INPUT_LIMITS.token + 1) });
+    expect(err).not.toBeNull();
+    expect(err).toContain("token");
+
+    // At the limit: must pass.
+    expect(checkInputLimits({ token: "x".repeat(INPUT_LIMITS.token) })).toBeNull();
   });
 });
