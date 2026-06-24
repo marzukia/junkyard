@@ -61,6 +61,10 @@ export interface DateToEpochResult {
  * Detect whether a numeric string is seconds or milliseconds.
  * Values >= 1e12 are treated as milliseconds (after Jan 9 2001 in ms).
  * Values <  1e12 are treated as seconds   (up to ~year 33658).
+ *
+ * Heuristic limitation: genuine ms timestamps before 2001 (< 1e12) will be
+ * misidentified as seconds and multiplied by 1000. Callers with a known unit
+ * should bypass this and set epochMs directly.
  */
 export function detectUnit(raw: string): EpochUnit {
   const n = Number(raw.trim());
@@ -183,6 +187,9 @@ export function relativeTime(epochMs: number, nowMs: number): string {
  * tz: a valid IANA timezone string (e.g. "America/New_York") or "" for UTC.
  */
 export function convertEpoch(epochMs: number, tz: string, nowMs: number): ConversionResult {
+  if (!Number.isFinite(epochMs) || isNaN(new Date(epochMs).getTime())) {
+    throw new Error(`Cannot parse timestamp: out-of-range epoch ${epochMs}`);
+  }
   const d = new Date(epochMs);
   const epochS = epochMs / 1000;
 

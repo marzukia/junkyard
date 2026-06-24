@@ -309,7 +309,7 @@ function expandField(raw: string, spec: FieldSpec): number[] {
     if (rangeMatch) {
       const lo = Number(rangeMatch[1]);
       const hi = Number(rangeMatch[2]);
-      const step = rangeMatch[3] ? Number(rangeMatch[3]) : 1;
+      const step = rangeMatch[3] ? Math.max(1, Number(rangeMatch[3])) : 1;
       for (let i = lo; i <= hi; i += step) result.add(i);
       continue;
     }

@@ -16,7 +16,7 @@ import { generatePassword } from "./password.js";
 import { generateWords, generateSentences, generateParagraphs } from "./lorem.js";
 import { toHtml } from "./markdown.js";
 import { generateSvgString } from "./qr.js";
-import { generateBarcodeSvg } from "./barcode.js";
+import { generateBarcodeSvg, ean8CheckDigit } from "./barcode.js";
 
 // ── Registry ──────────────────────────────────────────────────────────────────
 
@@ -1027,5 +1027,158 @@ describe("computeDiff empty-side stats (core)", () => {
     expect(r.stats.added).toBe(0);
     expect(r.stats.removed).toBe(0);
     expect(r.stats.unchanged).toBe(0);
+  });
+});
+
+
+// ── Gauntlet wave-1 regression tests ─────────────────────────────────────────
+
+describe("cron: step=0 DoS prevention (g1-cron-1)", () => {
+  it("rejects 0-30/0 as invalid (step must be >= 1)", () => {
+    const op = TOOLS.find((t) => t.slug === "cron")!.ops[0];
+    expect(() => op.run({ expr: "0-30/0 * * * *", nextCount: 1 })).toThrow(/step/i);
+  });
+
+  it("rejects */0 step in wildcard form", () => {
+    const op = TOOLS.find((t) => t.slug === "cron")!.ops[0];
+    expect(() => op.run({ expr: "*/0 * * * *", nextCount: 1 })).toThrow(/step/i);
+  });
+
+  it("accepts valid step 1-30/5 without error", async () => {
+    const op = TOOLS.find((t) => t.slug === "cron")!.ops[0];
+    const result = await Promise.resolve(op.run({ expr: "1-30/5 * * * *", nextCount: 2 })) as { nextRuns: string[] };
+    expect(result.nextRuns).toHaveLength(2);
+  });
+});
+
+describe("cron: nextRuns UTC consistency (g1-cron-2)", () => {
+  it("nextRuns for 0 0 31 * * from 2026-01-01 yields runs on the 31st in UTC", async () => {
+    const op = TOOLS.find((t) => t.slug === "cron")!.ops[0];
+    const result = await Promise.resolve(op.run({ expr: "0 0 31 * *", nextCount: 5 })) as { nextRuns: string[] };
+    // All returned runs must have '-31T' in the ISO string
+    for (const run of result.nextRuns) {
+      expect(run).toMatch(/-31T/);
+    }
+  });
+});
+
+describe("timestamp: out-of-range guard (g1-ts-4)", () => {
+  it("throws a clean error for number 9e15 (out of Date range)", () => {
+    expect(() => convertTimestamp(9e15)).toThrow(/Cannot parse timestamp/);
+  });
+
+  it("throws a clean error for huge integer string", () => {
+    expect(() => convertTimestamp("99999999999999999999")).toThrow(/Cannot parse timestamp/);
+  });
+
+  it("epoch 0 still works (valid boundary)", () => {
+    const r = convertTimestamp(0);
+    expect(r.iso8601).toBe("1970-01-01T00:00:00.000Z");
+  });
+});
+
+describe("base64: reject invalid input (g1-b64-5)", () => {
+  it("decodeBase64 throws on invalid chars", () => {
+    expect(() => decodeBase64("not!valid@base64#")).toThrow(/invalid/i);
+  });
+
+  it("decodeBase64 throws on wrong padding", () => {
+    // Valid chars but wrong padding (length not divisible by 4)
+    expect(() => decodeBase64("SGVsbG8")).toThrow(/invalid/i);
+  });
+
+  it("decodeBase64 returns empty string for empty input", () => {
+    expect(decodeBase64("")).toBe("");
+  });
+
+  it("decodeBase64Url throws on standard base64 chars (+ /)", () => {
+    expect(() => decodeBase64Url("SGVs+G8=")).toThrow(/invalid/i);
+  });
+
+  it("decodeBase64Url returns empty string for empty input", () => {
+    expect(decodeBase64Url("")).toBe("");
+  });
+
+  it("round-trip still works after fix", () => {
+    expect(decodeBase64(encodeBase64("hello world"))).toBe("hello world");
+    expect(decodeBase64Url(encodeBase64Url("hello world"))).toBe("hello world");
+  });
+});
+
+describe("units: non-finite and unknown unit errors (g1-units-6)", () => {
+  it("throws on NaN input", () => {
+    expect(() => convertUnit(NaN, "km", "mi")).toThrow(/non-finite/i);
+  });
+
+  it("throws on Infinity input", () => {
+    expect(() => convertUnit(Infinity, "km", "mi")).toThrow(/non-finite/i);
+  });
+
+  it("throws on -Infinity input", () => {
+    expect(() => convertUnit(-Infinity, "km", "mi")).toThrow(/non-finite/i);
+  });
+
+  it("throws when converting l/100km with value 0 (division by zero)", () => {
+    expect(() => convertUnit(0, "l100km", "kml")).toThrow(/non-finite/);
+  });
+
+  it("throws on unknown unit", () => {
+    expect(() => convertUnit(1, "km", "unknownUnit")).toThrow(/Unknown unit/);
+  });
+
+  it("same-unit with validation still works", () => {
+    expect(convertUnit(5, "km", "km")).toBe(5);
+  });
+});
+
+describe("csv: formula injection escape (g1-csv-7)", () => {
+  it("prefixes =cmd payload with single quote", () => {
+    const out = jsonToCsvString('[{"cmd":"=cmd|calc"}]', ",");
+    const lines = out.split("\n");
+    // data row first cell should start with '=
+    expect(lines[1]).toMatch(/^'=/);
+  });
+
+  it("prefixes @SUM payload", () => {
+    const out = jsonToCsvString('[{"formula":"@SUM(A1:A10)"}]', ",");
+    expect(out).toContain("'@SUM");
+  });
+
+  it("prefixes =HYPERLINK payload", () => {
+    const out = jsonToCsvString('[{"link":"=HYPERLINK(evil.com)"}]', ",");
+    expect(out).toContain("'=HYPERLINK");
+  });
+
+  it("prefixes + trigger", () => {
+    const out = jsonToCsvString('[{"v":"+1234"}]', ",");
+    expect(out).toContain("'+1234");
+  });
+
+  it("does not alter safe values", () => {
+    const out = jsonToCsvString('[{"name":"Alice","age":30}]', ",");
+    expect(out).toContain("Alice");
+    expect(out).toContain("30");
+    expect(out).not.toContain("'Alice");
+  });
+});
+
+describe("barcode: EAN-8 check digit validation (g1-barcode-8)", () => {
+  it("ean8CheckDigit('9638507') = 4", () => {
+    expect(ean8CheckDigit("9638507")).toBe(4);
+  });
+
+  it("generateBarcodeSvg throws for EAN-8 with wrong check digit", () => {
+    // 96385070 has wrong check digit (correct is 4, not 0)
+    expect(() => generateBarcodeSvg("96385070", "EAN8")).toThrow(/check digit/i);
+  });
+
+  it("generateBarcodeSvg accepts EAN-8 with correct check digit", () => {
+    const svg = generateBarcodeSvg("96385074", "EAN8");
+    expect(svg).toContain("<svg");
+  });
+
+  it("generateBarcodeSvg auto-appends check digit for 7-digit EAN-8", () => {
+    const svg = generateBarcodeSvg("9638507", "EAN8");
+    expect(svg).toContain("<svg");
   });
 });

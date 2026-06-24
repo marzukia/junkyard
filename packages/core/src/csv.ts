@@ -130,10 +130,17 @@ export function csvToJsonString(csvText: string, delimiter?: Delimiter): string 
 }
 
 function csvEscape(val: string, delimiter: Delimiter): string {
-  if (val.includes('"') || val.includes(delimiter) || val.includes("\n") || val.includes("\r")) {
-    return `"${val.replace(/"/g, '""')}"`;
+  // OWASP formula injection: prefix cells starting with a formula trigger char
+  // so spreadsheet apps do not execute them as formulas on import.
+  const FORMULA_TRIGGERS = /^[=+\-@\t\r]/;
+  let out = val;
+  if (FORMULA_TRIGGERS.test(val)) {
+    out = "'" + val;
   }
-  return val;
+  if (out.includes('"') || out.includes(delimiter) || out.includes("\n") || out.includes("\r")) {
+    return `"${out.replace(/"/g, '""')}"`;
+  }
+  return out;
 }
 
 export function jsonToCsvString(jsonText: string, delimiter: Delimiter = ","): string {
