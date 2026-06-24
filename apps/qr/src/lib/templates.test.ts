@@ -52,14 +52,27 @@ describe("buildWifiPayload", () => {
     expect(result).toContain("H:true;");
   });
 
-  it("handles nopass security", () => {
+  it("handles nopass security - omits P: segment", () => {
     const result = buildWifiPayload({
       ssid: "OpenNet",
       password: "",
       security: "nopass",
       hidden: false,
     });
-    expect(result).toBe("WIFI:T:nopass;S:OpenNet;P:;;");
+    expect(result).not.toContain("P:");
+    expect(result).toBe("WIFI:T:nopass;S:OpenNet;;");
+  });
+
+  it("nopass does not leak password even when one is supplied", () => {
+    // User typed a password then switched to nopass - must not appear in payload
+    const result = buildWifiPayload({
+      ssid: "net",
+      password: "secret",
+      security: "nopass",
+      hidden: false,
+    });
+    expect(result).not.toContain("secret");
+    expect(result).not.toContain("P:");
   });
 
   it("escapes special chars in SSID and password", () => {

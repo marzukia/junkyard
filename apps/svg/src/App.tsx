@@ -526,7 +526,6 @@ export function App() {
                         type="button"
                         className="space-btn space-btn--active"
                         aria-pressed={true}
-                        onClick={() => setPreviewMode("toggle")}
                       >
                         Side by side
                       </button>

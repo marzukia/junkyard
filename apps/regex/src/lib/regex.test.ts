@@ -10,6 +10,7 @@ import {
   formatMatchTextsForCopy,
   formatMatchesForCopy,
   generateCodeExport,
+  parseGroupNames,
 } from "./regex";
 import type { CodeLang, RegexFlag } from "./regex";
 
@@ -91,6 +92,51 @@ describe("execRegex", () => {
     const r = execRegex(ep.pattern, new Set<RegexFlag>(ep.flags), ep.example);
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.matchCount).toBeGreaterThanOrEqual(1);
+  });
+});
+
+// ── parseGroupNames ───────────────────────────────────────────────────────────
+
+describe("parseGroupNames", () => {
+  it("returns empty map for pattern with no named groups", () => {
+    expect(parseGroupNames("(\\d+)-(\\d+)")).toEqual(new Map());
+  });
+
+  it("maps a single named group to positional index 1", () => {
+    const map = parseGroupNames("(?<year>\\d{4})");
+    expect(map.get("year")).toBe(1);
+  });
+
+  it("maps named group in correct positional slot when preceded by unnamed group", () => {
+    // (\\w) is group 1 (unnamed), (?<b>\\w) is group 2 (named)
+    const map = parseGroupNames("(\\w)(?<b>\\w)");
+    expect(map.get("b")).toBe(2);
+  });
+
+  it("handles non-capturing groups without advancing index", () => {
+    const map = parseGroupNames("(?:prefix)(?<name>\\w+)");
+    expect(map.get("name")).toBe(1);
+  });
+
+  it("handles lookahead without advancing index", () => {
+    const map = parseGroupNames("(?=x)(?<word>\\w+)");
+    expect(map.get("word")).toBe(1);
+  });
+});
+
+// Regression: named group must not steal slot from same-valued unnamed group
+describe("execRegex named group slot", () => {
+  it("correctly labels named group when preceding unnamed group has same value", () => {
+    // Pattern: (\\w)(?<b>\\w) on "xx"
+    // group 1 = 'x' (unnamed), group 2 = 'x' (named 'b')
+    // Old bug: value-match found group 1 first and labelled it 'b'
+    const r = execRegex("(\\w)(?<b>\\w)", new Set<RegexFlag>(["g"]), "xx");
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const groups = r.matches[0].groups;
+    expect(groups).toHaveLength(2);
+    expect(groups[0].name).toBeUndefined(); // first group is unnamed
+    expect(groups[1].name).toBe("b");       // second group is named 'b'
   });
 });
 

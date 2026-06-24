@@ -355,6 +355,23 @@ describe("withClassicStart", () => {
     const result = withClassicStart(items, "list");
     expect(result).toBe(items);
   });
+
+  // Regression: count=1 sentences mode must not drop the generated sentence
+  it("sentences count=1 includes generated content alongside classic start", () => {
+    const oneSentence = generateSentences(1, 42);
+    const result = withClassicStart(oneSentence, "sentences");
+    expect(result.startsWith(CLASSIC_START)).toBe(true);
+    // The result must be longer than just the classic start - generated content preserved
+    expect(result.length).toBeGreaterThan(CLASSIC_START.length);
+  });
+
+  // Regression: count=1 paragraphs mode must not drop the generated paragraph
+  it("paragraphs count=1 includes generated content alongside classic start", () => {
+    const onePara = generateParagraphs(1, 42);
+    const result = withClassicStart(onePara, "paragraphs");
+    expect(result.startsWith(CLASSIC_START)).toBe(true);
+    expect(result.length).toBeGreaterThan(CLASSIC_START.length);
+  });
 });
 
 describe("placeholderSvgDataUri", () => {
