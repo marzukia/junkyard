@@ -94,6 +94,9 @@ export function detectFontVariant(texts: string[]): FontVariant {
 // We use @fontsource packages which mirror Google Fonts and are stable on jsDelivr.
 // Full CJK fonts are ~10-16 MB; fontsource ships subsets by unicode-range -- we
 // use the "all" variant to get full coverage since we need to subset at embed time.
+// NOTE: The "noto" URL below is the same Noto Sans latin-ext URL used by
+// kit/lib/unicodeFont.ts (vendored to invoice/pdf/resume/sign).  If this URL
+// ever changes, update kit/lib/unicodeFont.ts and re-run vendor-unicodefont.mjs.
 const FONT_CDN_URLS: Record<FontVariant, string> = {
   noto: "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5/files/noto-sans-latin-ext-400-normal.woff2",
   cjk: "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5/files/noto-sans-sc-chinese-simplified-400-normal.woff2",

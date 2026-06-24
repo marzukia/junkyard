@@ -13,6 +13,11 @@
  * (sanitize unencodable chars, use a StandardFont, log a warning) so the PDF
  * is still produced rather than crashing.
  *
+ * Canonical Noto woff2 URLs (also used in apps/ocr/src/ocrPdfUtils.ts — keep
+ * in sync manually if changed; a comment in that file points here):
+ *   noto-sans-latin-ext-400-normal.woff2  — cdn.jsdelivr.net/@fontsource/noto-sans@5
+ *   noto-sans-latin-ext-700-normal.woff2  — cdn.jsdelivr.net/@fontsource/noto-sans@5
+ *
  * Deferred split: this file is vendored per-app because the apps are standalone
  * Vite projects with separate node_modules. When a shared package layer exists,
  * extract to packages/pdf-utils/unicodeFont.ts.

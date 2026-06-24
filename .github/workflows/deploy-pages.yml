@@ -105,6 +105,24 @@ jobs:
           node scripts/vendor-brandmark.mjs
           git diff --exit-code -- kit/components/BrandMark.tsx apps/barcode/src/components/BrandMark.tsx apps/base64/src/components/BrandMark.tsx apps/bg/src/components/BrandMark.tsx apps/caption/src/components/BrandMark.tsx apps/chat/src/components/BrandMark.tsx apps/cleanup/src/components/BrandMark.tsx apps/colours/src/components/BrandMark.tsx apps/cron/src/components/BrandMark.tsx apps/css/src/components/BrandMark.tsx apps/csv/src/components/BrandMark.tsx apps/depth/src/components/BrandMark.tsx apps/diff/src/components/BrandMark.tsx apps/favicon/src/components/BrandMark.tsx apps/hash/src/components/BrandMark.tsx apps/invoice/src/components/BrandMark.tsx apps/json/src/components/BrandMark.tsx apps/jwt/src/components/BrandMark.tsx apps/lorem/src/components/BrandMark.tsx apps/markdown/src/components/BrandMark.tsx apps/ocr/src/components/BrandMark.tsx apps/password/src/components/BrandMark.tsx apps/pdf/src/components/BrandMark.tsx apps/qr/src/components/BrandMark.tsx apps/regex/src/components/BrandMark.tsx apps/resume/src/components/BrandMark.tsx apps/screen-recorder/src/components/BrandMark.tsx apps/sign/src/components/BrandMark.tsx apps/subs/src/components/BrandMark.tsx apps/summarize/src/components/BrandMark.tsx apps/svg/src/components/BrandMark.tsx apps/timestamp/src/components/BrandMark.tsx apps/transcribe/src/components/BrandMark.tsx apps/translate/src/components/BrandMark.tsx apps/units/src/components/BrandMark.tsx apps/upscale/src/components/BrandMark.tsx apps/uuid/src/components/BrandMark.tsx
 
+      - name: Check vendored theme.ts copies are up to date
+        # Fails if kit/theme.ts was changed without running vendor-theme.mjs.
+        # kit/theme.ts is the SUPERSET canonical (TextInput + Slider + Popover).
+        # The 4 non-Mantine apps (colours/exif/favicon/ocr) have no src/theme.ts
+        # and are intentionally skipped by the script.
+        run: |
+          node scripts/vendor-theme.mjs
+          git diff --exit-code -- kit/theme.ts apps/*/src/theme.ts
+
+      - name: Check vendored unicodeFont.ts copies are up to date
+        # Fails if kit/lib/unicodeFont.ts was changed without running vendor-unicodefont.mjs.
+        # Targets: apps/invoice/pdf/resume/sign src/lib/unicodeFont.ts.
+        # apps/ocr uses a superset (ocrPdfUtils.ts) with per-script font selection;
+        # its Noto Sans base URL is identical and documented with a cross-reference.
+        run: |
+          node scripts/vendor-unicodefont.mjs
+          git diff --exit-code -- kit/lib/unicodeFont.ts apps/invoice/src/lib/unicodeFont.ts apps/pdf/src/lib/unicodeFont.ts apps/resume/src/lib/unicodeFont.ts apps/sign/src/lib/unicodeFont.ts
+
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).
