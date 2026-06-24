@@ -98,7 +98,7 @@ function WifiForm({ onPayload }: { onPayload: (s: string) => void }) {
       />
       <div className="qr-field-group">
         <span className="qr-field-label">Security</span>
-        <div className="qr-ec-row" role="radiogroup" aria-label="WiFi security type">
+        <div className="qr-ec-row" role="group" aria-label="WiFi security type">
           {(["WPA", "WEP", "nopass"] as const).map((s) => (
             <button
               key={s}

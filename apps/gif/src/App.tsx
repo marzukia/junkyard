@@ -246,10 +246,20 @@ export function App() {
       />
 
       <main className="site-main">
-        {/* Drop zone */}
+        {/* Drop zone: label wraps the hidden input so mouse/drag clicks work;
+            keyboard users can also Tab to the label (tabIndex=0 + role=button) or
+            use the "Add files" button rendered below when frames exist. */}
         <label
           className={`drop-zone${dragging ? " drop-zone--active" : ""}${importingVideo ? " drop-zone--importing" : ""}`}
-          aria-label="Drop images or videos here or click to select files"
+          aria-label="Drop images or videos here or press Enter to select files"
+          tabIndex={0}
+          role="button"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              inputRef.current?.click();
+            }
+          }}
           onDrop={onDrop}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
@@ -268,13 +278,16 @@ export function App() {
               </span>
             </>
           )}
+          {/* Visually hidden: aria-hidden so SR reads the label text, not "Choose File" */}
           <input
             ref={inputRef}
             type="file"
             accept={ACCEPTED}
             multiple
             onChange={onInputChange}
-            style={{ display: "none" }}
+            aria-hidden="true"
+            tabIndex={-1}
+            style={{ position: "absolute", opacity: 0, width: 0, height: 0, overflow: "hidden" }}
           />
         </label>
 

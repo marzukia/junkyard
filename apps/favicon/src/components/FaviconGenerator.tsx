@@ -258,13 +258,13 @@ export function FaviconGenerator() {
             )}
 
             {status === "generating" && (
-              <div className="progress-bar-wrap">
+              <div className="progress-bar-wrap" role="status" aria-live="polite">
                 <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
               </div>
             )}
 
             {status === "done" && (
-              <div style={{ marginTop: "0.75rem" }}>
+              <div style={{ marginTop: "0.75rem" }} role="status" aria-live="polite">
                 <span className="status-badge">
                   Ready. {FAVICON_SIZES.length} sizes + ico + manifest
                 </span>
@@ -272,7 +272,7 @@ export function FaviconGenerator() {
             )}
 
             {status === "error" && (
-              <div style={{ marginTop: "0.75rem" }}>
+              <div style={{ marginTop: "0.75rem" }} role="alert" aria-live="assertive">
                 <span className="status-badge status-badge--error">{errorMsg}</span>
               </div>
             )}

@@ -775,7 +775,7 @@ export function App() {
             )}
 
             {phase === "error" && (
-              <div className="cap-error-inline">
+              <div className="cap-error-inline" role="alert" aria-live="assertive">
                 <svg
                   width="16"
                   height="16"
@@ -799,7 +799,7 @@ export function App() {
         {/* Model loading */}
         {phase === "model-loading" && (
           <div className="card">
-            <div className="cap-status-wrap">
+            <div className="cap-status-wrap" role="status" aria-live="polite">
               <ProgressBar
                 loaded={modelProgress.loaded}
                 total={modelProgress.total}
@@ -818,7 +818,7 @@ export function App() {
         {/* Processing */}
         {phase === "processing" && (
           <div className="card">
-            <div className="cap-status-wrap">
+            <div className="cap-status-wrap" role="status" aria-live="polite">
               <div className="cap-spinner" aria-label="Generating caption..." />
               <p className="cap-status-label">Generating caption...</p>
               {inputUrl && (

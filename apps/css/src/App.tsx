@@ -678,7 +678,7 @@ function RadialGradientTab() {
 
         <div className="css-control-row">
           <span className="css-control-label">Shape</span>
-          <div className="space-toggle" role="radiogroup" aria-label="Gradient shape">
+          <div className="space-toggle" role="group" aria-label="Gradient shape">
             {(["circle", "ellipse"] as const).map((shape) => (
               <button
                 key={shape}
@@ -1492,7 +1492,7 @@ function BorderRadiusTab() {
 
         <div className="css-control-row">
           <span className="css-control-label">Unit</span>
-          <div className="space-toggle" role="radiogroup" aria-label="Radius unit">
+          <div className="space-toggle" role="group" aria-label="Radius unit">
             {(["px", "%"] as const).map((u) => (
               <button
                 key={u}

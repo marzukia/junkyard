@@ -411,7 +411,7 @@ export function SignTool() {
                 style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}
               >
                 <span className="mono-label">Ink colour</span>
-                <div className="ink-swatches" role="radiogroup" aria-label="Ink colour">
+                <div className="ink-swatches" role="group" aria-label="Ink colour">
                   {INK_COLORS.map(({ color, label }) => (
                     <button
                       key={color}

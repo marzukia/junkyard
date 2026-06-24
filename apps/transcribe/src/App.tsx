@@ -777,7 +777,7 @@ export function App() {
 
           {/* Model loading */}
           {phase === "model-loading" && (
-            <div className="tr-status-wrap">
+            <div className="tr-status-wrap" role="status" aria-live="polite">
               <ProgressBar
                 loaded={modelProgress.loaded}
                 total={modelProgress.total}
@@ -794,7 +794,7 @@ export function App() {
 
           {/* Decoding */}
           {phase === "decoding" && (
-            <div className="tr-status-wrap">
+            <div className="tr-status-wrap" role="status" aria-live="polite">
               <div className="tr-spinner" aria-label="Decoding audio" />
               <p className="tr-status-label">Decoding audio...</p>
               {inputFile && (
@@ -810,7 +810,7 @@ export function App() {
 
           {/* Transcribing with elapsed time */}
           {phase === "transcribing" && (
-            <div className="tr-status-wrap">
+            <div className="tr-status-wrap" role="status" aria-live="polite">
               <div className="tr-spinner" aria-label="Transcribing" />
               <p className="tr-status-label">
                 Transcribing
@@ -1000,7 +1000,7 @@ export function App() {
 
           {/* Error */}
           {phase === "error" && (
-            <div className="tr-error-wrap">
+            <div className="tr-error-wrap" role="alert" aria-live="assertive">
               <svg
                 width="24"
                 height="24"
