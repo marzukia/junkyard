@@ -244,4 +244,11 @@ describe("getCommonConversions -- return shape", () => {
       expect(Number.isFinite(item.to.value)).toBe(true);
     }
   });
+
+  it("unknown categoryId (type-cast) returns [] instead of throwing", () => {
+    // Bug 2: switch had no default branch — unknown categoryId hit undefined.map()
+    const list = getCommonConversions("BOGUS" as CategoryId);
+    expect(Array.isArray(list)).toBe(true);
+    expect(list.length).toBe(0);
+  });
 });

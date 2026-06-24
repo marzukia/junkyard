@@ -127,3 +127,50 @@ describe("loremStore persistence", () => {
     expect(parsed.version).toBe(0);
   });
 });
+
+// ── Bug 3: setMode clamps count to new mode's max ────────────────────────────
+
+describe("loremStore setMode count clamping", () => {
+  beforeEach(() => { localStorage.clear(); });
+  afterEach(() => { localStorage.clear(); vi.resetModules(); });
+
+  it("switching from words (max 200) to paragraphs (max 20) clamps count to 20", async () => {
+    const store = await freshStore();
+    store.getState().setMode("words");
+    store.getState().setCount(200);
+    store.getState().setMode("paragraphs");
+    expect(store.getState().count).toBe(20);
+  });
+
+  it("switching from words (max 200) to list (max 30) clamps count to 30", async () => {
+    const store = await freshStore();
+    store.getState().setMode("words");
+    store.getState().setCount(200);
+    store.getState().setMode("list");
+    expect(store.getState().count).toBe(30);
+  });
+
+  it("switching from words (max 200) to sentences (max 20) clamps count to 20", async () => {
+    const store = await freshStore();
+    store.getState().setMode("words");
+    store.getState().setCount(150);
+    store.getState().setMode("sentences");
+    expect(store.getState().count).toBe(20);
+  });
+
+  it("count in-range for new mode is not changed", async () => {
+    const store = await freshStore();
+    store.getState().setMode("words");
+    store.getState().setCount(10);
+    store.getState().setMode("paragraphs");
+    expect(store.getState().count).toBe(10);
+  });
+
+  it("switching to words mode does not clamp (max 200)", async () => {
+    const store = await freshStore();
+    store.getState().setMode("paragraphs");
+    store.getState().setCount(15);
+    store.getState().setMode("words");
+    expect(store.getState().count).toBe(15);
+  });
+});

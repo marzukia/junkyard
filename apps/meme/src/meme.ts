@@ -280,7 +280,7 @@ export function templateDefaultLayers(template: MemeTemplate): TextLayer[] {
 
 /** Draw a blank template onto a canvas element and return it */
 export function drawBlankTemplate(template: MemeTemplate, width = 600): HTMLCanvasElement {
-  const height = Math.round(width / template.aspectRatio);
+  const height = Math.max(1, Math.round(width / template.aspectRatio));
   const c = document.createElement("canvas");
   c.width = width;
   c.height = height;

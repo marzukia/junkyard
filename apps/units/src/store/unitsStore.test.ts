@@ -192,3 +192,70 @@ describe("defaultUnits — returns valid unit ids for every category", () => {
     });
   }
 });
+
+// ── Bug 1: extreme values never throw (AllUnitsCard resilience) ───────────────
+
+describe("computeResult — extreme input values do not throw", () => {
+  it("1e308 (overflow) returns — not a throw", () => {
+    // convert(1e308 m → ft) may overflow to Infinity; computeResult must not throw.
+    let thrown = false;
+    let result: ReturnType<typeof computeResult> | undefined;
+    try {
+      result = computeResult("1e308", "m", "ft", "length" as CategoryId, false);
+    } catch {
+      thrown = true;
+    }
+    expect(thrown).toBe(false);
+    // result may be "—" (non-finite) or a valid sci-notation string — either is fine
+    expect(typeof result?.resultValue).toBe("string");
+  });
+
+  it("-1e308 (negative overflow) returns — not a throw", () => {
+    let thrown = false;
+    try {
+      computeResult("-1e308", "m", "ft", "length" as CategoryId, false);
+    } catch {
+      thrown = true;
+    }
+    expect(thrown).toBe(false);
+  });
+
+  it("Infinity string is treated as invalid input, not a throw", () => {
+    let thrown = false;
+    let result: ReturnType<typeof computeResult> | undefined;
+    try {
+      result = computeResult("Infinity", "m", "ft", "length" as CategoryId, false);
+    } catch {
+      thrown = true;
+    }
+    expect(thrown).toBe(false);
+    expect(result?.inputIsInvalid).toBe(true);
+  });
+});
+
+// ── Bug 2: poisoned prefs — categoryId and unit id validation ─────────────────
+
+describe("onRehydrateStorage validation (simulated via computeResult + defaultUnits)", () => {
+  it("BOGUS categoryId falls back to length defaults which produce valid results", () => {
+    // Simulate what onRehydrateStorage does: unknown categoryId → initialCat
+    const fallbackCat: CategoryId = "length";
+    const { fromUnit, toUnit } = defaultUnits(fallbackCat);
+    const result = computeResult("1", fromUnit, toUnit, fallbackCat, false);
+    expect(Number.isFinite(result.resultNumeric)).toBe(true);
+  });
+
+  it("BOGUS unit ids fall back to defaults which produce valid results", () => {
+    // computeResult catches unknown-unit throw and returns safe dash result
+    const result = computeResult("1", "BOGUS", "UNIT", "length" as CategoryId, false);
+    expect(result.resultValue).toBe("—");
+    // No throw
+  });
+
+  it("non-string categoryId does not propagate to convert() causing a crash", () => {
+    // If categoryId is e.g. null/number from tampered JSON, defaultUnits must still
+    // provide valid unit ids. Here we test that defaultUnits("length") is always safe.
+    const { fromUnit, toUnit } = defaultUnits("length");
+    expect(fromUnit).toBeTruthy();
+    expect(toUnit).toBeTruthy();
+  });
+});

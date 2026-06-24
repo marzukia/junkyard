@@ -355,8 +355,13 @@ function AllUnitsCard() {
       <div className="units-allunits-grid">
         {cat.units.map((u) => {
           if (u.id === fromUnit) return null;
-          const result = convert({ value: n, from: fromUnit, to: u.id, category: categoryId });
-          const formatted = formatResultHuman(result, fullPrecision);
+          let result: number;
+          try {
+            result = convert({ value: n, from: fromUnit, to: u.id, category: categoryId });
+          } catch {
+            result = Number.NaN;
+          }
+          const formatted = !Number.isFinite(result) ? "—" : formatResultHuman(result, fullPrecision);
           return (
             <button
               key={u.id}

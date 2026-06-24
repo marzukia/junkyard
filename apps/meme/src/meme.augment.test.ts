@@ -18,6 +18,7 @@ import {
   addLayer,
   buildFont,
   clamp01,
+  drawBlankTemplate,
   makeDefaultLayers,
   removeLayer,
   resolvedFontSize,
@@ -205,6 +206,32 @@ describe("updateLayer — multiple field patch", () => {
     expect(updated[0].font).toBe(original.font);
     expect(updated[0].x).toBe(original.x);
     expect(updated[0].y).toBe(original.y);
+  });
+});
+
+// ── Bug 5: drawBlankTemplate extreme aspect ratio never yields height=0 ──────
+
+describe("drawBlankTemplate — extreme aspect ratio canvas dims are always ≥1", () => {
+  it("normal 16:9 template has height >= 1", () => {
+    const wide = TEMPLATES.find((t) => t.id === "wide");
+    if (!wide) throw new Error("wide template missing");
+    const canvas = drawBlankTemplate(wide, 800);
+    expect(canvas.width).toBeGreaterThanOrEqual(1);
+    expect(canvas.height).toBeGreaterThanOrEqual(1);
+  });
+
+  it("extreme tall aspect ratio (near 0 width) still yields height >= 1", () => {
+    // Simulate an extreme-aspect-ratio by using a very small width
+    const tallTemplate = { ...TEMPLATES[0], aspectRatio: 10000 };
+    const canvas = drawBlankTemplate(tallTemplate, 1); // width=1 / 10000 → 0 without fix
+    expect(canvas.height).toBeGreaterThanOrEqual(1);
+  });
+
+  it("synthetic 1:10000 ratio (wide image) yields height >= 1", () => {
+    const wideTemplate = { ...TEMPLATES[0], aspectRatio: 1 / 10000 };
+    const canvas = drawBlankTemplate(wideTemplate, 800);
+    expect(canvas.width).toBeGreaterThanOrEqual(1);
+    expect(canvas.height).toBeGreaterThanOrEqual(1);
   });
 });
 
