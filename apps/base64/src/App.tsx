@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./kit/components/BrandMark";
-import { Footer } from "./kit/components/Footer";
-import { Header } from "./kit/components/Header";
+import { BrandMark } from "./components/BrandMark";
+import { Footer } from "./components/Footer";
+import { Header } from "./components/Header";
 import {
   base64ToBytes,
   decode,

@@ -39,6 +39,15 @@ function persistLangs(sourceLang: string, targetLang: string): void {
 
 export type Phase = "idle" | "model-loading" | "translating" | "done" | "error";
 
+/** Monotonic phase rank: higher = further along the pipeline. */
+const PHASE_RANK: Record<Phase, number> = {
+  idle: 0,
+  "model-loading": 1,
+  translating: 2,
+  done: 3,
+  error: 3,
+};
+
 interface ModelProgress {
   loaded: number;
   total: number;
@@ -113,7 +122,10 @@ export const useTranslateStore = create<TranslateState>((set, get) => ({
     set({ targetLang: code });
     persistLangs(get().sourceLang, code);
   },
-  setPhase: (phase) => set({ phase }),
+  setPhase: (phase) =>
+    set((s) =>
+      phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {}
+    ),
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
   setChunkProgress: (done, total) => set({ chunkProgress: { done, total } }),
   setResult: (text, detectedLang) =>

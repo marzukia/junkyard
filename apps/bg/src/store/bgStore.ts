@@ -2,6 +2,15 @@ import { create } from "zustand";
 
 export type Phase = "idle" | "model-loading" | "processing" | "done" | "error";
 
+/** Monotonic phase rank: higher = further along the pipeline. */
+const PHASE_RANK: Record<Phase, number> = {
+  idle: 0,
+  "model-loading": 1,
+  processing: 2,
+  done: 3,
+  error: 3,
+};
+
 interface ModelProgress {
   loaded: number;
   total: number;
@@ -60,7 +69,12 @@ export const useBgStore = create<BgState>((set, get) => ({
     set({ inputFile: file, inputUrl: url, resultUrl: null, errorMsg: null });
   },
 
-  setPhase: (phase) => set({ phase }),
+  setPhase: (phase) =>
+    set((s) =>
+      // idle is the cancel/reset sentinel — always allow it.
+      // All other transitions are monotonic: only advance, never regress.
+      phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {}
+    ),
 
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
 

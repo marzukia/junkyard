@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { BrandMark } from "./kit/components/BrandMark";
-import { Footer } from "./kit/components/Footer";
-import { Header } from "./kit/components/Header";
+import { BrandMark } from "./components/BrandMark";
+import { Footer } from "./components/Footer";
+import { Header } from "./components/Header";
 import { CATEGORIES, convert, formatResultHuman, getCommonConversions } from "./lib/units";
 import type { CategoryId } from "./lib/units";
 import { useUnitsStore } from "./store/unitsStore";
