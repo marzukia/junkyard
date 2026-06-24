@@ -338,6 +338,9 @@ export function App() {
         logoDataUrl: logoDataUrl ?? undefined,
       });
     } catch {
+      // Bug 5 fix: clear the canvas so no stale QR code is visible alongside the error.
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
       // Detect capacity overflow specifically so the user knows how to fix it
       if (willExceedCapacity(text.trim(), errorCorrectionLevel)) {
         setError(
