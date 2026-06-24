@@ -1,5 +1,5 @@
 import { mdToHtml } from "../lib/mdInline";
-import { filteredBullets, formatDateRange, parseSkills } from "../lib/resumeUtils";
+import { filteredBullets, formatDateRange, parseSkills, safeProjectUrl } from "../lib/resumeUtils";
 import { useResumeStore } from "../store/useResumeStore";
 import { LoadSampleButton } from "./LoadSampleButton";
 
@@ -210,9 +210,9 @@ export function ResumePreview() {
                   <div key={p.id} className="resume-entry">
                     <div className="resume-entry-header">
                       <span className="resume-entry-title">
-                        {p.url.trim() ? (
+                        {safeProjectUrl(p.url) ? (
                           <a
-                            href={p.url.trim()}
+                            href={safeProjectUrl(p.url) as string}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="resume-entry-link"
@@ -220,7 +220,7 @@ export function ResumePreview() {
                             {p.name.trim() || p.url.trim()}
                           </a>
                         ) : (
-                          p.name.trim() || "(Untitled project)"
+                          p.name.trim() || p.url.trim() || "(Untitled project)"
                         )}
                       </span>
                     </div>

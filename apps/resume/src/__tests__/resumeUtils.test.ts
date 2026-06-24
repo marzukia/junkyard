@@ -6,6 +6,7 @@ import {
   hasEducationContent,
   hasExperienceContent,
   parseSkills,
+  safeProjectUrl,
 } from "../lib/resumeUtils";
 import type { EducationEntry, ExperienceEntry } from "../store/useResumeStore";
 
@@ -156,5 +157,41 @@ describe("filteredBullets", () => {
 
   it("returns empty array for all-blank input", () => {
     expect(filteredBullets(["", " ", ""])).toEqual([]);
+  });
+});
+
+describe("safeProjectUrl", () => {
+  it("returns https URLs unchanged", () => {
+    expect(safeProjectUrl("https://github.com/user/repo")).toBe("https://github.com/user/repo");
+  });
+
+  it("returns http URLs unchanged", () => {
+    expect(safeProjectUrl("http://example.com")).toBe("http://example.com");
+  });
+
+  it("returns mailto URLs unchanged", () => {
+    expect(safeProjectUrl("mailto:user@example.com")).toBe("mailto:user@example.com");
+  });
+
+  it("blocks javascript: scheme — returns null", () => {
+    expect(safeProjectUrl("javascript:alert(1)")).toBeNull();
+  });
+
+  it("blocks data: scheme — returns null", () => {
+    expect(safeProjectUrl("data:text/html,<script>alert(1)</script>")).toBeNull();
+  });
+
+  it("blocks scheme-relative and bare paths — returns null", () => {
+    expect(safeProjectUrl("//evil.com")).toBeNull();
+    expect(safeProjectUrl("/local-path")).toBeNull();
+  });
+
+  it("returns null for blank input", () => {
+    expect(safeProjectUrl("")).toBeNull();
+    expect(safeProjectUrl("   ")).toBeNull();
+  });
+
+  it("trims whitespace before checking", () => {
+    expect(safeProjectUrl("  https://example.com  ")).toBe("https://example.com");
   });
 });

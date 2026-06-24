@@ -16,7 +16,6 @@
     "@fontsource/inter": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.1.2",
     "@mantine/core": "^7.17.4",
-    "@mantine/hooks": "^7.17.4",
     "dompurify": "^3.2.4",
     "marked": "^15.0.12",
     "react": "^18.3.1",

@@ -55,3 +55,15 @@ export function hasEducationContent(entry: EducationEntry): boolean {
 export function filteredBullets(bullets: string[]): string[] {
   return bullets.map((b) => b.trim()).filter((b) => b.length > 0);
 }
+
+/**
+ * Return the URL if it uses a safe scheme (https / http / mailto), or null.
+ * Blocks javascript:, data:, and any other non-safe schemes so project URLs
+ * cannot become clickable code-execution vectors. Mirrors the guard in
+ * mdInline.ts runsToHtml() which covers inline markdown links.
+ */
+export function safeProjectUrl(url: string): string | null {
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  return /^(https?:\/\/|mailto:)/i.test(trimmed) ? trimmed : null;
+}
