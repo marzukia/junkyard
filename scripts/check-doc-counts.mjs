@@ -6,6 +6,11 @@
 // and asserts each targeted doc file states the same count — so adding an app
 // without updating the docs fails CI before the PR merges.
 //
+// Extended (connascence w2): also guards the 17/25/27 sub-counts derived from
+// @junkyard/core TOOLS — coreCount (17 headless tools), opCount (25 ops), and
+// clientCount (44−17=27 client-only tools). These are computed from the live
+// package source so they update automatically when TOOLS changes.
+//
 // Robustness notes:
 // - Matches only specific count+context phrases (not every occurrence of the integer)
 //   to avoid false positives from unrelated numeric references.
@@ -24,10 +29,21 @@ const appCount = readdirSync(appsDir, { withFileTypes: true })
   .filter((d) => d.isDirectory() && existsSync(join(appsDir, d.name, "junkyard.ts")))
   .length;
 
-// Each entry: file path (relative to repo root) and an array of regexes that
-// must each match the CORRECT count (appCount) in the file.
+// Authoritative sub-counts from @junkyard/core — the single source of truth for
+// which tools are headless and how many ops each exposes.
+const { TOOLS } = await import(join(root, "packages/core/src/index.ts"));
+const coreCount = TOOLS.length;
+const opCount = TOOLS.reduce((s, t) => s + t.ops.length, 0);
+const clientCount = appCount - coreCount;
+
+// Each entry: file path (relative to repo root), the expected count, and an array
+// of regexes that must each match the CORRECT count in the file.
 // The patterns are specific enough to avoid false positives on adjacent numbers.
+//
+// Entries with no explicit `count` field use `appCount` (44) as the expected value.
+// Entries with an explicit `count` field use that value instead.
 const DOC_CHECKS = [
+  // ── appCount (44) guards ────────────────────────────────────────────────────
   {
     file: "README.md",
     // Matches: "44 free, 100% client-side web tools"
@@ -57,11 +73,44 @@ const DOC_CHECKS = [
       /all\s+(\d+)\s+apps\s+and\s+must\s+be\s+full-build-verified/,
     ],
   },
+  // ── coreCount (17) guards — authoritative: TOOLS.length ────────────────────
+  {
+    file: "README.md",
+    count: coreCount,
+    // Matches: "17 tool categories (25 ops)"
+    patterns: [/(\d+)\s+tool\s+categories/],
+  },
+  {
+    file: "CONTRIBUTING.md",
+    count: coreCount,
+    // Matches: "# @junkyard/core - 17 pure-logic headless tools"
+    patterns: [/(\d+)\s+pure-logic\s+headless\s+tools/],
+  },
+  {
+    file: "docs/ARCHITECTURE.md",
+    count: coreCount,
+    // Matches: "contains 17 headless, pure-logic tool implementations"
+    patterns: [/(\d+)\s+headless,\s+pure-logic\s+tool\s+implementations/],
+  },
+  // ── opCount (25) guards — authoritative: Σ TOOLS[i].ops.length ─────────────
+  {
+    file: "README.md",
+    count: opCount,
+    // Matches: "(25 ops)"
+    patterns: [/\((\d+)\s+ops\)/],
+  },
+  // ── clientCount (27) guards — authoritative: appCount − coreCount ───────────
+  {
+    file: "docs/ARCHITECTURE.md",
+    count: clientCount,
+    // Matches: "The remaining 27 tools are browser-only"
+    patterns: [/remaining\s+(\d+)\s+tools/],
+  },
 ];
 
 let errors = [];
 
-for (const { file, patterns } of DOC_CHECKS) {
+for (const { file, count: expectedCount = appCount, patterns } of DOC_CHECKS) {
   const fullPath = join(root, file);
   let content;
   try {
@@ -82,18 +131,22 @@ for (const { file, patterns } of DOC_CHECKS) {
       continue;
     }
     const stated = Number(match[1]);
-    if (stated !== appCount) {
+    if (stated !== expectedCount) {
       errors.push(
-        `${file}: doc states ${stated} tools/apps but apps/ has ${appCount} — update the prose to match`,
+        `${file}: doc states ${stated} but expected ${expectedCount} — update the prose to match`,
       );
     }
   }
 }
 
 if (errors.length > 0) {
-  console.error(`doc-count guard FAILED (authoritative count: ${appCount} apps):`);
+  console.error(
+    `doc-count guard FAILED (appCount=${appCount}, coreCount=${coreCount}, opCount=${opCount}, clientCount=${clientCount}):`,
+  );
   for (const e of errors) console.error("  " + e);
   process.exit(1);
 }
 
-console.log(`doc-count guard OK — all checked docs agree: ${appCount} tools/apps`);
+console.log(
+  `doc-count guard OK — appCount=${appCount}, coreCount=${coreCount}, opCount=${opCount}, clientCount=${clientCount}`,
+);
