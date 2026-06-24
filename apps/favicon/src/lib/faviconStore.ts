@@ -71,8 +71,11 @@ export const useFaviconStore = create<FaviconState>()(
         if (prev.zipUrl) URL.revokeObjectURL(prev.zipUrl);
         set({ sourceFile: file, sourceUrl: url, previews: [], zipUrl: null, status: "idle" });
       },
-      setSourceText: (text) =>
-        set({ sourceText: text, previews: [], zipUrl: null, status: "idle" }),
+      setSourceText: (text) => {
+        const prev = get();
+        if (prev.zipUrl) URL.revokeObjectURL(prev.zipUrl);
+        set({ sourceText: text, previews: [], zipUrl: null, status: "idle" });
+      },
       setAppName: (name) => set({ appName: name }),
       setCanvasOptions: (opts) => set({ canvasOptions: { ...get().canvasOptions, ...opts } }),
       setPreviews: (previews) => set({ previews }),

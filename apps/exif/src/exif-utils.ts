@@ -218,9 +218,13 @@ export function exifToJson(exif: Record<string, unknown>): string {
 
 /**
  * Escape a single CSV cell value: wraps in quotes and escapes internal quotes.
+ * OWASP formula injection: prefix cells starting with a formula trigger char
+ * so spreadsheet apps do not execute them as formulas on import.
  */
 export function csvEscape(value: string): string {
-  const escaped = value.replace(/"/g, '""');
+  const FORMULA_TRIGGERS = /^[=+\-@\t\r]/;
+  const prefixed = FORMULA_TRIGGERS.test(value) ? "'" + value : value;
+  const escaped = prefixed.replace(/"/g, '""');
   return `"${escaped}"`;
 }
 
