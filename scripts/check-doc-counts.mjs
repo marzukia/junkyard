@@ -6,9 +6,9 @@
 // and asserts each targeted doc file states the same count — so adding an app
 // without updating the docs fails CI before the PR merges.
 //
-// Extended (connascence w2): also guards the 17/25/27 sub-counts derived from
+// Extended (connascence w2): also guards the 17/25/28 sub-counts derived from
 // @junkyard/core TOOLS — coreCount (17 headless tools), opCount (25 ops), and
-// clientCount (44−17=27 client-only tools). These are computed from the live
+// clientCount (45−17=28 client-only tools). These are computed from the live
 // package source so they update automatically when TOOLS changes.
 //
 // Robustness notes:
