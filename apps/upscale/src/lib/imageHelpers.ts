@@ -14,12 +14,7 @@ export function isSupportedImage(file: File): boolean {
   return (ACCEPTED_TYPES as readonly string[]).includes(file.type);
 }
 
-/** Format bytes as a human-readable string (KB / MB). */
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
+export { formatBytes } from "./format";
 
 /** Format a download progress (loaded/total bytes) as "x% (y.y MB / z.z MB)". */
 export function formatProgress(loaded: number, total: number): string {

@@ -47,7 +47,7 @@ export function Hero() {
           </span>
         </div>
       </div>
-      <div className="hero-right">
+      <div className="hero-right" aria-hidden="true" role="presentation">
         <div className="window">
           <div className="winbar">
             <span className="dots">

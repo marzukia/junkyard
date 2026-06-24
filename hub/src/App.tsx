@@ -88,7 +88,7 @@ export function App() {
       <div className="wrap">
         <footer>
           <div className="fbar">
-            <span>&#169; 2026 junkyard.sh - take freely</span>
+            <span>&#169; {new Date().getFullYear()} junkyard.sh - take freely</span>
             <span>built in a browser, runs in a browser</span>
           </div>
         </footer>

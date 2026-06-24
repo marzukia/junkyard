@@ -11,7 +11,7 @@
  * Safe to re-run (idempotent).
  */
 
-import { readdirSync, readFileSync, writeFileSync, copyFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync, copyFileSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -22,6 +22,15 @@ const KIT_DIR = join(REPO_ROOT, "kit", "components");
 
 const SWITCHER_TSX = join(KIT_DIR, "AppSwitcher.tsx");
 const SWITCHER_CSS = join(KIT_DIR, "AppSwitcher.css");
+
+// Validate that source files exist before processing any apps.
+for (const [label, path] of [["AppSwitcher.tsx", SWITCHER_TSX], ["AppSwitcher.css", SWITCHER_CSS]]) {
+  if (!existsSync(path)) {
+    console.error(`[ERROR] Canonical source not found: ${path}`);
+    console.error(`        Expected kit/components/${label} to exist in the repo root.`);
+    process.exit(1);
+  }
+}
 
 // Recursively find all .tsx files under a directory
 function findTsx(dir) {
@@ -40,10 +49,22 @@ function findTsx(dir) {
 // Find the one src/**/*.tsx file that contains className="utility-bar"
 function findUtilityBarFile(slug) {
   const srcDir = join(APPS_DIR, slug, "src");
-  const txsFiles = findTsx(srcDir);
-  const matches = txsFiles.filter((f) =>
-    readFileSync(f, "utf8").includes('className="utility-bar"'),
-  );
+  let txsFiles;
+  try {
+    txsFiles = findTsx(srcDir);
+  } catch (err) {
+    console.warn(`  [WARN] ${slug}: could not scan src directory: ${err.message}`);
+    return null;
+  }
+  let matches;
+  try {
+    matches = txsFiles.filter((f) =>
+      readFileSync(f, "utf8").includes('className="utility-bar"'),
+    );
+  } catch (err) {
+    console.warn(`  [WARN] ${slug}: error reading source files: ${err.message}`);
+    return null;
+  }
   if (matches.length === 0) return null;
   if (matches.length > 1) {
     console.warn(`  [WARN] ${slug}: multiple utility-bar files found, using first: ${matches[0]}`);
@@ -117,6 +138,7 @@ const slugs = readdirSync(APPS_DIR, { withFileTypes: true })
 
 let modifiedCount = 0;
 let skippedCount = 0;
+let errorCount = 0;
 
 for (const slug of slugs) {
   const targetFile = findUtilityBarFile(slug);
@@ -130,28 +152,53 @@ for (const slug of slugs) {
   const destTsx = join(targetDir, "AppSwitcher.tsx");
   const destCss = join(targetDir, "AppSwitcher.css");
 
-  // Copy AppSwitcher files into target directory
-  copyFileSync(SWITCHER_TSX, destTsx);
-  copyFileSync(SWITCHER_CSS, destCss);
+  try {
+    // Copy AppSwitcher files into target directory
+    copyFileSync(SWITCHER_TSX, destTsx);
+    copyFileSync(SWITCHER_CSS, destCss);
+  } catch (err) {
+    console.error(`[ERROR] ${slug}: failed to copy AppSwitcher assets: ${err.message}`);
+    console.error(`        Target directory: ${targetDir}`);
+    errorCount++;
+    continue;
+  }
 
   // Determine relative import path for the CSS (the CSS import is in AppSwitcher.tsx itself,
   // which is now a copy in targetDir - no path change needed since it imports "./AppSwitcher.css")
 
   // Inject into the target file (Header.tsx or App.tsx)
-  const original = readFileSync(targetFile, "utf8");
+  let original;
+  try {
+    original = readFileSync(targetFile, "utf8");
+  } catch (err) {
+    console.error(`[ERROR] ${slug}: could not read target file ${targetFile.replace(REPO_ROOT + "/", "")}: ${err.message}`);
+    errorCount++;
+    continue;
+  }
+
   const importLine = `import { AppSwitcher } from "./AppSwitcher";`;
 
   let updated = original;
   updated = injectImport(updated, importLine);
   updated = injectElement(updated);
 
-  if (updated !== original) {
-    writeFileSync(targetFile, updated, "utf8");
-    console.log(`[MOD] ${slug}: ${targetFile.replace(REPO_ROOT + "/", "")}`);
-    modifiedCount++;
-  } else {
-    console.log(`[OK ] ${slug}: already injected (${targetFile.replace(REPO_ROOT + "/", "")})`);
+  try {
+    if (updated !== original) {
+      writeFileSync(targetFile, updated, "utf8");
+      console.log(`[MOD] ${slug}: ${targetFile.replace(REPO_ROOT + "/", "")}`);
+      modifiedCount++;
+    } else {
+      console.log(`[OK ] ${slug}: already injected (${targetFile.replace(REPO_ROOT + "/", "")})`);
+    }
+  } catch (err) {
+    console.error(`[ERROR] ${slug}: could not write target file ${targetFile.replace(REPO_ROOT + "/", "")}: ${err.message}`);
+    errorCount++;
   }
 }
 
 console.log(`\nDone: ${modifiedCount} modified, ${skippedCount} skipped, ${slugs.length} total apps.`);
+
+if (errorCount > 0) {
+  console.error(`${errorCount} error(s) occurred during vendoring.`);
+  process.exit(1);
+}
