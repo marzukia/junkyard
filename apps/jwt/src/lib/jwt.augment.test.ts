@@ -134,6 +134,18 @@ describe("decodeBase64Url — negative cases", () => {
     // Characters like ! are not valid base64; atob should throw
     expect(() => decodeBase64Url("!!!")).toThrow();
   });
+
+  it("throws for standard base64 chars that are invalid in base64url (+)", () => {
+    // '+' is valid standard base64 but NOT valid base64url (must be '-' instead).
+    // The canonical charset validator catches this before atob, pinning the drift
+    // between the old lenient jwt/colours implementations and the robust canonical.
+    expect(() => decodeBase64Url("SGVs+G8")).toThrow(/invalid characters/);
+  });
+
+  it("throws for standard base64 chars that are invalid in base64url (/)", () => {
+    // '/' is valid standard base64 but NOT valid base64url (must be '_' instead).
+    expect(() => decodeBase64Url("SGVs/G8")).toThrow(/invalid characters/);
+  });
 });
 
 // ── getExpiryStatus — additional cases ───────────────────────────────────────

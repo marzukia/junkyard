@@ -38,26 +38,10 @@ export function decodeBase64(encoded: string): string {
 }
 
 // ── Base64 URL-safe variant ───────────────────────────────────────────────────
-// RFC 4648 §5: replace + → - and / → _ ; strip padding =
-
-/** Encode a UTF-8 string to URL-safe Base64 (no padding). */
-export function encodeBase64Url(text: string): string {
-  return encodeBase64(text).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
-
-/** Decode a URL-safe Base64 string to UTF-8. Throws on invalid input. */
-export function decodeBase64Url(encoded: string): string {
-  const trimmed = encoded.trim();
-  if (trimmed.length === 0) return "";
-  // Validate base64url charset (no + / or =)
-  if (!/^[A-Za-z0-9_-]*$/.test(trimmed)) {
-    throw new Error("Cannot decode base64url: invalid characters");
-  }
-  // Restore standard Base64 alphabet and padding
-  const standard =
-    trimmed.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - (trimmed.length % 4)) % 4);
-  return decodeBase64(standard);
-}
+// RFC 4648 §5 — canonical implementation lives in kit/lib/base64url.ts,
+// vendored here via scripts/vendor-base64url.mjs.
+export { encodeBase64Url, decodeBase64Url } from "./base64url";
+import { encodeBase64Url, decodeBase64Url } from "./base64url";
 
 // ── Hex encoding ─────────────────────────────────────────────────────────────
 

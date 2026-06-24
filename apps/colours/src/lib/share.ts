@@ -17,6 +17,7 @@ import { COLOR_SPACES, normalizeHex } from "./color";
 import type { ColorSpace } from "./color";
 import { HARMONY_MODES, MIN_PALETTE_COUNT, clampCount } from "./palette";
 import type { HarmonyMode } from "./palette";
+import { encodeBase64Url, decodeBase64Url } from "./base64url";
 
 // ── Abbreviated key shape written to the hash ─────────────────────────────────
 
@@ -48,24 +49,7 @@ interface EncodedPayload {
 }
 
 // ── Serialization ─────────────────────────────────────────────────────────────
-
-function toBase64url(str: string): string {
-  // btoa expects a binary string; TextEncoder handles any Unicode
-  const bytes = new TextEncoder().encode(str);
-  let binary = "";
-  for (const b of bytes) binary += String.fromCharCode(b);
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
-
-function fromBase64url(b64: string): string {
-  // Re-pad and convert +/_ back to standard base64
-  const padded = b64.replace(/-/g, "+").replace(/_/g, "/");
-  const rem = padded.length % 4;
-  const padded2 = rem === 0 ? padded : padded + "====".slice(rem);
-  const binary = atob(padded2);
-  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
-}
+// base64url codec from kit/lib/base64url.ts (vendored via scripts/vendor-base64url.mjs)
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
@@ -94,7 +78,7 @@ export function encodeState(state: ShareableState): string {
     rn: state.threePoint.steps,
     sp: state.space,
   };
-  return toBase64url(JSON.stringify(payload));
+  return encodeBase64Url(JSON.stringify(payload));
 }
 
 /**
@@ -104,7 +88,7 @@ export function encodeState(state: ShareableState): string {
 export function decodeState(encoded: string): ShareableState | null {
   if (!encoded || typeof encoded !== "string") return null;
   try {
-    const raw = fromBase64url(encoded);
+    const raw = decodeBase64Url(encoded);
     const p: Partial<EncodedPayload> = JSON.parse(raw);
 
     // Validate and clamp count first — it governs array lengths

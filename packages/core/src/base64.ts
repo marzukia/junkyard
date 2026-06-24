@@ -2,6 +2,11 @@
  * Base64 encode/decode using Node.js Buffer (no btoa/atob browser globals needed,
  * though both are also available in Node 18+). Buffer is used here for clarity
  * and to ensure headless-safe operation.
+ *
+ * Sync note: encodeBase64Url/decodeBase64Url here mirror kit/lib/base64url.ts
+ * (the shared browser canonical).  core stays standalone (MCP server, Node-only)
+ * and MUST NOT import from kit; keep both implementations in sync if the RFC 4648
+ * §5 logic ever changes.
  */
 import { z } from "zod";
 import type { ToolDef } from "./types.js";

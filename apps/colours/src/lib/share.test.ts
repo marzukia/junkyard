@@ -84,6 +84,12 @@ describe("decodeState — resilience", () => {
     expect(decodeState("not-base64-at-all!!")).toBeNull();
   });
 
+  it("returns null for standard base64 chars invalid in base64url (+)", () => {
+    // The canonical charset validator rejects '+' (valid std base64, not base64url).
+    // decodeState catches the throw and returns null — guards the drift fix.
+    expect(decodeState("SGVs+G8=")).toBeNull();
+  });
+
   it("returns null for malformed base64 that decodes to non-JSON", () => {
     // Valid base64 but not JSON
     const notJson = btoa("hello world").replace(/=/g, "");
