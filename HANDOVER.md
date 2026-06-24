@@ -200,3 +200,24 @@ npm test             # vitest
 - [ ] Per-app SEO: each app's `<link rel=canonical>`/`og:url` still points at `<slug>.mrzk.io` - update to the `/<slug>/` paths.
 - [ ] Per-tool deferred features (round-2 commit messages): resume CV-import, jwt signature verify, pdf rotate/watermark/page-numbers, qr batch/eye-shapes, ocr searchable-PDF/DOCX, bg background-replacement, etc.
 - [ ] **Build the MCP server** - read `/catalogue.json` (or `apps/*/junkyard.ts`), wrap each `mcp.lib` as a handler (`junkyard.<slug>`); client-ai tools need a server-side inference path or a browser-only marker.
+
+---
+
+## RESUME (24 Jun) — adversarial gauntlet to convergence
+
+peepercat asked to "run the adversarial gauntlet until no more material findings." In progress. All work on hydrogen (bun, `~/.bun/bin`), commit as Andryo Marzuki <42439397+marzukia@users.noreply.github.com>, push origin main → GH Pages deploy. junkyard.sh is live (nginx reverse-proxy on hydrogen → GH Pages origin junkyard.mrzk.io; junkyard.sh is canonical/primary).
+
+**Per-wave loop:** 3-4 read-only reviewers (correctness / security / leaks / a11y / mcp-infra), material-only with concrete repros (FILTER false positives - many appear; verify every finding) → fix builders in git worktrees → merge to main → poll deploy green → next wave. Converges when a waves reviewers all report CONVERGENCE: clean / 0 material.
+---
+
+## RESUME (24 Jun) — adversarial gauntlet to convergence
+
+peepercat asked to run the adversarial gauntlet until no more material findings. In progress. All work on hydrogen (bun, ~/.bun/bin), commit as Andryo Marzuki <42439397+marzukia@users.noreply.github.com>, push origin main → GH Pages deploy. junkyard.sh is live (nginx reverse-proxy on hydrogen → GH Pages origin junkyard.mrzk.io; junkyard.sh is canonical/primary).
+
+Per-wave loop: 3-4 read-only reviewers (correctness / security / leaks / a11y / mcp-infra), material-only with concrete repros (FILTER false positives, many appear, verify every finding) → fix builders in git worktrees → merge to main → poll deploy green → next wave. Converges when a wave's reviewers all report CONVERGENCE clean / 0 material.
+
+Done so far: 6 manual review rounds + gauntlet waves 1-3, each fixed + deployed green. Severity trend HIGH then MED then MED (security now verified clean) = converging. Big items already fixed: MCP ReDoS/infinite-loop (ops now run in a Bun Worker packages/mcp-server/src/worker.ts with terminate-on-timeout + concurrency semaphore cap 8 + INPUT_LIMITS); CSV formula-injection; qr-nopass password leak; json-repair corruption; PDF WinAnsi crashes (Unicode fonts via unicodeFont.ts + sanitizeWinAnsi fallback, 4 byte-identical copies) + invoice pagination + sign rotation; a11y (label/chip/hero contrast to AA, role=group, diff/gif keyboard, aria-live cluster); object-URL leaks.
+
+NEXT (wave-3 fix builders were in flight at handover): branches fix/g3-leaks (revoke object URLs in bg/caption/depth/upscale store setters + collage cell/freeform) and fix/g3-misc (sanitizeWinAnsi strip C1 range, csvToYaml/Markdown escape newlines, MCP INPUT_LIMITS keys for diff/markdown/base64, bg restore role=radiogroup, csv __proto__ Object.create(null), cron step-wild guard). When done: verify (core+mcp bun test, vendor+catalogue 0-drift, app builds), merge both, push, poll deploy green, then run wave 4 (expected near-clean). CI does NOT run app-level tsc (pre-existing strict-mode test-file TS errors are non-blocking).
+
+Separately DONE this session: all junkyard issues #1-#28 fixed+closed; bun migration; repo public; box resilience on hydrogen (monitoring ~/observability prom+grafana+node/cadvisor/blackbox+alertmanager+autoheal — discord alert delivery PAUSED per group; nightly backups to oxygen ~/scripts/backup-to-oxygen.sh); Frank ctx-status hook on oxygen (Hermes) fixed+confirmed. Open: GH issue #41 (no-root-workspace, intentional/documented). See memory: project_junkyard, reference_hydrogen_monitoring_backups, project_junkyard_gauntlet_resume.
