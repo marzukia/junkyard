@@ -78,13 +78,17 @@ export function parseSrt(raw: string): Cue[] {
     if (idx >= lines.length) continue;
     const timingMatch = lines[idx].match(SRT_TIMING_RE);
     if (!timingMatch) continue;
-    const startMs = parseTimestamp(timingMatch[1]);
-    const endMs = parseTimestamp(timingMatch[2]);
-    const text = lines
-      .slice(idx + 1)
-      .join("\n")
-      .trim();
-    cues.push({ id: genId(), startMs, endMs, text });
+    try {
+      const startMs = parseTimestamp(timingMatch[1]);
+      const endMs = parseTimestamp(timingMatch[2]);
+      const text = lines
+        .slice(idx + 1)
+        .join("\n")
+        .trim();
+      cues.push({ id: genId(), startMs, endMs, text });
+    } catch {
+      // skip malformed cue (e.g. timestamp missing separator)
+    }
   }
   return cues;
 }

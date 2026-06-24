@@ -351,3 +351,23 @@ describe("randomPick", () => {
     expect(randomPick(["only"])).toBe("only");
   });
 });
+
+
+// ── generatePassword length cap when length < pools (gauntlet w1) ──────────
+
+describe("generatePassword length cap", () => {
+  it("returns exactly length=3 when all 4 pools selected", () => {
+    const p = generatePassword(pwOpts({ length: 3, upper: true, lower: true, digits: true, symbols: true }));
+    expect(p).toHaveLength(3);
+  });
+
+  it("returns exactly length=1 with 2 pools", () => {
+    const p = generatePassword(pwOpts({ length: 1, upper: true, lower: true, digits: false, symbols: false }));
+    expect(p).toHaveLength(1);
+  });
+
+  it("returns exactly length=2 with 3 pools", () => {
+    const p = generatePassword(pwOpts({ length: 2, upper: true, lower: true, digits: true, symbols: false }));
+    expect(p).toHaveLength(2);
+  });
+});

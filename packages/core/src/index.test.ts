@@ -1180,5 +1180,21 @@ describe("barcode: EAN-8 check digit validation (g1-barcode-8)", () => {
   it("generateBarcodeSvg auto-appends check digit for 7-digit EAN-8", () => {
     const svg = generateBarcodeSvg("9638507", "EAN8");
     expect(svg).toContain("<svg");
+// ── password length < pools cap (gauntlet w1) ────────────────────────────────
+
+describe("password length cap when length < pool count", () => {
+  it("returns exactly length=3 chars when all 4 sets selected", () => {
+    const p = generatePassword({ length: 3, upper: true, lower: true, digits: true, symbols: true });
+    expect(p).toHaveLength(3);
+  });
+
+  it("returns exactly length=1 char", () => {
+    const p = generatePassword({ length: 1, upper: true, lower: false, digits: false, symbols: false });
+    expect(p).toHaveLength(1);
+  });
+
+  it("returns exactly length=2 chars with 3 pools", () => {
+    const p = generatePassword({ length: 2, upper: true, lower: true, digits: true, symbols: false });
+    expect(p).toHaveLength(2);
   });
 });

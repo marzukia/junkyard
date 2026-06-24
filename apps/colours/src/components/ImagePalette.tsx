@@ -5,7 +5,7 @@
  * on the canvas pixel data (see lib/imageExtract.ts). Fully client-side.
  */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { extractPaletteFromFile, isImageFile } from "../lib/imageExtract";
 import { MAX_PALETTE_COUNT, MIN_PALETTE_COUNT, useColoursStore } from "../store";
 
@@ -60,6 +60,9 @@ export function ImagePalette() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Revoke the object URL when it changes or when the component unmounts.
+  useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
+
   const processFile = useCallback(
     async (file: File) => {
       if (!isImageFile(file)) {
@@ -69,9 +72,11 @@ export function ImagePalette() {
       }
 
       setState("loading");
-      // Show a thumbnail preview
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewUrl(objectUrl);
+      // Show a thumbnail preview; revoke the previous URL first to avoid leaking it
+      setPreviewUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return URL.createObjectURL(file);
+      });
 
       try {
         // Extract same number of colors as current palette count
@@ -81,7 +86,7 @@ export function ImagePalette() {
         setState("idle");
       } catch {
         setState("error");
-        setPreviewUrl(null);
+        setPreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
         setTimeout(() => setState("idle"), 2500);
       }
     },
