@@ -89,7 +89,7 @@ export const useUuidStore = create<UuidStore>()(
         setOutputFormat: (outputFormat) => buildAndSet({ outputFormat }),
         setCopyFormat: (copyFormat) => set({ copyFormat }),
         setNamespaceName: (namespaceName) => buildAndSet({ namespaceName }),
-        setNameValue: (nameValue) => set({ nameValue }),
+        setNameValue: (nameValue) => buildAndSet({ nameValue }),
 
         generate: () => buildAndSet(),
       };

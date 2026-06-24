@@ -99,6 +99,7 @@ export function Controls() {
   const fileRef = useRef<HTMLInputElement>(null);
   const logoRef = useRef<HTMLInputElement>(null);
   const [bgImageError, setBgImageError] = useState<string | null>(null);
+  const [logoImageError, setLogoImageError] = useState<string | null>(null);
 
   // Title overflow warning: more than 2 lines is a problem
   const titleFontSize = Math.round(canvasHeight * 0.113);
@@ -132,16 +133,30 @@ export function Controls() {
     reader.readAsDataURL(file);
   }, [store]);
 
-  function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  const handleLogoUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    // Reset the input value so re-uploading the same file re-triggers onChange
+    e.target.value = "";
     if (!file) return;
+    setLogoImageError(null);
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const result = ev.target?.result;
-      if (typeof result === "string") store.setLogoImage(result);
+      const dataUrl = ev.target?.result;
+      if (typeof dataUrl !== "string") return;
+      // Validate the file is a decodable image before storing, matching bg-image validation.
+      // Catches non-image files that pass accept="image/*" filtering.
+      const img = new window.Image();
+      img.onload = () => {
+        setLogoImageError(null);
+        store.setLogoImage(dataUrl);
+      };
+      img.onerror = () => {
+        setLogoImageError("File could not be decoded as an image. Please upload a valid image file (JPEG, PNG, WebP, etc.).");
+      };
+      img.src = dataUrl;
     };
     reader.readAsDataURL(file);
-  }
+  }, [store]);
 
   return (
     <div className="og-controls">
@@ -370,7 +385,7 @@ export function Controls() {
                   <button
                     type="button"
                     className="og-upload-clear"
-                    onClick={() => store.setLogoImage(null)}
+                    onClick={() => { store.setLogoImage(null); setLogoImageError(null); }}
                     aria-label="Remove logo"
                   >
                     remove
@@ -401,6 +416,11 @@ export function Controls() {
               onChange={handleLogoUpload}
               aria-label="Upload logo image"
             />
+            {logoImageError && (
+              <p className="og-field-warn" role="alert">
+                {logoImageError}
+              </p>
+            )}
           </div>
         </div>
       </Section>

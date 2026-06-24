@@ -138,6 +138,7 @@ function Sidebar() {
   const {
     conversations,
     activeConversationId,
+    generating,
     sidebarOpen,
     newConversation,
     loadConversation,
