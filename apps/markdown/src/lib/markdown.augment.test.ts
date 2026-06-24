@@ -97,9 +97,12 @@ describe("countStats — additional edge cases", () => {
 
 describe("extractToc — additional cases", () => {
   it("handles duplicate heading text with same slug", () => {
-    const toc = extractToc("## Introduction\n## Introduction");
-    expect(toc).toHaveLength(2);
-    expect(toc[0].slug).toBe(toc[1].slug);
+    const toc = extractToc("## Introduction\n## Introduction\n## Introduction");
+    expect(toc).toHaveLength(3);
+    // First occurrence keeps the base slug; subsequent collisions get -1, -2, ...
+    expect(toc[0].slug).toBe("introduction");
+    expect(toc[1].slug).toBe("introduction-1");
+    expect(toc[2].slug).toBe("introduction-2");
   });
 
   it("slugifies heading with leading/trailing spaces", () => {
