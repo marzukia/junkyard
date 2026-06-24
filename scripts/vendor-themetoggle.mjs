@@ -14,7 +14,7 @@
  * Safe to re-run (idempotent).
  */
 
-import { readdirSync, readFileSync, writeFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -24,7 +24,21 @@ const APPS_DIR = join(REPO_ROOT, "apps");
 const KIT_DIR = join(REPO_ROOT, "kit", "components");
 
 const SOURCE_TSX = join(KIT_DIR, "ThemeToggle.tsx");
-const canonical = readFileSync(SOURCE_TSX, "utf8");
+
+if (!existsSync(SOURCE_TSX)) {
+  console.error(`[ERROR] Canonical source not found: ${SOURCE_TSX}`);
+  console.error("        Expected kit/components/ThemeToggle.tsx to exist in the repo root.");
+  process.exit(1);
+}
+
+let canonical;
+try {
+  canonical = readFileSync(SOURCE_TSX, "utf8");
+} catch (err) {
+  console.error(`[ERROR] Could not read canonical source: ${SOURCE_TSX}`);
+  console.error(`        ${err.message}`);
+  process.exit(1);
+}
 
 // Recursively find all .tsx files under a directory.
 function findTsx(dir) {
@@ -48,10 +62,18 @@ const slugs = readdirSync(APPS_DIR, { withFileTypes: true })
 let modifiedCount = 0;
 let alreadyOkCount = 0;
 let skippedCount = 0;
+let errorCount = 0;
 
 for (const slug of slugs) {
   const srcDir = join(APPS_DIR, slug, "src");
-  const files = findTsx(srcDir);
+  let files;
+  try {
+    files = findTsx(srcDir);
+  } catch (err) {
+    console.warn(`[SKIP] ${slug}: could not scan src directory: ${err.message}`);
+    skippedCount++;
+    continue;
+  }
 
   if (files.length === 0) {
     console.warn(`[SKIP] ${slug}: no ThemeToggle.tsx found`);
@@ -64,16 +86,26 @@ for (const slug of slugs) {
   }
 
   for (const file of files) {
-    const existing = readFileSync(file, "utf8");
-    if (existing === canonical) {
-      console.log(`[OK ] ${slug}: ${file.replace(REPO_ROOT + "/", "")}`);
-      alreadyOkCount++;
-    } else {
-      writeFileSync(file, canonical, "utf8");
-      console.log(`[MOD] ${slug}: ${file.replace(REPO_ROOT + "/", "")}`);
-      modifiedCount++;
+    try {
+      const existing = readFileSync(file, "utf8");
+      if (existing === canonical) {
+        console.log(`[OK ] ${slug}: ${file.replace(REPO_ROOT + "/", "")}`);
+        alreadyOkCount++;
+      } else {
+        writeFileSync(file, canonical, "utf8");
+        console.log(`[MOD] ${slug}: ${file.replace(REPO_ROOT + "/", "")}`);
+        modifiedCount++;
+      }
+    } catch (err) {
+      console.error(`[ERROR] ${slug}: failed to vendor ${file.replace(REPO_ROOT + "/", "")}: ${err.message}`);
+      errorCount++;
     }
   }
 }
 
 console.log(`\nDone: ${modifiedCount} modified, ${alreadyOkCount} already up to date, ${skippedCount} skipped, ${slugs.length} total apps.`);
+
+if (errorCount > 0) {
+  console.error(`${errorCount} error(s) occurred during vendoring.`);
+  process.exit(1);
+}
