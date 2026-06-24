@@ -52,6 +52,14 @@ jobs:
           node scripts/vendor-themetoggle.mjs
           git diff --exit-code
 
+      - name: Check vendored format copies are up to date
+        # Fails if kit/components/format.ts was changed without running vendor-format.mjs.
+        # Editing the canonical source without re-vendoring leaves the 6 target apps
+        # (bg, caption, cleanup, depth, transcribe, upscale) diverged from kit.
+        run: |
+          node scripts/vendor-format.mjs
+          git diff --exit-code
+
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).
