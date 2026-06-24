@@ -404,3 +404,111 @@ describe("csvEscape", () => {
     expect(csvEscape("line1\nline2", ",")).toBe('"line1\nline2"');
   });
 });
+
+// ── csvToYaml newline cells (gauntlet w3) ────────────────────────────────────
+
+describe("csvToYaml – newline-containing cells", () => {
+  it("escapes embedded newlines to \\n in quoted scalar (valid YAML)", () => {
+    const parsed = {
+      headers: ["name", "notes"],
+      rows: [["Alice", "line1\nline2"]],
+      rowCount: 1,
+      colCount: 2,
+      nonEmptyLineCount: 2,
+      raggedWarnings: [],
+    };
+    const result = csvToYaml(parsed);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    // The output YAML must not contain a literal newline inside a scalar value
+    // (after the - line). Check the notes value line specifically.
+    const notesLine = result.value.split("\n").find((l) => l.includes("notes:"));
+    expect(notesLine).toBeDefined();
+    expect(notesLine).toContain("\\n");
+    expect(notesLine).not.toMatch(/notes:.*\n.*line2/);
+  });
+
+  it("escapes \\r in values too", () => {
+    const parsed = {
+      headers: ["val"],
+      rows: [["foo\r\nbar"]],
+      rowCount: 1, colCount: 1, nonEmptyLineCount: 2, raggedWarnings: [],
+    };
+    const result = csvToYaml(parsed);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value).toContain("\\r");
+    expect(result.value).toContain("\\n");
+  });
+
+  it("escapes newlines in keys too", () => {
+    const parsed = {
+      headers: ["col\nnewline"],
+      rows: [["value"]],
+      rowCount: 1, colCount: 1, nonEmptyLineCount: 2, raggedWarnings: [],
+    };
+    const result = csvToYaml(parsed);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    // Key must have escaped newline
+    expect(result.value).toContain("\\n");
+  });
+});
+
+// ── csvToMarkdown newline cells (gauntlet w3) ─────────────────────────────────
+
+describe("csvToMarkdown – newline-containing cells", () => {
+  it("replaces embedded newlines with <br> to keep GFM table row intact", () => {
+    const parsed = {
+      headers: ["name", "notes"],
+      rows: [["Alice", "line1\nline2"]],
+      rowCount: 1,
+      colCount: 2,
+      nonEmptyLineCount: 2,
+      raggedWarnings: [],
+    };
+    const result = csvToMarkdown(parsed);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const lines = result.value.split("\n");
+    // There should be exactly 3 lines: header, separator, data row
+    expect(lines).toHaveLength(3);
+    // The data row should contain <br> not a literal newline in the cell
+    expect(lines[2]).toContain("<br>");
+    expect(lines[2]).not.toContain("\n");
+  });
+
+  it("replaces CRLF with <br> too", () => {
+    const parsed = {
+      headers: ["val"],
+      rows: [["foo\r\nbar"]],
+      rowCount: 1, colCount: 1, nonEmptyLineCount: 2, raggedWarnings: [],
+    };
+    const result = csvToMarkdown(parsed);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const lines = result.value.split("\n");
+    expect(lines).toHaveLength(3);
+    expect(lines[2]).toContain("<br>");
+  });
+});
+
+// ── csvToJson __proto__ guard (gauntlet w3) ───────────────────────────────────
+
+describe("csvToJson – __proto__ column guard", () => {
+  it("preserves __proto__ header as a data key (Object.create(null) prevents prototype pollution)", () => {
+    const parsed = {
+      headers: ["__proto__", "name"],
+      rows: [["polluted", "Alice"]],
+      rowCount: 1, colCount: 2, nonEmptyLineCount: 2, raggedWarnings: [],
+    };
+    const result = csvToJson(parsed);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const rows = JSON.parse(result.value) as Array<Record<string, unknown>>;
+    expect(rows[0]["__proto__"]).toBe("polluted");
+    expect(rows[0]["name"]).toBe("Alice");
+    // Prototype of a normal object must not be poisoned
+    expect(({} as Record<string, unknown>)["polluted"]).toBeUndefined();
+  });
+});

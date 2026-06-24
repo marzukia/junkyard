@@ -105,7 +105,7 @@ function expandField(raw: string, spec: FieldSpec): number[] {
   for (const segment of part.split(",")) {
     const stepWild = segment.match(/^\*\/(\d+)$/);
     if (stepWild) {
-      const step = Number(stepWild[1]);
+      const step = Math.max(1, Number(stepWild[1]));
       for (let i = spec.min; i <= spec.max; i += step) result.add(i);
       continue;
     }

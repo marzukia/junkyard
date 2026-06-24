@@ -248,7 +248,7 @@ export function splitCsvRows(text: string, delimiter: Delimiter): string[][] {
 export function csvToJson(parsed: ParsedCsv): ConvertResult<string> {
   try {
     const objects = parsed.rows.map((row) => {
-      const obj: Record<string, unknown> = {};
+      const obj = Object.create(null) as Record<string, unknown>;
       parsed.headers.forEach((header, i) => {
         const raw = row[i] ?? "";
         obj[header] = coerceValue(raw);
@@ -370,7 +370,7 @@ export function csvEscape(val: string, delimiter: Delimiter): string {
  */
 export function csvToMarkdown(parsed: ParsedCsv): ConvertResult<string> {
   try {
-    const md = (val: string) => val.replace(/\|/g, "\\|");
+    const md = (val: string) => val.replace(/\r?\n/g, "<br>").replace(/\|/g, "\\|");
     const header = `| ${parsed.headers.map(md).join(" | ")} |`;
     const sep = `| ${parsed.headers.map(() => "---").join(" | ")} |`;
     const rows = parsed.rows.map(
@@ -466,7 +466,7 @@ function yamlVal(s: string): string {
   if (s === "true" || s === "false" || s === "null") return `"${s}"`;
   // If it contains special chars, quote it
   if (/[:#\[\]{},&*?|<>=!%@`\n\r\\"]/.test(s) || s.startsWith(" ") || s.endsWith(" ")) {
-    return `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+    return `"${s.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/"/g, '\\"')}"`;
   }
   return s;
 }
@@ -480,7 +480,7 @@ function yamlKey(s: string): string {
   if (s === "") return '""';
   // Quote if the key contains YAML-special chars or leading/trailing whitespace
   if (/[:#\[\]{},&*?|<>=!%@`\n\r\\"]/.test(s) || s.startsWith(" ") || s.endsWith(" ")) {
-    return `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+    return `"${s.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/"/g, '\\"')}"`;
   }
   return s;
 }

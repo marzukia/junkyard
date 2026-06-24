@@ -122,6 +122,13 @@ export const INPUT_LIMITS: Record<string, number> = {
   expr: 200,
   // json.format takes a `json` arg; a multi-MB string must not bypass the cap
   json: 100_000,
+  // diff op takes `a` and `b` text arguments
+  a: 100_000,
+  b: 100_000,
+  // markdown op takes a `markdown` argument
+  markdown: 100_000,
+  // base64.decode takes an `encoded` argument
+  encoded: 100_000,
 };
 
 // Returns an error string if any arg exceeds its limit, otherwise null.
