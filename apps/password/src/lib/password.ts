@@ -98,7 +98,11 @@ export function generatePassword(opts: PasswordOptions): string {
     for (let i = have; i < minSymbols; i++) extraSymbols.push(randomPick(symbolPool.split("")));
   }
 
-  const mandatoryCount = baseRequired.length + extraDigits.length + extraSymbols.length;
+  // Cap baseRequired to length to prevent exceeding requested output size when
+  // fewer pool-guarantee chars are needed than pools selected.
+  const cappedRequired = baseRequired.slice(0, length);
+  const remaining = length - cappedRequired.length;
+  const mandatoryCount = cappedRequired.length + extraDigits.length + extraSymbols.length;
   if (mandatoryCount > length) {
     throw new Error(
       `Min-digit/symbol constraints (${mandatoryCount} required chars) exceed password length (${length})`
@@ -111,7 +115,7 @@ export function generatePassword(opts: PasswordOptions): string {
     rest.push(randomPick(alphabet.split("")));
   }
 
-  return shuffle([...baseRequired, ...extraDigits, ...extraSymbols, ...rest]).join("");
+  return shuffle([...cappedRequired, ...extraDigits, ...extraSymbols, ...rest]).join("");
 }
 
 // ── Passphrase generation ─────────────────────────────────────────────────────

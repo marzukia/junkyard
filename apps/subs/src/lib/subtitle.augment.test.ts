@@ -199,3 +199,50 @@ describe("fixOverlaps preserves input order (W8)", () => {
     expect(result[1].id).toBe("early");
   });
 });
+
+// ── parseSrt skips malformed cues (gauntlet w1) ───────────────────────────────
+
+describe("parseSrt skips bad cue instead of throwing", () => {
+  it("does not throw on a timing line missing the separator", () => {
+    // "00:00:01000" matches SRT_TIMING_RE (separator optional) but parseTimestamp would throw
+    const bad = "1\n00:00:01000 --> 00:00:02,000\nHi\n";
+    expect(() => parseSrt(bad)).not.toThrow();
+  });
+
+  it("returns empty array for a single malformed cue", () => {
+    const bad = "1\n00:00:01000 --> 00:00:02,000\nHi\n";
+    expect(parseSrt(bad)).toHaveLength(0);
+  });
+
+  it("still parses valid cues after a malformed one", () => {
+    const mixed = [
+      "1",
+      "00:00:01000 --> 00:00:02,000",
+      "Bad cue",
+      "",
+      "2",
+      "00:00:03,000 --> 00:00:05,000",
+      "Good cue",
+      "",
+    ].join("\n");
+    const cues = parseSrt(mixed);
+    expect(cues).toHaveLength(1);
+    expect(cues[0].text).toBe("Good cue");
+  });
+
+  it("still parses valid cues before a malformed one", () => {
+    const mixed = [
+      "1",
+      "00:00:01,000 --> 00:00:02,000",
+      "Good cue",
+      "",
+      "2",
+      "00:00:03000 --> 00:00:04,000",
+      "Bad cue",
+      "",
+    ].join("\n");
+    const cues = parseSrt(mixed);
+    expect(cues).toHaveLength(1);
+    expect(cues[0].text).toBe("Good cue");
+  });
+});
