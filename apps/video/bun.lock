@@ -5,12 +5,11 @@
     "": {
       "name": "tool-video",
       "dependencies": {
-        "@ffmpeg/ffmpeg": "^0.12.15",
+        "@ffmpeg/ffmpeg": "0.12.15",
         "@ffmpeg/util": "^0.12.2",
         "@fontsource/inter": "^5.2.8",
         "@fontsource/jetbrains-mono": "^5.1.2",
         "@mantine/core": "^7.17.4",
-        "@mantine/hooks": "^7.17.4",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
       },

@@ -71,7 +71,15 @@ export async function runFFmpeg(
     ? ({ progress }: { progress: number }) => onProgress(Math.min(progress, 1))
     : null;
 
+  // Collect ffmpeg log lines so codec/format errors are surfaced to the caller
+  // rather than swallowed into a generic "Processing failed" message.
+  const logLines: string[] = [];
+  const logHandler = ({ message }: { message: string }) => {
+    logLines.push(message);
+  };
+
   if (handler) ff.on("progress", handler);
+  ff.on("log", logHandler);
 
   const inName = `input_${Date.now()}_${inputFile.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
 
@@ -79,7 +87,15 @@ export async function runFFmpeg(
   try {
     await ff.writeFile(inName, await fetchFile(inputFile));
 
-    await ff.exec(["-i", inName, ...args, outputName]);
+    const ret = await ff.exec(["-i", inName, ...args, outputName]);
+    if (ret !== 0) {
+      // Surface the last meaningful ffmpeg log line as the error message so
+      // codec/format failures (e.g. unsupported encoder) are diagnosable.
+      const detail = logLines.filter((l) => l.trim()).slice(-3).join(" | ");
+      throw new Error(
+        `ffmpeg exited with code ${ret}${detail ? `: ${detail}` : ""}`,
+      );
+    }
 
     const data = await ff.readFile(outputName);
     // readFile returns Uint8Array | string; copy into a plain Uint8Array for Blob
@@ -91,6 +107,7 @@ export async function runFFmpeg(
     await ff.deleteFile(outputName).catch(() => {});
   } finally {
     if (handler) ff.off("progress", handler);
+    ff.off("log", logHandler);
   }
 
   return new Blob([bytes!.buffer as ArrayBuffer], { type: mimeForName(outputName) });

@@ -52,6 +52,12 @@ export function FaviconGenerator() {
   const generate = useCallback(async () => {
     if (!isReady) return;
 
+    // Snapshot the source at the moment generation starts.  If the user switches
+    // mode mid-run, setSourceMode() revokes sourceUrl — loading it after that
+    // throws "Failed to load image".  We bail quietly instead of showing an error.
+    const snapMode = sourceMode;
+    const snapUrl = sourceUrl;
+
     setStatus("generating");
     setProgress(0);
 
@@ -67,10 +73,15 @@ export function FaviconGenerator() {
       const previews = [];
 
       for (const entry of FAVICON_SIZES) {
+        // Bail if the source was changed/revoked since we started
+        if (snapMode !== sourceMode || (snapMode === "image" && snapUrl !== sourceUrl)) {
+          setStatus("idle");
+          return;
+        }
         let canvas: HTMLCanvasElement;
 
-        if (sourceMode === "image" && sourceUrl) {
-          const img = await loadImage(sourceUrl);
+        if (snapMode === "image" && snapUrl) {
+          const img = await loadImage(snapUrl);
           canvas = drawToCanvas(img, entry.size, canvasOptions);
         } else {
           canvas = drawTextToCanvas(sourceText.trim(), entry.size, canvasOptions);
@@ -94,8 +105,8 @@ export function FaviconGenerator() {
       const icoFrames = await Promise.all(
         icoSizes.map(async (sz) => {
           let canvas: HTMLCanvasElement;
-          if (sourceMode === "image" && sourceUrl) {
-            const img = await loadImage(sourceUrl);
+          if (snapMode === "image" && snapUrl) {
+            const img = await loadImage(snapUrl);
             canvas = drawToCanvas(img, sz, canvasOptions);
           } else {
             canvas = drawTextToCanvas(sourceText.trim(), sz, canvasOptions);

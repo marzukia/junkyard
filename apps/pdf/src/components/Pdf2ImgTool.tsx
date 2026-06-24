@@ -1,16 +1,22 @@
-import { useState } from "react";
-import { baseName, formatBytes } from "../lib/pdfUtils";
+import { useRef, useState } from "react";
+import { baseName, downloadBytes, formatBytes } from "../lib/pdfUtils";
 import { DropZone } from "./DropZone";
 import { Spinner } from "./Spinner";
 
-async function renderPdfPages(
+/**
+ * Render every page of a PDF to PNG and return them as a map of
+ * filename → Uint8Array, ready for zipSync.
+ *
+ * Bug 2 fix: previously called a.click() per page; Chromium throttles rapid
+ * downloads so only ~10-19 of 60 actually landed.  We now collect all blobs
+ * in memory and let the caller bundle them into a single ZIP download.
+ */
+async function renderPdfPagesToBlobs(
   file: File,
   dpi: number,
   onProgress: (current: number, total: number) => void
-): Promise<void> {
-  // Dynamically import pdfjs-dist to avoid SSR issues.
+): Promise<Record<string, Uint8Array>> {
   const pdfjsLib = await import("pdfjs-dist");
-  // Use local worker copy shipped by pdfjs-dist
   pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
     import.meta.url
@@ -20,6 +26,7 @@ async function renderPdfPages(
   const bytes = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
   const name = baseName(file.name);
+  const results: Record<string, Uint8Array> = {};
 
   for (let i = 1; i <= pdf.numPages; i++) {
     onProgress(i, pdf.numPages);
@@ -31,20 +38,16 @@ async function renderPdfPages(
     const ctx = canvas.getContext("2d");
     if (!ctx) continue;
     await page.render({ canvasContext: ctx, viewport }).promise;
-    await new Promise<void>((resolve) => {
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `${name}-page${i}.png`;
-          a.click();
-          setTimeout(() => URL.revokeObjectURL(url), 10000);
-        }
-        resolve();
-      }, "image/png");
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob((b) => resolve(b), "image/png");
     });
+    if (blob) {
+      const buf = await blob.arrayBuffer();
+      results[`${name}-page${i}.png`] = new Uint8Array(buf);
+    }
   }
+
+  return results;
 }
 
 const DPI_OPTIONS = [72, 150, 300] as const;
@@ -57,6 +60,8 @@ export function Pdf2ImgTool() {
   const [progress, setProgress] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  // Bug 3: synchronous in-flight guard prevents duplicate work on rapid double-click.
+  const inFlight = useRef(false);
 
   const onFile = (files: File[]) => {
     setFile(files[0] ?? null);
@@ -66,15 +71,23 @@ export function Pdf2ImgTool() {
   };
 
   const convert = async () => {
-    if (!file) return;
+    // Synchronous guard: checked before any await so a 2nd click in the same tick
+    // is rejected before React has flushed the setBusy(true) state update.
+    if (inFlight.current || !file) return;
+    inFlight.current = true;
     setBusy(true);
     setError(null);
     setDone(false);
     setProgress("Rendering pages…");
     try {
-      await renderPdfPages(file, dpi, (i, total) => {
+      const blobs = await renderPdfPagesToBlobs(file, dpi, (i, total) => {
         setProgress(`Rendering page ${i} / ${total}`);
       });
+      // Bug 2: bundle all pages into a single ZIP download.
+      setProgress("Building ZIP…");
+      const { zipSync } = await import("fflate");
+      const zip = zipSync(blobs);
+      downloadBytes(zip, `${baseName(file.name)}-images.zip`);
       setDone(true);
       setProgress("");
     } catch (err) {
@@ -82,6 +95,7 @@ export function Pdf2ImgTool() {
       setProgress("");
     } finally {
       setBusy(false);
+      inFlight.current = false;
     }
   };
 
@@ -91,7 +105,7 @@ export function Pdf2ImgTool() {
         accept=".pdf,application/pdf"
         onFiles={onFile}
         label="Drop a PDF here or click to select"
-        sublabel="Each page will be exported as a PNG image"
+        sublabel="Each page will be exported as a PNG image inside a ZIP"
       />
 
       {file && (
@@ -140,7 +154,9 @@ export function Pdf2ImgTool() {
         </output>
       )}
       {done && (
-        <output className="tool-success">Pages downloaded! Check your downloads folder.</output>
+        <output className="tool-success">
+          Export complete — downloaded as a ZIP. Check your downloads folder.
+        </output>
       )}
       {error && (
         <p className="tool-error" role="alert">

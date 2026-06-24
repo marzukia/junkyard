@@ -215,7 +215,12 @@ export function App() {
       const url = URL.createObjectURL(blob);
       setResult({ blob, name: built.outputName, url, size: blob.size });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Processing failed";
+      const msg =
+        err instanceof Error
+          ? err.message
+          : typeof err === "object" && err !== null && "message" in err
+            ? String((err as { message: unknown }).message)
+            : "Processing failed";
       setError(msg);
     } finally {
       setProcessing(false);

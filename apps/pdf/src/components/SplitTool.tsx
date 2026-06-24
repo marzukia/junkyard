@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { baseName, downloadBytes, formatBytes, splitPdf } from "../lib/pdfUtils";
+import { useRef, useState } from "react";
+import { baseName, downloadBytes, formatBytes, splitPdfToZip } from "../lib/pdfUtils";
 import { DropZone } from "./DropZone";
 import { Spinner } from "./Spinner";
 
@@ -8,6 +8,8 @@ export function SplitTool() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  // Bug 3: synchronous in-flight guard — prevents duplicate work on rapid double-click.
+  const inFlight = useRef(false);
 
   const onFile = (files: File[]) => {
     setFile(files[0] ?? null);
@@ -16,22 +18,25 @@ export function SplitTool() {
   };
 
   const split = async () => {
-    if (!file) return;
+    // Synchronous guard checked before any await so a 2nd click in the same tick
+    // is rejected before React has flushed the setBusy(true) state update.
+    if (inFlight.current || !file) return;
+    inFlight.current = true;
     setBusy(true);
     setError(null);
     setDone(false);
     try {
       const bytes = new Uint8Array(await file.arrayBuffer());
-      const pages = await splitPdf(bytes);
       const name = baseName(file.name);
-      for (let i = 0; i < pages.length; i++) {
-        downloadBytes(pages[i]!, `${name}-page${i + 1}.pdf`);
-      }
+      // Bug 2: bundle all pages into a single ZIP to avoid Chromium download throttling.
+      const zip = await splitPdfToZip(bytes, name);
+      downloadBytes(zip, `${name}-split-pages.zip`);
       setDone(true);
     } catch (err) {
       setError(`Split failed: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setBusy(false);
+      inFlight.current = false;
     }
   };
 
@@ -41,7 +46,7 @@ export function SplitTool() {
         accept=".pdf,application/pdf"
         onFiles={onFile}
         label="Drop a PDF here or click to select"
-        sublabel="Each page will be saved as a separate PDF"
+        sublabel="Each page will be saved as a separate PDF inside a ZIP"
       />
 
       {file && (
@@ -69,7 +74,9 @@ export function SplitTool() {
         </p>
       )}
       {done && (
-        <output className="tool-success">Pages downloaded! Check your downloads folder.</output>
+        <output className="tool-success">
+          Split complete — downloaded as a ZIP. Check your downloads folder.
+        </output>
       )}
 
       <div className="tool-actions">

@@ -1,6 +1,43 @@
 import { PDFDocument, StandardFonts, degrees, rgb } from "pdf-lib";
 import { sanitizeWinAnsi } from "./unicodeFont";
 
+/**
+ * Guard: load a PDF and verify its page tree is traversable.
+ *
+ * PDFDocument.load() can succeed on a truncated-but-header-valid PDF because
+ * the xref table is parseable; a later page traversal then throws an internal
+ * error like "i.catalog.Pages(...).traverse is not a function".  This helper
+ * does the full round-trip (load + getPageIndices) inside a single try/catch
+ * and maps any failure to a human-readable message so no pdf-lib internals
+ * leak to the UI.
+ *
+ * Use this instead of a bare PDFDocument.load() call in any op that will
+ * subsequently access pages.
+ */
+async function assertReadable(
+  bytes: Uint8Array,
+  label?: string
+): Promise<PDFDocument> {
+  let doc: PDFDocument;
+  try {
+    doc = await PDFDocument.load(bytes);
+  } catch {
+    const who = label ? `"${label}"` : "The PDF";
+    throw new Error(
+      `${who} appears to be corrupted or incomplete and could not be loaded.`
+    );
+  }
+  try {
+    doc.getPageIndices();
+  } catch {
+    const who = label ? `"${label}"` : "The PDF";
+    throw new Error(
+      `${who} appears to be corrupted or incomplete. It loaded but its page tree is unreadable.`
+    );
+  }
+  return doc;
+}
+
 /** Parse a compact page range string like "1,3-5,7" into 0-based indices.
  * Throws if any token is not a valid page number or range (e.g. "abc", "x-y").
  * Use this when the caller should surface parse errors to the user.
@@ -49,14 +86,21 @@ export async function mergePdfs(
   const merged = await PDFDocument.create();
   for (let i = 0; i < pdfBytes.length; i++) {
     const bytes = pdfBytes[i]!;
+    const label = names?.[i] ?? `file ${i + 1}`;
     let doc: PDFDocument;
     try {
       doc = await PDFDocument.load(bytes);
     } catch {
-      const label = names?.[i] ?? `file ${i + 1}`;
       throw new Error(`"${label}" is not a valid PDF or is corrupted and cannot be read.`);
     }
-    const pageIndices = doc.getPageIndices();
+    let pageIndices: number[];
+    try {
+      pageIndices = doc.getPageIndices();
+    } catch {
+      throw new Error(
+        `"${label}" appears to be corrupted or incomplete. It loaded but its page tree is unreadable.`
+      );
+    }
     const copied = await merged.copyPages(doc, pageIndices);
     for (const page of copied) {
       merged.addPage(page);
@@ -68,7 +112,7 @@ export async function mergePdfs(
 
 /** Extract a subset of pages (0-based indices) from a PDF. */
 export async function extractPages(pdfBytes: Uint8Array, indices: number[]): Promise<Uint8Array> {
-  const src = await PDFDocument.load(pdfBytes);
+  const src = await assertReadable(pdfBytes);
   const out = await PDFDocument.create();
   const copied = await out.copyPages(src, indices);
   for (const page of copied) {
@@ -79,7 +123,7 @@ export async function extractPages(pdfBytes: Uint8Array, indices: number[]): Pro
 
 /** Split a PDF into individual single-page PDFs. Returns one Uint8Array per page. */
 export async function splitPdf(pdfBytes: Uint8Array): Promise<Uint8Array[]> {
-  const src = await PDFDocument.load(pdfBytes);
+  const src = await assertReadable(pdfBytes);
   const total = src.getPageCount();
   const results: Uint8Array[] = [];
   for (let i = 0; i < total; i++) {
@@ -93,7 +137,7 @@ export async function splitPdf(pdfBytes: Uint8Array): Promise<Uint8Array[]> {
 
 /** Reorder pages of a PDF. newOrder is an array of 0-based old indices. */
 export async function reorderPages(pdfBytes: Uint8Array, newOrder: number[]): Promise<Uint8Array> {
-  const src = await PDFDocument.load(pdfBytes);
+  const src = await assertReadable(pdfBytes);
   const out = await PDFDocument.create();
   const copied = await out.copyPages(src, newOrder);
   for (const page of copied) {
@@ -128,7 +172,15 @@ export async function compressPdf(pdfBytes: Uint8Array): Promise<Uint8Array> {
           "Decrypt the PDF first, then optimise."
       );
     }
-    throw err;
+    throw new Error("This PDF appears to be corrupted or incomplete.");
+  }
+  // Guard: verify page tree is traversable before proceeding.
+  try {
+    doc.getPageIndices();
+  } catch {
+    throw new Error(
+      "This PDF appears to be corrupted or incomplete. It loaded but its page tree is unreadable."
+    );
   }
   return doc.save({ useObjectStreams: true });
 }
@@ -149,9 +201,38 @@ export async function imagesToPdf(imageFiles: File[]): Promise<Uint8Array> {
   return doc.save();
 }
 
-/** Trigger a file download in the browser. */
+/**
+ * Split a PDF into individual single-page PDFs and bundle them into a ZIP.
+ *
+ * Returns the ZIP as a Uint8Array.  One entry per page, named
+ * `<baseName>-page1.pdf`, `<baseName>-page2.pdf`, etc.
+ *
+ * Uses fflate's zipSync so the bundling is synchronous after the async pdf-lib
+ * work.  This avoids Chromium's download throttle (which drops individual
+ * a.click() calls beyond ~10) and keeps the whole operation as a single
+ * user-visible download.
+ */
+export async function splitPdfToZip(pdfBytes: Uint8Array, name: string): Promise<Uint8Array> {
+  const { zipSync } = await import("fflate");
+  const pages = await splitPdf(pdfBytes);
+  const files: Record<string, Uint8Array> = {};
+  for (let i = 0; i < pages.length; i++) {
+    files[`${name}-page${i + 1}.pdf`] = pages[i]!;
+  }
+  return zipSync(files);
+}
+
+/** Trigger a file download in the browser.
+ *
+ * The MIME type is inferred from the filename extension:
+ *   .zip  → application/zip
+ *   other → application/pdf  (legacy default, matches the original behaviour)
+ */
 export function downloadBytes(bytes: Uint8Array, filename: string): void {
-  const blob = new Blob([bytes.buffer as ArrayBuffer], { type: "application/pdf" });
+  const mime = filename.toLowerCase().endsWith(".zip")
+    ? "application/zip"
+    : "application/pdf";
+  const blob = new Blob([bytes.buffer as ArrayBuffer], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -180,7 +261,7 @@ export async function rotatePages(
   angle: RotationAngle,
   pageIndices?: number[]
 ): Promise<Uint8Array> {
-  const doc = await PDFDocument.load(pdfBytes);
+  const doc = await assertReadable(pdfBytes);
   const total = doc.getPageCount();
   const targets = pageIndices ?? Array.from({ length: total }, (_, i) => i);
   for (const idx of targets) {
@@ -211,7 +292,7 @@ export async function addPageNumbers(
   } = {}
 ): Promise<Uint8Array> {
   const { position = "bottom-center", startAt = 1, fontSize = 10, format = "n" } = opts;
-  const doc = await PDFDocument.load(pdfBytes);
+  const doc = await assertReadable(pdfBytes);
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const total = doc.getPageCount();
   for (let i = 0; i < total; i++) {
@@ -251,7 +332,7 @@ export async function addWatermark(
     throw new Error("Watermark text must not be empty.");
   }
   const { opacity = 0.15, fontSize = 48, color = [0.5, 0.5, 0.5] } = opts;
-  const doc = await PDFDocument.load(pdfBytes);
+  const doc = await assertReadable(pdfBytes);
   const font = await doc.embedFont(StandardFonts.HelveticaBold);
   // Sanitize: StandardFont (Helvetica) is WinAnsi-only; replace non-encodable chars.
   const safeText = sanitizeWinAnsi(text);

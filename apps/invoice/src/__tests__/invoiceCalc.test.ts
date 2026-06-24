@@ -207,6 +207,44 @@ describe("formatMoney", () => {
   });
 });
 
+// Bug-4: extreme values must never produce Infinity or NaN in any field
+describe("calcTotals — extreme value guard (Bug-4)", () => {
+  it("qty=1e300 × price=1e300 produces finite, consistent totals with no NaN", () => {
+    const items = [item("Extreme", 1e300, 1e300)];
+    const result = calcTotals(items, 0, 0);
+    for (const [key, val] of Object.entries(result)) {
+      expect(Number.isFinite(val), `${key} should be finite`).toBe(true);
+      expect(Number.isNaN(val), `${key} should not be NaN`).toBe(false);
+    }
+  });
+
+  it("subtotal=Infinity with 0% discount produces consistent discountAmount (not NaN)", () => {
+    const items = [item("Big", 1e300, 1e300)];
+    const result = calcTotals(items, 0, 0);
+    // Both subtotal and discountAmount must be finite — the old code had Infinity * 0 = NaN
+    expect(Number.isFinite(result.subtotal)).toBe(true);
+    expect(Number.isFinite(result.discountAmount)).toBe(true);
+    expect(Number.isNaN(result.discountAmount)).toBe(false);
+  });
+
+  it("total is always >= subtotal when tax=0, discount=0, shipping=0", () => {
+    const items = [item("Big", 1e300, 1e300)];
+    const result = calcTotals(items, 0, 0);
+    expect(result.total).toBeGreaterThanOrEqual(result.taxableAmount);
+  });
+
+  it("normal values still work correctly after adding the isFinite guard", () => {
+    const items = [item("Normal", 2, 50)];
+    const result = calcTotals(items, 10, 5);
+    // subtotal=100, 5% discount=5, taxable=95, 10% tax=9.5, total=104.5
+    expect(result.subtotal).toBe(100);
+    expect(result.discountAmount).toBe(5);
+    expect(result.taxableAmount).toBe(95);
+    expect(result.taxAmount).toBe(9.5);
+    expect(result.total).toBe(104.5);
+  });
+});
+
 // H4 toggle wire-up: assert the toggle meaningfully changes the total
 describe("H4 taxOnGross UI toggle effect", () => {
   it("toggling taxOnGross produces a different total when both tax and discount are set", () => {

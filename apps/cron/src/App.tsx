@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
@@ -9,6 +9,7 @@ import {
   TZ_OPTIONS,
   fieldLabel,
   formatRunTime,
+  nextRuns,
   resolveTzLabel,
 } from "./lib/cron";
 import type { CronFields } from "./lib/cron";
@@ -190,7 +191,6 @@ export function App() {
     expression,
     fields,
     description,
-    runs,
     fieldErrors,
     globalError,
     setExpression,
@@ -215,6 +215,13 @@ export function App() {
   }, []);
 
   const isValid = globalError === null;
+
+  // Recompute run times in the selected timezone so that e.g. `0 0 * * *`
+  // shows midnight in Tokyo when Tokyo is selected, not midnight local.
+  const runs = useMemo(
+    () => (isValid ? nextRuns(fields, 5, undefined, timezone) : []),
+    [fields, isValid, timezone],
+  );
 
   return (
     <div className="app-root">

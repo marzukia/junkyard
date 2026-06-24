@@ -84,9 +84,9 @@ describe("nextRuns N/step expansion", () => {
   it("0 0 1/2 * * dom expands to 1,3,5,...,31", () => {
     const r = expressionToFields("0 0 1/2 * *");
     expect(r.ok).toBe(true);
-    // Generate 16 runs: should be days 1,3,5,...,31 in Jan then 1,3,...
-    const anchor2 = new Date("2024-01-01T00:00:00Z"); // Jan 1 2024 = Monday
-    const runs = nextRuns(r.fields, 16, new Date("2023-12-31T00:00:00Z"));
+    // Pass timezone="UTC" so nextRuns evaluates midnight in UTC and
+    // getUTCDate() reads the correct frame on any host timezone.
+    const runs = nextRuns(r.fields, 16, new Date("2023-12-31T00:00:00Z"), "UTC");
     const dates = runs.map((d) => d.getUTCDate());
     expect(dates).toEqual([1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]);
   });

@@ -71,7 +71,18 @@ export interface DiffResult {
     removed: number;
     unchanged: number;
   };
+  /** True when word-level highlighting was disabled because the input exceeded
+   *  LARGE_INPUT_LINE_THRESHOLD.  The UI should surface a notice to the user. */
+  wordDiffDisabled?: boolean;
 }
+
+/**
+ * When the total number of lines across both sides exceeds this threshold,
+ * per-line word-diff is skipped.  Word-diff has O(n²) behaviour in pathological
+ * cases (e.g. very long lines, many changed lines) and made a 5000-line diff
+ * freeze for 63 seconds in testing.  Line-level diff remains correct and fast.
+ */
+export const LARGE_INPUT_LINE_THRESHOLD = 1500;
 
 // ─── Word diff ───────────────────────────────────────────────────────────────
 
@@ -147,6 +158,15 @@ export function computeDiff(oldText: string, newText: string, opts: DiffOptions 
   // Normalise: ensure trailing newline so structuredPatch works correctly.
   const ensureNewline = (s: string) => (s && !s.endsWith("\n") ? `${s}\n` : s);
 
+  // Large-input guard: count lines before the expensive word-diff pass.
+  // structuredPatch with context=MAX_SAFE_INTEGER is O(n) in line count, but
+  // per-line wordDiff is O(m²) in character count and causes multi-second
+  // freezes on inputs >1500 total lines.  Above the threshold we fall back to
+  // line-level-only output and set wordDiffDisabled so the UI can warn the user.
+  const oldLineCount = oldText ? oldText.split("\n").length : 0;
+  const newLineCount = newText ? newText.split("\n").length : 0;
+  const skipWordDiff = oldLineCount + newLineCount > LARGE_INPUT_LINE_THRESHOLD;
+
   // When ignoring whitespace/case, diff against normalised text but display original lines.
   const compareOld = ensureNewline(normaliseForCompare(oldText, opts));
   const compareNew = ensureNewline(normaliseForCompare(newText, opts));
@@ -195,6 +215,9 @@ export function computeDiff(oldText: string, newText: string, opts: DiffOptions 
     return { sideBySide, inline, stats };
   }
 
+  // Expose the skipWordDiff flag once (used in return below).
+  const wordDiffDisabled = skipWordDiff;
+
   // Collect all hunk lines (context=MAX so we get one big hunk with everything).
   // Lines are prefixed with ' ', '+', '-'.
   const hunkLines = patch.hunks.flatMap((h) => h.lines);
@@ -208,12 +231,15 @@ export function computeDiff(oldText: string, newText: string, opts: DiffOptions 
     const pairCount = Math.min(removedBuf.length, addedBuf.length);
 
     for (let i = 0; i < pairCount; i++) {
-      const [lw, rw] = wordDiff(removedBuf[i], addedBuf[i]);
+      // Large-input guard: skip expensive per-line word diff above threshold.
+      const [lw, rw] = skipWordDiff
+        ? [null, null]
+        : wordDiff(removedBuf[i]!, addedBuf[i]!);
       sideBySide.push({
         leftNo: leftNo++,
         rightNo: rightNo++,
-        leftText: removedBuf[i],
-        rightText: addedBuf[i],
+        leftText: removedBuf[i]!,
+        rightText: addedBuf[i]!,
         kind: "changed",
         leftWords: lw,
         rightWords: rw,
@@ -221,14 +247,14 @@ export function computeDiff(oldText: string, newText: string, opts: DiffOptions 
       inline.push({
         no: leftNo - 1,
         kind: "removed",
-        text: removedBuf[i],
-        words: wordDiffSingle(removedBuf[i], addedBuf[i], "left"),
+        text: removedBuf[i]!,
+        words: skipWordDiff ? null : wordDiffSingle(removedBuf[i]!, addedBuf[i]!, "left"),
       });
       inline.push({
         no: rightNo - 1,
         kind: "added",
-        text: addedBuf[i],
-        words: wordDiffSingle(addedBuf[i], removedBuf[i], "right"),
+        text: addedBuf[i]!,
+        words: skipWordDiff ? null : wordDiffSingle(addedBuf[i]!, removedBuf[i]!, "right"),
       });
       stats.removed++;
       stats.added++;
@@ -303,7 +329,7 @@ export function computeDiff(oldText: string, newText: string, opts: DiffOptions 
   // Flush any trailing buffers.
   flushRemoved(addedBuf);
 
-  return { sideBySide, inline, stats };
+  return { sideBySide, inline, stats, wordDiffDisabled };
 }
 
 // ─── Unified patch export ─────────────────────────────────────────────────────

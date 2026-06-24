@@ -543,8 +543,13 @@ export function App() {
     }
     const img = new Image();
     img.onload = () => setImgDims({ w: img.naturalWidth, h: img.naturalHeight });
+    img.onerror = () => {
+      // Undecodable file: surface an error and reset to the dropzone
+      setError(`Could not load the image. The file may be corrupt or unsupported.`);
+      reset();
+    };
     img.src = inputUrl;
-  }, [inputUrl]);
+  }, [inputUrl, setError, reset]);
 
   // Listen for brush radius changes from the slider event (avoids prop-drilling back up)
   const editorWrapRef = useRef<HTMLDivElement>(null);
