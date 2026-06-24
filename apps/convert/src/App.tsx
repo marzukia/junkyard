@@ -353,6 +353,7 @@ export function App() {
                       min={1}
                       max={200}
                       placeholder="100"
+                      aria-label="Scale percentage"
                       value={scaleInput}
                       onChange={(e) => {
                         setScaleInput(e.target.value);
