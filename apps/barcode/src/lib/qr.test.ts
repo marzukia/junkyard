@@ -42,10 +42,21 @@ describe("buildWifiString", () => {
     });
     expect(result).toContain("S:Net\\;Work");
   });
+
+  it("does not escape backtick (not a special meCard char)", () => {
+    const result = buildWifiString({
+      ssid: "Net`Work",
+      password: "pass",
+      security: "WPA",
+      hidden: false,
+    });
+    expect(result).toContain("S:Net`Work");
+    expect(result).not.toContain("S:Net\\`Work");
+  });
 });
 
 describe("buildVCardString", () => {
-  it("produces a valid vCard 3.0 string", () => {
+  it("produces a valid vCard 3.0 string with N: and FN: lines", () => {
     const result = buildVCardString({
       name: "Jane Smith",
       phone: "+1 555 0000",
@@ -55,6 +66,9 @@ describe("buildVCardString", () => {
     });
     expect(result).toContain("BEGIN:VCARD");
     expect(result).toContain("VERSION:3.0");
+    // Canonical vCard 3.0 requires both structured N: and formatted FN:
+    // barcode splits on last space: "Jane Smith" → firstName="Jane", lastName="Smith"
+    expect(result).toContain("N:Smith;Jane;;;");
     expect(result).toContain("FN:Jane Smith");
     expect(result).toContain("TEL:+1 555 0000");
     expect(result).toContain("EMAIL:jane@example.com");
@@ -75,6 +89,12 @@ describe("buildVCardString", () => {
     expect(result).not.toContain("EMAIL:");
     expect(result).not.toContain("ORG:");
     expect(result).not.toContain("URL:");
+  });
+
+  it("handles a single-word name (no space) - firstName only, lastName empty", () => {
+    const result = buildVCardString({ name: "Madonna", phone: "", email: "", org: "", url: "" });
+    expect(result).toContain("N:;Madonna;;;");
+    expect(result).toContain("FN:Madonna");
   });
 });
 

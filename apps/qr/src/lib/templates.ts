@@ -2,6 +2,9 @@
  * Content-type templates for QR code payload assembly.
  * Each template assembles a standardised string from structured fields.
  * Pure functions - no side effects, easily testable.
+ *
+ * WiFi and vCard builders delegate to the canonical kit/lib/qrContent.ts
+ * (vendored here as ./qrContent). Edit the canonical; run vendor-qrcontent.mjs.
  */
 
 export type ContentType = "url" | "wifi" | "vcard" | "email" | "sms" | "phone";
@@ -37,40 +40,13 @@ export interface PhoneFields {
   number: string;
 }
 
-/**
- * Escapes special characters in WiFi SSID/password fields.
- * Chars that must be escaped: \ ; , " :
- */
-export function escapeWifiField(value: string): string {
-  return value.replace(/[\\;,":`]/g, (c) => `\\${c}`);
-}
-
-/** Assembles a WiFi QR payload string (WPA2 format). */
-export function buildWifiPayload(fields: WifiFields): string {
-  const ssid = escapeWifiField(fields.ssid);
-  const password = escapeWifiField(fields.password);
-  const hidden = fields.hidden ? "H:true;" : "";
-  // nopass networks have no password; omit the P: segment entirely to avoid leaking
-  // any value the user may have typed into the password field before switching mode.
-  const passwordSegment = fields.security === "nopass" ? "" : `P:${password};`;
-  return `WIFI:T:${fields.security};S:${ssid};${passwordSegment}${hidden};`;
-}
-
-/** Assembles a vCard 3.0 QR payload string. */
-export function buildVCardPayload(fields: VCardFields): string {
-  const lines = [
-    "BEGIN:VCARD",
-    "VERSION:3.0",
-    `N:${fields.lastName};${fields.firstName};;;`,
-    `FN:${fields.firstName} ${fields.lastName}`.trim(),
-  ];
-  if (fields.phone) lines.push(`TEL:${fields.phone}`);
-  if (fields.email) lines.push(`EMAIL:${fields.email}`);
-  if (fields.organisation) lines.push(`ORG:${fields.organisation}`);
-  if (fields.url) lines.push(`URL:${fields.url}`);
-  lines.push("END:VCARD");
-  return lines.join("\n");
-}
+// Re-export from the canonical so callers that import these from templates.ts
+// continue to work without import-path changes.
+export {
+  buildVCardPayload,
+  buildWifiPayload,
+  escapeWifiField,
+} from "./qrContent";
 
 /** Assembles a mailto: URI for email QR codes. */
 export function buildEmailPayload(fields: EmailFields): string {

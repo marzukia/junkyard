@@ -78,9 +78,12 @@ describe("buildWifiString - additional edge cases", () => {
 // ── buildVCardString additional edge cases ─────────────────────────────────────
 
 describe("buildVCardString - additional edge cases", () => {
-  it("omits name line when name is empty string", () => {
+  it("always emits N: and FN: lines (vCard 3.0 requires both, even when name is empty)", () => {
+    // Old behaviour omitted FN: when name was blank; canonical always emits both
+    // per RFC 2426 §3.1 — N: and FN: are REQUIRED properties.
     const result = buildVCardString({ name: "", phone: "123", email: "", org: "", url: "" });
-    expect(result).not.toContain("FN:");
+    expect(result).toContain("N:");
+    expect(result).toContain("FN:");
     expect(result).toContain("TEL:123");
   });
 

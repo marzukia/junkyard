@@ -146,6 +146,15 @@ jobs:
           node scripts/vendor-csvparse.mjs
           git diff --exit-code -- kit/lib/csvParse.ts apps/csv/src/lib/csvParse.ts
 
+      - name: Check vendored qrContent.ts copies are up to date
+        # Fails if kit/lib/qrContent.ts was changed without running vendor-qrcontent.mjs.
+        # qrContent.ts is the canonical WiFi (meCard) and vCard 3.0 QR payload builder.
+        # Both apps/qr and apps/barcode vendor this file; editing without re-vendoring
+        # causes the two apps to diverge — exactly the bug fixed in #61.
+        run: |
+          node scripts/vendor-qrcontent.mjs
+          git diff --exit-code -- kit/lib/qrContent.ts apps/qr/src/lib/qrContent.ts apps/barcode/src/lib/qrContent.ts
+
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).
