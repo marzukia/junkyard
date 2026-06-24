@@ -1,8 +1,12 @@
 import { PDFDocument, StandardFonts, degrees, rgb } from "pdf-lib";
 
-/** Parse a compact page range string like "1,3-5,7" into 0-based indices. */
+/** Parse a compact page range string like "1,3-5,7" into 0-based indices.
+ * Throws if any token is not a valid page number or range (e.g. "abc", "x-y").
+ * Use this when the caller should surface parse errors to the user.
+ */
 export function parsePageRange(rangeStr: string, totalPages: number): number[] {
   const indices: number[] = [];
+  const invalid: string[] = [];
   const parts = rangeStr.split(",");
   for (const part of parts) {
     const trimmed = part.trim();
@@ -11,16 +15,26 @@ export function parsePageRange(rangeStr: string, totalPages: number): number[] {
     if (rangeParts.length === 2) {
       const start = Number.parseInt(rangeParts[0]!, 10);
       const end = Number.parseInt(rangeParts[1]!, 10);
-      if (Number.isNaN(start) || Number.isNaN(end)) continue;
+      if (Number.isNaN(start) || Number.isNaN(end)) {
+        invalid.push(trimmed);
+        continue;
+      }
       for (let i = start; i <= end; i++) {
         if (i >= 1 && i <= totalPages) indices.push(i - 1);
       }
     } else {
       const page = Number.parseInt(trimmed, 10);
-      if (!Number.isNaN(page) && page >= 1 && page <= totalPages) {
+      if (Number.isNaN(page)) {
+        invalid.push(trimmed);
+      } else if (page >= 1 && page <= totalPages) {
         indices.push(page - 1);
       }
     }
+  }
+  if (invalid.length > 0) {
+    const plural = invalid.length > 1 ? "s" : "";
+    const tokens = invalid.map((t) => JSON.stringify(t)).join(", ");
+    throw new Error(`Invalid page range token${plural}: ${tokens}`);
   }
   return [...new Set(indices)];
 }
