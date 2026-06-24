@@ -51,7 +51,8 @@ describe("savePalette / loadPalette", () => {
     expect(loadPalette()).toBeNull();
   });
 
-  it("falls back to #808080 for invalid hex entries", () => {
+  it("emits console.warn and returns null for invalid hex entries", () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     const palette = {
       colors: ["notvalid", "#ff0000", "#0000ff"],
       locked: [false, false, false],
@@ -60,8 +61,13 @@ describe("savePalette / loadPalette", () => {
     };
     savePalette(palette);
     const loaded = loadPalette();
-    expect(loaded?.colors[0]).toBe("#808080");
-    expect(loaded?.colors[1]).toBe("#ff0000");
+    // Should return null (not silently substitute grey) and warn about the bad entry.
+    expect(loaded).toBeNull();
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("[colours]"),
+      // message includes the bad value
+    );
+    warnSpy.mockRestore();
   });
 
   it("falls back to analogous for invalid harmony mode", () => {
@@ -83,8 +89,10 @@ describe("savePalette / loadPalette", () => {
       harmonyMode: "monochromatic",
     });
     const loaded = loadPalette();
-    // count=100 clamps to MAX (8); colors shorter than clamped count get #808080 backfill
-    expect(loaded?.count).toBe(8);
+    // count=100 clamps to MAX (8); colors shorter than clamped count triggers
+    // the invalid-entry path (undefined entries fail hex validation) -> returns null.
+    // The store's buildInitialState then falls back to a fresh generated palette.
+    expect(loaded).toBeNull();
   });
 });
 

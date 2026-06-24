@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { Yard } from "../tools";
 import { TOOLS, YARDS } from "../tools";
 
@@ -10,14 +11,20 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ query, onQuery, active, onFilter, searchRef }: ToolbarProps) {
-  const chips: { id: Yard | "all"; label: string; count: number }[] = [
-    { id: "all", label: "All", count: TOOLS.length },
-    ...YARDS.map((y) => ({
-      id: y.id,
-      label: y.label,
-      count: TOOLS.filter((t) => t.yard === y.id).length,
-    })),
-  ];
+  // Memoize per-yard counts: they depend only on static TOOLS/YARDS, so this
+  // computes once and never re-runs -- even when the query prop changes on each
+  // keystroke, causing App and Toolbar to re-render.
+  const chips = useMemo(
+    () => [
+      { id: "all" as Yard | "all", label: "All", count: TOOLS.length },
+      ...YARDS.map((y) => ({
+        id: y.id as Yard | "all",
+        label: y.label,
+        count: TOOLS.filter((t) => t.yard === y.id).length,
+      })),
+    ],
+    [] // TOOLS and YARDS are module-level constants; no runtime dependencies.
+  );
 
   return (
     <div className="tools-top">

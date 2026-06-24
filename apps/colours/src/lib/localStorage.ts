@@ -29,7 +29,7 @@ export function savePalette(palette: PersistedPalette): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(palette));
   } catch {
-    // Quota exceeded or private browsing — silently ignore.
+    // Quota exceeded or private browsing -- silently ignore.
   }
 }
 
@@ -37,6 +37,11 @@ export function savePalette(palette: PersistedPalette): void {
  * Read the persisted palette from localStorage.
  * Returns null if nothing is stored or if the stored data is invalid.
  * Never throws.
+ *
+ * If a stored color entry fails hex validation, a console.warn is emitted and
+ * that entry is skipped; the returned palette will be shorter than `count` for
+ * the skipped slots, which causes the store to fall back to a freshly generated
+ * palette (loadPalette returns null when no valid entries survive).
  */
 export function loadPalette(): PersistedPalette | null {
   try {
@@ -50,15 +55,26 @@ export function loadPalette(): PersistedPalette | null {
 
     const rawColors = Array.isArray(p.colors) ? p.colors : [];
     const colors: string[] = [];
+    let hadInvalid = false;
     for (let i = 0; i < count; i++) {
-      const normalized = normalizeHex(String(rawColors[i] ?? ""));
-      colors.push(normalized ?? "#808080");
+      const raw = String(rawColors[i] ?? "");
+      const normalized = normalizeHex(raw);
+      if (normalized === null || normalized === undefined) {
+        console.warn(
+          `[colours] Skipping corrupt stored color at index ${i}: ${JSON.stringify(raw)}`
+        );
+        hadInvalid = true;
+        continue;
+      }
+      colors.push(normalized);
     }
 
+    // If any entry was invalid, return null so the store falls back to a fresh palette
+    // rather than silently presenting a partial or grey-padded result.
+    if (hadInvalid) return null;
+
     const rawLocked = Array.isArray(p.locked) ? p.locked : [];
-    const locked: boolean[] = Array.from({ length: count }, (_, i) =>
-      Boolean(rawLocked[i] ?? false)
-    );
+    const locked: boolean[] = Array.from({ length: count }, (_, i) => rawLocked[i] === true);
 
     const harmonyMode: HarmonyMode = VALID_HARMONY_MODES.has(String(p.harmonyMode))
       ? (p.harmonyMode as HarmonyMode)
