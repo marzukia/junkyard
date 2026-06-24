@@ -12,6 +12,7 @@ import {
   validateLanguagePair,
 } from "./lib/languages";
 import type { TranslationResult } from "./lib/translator";
+import InferWorker from "./infer.worker.ts?worker";
 import { useWorkerTask } from "./lib/workerTask";
 import { useTranslateStore } from "./store/translateStore";
 import "./styles/translate.css";
@@ -220,7 +221,7 @@ export function App() {
     setPhase("idle");
     setPhase("model-loading");
     await runWorker(
-      new URL("./infer.worker.ts", import.meta.url),
+      () => new InferWorker(),
       { text: sourceText, sourceLang, targetLang },
       {
         onProgress: (loaded, total, status) => {

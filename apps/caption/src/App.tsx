@@ -4,6 +4,7 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { captionImage, fetchImageFromUrl, isModelLoaded, loadModel } from "./lib/captioner";
 import type { CaptionResult } from "./lib/captioner";
+import InferWorker from "./infer.worker.ts?worker";
 import { useWorkerTask } from "./lib/workerTask";
 import {
   type BatchCaptionRow,
@@ -628,7 +629,7 @@ export function App() {
       setPhase("idle");
       setPhase("model-loading");
       await runWorker(
-        new URL("./infer.worker.ts", import.meta.url),
+        () => new InferWorker(),
         { file, numCaptions },
         {
           onProgress: (loaded, total, status) => {

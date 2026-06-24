@@ -3,6 +3,7 @@ import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import type { SummaryResult } from "./lib/summarizer";
+import InferWorker from "./infer.worker.ts?worker";
 import { useWorkerTask } from "./lib/workerTask";
 import {
   MODEL_MAX_WORDS,
@@ -179,7 +180,7 @@ export function App() {
     setPhase("model-loading");
     setChunkProgress(0, 1);
     await runWorker(
-      new URL("./infer.worker.ts", import.meta.url),
+      () => new InferWorker(),
       { inputText, minWords, maxWords },
       {
         onProgress: (loaded, total, status) => {
