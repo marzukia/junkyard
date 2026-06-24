@@ -7,7 +7,7 @@
  * kills any synchronous CPU work (ReDoS, infinite loop, huge CSV parse) -- which
  * Promise.race cannot do when the event loop is blocked by synchronous code.
  */
-import { TOOLS } from "../../core/src/index.ts";
+import { TOOLS } from "@junkyard/core";
 
 interface WorkerRequest {
   slug: string;

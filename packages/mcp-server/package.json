@@ -11,7 +11,8 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.29.0"
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "@junkyard/core": "file:../core"
   },
   "description": "MCP stdio server exposing 17 junkyard tool categories (25 ops) for use with Claude Desktop, Claude Code, and any MCP-compatible client",
   "license": "MIT",

@@ -25,7 +25,7 @@
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { TOOLS } from "../../core/src/index.ts";
+import { TOOLS } from "@junkyard/core";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 

@@ -16,7 +16,6 @@
     "@fontsource/inter": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.1.2",
     "@mantine/core": "^7.17.4",
-    "@mantine/hooks": "^7.17.4",
     "jsbarcode": "^3.11.6",
     "jszip": "^3.10.1",
     "qrcode": "^1.5.4",
