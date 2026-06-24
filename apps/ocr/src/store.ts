@@ -56,6 +56,13 @@ export interface OcrState {
   copyDone: boolean;
   showWordHighlights: boolean;
 
+  /**
+   * Monotonic counter for generating unique queue-item IDs.
+   * Stored in Zustand state (not module scope) so it resets correctly under
+   * Vite HMR and does not desync across hot reloads.
+   */
+  _idCounter: number;
+
   // Actions
   setImage: (file: File) => void;
   addFiles: (files: File[]) => void;
@@ -79,11 +86,6 @@ export interface OcrState {
   reset: () => void;
 }
 
-let _idCounter = 0;
-function nextId(): string {
-  return `q${++_idCounter}`;
-}
-
 const initialState = {
   imageFile: null,
   imageUrl: null,
@@ -101,11 +103,12 @@ const initialState = {
   ocrWords: [] as OcrWord[],
   copyDone: false,
   showWordHighlights: false,
+  _idCounter: 0,
 };
 
-function makeQueueItem(file: File): QueueItem {
+function makeQueueItem(file: File, id: number): QueueItem {
   return {
-    id: nextId(),
+    id: `q${id}`,
     file,
     previewUrl: URL.createObjectURL(file),
     status: "idle",
@@ -125,8 +128,10 @@ export const useOcrStore = create<OcrState>((set, get) => ({
     for (const item of state.queue) URL.revokeObjectURL(item.previewUrl);
     if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
 
-    const item = makeQueueItem(file);
+    const nextId = state._idCounter + 1;
+    const item = makeQueueItem(file, nextId);
     set({
+      _idCounter: nextId,
       imageFile: file,
       imageUrl: item.previewUrl,
       queue: [item],
@@ -142,11 +147,13 @@ export const useOcrStore = create<OcrState>((set, get) => ({
 
   addFiles: (files) => {
     const state = get();
-    const newItems = files.map(makeQueueItem);
+    let counter = state._idCounter;
+    const newItems = files.map((f) => makeQueueItem(f, ++counter));
     if (state.queue.length === 0) {
       // Nothing yet -- treat first file as the active image
       const first = newItems[0];
       set({
+        _idCounter: counter,
         imageFile: first.file,
         imageUrl: first.previewUrl,
         queue: newItems,
@@ -159,7 +166,7 @@ export const useOcrStore = create<OcrState>((set, get) => ({
         lowConfWords: [],
       });
     } else {
-      set({ queue: [...state.queue, ...newItems] });
+      set({ _idCounter: counter, queue: [...state.queue, ...newItems] });
     }
   },
 
@@ -171,8 +178,8 @@ export const useOcrStore = create<OcrState>((set, get) => ({
     URL.revokeObjectURL(item.previewUrl);
     const newQueue = state.queue.filter((q) => q.id !== id);
     if (newQueue.length === 0) {
-      // All removed, full reset
-      set({ ...initialState, language: state.language });
+      // All removed, full reset (preserve _idCounter so IDs stay monotonic)
+      set({ ...initialState, _idCounter: state._idCounter, language: state.language });
       return;
     }
     const newActive = Math.min(state.activeIndex, newQueue.length - 1);
@@ -216,7 +223,8 @@ export const useOcrStore = create<OcrState>((set, get) => ({
     const state = get();
     for (const item of state.queue) URL.revokeObjectURL(item.previewUrl);
     if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
-    set({ ...initialState, language: state.language });
+    // Preserve _idCounter so IDs remain monotonic after clear.
+    set({ ...initialState, _idCounter: state._idCounter, language: state.language });
   },
 
   setLanguage: (lang) => set({ language: lang }),
@@ -266,6 +274,7 @@ export const useOcrStore = create<OcrState>((set, get) => ({
     const state = get();
     for (const item of state.queue) URL.revokeObjectURL(item.previewUrl);
     if (state.imageUrl) URL.revokeObjectURL(state.imageUrl);
-    set({ ...initialState, language: state.language });
+    // Preserve _idCounter so IDs remain monotonic after reset.
+    set({ ...initialState, _idCounter: state._idCounter, language: state.language });
   },
 }));

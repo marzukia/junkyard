@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`extractPaletteFromPixels -- determinism > same pixels + same seed always produces the same palette (pinned output) 1`] = `
+[
+  "#2ad549",
+  "#3fc0db",
+  "#80805c",
+  "#c03fdf",
+  "#d52a50",
+]
+`;

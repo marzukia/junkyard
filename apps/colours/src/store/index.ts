@@ -84,17 +84,6 @@ interface ColoursStore {
 }
 
 const INITIAL_COUNT = 5;
-// Monotonic counter ensures each generate call uses a distinct seed even on the same tick.
-// Initialised with Date.now() so the starting palette differs across page loads.
-let _globalSeedCounter = Date.now() & 0xffffffff;
-
-// Try to restore from localStorage; fall back to a fresh palette.
-const _persisted = loadPalette();
-const initialCount = _persisted?.count ?? INITIAL_COUNT;
-const initialHarmony: HarmonyMode = _persisted?.harmonyMode ?? "analogous";
-const initialColors =
-  _persisted?.colors ?? generatePalette(initialCount, initialHarmony, ++_globalSeedCounter);
-const initialLocked = _persisted?.locked ?? Array(initialCount).fill(false);
 
 export { MIN_PALETTE_COUNT, MAX_PALETTE_COUNT };
 
@@ -112,260 +101,289 @@ function pushRecent(ring: string[][], colors: string[]): string[][] {
   return next.length > RECENT_PALETTE_COUNT ? next.slice(0, RECENT_PALETTE_COUNT) : next;
 }
 
-export const useColoursStore = create<ColoursStore>((set, get) => ({
-  space: "lab",
-  setSpace: (space) => set({ space }),
+/**
+ * Compute the initial palette state lazily (called inside create(), not at module scope).
+ * This avoids any side effects (localStorage reads, PRNG calls) at import time.
+ *
+ * The seed counter is initialised with Date.now() so the starting palette differs
+ * across page loads. The monotonic counter ensures each generate call uses a distinct
+ * seed even on the same tick.
+ */
+function buildInitialState(): {
+  palette: PaletteState;
+  seedCounter: number;
+  recentPalettes: string[][];
+} {
+  // Monotonic counter starts at Date.now() so each page load gets a different palette.
+  const seedCounter = Date.now() & 0xffffffff;
 
-  cvdMode: "none",
-  setCvdMode: (mode) => set({ cvdMode: mode }),
+  // Try to restore from localStorage; fall back to a freshly generated palette.
+  const persisted = loadPalette();
+  const count = persisted?.count ?? INITIAL_COUNT;
+  const harmonyMode: HarmonyMode = persisted?.harmonyMode ?? "analogous";
+  const colors =
+    persisted?.colors ?? generatePalette(count, harmonyMode, seedCounter + 1);
+  const locked = persisted?.locked ?? Array(count).fill(false);
 
-  twoPoint: {
-    start: "#2D3A4A",
-    end: "#D4A574",
-    steps: 8,
-  },
-  setTwoPoint: (patch) => set((s) => ({ twoPoint: { ...s.twoPoint, ...patch } })),
+  const palette: PaletteState = { colors, locked, count, harmonyMode };
+  return { palette, seedCounter: seedCounter + 1, recentPalettes: [colors] };
+}
 
-  threePoint: {
-    start: "#1B4332",
-    mid: "#74C69D",
-    end: "#F8F4E1",
-    steps: 9,
-  },
-  setThreePoint: (patch) => set((s) => ({ threePoint: { ...s.threePoint, ...patch } })),
+export const useColoursStore = create<ColoursStore>((set, _get) => {
+  // Lazy init: all side-effectful setup happens here, inside create(), not at module scope.
+  const { palette: initialPalette, seedCounter: initialSeed, recentPalettes: initialRecent } =
+    buildInitialState();
 
-  palette: {
-    colors: initialColors,
-    locked: initialLocked,
-    count: initialCount,
-    harmonyMode: initialHarmony,
-  },
+  return {
+    space: "lab",
+    setSpace: (space) => set({ space }),
 
-  // _seedCounter is always the last seed used; each generate call increments before use.
-  _seedCounter: _globalSeedCounter,
+    cvdMode: "none",
+    setCvdMode: (mode) => set({ cvdMode: mode }),
 
-  _undoStack: [],
-  recentPalettes: [initialColors],
-  canUndo: false,
+    twoPoint: {
+      start: "#2D3A4A",
+      end: "#D4A574",
+      steps: 8,
+    },
+    setTwoPoint: (patch) => set((s) => ({ twoPoint: { ...s.twoPoint, ...patch } })),
 
-  regeneratePaletteColors: () =>
-    set((s) => {
-      const snap: PaletteSnapshot = {
-        colors: s.palette.colors,
-        locked: s.palette.locked,
-        count: s.palette.count,
-        harmonyMode: s.palette.harmonyMode,
-      };
-      const nextSeed = s._seedCounter + 1;
-      const newColors = regeneratePalette(
-        s.palette.colors,
-        s.palette.locked,
-        s.palette.harmonyMode,
-        nextSeed
-      );
-      const nextPalette = { ...s.palette, colors: newColors };
-      savePalette(nextPalette);
-      return {
-        _seedCounter: nextSeed,
-        _undoStack: pushUndo(s._undoStack, snap),
-        recentPalettes: pushRecent(s.recentPalettes, newColors),
-        canUndo: true,
-        palette: nextPalette,
-      };
-    }),
+    threePoint: {
+      start: "#1B4332",
+      mid: "#74C69D",
+      end: "#F8F4E1",
+      steps: 9,
+    },
+    setThreePoint: (patch) => set((s) => ({ threePoint: { ...s.threePoint, ...patch } })),
 
-  undoPalette: () =>
-    set((s) => {
-      if (s._undoStack.length === 0) return {};
-      const stack = [...s._undoStack];
-      const snap = stack.pop() as PaletteSnapshot;
-      const nextPalette: PaletteState = {
-        colors: snap.colors,
-        locked: snap.locked,
-        count: snap.count,
-        harmonyMode: snap.harmonyMode,
-      };
-      savePalette(nextPalette);
-      return {
-        _undoStack: stack,
-        canUndo: stack.length > 0,
-        palette: nextPalette,
-      };
-    }),
+    palette: initialPalette,
 
-  setPaletteCount: (count) => {
-    const clamped = clampCount(count);
-    set((s) => {
-      const snap: PaletteSnapshot = {
-        colors: s.palette.colors,
-        locked: s.palette.locked,
-        count: s.palette.count,
-        harmonyMode: s.palette.harmonyMode,
-      };
-      const prev = s.palette;
-      const nextSeed = s._seedCounter + 1;
-      let newColors: string[];
-      let newLocked: boolean[];
-      if (clamped > prev.count) {
-        // Regenerate the whole palette at the new count, preserving locked slots.
-        // This keeps appended swatches harmonious with the existing palette.
-        const extended = Array(clamped).fill(false) as boolean[];
-        for (let i = 0; i < prev.locked.length; i++) extended[i] = prev.locked[i];
-        newColors = regeneratePalette(
-          [...prev.colors, ...Array(clamped - prev.count).fill("")],
-          extended,
-          prev.harmonyMode,
+    // _seedCounter is always the last seed used; each generate call increments before use.
+    _seedCounter: initialSeed,
+
+    _undoStack: [],
+    recentPalettes: initialRecent,
+    canUndo: false,
+
+    regeneratePaletteColors: () =>
+      set((s) => {
+        const snap: PaletteSnapshot = {
+          colors: s.palette.colors,
+          locked: s.palette.locked,
+          count: s.palette.count,
+          harmonyMode: s.palette.harmonyMode,
+        };
+        const nextSeed = s._seedCounter + 1;
+        const newColors = regeneratePalette(
+          s.palette.colors,
+          s.palette.locked,
+          s.palette.harmonyMode,
           nextSeed
         );
-        newLocked = extended;
-      } else {
-        // Shrink: trim from the right
-        newColors = prev.colors.slice(0, clamped);
-        newLocked = prev.locked.slice(0, clamped);
-      }
-      const nextPalette: PaletteState = {
-        ...prev,
-        count: clamped,
-        colors: newColors,
-        locked: newLocked,
-      };
-      savePalette(nextPalette);
-      return {
-        _seedCounter: clamped > prev.count ? nextSeed : s._seedCounter,
-        _undoStack: pushUndo(s._undoStack, snap),
-        canUndo: true,
-        palette: nextPalette,
-      };
-    });
-  },
+        const nextPalette = { ...s.palette, colors: newColors };
+        savePalette(nextPalette);
+        return {
+          _seedCounter: nextSeed,
+          _undoStack: pushUndo(s._undoStack, snap),
+          recentPalettes: pushRecent(s.recentPalettes, newColors),
+          canUndo: true,
+          palette: nextPalette,
+        };
+      }),
 
-  setPaletteHarmony: (mode) => {
-    set((s) => {
-      const snap: PaletteSnapshot = {
-        colors: s.palette.colors,
-        locked: s.palette.locked,
-        count: s.palette.count,
-        harmonyMode: s.palette.harmonyMode,
-      };
-      const { colors, locked } = s.palette;
-      const nextSeed = s._seedCounter + 1;
-      const newColors = regeneratePalette(colors, locked, mode, nextSeed);
-      const nextPalette: PaletteState = {
-        ...s.palette,
-        harmonyMode: mode,
-        colors: newColors,
-      };
-      savePalette(nextPalette);
-      return {
-        _seedCounter: nextSeed,
-        _undoStack: pushUndo(s._undoStack, snap),
-        canUndo: true,
-        palette: nextPalette,
-      };
-    });
-  },
+    undoPalette: () =>
+      set((s) => {
+        if (s._undoStack.length === 0) return {};
+        const stack = [...s._undoStack];
+        const snap = stack.pop() as PaletteSnapshot;
+        const nextPalette: PaletteState = {
+          colors: snap.colors,
+          locked: snap.locked,
+          count: snap.count,
+          harmonyMode: snap.harmonyMode,
+        };
+        savePalette(nextPalette);
+        return {
+          _undoStack: stack,
+          canUndo: stack.length > 0,
+          palette: nextPalette,
+        };
+      }),
 
-  togglePaletteLock: (index) => {
-    set((s) => {
-      const snap: PaletteSnapshot = {
-        colors: s.palette.colors,
-        locked: s.palette.locked,
-        count: s.palette.count,
-        harmonyMode: s.palette.harmonyMode,
-      };
-      const newLocked = s.palette.locked.map((v, i) => (i === index ? !v : v));
-      const nextPalette = { ...s.palette, locked: newLocked };
-      savePalette(nextPalette);
-      return {
-        _undoStack: pushUndo(s._undoStack, snap),
-        canUndo: true,
-        palette: nextPalette,
-      };
-    });
-  },
+    setPaletteCount: (count) => {
+      const clamped = clampCount(count);
+      set((s) => {
+        const snap: PaletteSnapshot = {
+          colors: s.palette.colors,
+          locked: s.palette.locked,
+          count: s.palette.count,
+          harmonyMode: s.palette.harmonyMode,
+        };
+        const prev = s.palette;
+        const nextSeed = s._seedCounter + 1;
+        let newColors: string[];
+        let newLocked: boolean[];
+        if (clamped > prev.count) {
+          // Regenerate the whole palette at the new count, preserving locked slots.
+          // This keeps appended swatches harmonious with the existing palette.
+          const extended = Array(clamped).fill(false) as boolean[];
+          for (let i = 0; i < prev.locked.length; i++) extended[i] = prev.locked[i];
+          newColors = regeneratePalette(
+            [...prev.colors, ...Array(clamped - prev.count).fill("")],
+            extended,
+            prev.harmonyMode,
+            nextSeed
+          );
+          newLocked = extended;
+        } else {
+          // Shrink: trim from the right
+          newColors = prev.colors.slice(0, clamped);
+          newLocked = prev.locked.slice(0, clamped);
+        }
+        const nextPalette: PaletteState = {
+          ...prev,
+          count: clamped,
+          colors: newColors,
+          locked: newLocked,
+        };
+        savePalette(nextPalette);
+        return {
+          _seedCounter: clamped > prev.count ? nextSeed : s._seedCounter,
+          _undoStack: pushUndo(s._undoStack, snap),
+          canUndo: true,
+          palette: nextPalette,
+        };
+      });
+    },
 
-  // Manually set a swatch's colour. Locks the slot so the next regenerate preserves it.
-  setPaletteColor: (index, hex) => {
-    set((s) => {
-      const snap: PaletteSnapshot = {
-        colors: s.palette.colors,
-        locked: s.palette.locked,
-        count: s.palette.count,
-        harmonyMode: s.palette.harmonyMode,
-      };
-      const nextPalette: PaletteState = {
-        ...s.palette,
-        colors: s.palette.colors.map((c, i) => (i === index ? hex : c)),
-        locked: s.palette.locked.map((v, i) => (i === index ? true : v)),
-      };
-      savePalette(nextPalette);
-      return {
-        _undoStack: pushUndo(s._undoStack, snap),
-        canUndo: true,
-        palette: nextPalette,
-      };
-    });
-  },
+    setPaletteHarmony: (mode) => {
+      set((s) => {
+        const snap: PaletteSnapshot = {
+          colors: s.palette.colors,
+          locked: s.palette.locked,
+          count: s.palette.count,
+          harmonyMode: s.palette.harmonyMode,
+        };
+        const { colors, locked } = s.palette;
+        const nextSeed = s._seedCounter + 1;
+        const newColors = regeneratePalette(colors, locked, mode, nextSeed);
+        const nextPalette: PaletteState = {
+          ...s.palette,
+          harmonyMode: mode,
+          colors: newColors,
+        };
+        savePalette(nextPalette);
+        return {
+          _seedCounter: nextSeed,
+          _undoStack: pushUndo(s._undoStack, snap),
+          canUndo: true,
+          palette: nextPalette,
+        };
+      });
+    },
 
-  // Reset palette to a fresh 5-swatch analogous palette, clearing all locks.
-  resetPalette: () =>
-    set((s) => {
-      const nextSeed = s._seedCounter + 1;
-      const count = INITIAL_COUNT;
-      const nextPalette: PaletteState = {
-        colors: generatePalette(count, "analogous", nextSeed),
-        locked: Array(count).fill(false),
-        count,
-        harmonyMode: "analogous",
-      };
-      savePalette(nextPalette);
-      return {
-        _seedCounter: nextSeed,
+    togglePaletteLock: (index) => {
+      set((s) => {
+        const snap: PaletteSnapshot = {
+          colors: s.palette.colors,
+          locked: s.palette.locked,
+          count: s.palette.count,
+          harmonyMode: s.palette.harmonyMode,
+        };
+        const newLocked = s.palette.locked.map((v, i) => (i === index ? !v : v));
+        const nextPalette = { ...s.palette, locked: newLocked };
+        savePalette(nextPalette);
+        return {
+          _undoStack: pushUndo(s._undoStack, snap),
+          canUndo: true,
+          palette: nextPalette,
+        };
+      });
+    },
+
+    // Manually set a swatch's colour. Locks the slot so the next regenerate preserves it.
+    setPaletteColor: (index, hex) => {
+      set((s) => {
+        const snap: PaletteSnapshot = {
+          colors: s.palette.colors,
+          locked: s.palette.locked,
+          count: s.palette.count,
+          harmonyMode: s.palette.harmonyMode,
+        };
+        const nextPalette: PaletteState = {
+          ...s.palette,
+          colors: s.palette.colors.map((c, i) => (i === index ? hex : c)),
+          locked: s.palette.locked.map((v, i) => (i === index ? true : v)),
+        };
+        savePalette(nextPalette);
+        return {
+          _undoStack: pushUndo(s._undoStack, snap),
+          canUndo: true,
+          palette: nextPalette,
+        };
+      });
+    },
+
+    // Reset palette to a fresh 5-swatch analogous palette, clearing all locks.
+    resetPalette: () =>
+      set((s) => {
+        const nextSeed = s._seedCounter + 1;
+        const count = INITIAL_COUNT;
+        const nextPalette: PaletteState = {
+          colors: generatePalette(count, "analogous", nextSeed),
+          locked: Array(count).fill(false),
+          count,
+          harmonyMode: "analogous",
+        };
+        savePalette(nextPalette);
+        return {
+          _seedCounter: nextSeed,
+          _undoStack: [],
+          canUndo: false,
+          palette: nextPalette,
+          recentPalettes: [nextPalette.colors],
+        };
+      }),
+
+    // Load a palette extracted from an image. Pushes to undo/recent.
+    loadImagePalette: (colors: string[]) =>
+      set((s) => {
+        const snap: PaletteSnapshot = {
+          colors: s.palette.colors,
+          locked: s.palette.locked,
+          count: s.palette.count,
+          harmonyMode: s.palette.harmonyMode,
+        };
+        const clamped = clampCount(colors.length);
+        const safeColors = colors.slice(0, clamped);
+        const nextPalette: PaletteState = {
+          colors: safeColors,
+          locked: Array(clamped).fill(false),
+          count: clamped,
+          harmonyMode: s.palette.harmonyMode,
+        };
+        savePalette(nextPalette);
+        return {
+          _undoStack: pushUndo(s._undoStack, snap),
+          canUndo: true,
+          recentPalettes: pushRecent(s.recentPalettes, safeColors),
+          palette: nextPalette,
+        };
+      }),
+
+    // Restore full app state from a decoded shareable permalink.
+    // colors[]/locked[] lengths are already validated to match count by decodeState.
+    hydrate: (shared) => {
+      savePalette(shared.palette);
+      set({
+        space: shared.space,
+        twoPoint: shared.twoPoint,
+        threePoint: shared.threePoint,
+        palette: shared.palette,
         _undoStack: [],
         canUndo: false,
-        palette: nextPalette,
-        recentPalettes: [nextPalette.colors],
-      };
-    }),
-
-  // Load a palette extracted from an image. Pushes to undo/recent.
-  loadImagePalette: (colors: string[]) =>
-    set((s) => {
-      const snap: PaletteSnapshot = {
-        colors: s.palette.colors,
-        locked: s.palette.locked,
-        count: s.palette.count,
-        harmonyMode: s.palette.harmonyMode,
-      };
-      const clamped = clampCount(colors.length);
-      const safeColors = colors.slice(0, clamped);
-      const nextPalette: PaletteState = {
-        colors: safeColors,
-        locked: Array(clamped).fill(false),
-        count: clamped,
-        harmonyMode: s.palette.harmonyMode,
-      };
-      savePalette(nextPalette);
-      return {
-        _undoStack: pushUndo(s._undoStack, snap),
-        canUndo: true,
-        recentPalettes: pushRecent(s.recentPalettes, safeColors),
-        palette: nextPalette,
-      };
-    }),
-
-  // Restore full app state from a decoded shareable permalink.
-  // colors[]/locked[] lengths are already validated to match count by decodeState.
-  hydrate: (shared) => {
-    savePalette(shared.palette);
-    set({
-      space: shared.space,
-      twoPoint: shared.twoPoint,
-      threePoint: shared.threePoint,
-      palette: shared.palette,
-      _undoStack: [],
-      canUndo: false,
-      recentPalettes: [shared.palette.colors],
-    });
-  },
-}));
+        recentPalettes: [shared.palette.colors],
+      });
+    },
+  };
+});
