@@ -66,24 +66,11 @@ export interface RawDepthCache {
   height: number;
 }
 
-/**
- * Viridis colour map lookup, maps a normalised value [0,1] to [R,G,B].
- * Sampled from the matplotlib viridis palette at 256 points.
- * Bright (yellow) = close; dark (purple) = far.
- */
-export function viridisColour(t: number): [number, number, number] {
-  // 8-stop piecewise linear approximation of viridis (sampled from matplotlib viridis)
-  const stops: [number, number, number, number][] = [
-    [0.0, 68, 1, 84],
-    [0.143, 70, 50, 126],
-    [0.286, 54, 92, 141],
-    [0.429, 39, 127, 142],
-    [0.571, 31, 161, 135],
-    [0.714, 74, 193, 109],
-    [0.857, 160, 218, 57],
-    [1.0, 253, 231, 37],
-  ];
-
+/** Piecewise-linear interpolation over a colour-map stop table. */
+function interpolateColourMap(
+  stops: [number, number, number, number][],
+  t: number
+): [number, number, number] {
   const clamped = Math.max(0, Math.min(1, t));
   for (let i = 0; i < stops.length - 1; i++) {
     const [t0, r0, g0, b0] = stops[i];
@@ -97,105 +84,186 @@ export function viridisColour(t: number): [number, number, number] {
       ];
     }
   }
-  return [253, 231, 37];
+  // Fallback: return the last stop (handles t=1.0 exact float edge)
+  const last = stops[stops.length - 1];
+  return [last[1], last[2], last[3]];
+}
+
+/**
+ * Viridis colour map lookup, maps a normalised value [0,1] to [R,G,B].
+ * 32-stop piecewise linear interpolation of the matplotlib viridis palette.
+ * Bright (yellow) = close; dark (purple) = far.
+ */
+export function viridisColour(t: number): [number, number, number] {
+  // 32 stops sampled uniformly from the matplotlib viridis 256-entry table.
+  const stops: [number, number, number, number][] = [
+    [0.0000, 68, 1, 84],
+    [0.0323, 70, 8, 92],
+    [0.0645, 72, 17, 101],
+    [0.0968, 72, 26, 108],
+    [0.1290, 71, 35, 116],
+    [0.1613, 69, 43, 122],
+    [0.1935, 66, 51, 126],
+    [0.2258, 63, 59, 131],
+    [0.2581, 59, 68, 134],
+    [0.2903, 55, 76, 138],
+    [0.3226, 50, 83, 140],
+    [0.3548, 46, 91, 143],
+    [0.3871, 42, 99, 145],
+    [0.4194, 38, 107, 146],
+    [0.4516, 35, 115, 147],
+    [0.4839, 31, 123, 146],
+    [0.5161, 30, 131, 145],
+    [0.5484, 31, 139, 141],
+    [0.5806, 36, 147, 137],
+    [0.6129, 45, 155, 131],
+    [0.6452, 56, 162, 124],
+    [0.6774, 69, 170, 116],
+    [0.7097, 84, 177, 107],
+    [0.7419, 101, 184, 96],
+    [0.7742, 118, 190, 84],
+    [0.8065, 137, 197, 71],
+    [0.8387, 157, 203, 58],
+    [0.8710, 177, 210, 44],
+    [0.9032, 196, 216, 31],
+    [0.9355, 215, 222, 22],
+    [0.9677, 234, 228, 25],
+    [1.0000, 253, 231, 37],
+  ];
+
+  return interpolateColourMap(stops, t);
 }
 
 /**
  * Magma colour map lookup, maps a normalised value [0,1] to [R,G,B].
- * 8-stop piecewise linear approximation of matplotlib magma.
+ * 32-stop piecewise linear interpolation of matplotlib magma.
  * Bright (white/yellow) = close; dark (black/purple) = far.
  */
 export function magmaColour(t: number): [number, number, number] {
   const stops: [number, number, number, number][] = [
-    [0.0, 0, 0, 4],
-    [0.143, 28, 16, 68],
-    [0.286, 79, 18, 123],
-    [0.429, 129, 37, 129],
-    [0.571, 181, 54, 122],
-    [0.714, 229, 80, 100],
-    [0.857, 251, 136, 97],
-    [1.0, 252, 253, 191],
+    [0.0000, 0, 0, 4],
+    [0.0323, 3, 3, 18],
+    [0.0645, 8, 7, 34],
+    [0.0968, 15, 10, 52],
+    [0.1290, 22, 13, 67],
+    [0.1613, 30, 15, 79],
+    [0.1935, 40, 16, 91],
+    [0.2258, 52, 16, 100],
+    [0.2581, 64, 16, 108],
+    [0.2903, 77, 16, 113],
+    [0.3226, 90, 18, 117],
+    [0.3548, 103, 21, 119],
+    [0.3871, 115, 26, 120],
+    [0.4194, 128, 31, 119],
+    [0.4516, 141, 37, 117],
+    [0.4839, 153, 44, 113],
+    [0.5161, 166, 52, 108],
+    [0.5484, 178, 61, 101],
+    [0.5806, 190, 72, 93],
+    [0.6129, 201, 84, 83],
+    [0.6452, 210, 97, 73],
+    [0.6774, 220, 112, 62],
+    [0.7097, 228, 127, 51],
+    [0.7419, 235, 143, 40],
+    [0.7742, 241, 159, 33],
+    [0.8065, 246, 176, 31],
+    [0.8387, 249, 193, 38],
+    [0.8710, 251, 210, 58],
+    [0.9032, 252, 225, 88],
+    [0.9355, 252, 238, 126],
+    [0.9677, 252, 248, 166],
+    [1.0000, 252, 253, 191],
   ];
 
-  const clamped = Math.max(0, Math.min(1, t));
-  for (let i = 0; i < stops.length - 1; i++) {
-    const [t0, r0, g0, b0] = stops[i];
-    const [t1, r1, g1, b1] = stops[i + 1];
-    if (clamped >= t0 && clamped <= t1) {
-      const f = (clamped - t0) / (t1 - t0);
-      return [
-        Math.round(r0 + f * (r1 - r0)),
-        Math.round(g0 + f * (g1 - g0)),
-        Math.round(b0 + f * (b1 - b0)),
-      ];
-    }
-  }
-  return [252, 253, 191];
+  return interpolateColourMap(stops, t);
 }
 
 /**
  * Turbo colour map lookup, maps a normalised value [0,1] to [R,G,B].
- * Google's Turbo: red/yellow = close, blue = far. High-contrast + perceptually uniform.
+ * 32-stop piecewise linear interpolation of Google Turbo.
+ * Red/yellow = close; blue = far. High-contrast + perceptually uniform.
  */
 export function turboColour(t: number): [number, number, number] {
   const stops: [number, number, number, number][] = [
-    [0.0, 48, 18, 59],
-    [0.143, 50, 92, 200],
-    [0.286, 44, 178, 187],
-    [0.429, 75, 209, 112],
-    [0.571, 178, 221, 60],
-    [0.714, 241, 168, 40],
-    [0.857, 227, 79, 21],
-    [1.0, 122, 4, 3],
+    [0.0000, 48, 18, 59],
+    [0.0323, 55, 35, 96],
+    [0.0645, 59, 54, 135],
+    [0.0968, 60, 72, 169],
+    [0.1290, 58, 92, 199],
+    [0.1613, 53, 113, 224],
+    [0.1935, 44, 135, 244],
+    [0.2258, 33, 155, 255],
+    [0.2581, 22, 174, 254],
+    [0.2903, 13, 191, 239],
+    [0.3226, 10, 205, 220],
+    [0.3548, 14, 217, 198],
+    [0.3871, 28, 228, 174],
+    [0.4194, 51, 237, 148],
+    [0.4516, 78, 244, 120],
+    [0.4839, 107, 248, 92],
+    [0.5161, 138, 250, 64],
+    [0.5484, 168, 248, 41],
+    [0.5806, 198, 244, 26],
+    [0.6129, 225, 235, 19],
+    [0.6452, 247, 222, 16],
+    [0.6774, 249, 202, 15],
+    [0.7097, 249, 181, 15],
+    [0.7419, 247, 160, 16],
+    [0.7742, 243, 138, 18],
+    [0.8065, 237, 116, 21],
+    [0.8387, 228, 95, 23],
+    [0.8710, 214, 72, 23],
+    [0.9032, 196, 51, 21],
+    [0.9355, 174, 31, 17],
+    [0.9677, 149, 15, 9],
+    [1.0000, 122, 4, 3],
   ];
 
-  const clamped = Math.max(0, Math.min(1, t));
-  for (let i = 0; i < stops.length - 1; i++) {
-    const [t0, r0, g0, b0] = stops[i];
-    const [t1, r1, g1, b1] = stops[i + 1];
-    if (clamped >= t0 && clamped <= t1) {
-      const f = (clamped - t0) / (t1 - t0);
-      return [
-        Math.round(r0 + f * (r1 - r0)),
-        Math.round(g0 + f * (g1 - g0)),
-        Math.round(b0 + f * (b1 - b0)),
-      ];
-    }
-  }
-  return [122, 4, 3];
+  return interpolateColourMap(stops, t);
 }
 
 /**
  * Plasma colour map lookup, maps a normalised value [0,1] to [R,G,B].
- * 8-stop piecewise linear approximation of matplotlib plasma.
+ * 32-stop piecewise linear interpolation of matplotlib plasma.
  * Bright (yellow) = close; dark (purple/blue) = far.
  */
 export function plasmaColour(t: number): [number, number, number] {
   const stops: [number, number, number, number][] = [
-    [0.0, 13, 8, 135],
-    [0.143, 84, 2, 163],
-    [0.286, 139, 10, 165],
-    [0.429, 185, 50, 137],
-    [0.571, 219, 92, 104],
-    [0.714, 244, 136, 73],
-    [0.857, 254, 188, 43],
-    [1.0, 240, 249, 33],
+    [0.0000, 13, 8, 135],
+    [0.0323, 27, 5, 142],
+    [0.0645, 41, 3, 149],
+    [0.0968, 55, 2, 156],
+    [0.1290, 68, 1, 162],
+    [0.1613, 80, 3, 167],
+    [0.1935, 91, 7, 170],
+    [0.2258, 103, 11, 173],
+    [0.2581, 114, 15, 175],
+    [0.2903, 124, 21, 174],
+    [0.3226, 134, 26, 173],
+    [0.3548, 143, 32, 170],
+    [0.3871, 152, 38, 167],
+    [0.4194, 161, 43, 163],
+    [0.4516, 170, 49, 159],
+    [0.4839, 178, 55, 153],
+    [0.5161, 186, 62, 147],
+    [0.5484, 194, 69, 139],
+    [0.5806, 202, 77, 131],
+    [0.6129, 209, 85, 122],
+    [0.6452, 216, 95, 112],
+    [0.6774, 222, 104, 102],
+    [0.7097, 228, 114, 91],
+    [0.7419, 233, 124, 80],
+    [0.7742, 237, 134, 68],
+    [0.8065, 241, 145, 56],
+    [0.8387, 244, 157, 43],
+    [0.8710, 246, 169, 29],
+    [0.9032, 248, 182, 15],
+    [0.9355, 249, 195, 7],
+    [0.9677, 250, 209, 10],
+    [1.0000, 240, 249, 33],
   ];
 
-  const clamped = Math.max(0, Math.min(1, t));
-  for (let i = 0; i < stops.length - 1; i++) {
-    const [t0, r0, g0, b0] = stops[i];
-    const [t1, r1, g1, b1] = stops[i + 1];
-    if (clamped >= t0 && clamped <= t1) {
-      const f = (clamped - t0) / (t1 - t0);
-      return [
-        Math.round(r0 + f * (r1 - r0)),
-        Math.round(g0 + f * (g1 - g0)),
-        Math.round(b0 + f * (b1 - b0)),
-      ];
-    }
-  }
-  return [240, 249, 33];
+  return interpolateColourMap(stops, t);
 }
 
 /** Apply a colourmap function to a normalised depth value. */

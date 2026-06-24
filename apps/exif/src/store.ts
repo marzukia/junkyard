@@ -1,5 +1,13 @@
 import { create } from "zustand";
 
+/** Collision-safe ID (crypto.randomUUID with Date.now+random fallback for insecure contexts). */
+function genId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+}
+
 export interface ImageEntry {
   id: string;
   file: File;
@@ -42,7 +50,7 @@ export const useExifStore = create<ExifStore>((set) => ({
   addImages: (files) => {
     set((state) => {
       const next = files.map((file) => ({
-        id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        id: genId(),
         file,
         objectUrl: URL.createObjectURL(file),
         exif: undefined,
