@@ -14,6 +14,15 @@ export const useJwtStore = create<JwtStore>()(
       setRawToken: (token) => set({ rawToken: token }),
       clearToken: () => set({ rawToken: "" }),
     }),
-    { name: "jwt-tool-state" }
+    {
+      name: "jwt-tool-state",
+      merge: (persisted, current) => {
+        const p = persisted as Partial<JwtStore>;
+        return {
+          ...current,
+          rawToken: typeof p.rawToken === "string" ? p.rawToken : "",
+        };
+      },
+    }
   )
 );

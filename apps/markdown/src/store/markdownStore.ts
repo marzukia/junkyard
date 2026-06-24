@@ -43,7 +43,16 @@ export const useMarkdownStore = create<MarkdownState>()(
       setSource: (s) => set({ source: s }),
       clearSource: () => set({ source: "" }),
     }),
-    { name: "md-editor-source" }
+    {
+      name: "md-editor-source",
+      merge: (persisted, current) => {
+        const p = persisted as Partial<MarkdownState>;
+        return {
+          ...current,
+          source: typeof p.source === "string" ? p.source : DEFAULT_MD,
+        };
+      },
+    }
   )
 );
 
