@@ -181,7 +181,7 @@ This is what the MCP server iterates to register tools. Adapters only need to im
 
 ## Tests
 
-195 test cases across `src/index.test.ts` (184 tests) and `src/cron.augment.test.ts` (11 tests) using Vitest, including a 58-test markdown section with a 39-test XSS battery covering script injection, `javascript:` URIs, attribute injection, and HTML block passthrough.
+Comprehensive unit tests across `src/index.test.ts` and `src/cron.augment.test.ts` covering all tools, including extensive markdown rendering and XSS-sanitisation tests (script injection, `javascript:` URIs, attribute injection, and HTML block passthrough).
 
 Run:
 

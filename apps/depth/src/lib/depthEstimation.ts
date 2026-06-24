@@ -11,7 +11,7 @@ import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/t
 import { configureTransformersEnv } from "./transformersEnv";
 
 
-const MODEL_ID = "onnx-community/depth-anything-v2-small";
+export const MODEL_ID = "onnx-community/depth-anything-v2-small";
 
 export type ColourMap = "viridis" | "greyscale" | "magma" | "turbo" | "plasma";
 

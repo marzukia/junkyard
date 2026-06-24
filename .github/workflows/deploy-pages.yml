@@ -106,6 +106,12 @@ jobs:
         # every catalogue slug must appear in the sitemap and vice-versa.
         run: bun scripts/check-hub-sitemap-from-catalogue.mjs
 
+      - name: Doc tool-count guard
+        # Fails if the tool count stated in README.md, CONTRIBUTING.md, or
+        # docs/ARCHITECTURE.md diverges from the real apps/ directory count.
+        # Prevents silent "44" drift when a new tool is added without updating docs.
+        run: bun scripts/check-doc-counts.mjs
+
       - name: Core TOOLS vs exposed apps guard
         # Fails if the set of apps with mcp.exposed:true diverges from the
         # slugs registered in @junkyard/core TOOLS (must stay at 17).
@@ -115,7 +121,7 @@ jobs:
           bun ./scripts/check-core-vs-exposed.mjs
 
       - name: Typecheck and test packages/core
-        # Ensures @junkyard/core stays type-clean and its 195 unit tests pass.
+        # Ensures @junkyard/core stays type-clean and all unit tests pass.
         # Deps are already installed by the core-vs-exposed step above.
         run: |
           cd packages/core

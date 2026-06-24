@@ -99,7 +99,7 @@ interface TranscribeState {
   setError: (msg: string) => void;
   setLanguage: (lang: LanguageHint) => void;
   setTranslateToEnglish: (v: boolean) => void;
-  setTranscribeProgress: (p: TranscribeProgress) => void;
+  setTranscribeProgress: (p: Partial<TranscribeProgress>) => void;
   reset: () => void;
 }
 
@@ -155,7 +155,7 @@ export const useTranscribeStore = create<TranscribeState>((set) => ({
     set({ translateToEnglish: v });
   },
 
-  setTranscribeProgress: (p) => set({ transcribeProgress: p }),
+  setTranscribeProgress: (p) => set((s) => ({ transcribeProgress: { ...s.transcribeProgress, ...p } })),
 
   reset: () => set({ ...INITIAL }),
 }));

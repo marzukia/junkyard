@@ -491,13 +491,12 @@ export function App() {
     };
   }, [mediaUrl]);
 
-  const startElapsedTimer = useCallback(
-    (getChunks: () => number) => {
+  const startElapsedTimer = useCallback(() => {
       if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
       const startTime = Date.now();
       elapsedTimerRef.current = setInterval(() => {
         const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        setTranscribeProgress({ elapsedSec: elapsed, chunksProcessed: getChunks() });
+        setTranscribeProgress({ elapsedSec: elapsed });
       }, 500);
     },
     [setTranscribeProgress]
@@ -534,7 +533,7 @@ export function App() {
       setSeekingTo(null);
 
       setPhase("model-loading");
-      startElapsedTimer(() => 0);
+      startElapsedTimer();
       await runWorker(
         new URL("./infer.worker.ts", import.meta.url),
         { file, language: language !== "auto" ? language : undefined, translateToEnglish },
@@ -549,7 +548,7 @@ export function App() {
           },
           onChunkProgress: (done) => {
             setPhase("transcribing");
-            setTranscribeProgress({ elapsedSec: 0, chunksProcessed: done });
+            setTranscribeProgress({ chunksProcessed: done });
           },
           onResult: (result) => {
             stopElapsedTimer();

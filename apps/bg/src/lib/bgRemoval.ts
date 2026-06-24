@@ -9,11 +9,7 @@
  */
 import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface/transformers";
 import { configureTransformersEnv } from "./transformersEnv";
-
-const MODEL_ID = "briaai/RMBG-1.4";
-
-// Maximum edge length before downscaling for inference (avoids OOM on huge images)
-const MAX_INFER_SIDE = 1024;
+import { MODEL_ID, MAX_INFER_SIDE } from "./bgConstants";
 
 export type ProgressCallback = (loaded: number, total: number, status: string) => void;
 

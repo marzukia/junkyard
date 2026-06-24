@@ -13,7 +13,13 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 
-// CDN base for @ffmpeg/core single-thread build (pinned to 0.12.x)
+// CDN base for @ffmpeg/core single-thread build.
+// VERSION PAIRING — do not align these independently:
+//   @ffmpeg/ffmpeg  0.12.15  (npm, exact-pinned in package.json)
+//   @ffmpeg/core    0.12.10  (CDN, loaded here at runtime — NOT bundled)
+// The Vite plugin in vite.config.ts patches @ffmpeg/ffmpeg's classes.js for
+// the 0.12.15 source specifically. Bumping either version requires reviewing
+// the other and updating the patch target if classes.js internals changed.
 const CORE_CDN = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd";
 
 let ffmpegInstance: FFmpeg | null = null;

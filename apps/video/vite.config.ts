@@ -15,6 +15,13 @@ import { defineConfig } from "vite";
  *
  * We exclude @ffmpeg/ffmpeg from optimizeDeps so the transform hook runs on
  * its source before the esbuild pre-bundler hides it from the plugin pipeline.
+ *
+ * VERSION PAIRING — do not "align" these independently:
+ *   @ffmpeg/ffmpeg  0.12.15  (npm, exact-pinned) — the JS wrapper; this patch
+ *                            targets its classes.js Worker() call sites.
+ *   @ffmpeg/core    0.12.10  (CDN, runtime)      — the WASM binary; loaded in
+ *                            ffmpeg.ts via jsDelivr, NOT bundled here.
+ * Bumping either version without reviewing the other can break the engine.
  */
 function ffmpegClassicWorkerPlugin(): Plugin {
   return {
@@ -44,8 +51,15 @@ function ffmpegClassicWorkerPlugin(): Plugin {
             'new Worker(new URL("./worker.js", import.meta.url), { type: "classic" })'
           );
         if (patched2 === code) {
-          console.warn("[ffmpeg-classic-worker] pattern not found in", id, "- engine may fail to load");
-          return null;
+          // This module matched the ffmpeg/classes filter but neither the exact
+          // string replacement nor the regex fallback applied — the internals of
+          // @ffmpeg/ffmpeg changed from the pinned 0.12.15 source this patch was
+          // written against. Failing loudly here prevents shipping a build where
+          // the worker stays type:"module" and fails silently at runtime.
+          throw new Error(
+            `ffmpeg worker patch failed: expected string not found in ${id} — ` +
+              "@ffmpeg/ffmpeg internals changed (pinned 0.12.15); update the patch."
+          );
         }
         console.log("[ffmpeg-classic-worker] patched (regex fallback) Worker type to classic in", id);
         return { code: patched2, map: null };
