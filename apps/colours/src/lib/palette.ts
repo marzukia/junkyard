@@ -25,7 +25,7 @@ export const MAX_PALETTE_COUNT = 8;
  * A minimal seeded PRNG (mulberry32) so palette generation can be deterministic
  * given the same seed. Accepts a 32-bit integer seed.
  */
-function mulberry32(seed: number) {
+export function mulberry32(seed: number) {
   let s = seed >>> 0;
   return (): number => {
     s = (s + 0x6d2b79f5) >>> 0;

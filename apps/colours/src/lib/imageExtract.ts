@@ -7,15 +7,23 @@
  *
  * Designed to run in a web worker if needed, but works on the main thread for
  * images of reasonable size after the downsample step.
+ *
+ * Determinism: extraction is seeded (default seed = 1). Providing the same image
+ * and seed always produces the same palette, which is both testable and stable
+ * across hot reloads. The caller may supply a custom seed when variety is desired.
  */
 
 import { normalizeHex } from "./color";
+import { mulberry32 } from "./palette";
 
 /** Maximum pixel dimension after downsampling. Keeps k-means fast. */
 const MAX_DIM = 96;
 
 /** Number of k-means iterations. 12 converges well on palette-sized k. */
 const KMEANS_ITERS = 12;
+
+/** Default seed for deterministic extraction. */
+const DEFAULT_EXTRACT_SEED = 1;
 
 /** Clamp a number to [0, 255]. */
 function clamp255(n: number): number {
@@ -59,42 +67,54 @@ function distSq(a: RgbPixel, b: RgbPixel): number {
   return (a.r - b.r) ** 2 + (a.g - b.g) ** 2 + (a.b - b.b) ** 2;
 }
 
-/** Pick k well-spaced seed pixels using kmeans++ initialization. */
-function initCentroids(pixels: RgbPixel[], k: number): RgbPixel[] {
+/**
+ * Pick k well-spaced seed pixels using kmeans++ initialization.
+ *
+ * Uses a caller-supplied seeded PRNG so results are deterministic.
+ * The cumulative-weight selection sums weights into a prefix array and
+ * does a single pass -- avoiding the floating-point drift that can occur
+ * when subtracting from a running total on large pixel sets.
+ */
+function initCentroids(pixels: RgbPixel[], k: number, rand: () => number): RgbPixel[] {
   if (pixels.length === 0) return [];
-  const centers: RgbPixel[] = [pixels[Math.floor(Math.random() * pixels.length)]];
+  const centers: RgbPixel[] = [pixels[Math.floor(rand() * pixels.length)]];
 
   while (centers.length < k) {
-    // Weight each pixel by its distance to the nearest center
-    const weights = pixels.map((p) => {
-      const d = Math.min(...centers.map((c) => distSq(p, c)));
-      return d;
-    });
-    const total = weights.reduce((s, w) => s + w, 0);
+    // Weight each pixel by its distance-squared to the nearest center.
+    const weights = pixels.map((p) => Math.min(...centers.map((c) => distSq(p, c))));
+
+    // Build a prefix-sum array for correct weighted sampling that avoids
+    // floating-point accumulation drift on large images.
+    const prefix = new Float64Array(weights.length);
+    prefix[0] = weights[0];
+    for (let i = 1; i < weights.length; i++) prefix[i] = prefix[i - 1] + weights[i];
+    const total = prefix[weights.length - 1];
+
     if (total === 0) {
-      // All pixels are coincident — just pick the next pixel sequentially
+      // All pixels are coincident -- just pick the next pixel sequentially.
       centers.push(pixels[centers.length % pixels.length]);
       continue;
     }
-    let r = Math.random() * total;
-    let chosen = pixels[pixels.length - 1];
-    for (let i = 0; i < pixels.length; i++) {
-      r -= weights[i];
-      if (r <= 0) {
-        chosen = pixels[i];
-        break;
-      }
+
+    const target = rand() * total;
+    // Binary search in prefix array for the first entry >= target.
+    let lo = 0;
+    let hi = prefix.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (prefix[mid] < target) lo = mid + 1;
+      else hi = mid;
     }
-    centers.push(chosen);
+    centers.push(pixels[lo]);
   }
   return centers;
 }
 
 /** Run k-means on the pixel array and return k centroid colors. */
-function kMeans(pixels: RgbPixel[], k: number): RgbPixel[] {
+function kMeans(pixels: RgbPixel[], k: number, rand: () => number): RgbPixel[] {
   if (pixels.length === 0) return [];
   const safeK = Math.min(k, pixels.length);
-  let centers = initCentroids(pixels, safeK);
+  let centers = initCentroids(pixels, safeK, rand);
 
   for (let iter = 0; iter < KMEANS_ITERS; iter++) {
     // Assign each pixel to nearest center
@@ -178,21 +198,35 @@ export function loadImageFile(file: File): Promise<HTMLImageElement> {
  * Returns an array of #rrggbb hex strings sorted light-to-dark.
  *
  * Throws if the canvas API is unavailable or the image cannot be loaded.
+ *
+ * @param seed  32-bit integer seed for the PRNG (default 1). Same image + same
+ *              seed always produces the same palette.
  */
-export async function extractPaletteFromFile(file: File, count: number): Promise<string[]> {
+export async function extractPaletteFromFile(
+  file: File,
+  count: number,
+  seed = DEFAULT_EXTRACT_SEED
+): Promise<string[]> {
   const img = await loadImageFile(file);
-  return extractPaletteFromImage(img, count);
+  return extractPaletteFromImage(img, count, seed);
 }
 
 /**
  * Extract `count` dominant colors from an HTMLImageElement.
  * Exported for testing / reuse.
+ *
+ * @param seed  32-bit integer seed for the PRNG (default 1).
  */
-export function extractPaletteFromImage(img: HTMLImageElement, count: number): string[] {
+export function extractPaletteFromImage(
+  img: HTMLImageElement,
+  count: number,
+  seed = DEFAULT_EXTRACT_SEED
+): string[] {
   const pixels = samplePixels(img);
   if (pixels.length === 0) return Array(count).fill("#808080");
 
-  const centroids = kMeans(pixels, count);
+  const rand = mulberry32(seed);
+  const centroids = kMeans(pixels, count, rand);
 
   // Sort light to dark
   centroids.sort((a, b) => perceivedLightness(b) - perceivedLightness(a));
@@ -208,4 +242,27 @@ export function extractPaletteFromImage(img: HTMLImageElement, count: number): s
  */
 export function isImageFile(file: File): boolean {
   return file.type.startsWith("image/");
+}
+
+/**
+ * Extract a palette from a raw pixel array (r,g,b triples as flat numbers).
+ * Exported for unit tests that cannot use the canvas-dependent path.
+ *
+ * @param pixels  Array of {r,g,b} objects
+ * @param count   Number of clusters
+ * @param seed    PRNG seed
+ */
+export function extractPaletteFromPixels(
+  pixels: Array<{ r: number; g: number; b: number }>,
+  count: number,
+  seed = DEFAULT_EXTRACT_SEED
+): string[] {
+  if (pixels.length === 0) return Array(count).fill('#808080');
+  const rand = mulberry32(seed);
+  const centroids = kMeans(pixels, count, rand);
+  centroids.sort((a, b) => perceivedLightness(b) - perceivedLightness(a));
+  return centroids.map((c) => {
+    const hex = rgbToHex(c);
+    return normalizeHex(hex) ?? '#808080';
+  });
 }
