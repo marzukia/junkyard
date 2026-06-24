@@ -183,14 +183,14 @@ describe("runInWorker -- ReDoS protection", () => {
 });
 
 describe("runInWorker -- cron infinite step", () => {
-  // step=0 in a range expansion causes an infinite for-loop in expandField().
-  // This is a synchronous infinite loop -- Promise.race cannot stop it.
-  // Worker terminate() kills the thread OS-level.
-  it("terminates a cron expression that causes an infinite CPU loop", async () => {
+  // step=0 used to cause an infinite for-loop; it is now rejected at source
+  // (validateSinglePart), so the op throws a clean validation error fast. The
+  // worker terminate() kill path is proven by the ReDoS test above.
+  it("rejects a step-0 cron expression fast via source validation (no infinite loop)", async () => {
     const t0 = Date.now();
     await expect(
       runInWorker("cron", "describe", { expr: "0-30/0 * * * *", nextCount: 5 }, CRON_TIMEOUT_MS),
-    ).rejects.toThrow(/timed out/);
+    ).rejects.toThrow(/step/i);
     const elapsed = Date.now() - t0;
     expect(elapsed).toBeLessThan(CRON_TIMEOUT_MS + 300);
   }, CRON_TIMEOUT_MS + 3_000);
