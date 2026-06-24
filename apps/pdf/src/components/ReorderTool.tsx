@@ -14,6 +14,7 @@ export function ReorderTool() {
   const [pages, setPages] = useState<PageEntry[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
   const dragIdx = useRef<number | null>(null);
 
   const onFile = async (files: File[]) => {
@@ -21,6 +22,7 @@ export function ReorderTool() {
     if (!f) return;
     setFile(f);
     setError(null);
+    setDone(false);
     try {
       const bytes = new Uint8Array(await f.arrayBuffer());
       const doc = await PDFDocument.load(bytes);
@@ -56,11 +58,13 @@ export function ReorderTool() {
     if (!file) return;
     setBusy(true);
     setError(null);
+    setDone(false);
     try {
       const bytes = new Uint8Array(await file.arrayBuffer());
       const newOrder = pages.map((p) => p.originalIndex);
       const result = await reorderPages(bytes, newOrder);
       downloadBytes(result, `${baseName(file.name)}-reordered.pdf`);
+      setDone(true);
     } catch (err) {
       setError(`Reorder failed: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
@@ -90,6 +94,7 @@ export function ReorderTool() {
               onClick={() => {
                 setFile(null);
                 setPages([]);
+                setDone(false);
               }}
               aria-label="Remove file"
               title="Remove"
@@ -118,6 +123,12 @@ export function ReorderTool() {
             ))}
           </ul>
         </>
+      )}
+
+      {done && (
+        <output className="tool-success" aria-live="polite">
+          Reordered! Check your downloads folder.
+        </output>
       )}
 
       {error && (

@@ -47,7 +47,10 @@ export function App() {
     (files: FileList | null) => {
       if (!files || files.length === 0) return;
       const file = files[0];
-      if (!file.type.startsWith("image/")) return;
+      if (!file.type.startsWith("image/")) {
+        setLoadError("Please drop an image file (JPEG, PNG, WebP, …).");
+        return;
+      }
       loadFile(file);
     },
     [loadFile]

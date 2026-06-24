@@ -278,7 +278,10 @@ export function App() {
 
   const handleFile = useCallback(
     (file: File) => {
-      if (!file.name.endsWith(".svg") && file.type !== "image/svg+xml") return;
+      if (!file.name.endsWith(".svg") && file.type !== "image/svg+xml") {
+        store.setError("That doesn't look like an SVG — drop a .svg file or paste SVG markup.");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (e) => {
         const text = e.target?.result;

@@ -15,12 +15,29 @@ export function Img2PdfTool() {
   const [done, setDone] = useState(false);
 
   const addFiles = (files: File[]) => {
-    setEntries((prev) => [
-      ...prev,
-      ...files.map((f) => ({ file: f, id: (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") ? crypto.randomUUID() : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2) })),
-    ]);
-    setError(null);
-    setDone(false);
+    const accepted = files.filter(
+      (f) => f.type === "image/png" || f.type === "image/jpeg" || f.name.toLowerCase().endsWith(".png") || f.name.toLowerCase().endsWith(".jpg") || f.name.toLowerCase().endsWith(".jpeg")
+    );
+    const rejected = files.filter(
+      (f) => !(f.type === "image/png" || f.type === "image/jpeg" || f.name.toLowerCase().endsWith(".png") || f.name.toLowerCase().endsWith(".jpg") || f.name.toLowerCase().endsWith(".jpeg"))
+    );
+    if (rejected.length > 0) {
+      const names = rejected.map((f) => f.name).join(", ");
+      setError(
+        rejected.length === 1
+          ? `"${names}" is not supported. Only PNG and JPEG images can be converted.`
+          : `These files are not supported and were skipped: ${names}. Only PNG and JPEG images can be converted.`
+      );
+    } else {
+      setError(null);
+    }
+    if (accepted.length > 0) {
+      setEntries((prev) => [
+        ...prev,
+        ...accepted.map((f) => ({ file: f, id: (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") ? crypto.randomUUID() : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2) })),
+      ]);
+      setDone(false);
+    }
   };
 
   const remove = (id: string) => setEntries((prev) => prev.filter((e) => e.id !== id));
@@ -65,7 +82,7 @@ export function Img2PdfTool() {
   return (
     <div className="tool-panel">
       <DropZone
-        accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+        accept="image/*"
         multiple
         onFiles={addFiles}
         label="Drop PNG/JPEG images or click to select"

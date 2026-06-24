@@ -126,18 +126,39 @@ function DownloadButton({
 
 // ── File upload ───────────────────────────────────────────────────────────────
 
-function FileUpload({ onLoad }: { onLoad: (text: string) => void }) {
+function FileUpload({
+  onLoad,
+  onError,
+}: {
+  onLoad: (text: string) => void;
+  onError: (msg: string) => void;
+}) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    // Reject obviously non-text files (images, PDFs, etc.)
+    if (
+      file.type &&
+      !file.type.startsWith("text/") &&
+      file.type !== "application/json" &&
+      !["", "application/csv"].includes(file.type)
+    ) {
+      onError(`Cannot read "${file.name}" — only CSV, TSV, JSON, or plain-text files are supported.`);
+      if (inputRef.current) inputRef.current.value = "";
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (ev) => {
       const text = ev.target?.result;
       if (typeof text === "string") {
+        onError("");
         onLoad(text);
       }
+    };
+    reader.onerror = () => {
+      onError(`Failed to read "${file.name}".`);
     };
     reader.readAsText(file);
     // Reset so the same file can be re-loaded
@@ -265,6 +286,7 @@ export function App() {
   } = useCsvStore();
 
   const [viewMode, setViewMode] = useState<"table" | "raw">("table");
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const loadExample = useCallback(() => {
     setInput(mode === "csv-to-json" ? EXAMPLE_CSV : EXAMPLE_JSON);
@@ -416,7 +438,7 @@ export function App() {
                 </span>
               )}
               <div className="csv-panel-actions">
-                <FileUpload onLoad={setInput} />
+                <FileUpload onLoad={(t) => { setUploadError(null); setInput(t); }} onError={(m) => setUploadError(m || null)} />
                 {!input.trim() && (
                   <button
                     type="button"
@@ -451,6 +473,12 @@ export function App() {
               autoCorrect="off"
               autoCapitalize="off"
             />
+            {uploadError && (
+              <div className="csv-error" role="alert" aria-live="polite">
+                <span className="csv-error-icon">!</span>
+                <span className="csv-error-msg">{uploadError}</span>
+              </div>
+            )}
             {parseError && (
               <div className="csv-error" role="alert" aria-live="polite">
                 <span className="csv-error-icon">!</span>

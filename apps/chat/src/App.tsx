@@ -374,9 +374,16 @@ export function App() {
   const [input, setInput] = useState("");
   const [loadStartedAt, setLoadStartedAt] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
-  const webGpuSupported = hasWebGpu();
+  // null = probe in-flight; true/false = resolved
+  const [webGpuSupported, setWebGpuSupported] = useState<boolean | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Probe WebGPU support on mount (requestAdapter catches blocklisted GPUs that
+  // expose navigator.gpu but fail at engine creation).
+  useEffect(() => {
+    hasWebGpu().then(setWebGpuSupported);
+  }, []);
 
   // Auto-scroll to bottom when message count changes.
   // biome-ignore lint/correctness/useExhaustiveDependencies: messages.length is the trigger
@@ -545,11 +552,11 @@ export function App() {
           sent to any server.
         </p>
 
-        {/* WebGPU check */}
-        {!webGpuSupported && <UnsupportedBanner />}
+        {/* WebGPU check — null means probe in-flight, render nothing until resolved */}
+        {webGpuSupported === false && <UnsupportedBanner />}
 
         {/* Load model prompt */}
-        {webGpuSupported && modelPhase === "idle" && (
+        {webGpuSupported === true && modelPhase === "idle" && (
           <div className="card">
             <div className="chat-load-wrap">
               <p className="chat-load-title">Ready to load the AI model</p>
@@ -565,7 +572,7 @@ export function App() {
         )}
 
         {/* Model loading / download */}
-        {webGpuSupported && modelPhase === "loading" && (
+        {webGpuSupported === true && modelPhase === "loading" && (
           <div className="card">
             <ProgressBar
               text={downloadProgress.text}
@@ -577,7 +584,7 @@ export function App() {
         )}
 
         {/* Model load error */}
-        {webGpuSupported && modelPhase === "error" && (
+        {webGpuSupported === true && modelPhase === "error" && (
           <div className="card">
             <div className="chat-unsupported">
               <svg
@@ -610,7 +617,7 @@ export function App() {
         )}
 
         {/* Chat UI */}
-        {webGpuSupported && modelPhase === "ready" && (
+        {webGpuSupported === true && modelPhase === "ready" && (
           <div className="chat-layout">
             {/* Sidebar: persistent on desktop, drawer on mobile */}
             <Sidebar />

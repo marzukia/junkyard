@@ -129,6 +129,11 @@ export async function translateText(
   const chunks = splitIntoChunks(text);
   const translated: string[] = [];
 
+  // Signal inference-started before the first chunk so single-chunk inputs
+  // flip to "translating" phase immediately (chunk_progress only fires after
+  // each chunk completes, so without this single-chunk stays on "Downloading").
+  onChunkProgress?.(0, chunks.length);
+
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i];
     const result = await translator(chunk, {

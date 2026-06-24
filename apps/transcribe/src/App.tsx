@@ -540,8 +540,12 @@ export function App() {
         { file, language: language !== "auto" ? language : undefined, translateToEnglish },
         {
           onProgress: (loaded, total, status) => {
-            setModelProgress(loaded, total, status);
-            setPhase("model-loading");
+            if (status === "decoding") {
+              setPhase("decoding");
+            } else {
+              setModelProgress(loaded, total, status);
+              setPhase("model-loading");
+            }
           },
           onChunkProgress: (done) => {
             setPhase("transcribing");

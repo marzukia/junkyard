@@ -123,6 +123,7 @@ export function App() {
   // mobile tab: "edit" or "preview"
   const [mobileTab, setMobileTab] = useState<"edit" | "preview">("edit");
   const [isDragOver, setIsDragOver] = useState(false);
+  const [fileError, setFileError] = useState<string | null>(null);
   const [showToc, setShowToc] = useState(false);
   // Prevent scroll-sync feedback loop
   const syncingRef = useRef<"editor" | "preview" | null>(null);
@@ -212,14 +213,19 @@ export function App() {
         file.type !== "text/markdown" &&
         file.type !== "text/plain"
       ) {
+        setFileError("Only .md or plain-text files can be opened here.");
         return;
       }
+      setFileError(null);
       const reader = new FileReader();
       reader.onload = (e) => {
         const text = e.target?.result;
         if (typeof text === "string") {
           setSource(text);
         }
+      };
+      reader.onerror = () => {
+        setFileError(`Failed to read "${file.name}".`);
       };
       reader.readAsText(file);
     },
@@ -420,6 +426,22 @@ export function App() {
 
           {/* TOC panel (collapsible, above the split) */}
           {showToc && toc.length > 0 && <TocPanel entries={toc} onNavigate={handleTocNavigate} />}
+
+          {/* File-rejection notice */}
+          {fileError && (
+            <p
+              role="alert"
+              aria-live="assertive"
+              style={{
+                color: "var(--error, #c0392b)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.85rem",
+                margin: "0.5rem 0",
+              }}
+            >
+              {fileError}
+            </p>
+          )}
 
           {/* Split editor / preview */}
           <div

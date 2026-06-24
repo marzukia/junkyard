@@ -27,6 +27,8 @@ kit/
 
 ## How to consume the kit (per tool)
 
+> **NOTE (superseded):** the per-tool scaffold below describes the retired per-subdomain model (per-tool `git init`, `CNAME <slug>.mrzk.io`, per-tool `.github/workflows`, `__UMAMI_ID__` placeholder). For the current workflow see [CONTRIBUTING.md](../CONTRIBUTING.md) §Adding a new tool.
+
 ### 1. Bootstrap the tool directory
 
 ```bash

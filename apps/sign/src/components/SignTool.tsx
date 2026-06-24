@@ -68,6 +68,7 @@ export function SignTool() {
   // Undo stack: keep last 10 overlay positions
   const [overlayHistory, setOverlayHistory] = useState<SigOverlayState[]>([]);
   const [downloading, setDownloading] = useState(false);
+  const [downloadDone, setDownloadDone] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [loadingSample, setLoadingSample] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -159,7 +160,7 @@ export function SignTool() {
         const dataUrl = await imageFileToDataUrl(file);
         setSigDataUrl(dataUrl);
       } catch (err) {
-        setUploadError(String(err));
+        setUploadError(`Could not load image: ${err instanceof Error ? err.message : String(err)}`);
       }
     },
     [setSigDataUrl]
@@ -186,6 +187,7 @@ export function SignTool() {
   const handleDownload = useCallback(async () => {
     if (!pdfBytes || !sigDataUrl) return;
     setDownloading(true);
+    setDownloadDone(false);
     setDownloadError(null);
     try {
       const canvas = pdfViewerContainerRef.current?.querySelector("canvas");
@@ -237,8 +239,10 @@ export function SignTool() {
       a.download = `${stem}-signed.pdf`;
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 10000);
+      setDownloadDone(true);
+      setTimeout(() => setDownloadDone(false), 2500);
     } catch (err) {
-      setDownloadError(String(err));
+      setDownloadError(err instanceof Error ? err.message : String(err));
     } finally {
       setDownloading(false);
     }
@@ -654,12 +658,13 @@ export function SignTool() {
             <div className="tool-actions">
               <button
                 type="button"
-                className="btn-primary"
+                className={`btn-primary${downloadDone ? " btn-primary--done" : ""}`}
                 onClick={handleDownload}
                 disabled={downloading}
+                aria-live="polite"
                 title="Download signed PDF (Ctrl+Enter / Cmd+Enter)"
               >
-                {downloading ? "Preparing..." : "Download signed PDF"}
+                {downloading ? "Preparing..." : downloadDone ? "Downloaded!" : "Download signed PDF"}
               </button>
               {overlayHistory.length > 0 && (
                 <button

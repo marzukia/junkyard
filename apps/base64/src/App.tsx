@@ -355,6 +355,8 @@ function FileTab() {
   const b64InputRef = useRef<HTMLTextAreaElement>(null);
   const [decodeError, setDecodeError] = useState<string | null>(null);
   const [decodedPreviewUrl, setDecodedPreviewUrl] = useState<string | null>(null);
+  const [reading, setReading] = useState(false);
+  const [b64InputEmpty, setB64InputEmpty] = useState(true);
 
   // When a file is loaded, compute its Base64 output
   useEffect(() => {
@@ -368,12 +370,17 @@ function FileTab() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      setReading(true);
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result;
         if (typeof result === "string") {
           setFile(result, file.name, file.type || "application/octet-stream");
         }
+        setReading(false);
+      };
+      reader.onerror = () => {
+        setReading(false);
       };
       reader.readAsDataURL(file);
       e.target.value = "";
@@ -426,6 +433,7 @@ function FileTab() {
   const handleDecodeInput = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDecodeError(null);
     const raw = e.target.value.trim();
+    setB64InputEmpty(!raw);
     if (!raw) {
       setDecodedPreviewUrl(null);
       return;
@@ -463,8 +471,9 @@ function FileTab() {
             type="button"
             className="btn-secondary"
             onClick={() => fileInputRef.current?.click()}
+            disabled={reading}
           >
-            {fileDataUrl ? "Replace file" : "Choose file…"}
+            {reading ? "Reading file…" : fileDataUrl ? "Replace file" : "Choose file…"}
           </button>
 
           {fileDataUrl && (
@@ -560,6 +569,7 @@ function FileTab() {
             className="btn-primary"
             onClick={handleDownloadFromB64}
             aria-label="Download decoded file"
+            disabled={b64InputEmpty}
           >
             Download file
           </button>
