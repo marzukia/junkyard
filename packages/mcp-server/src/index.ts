@@ -15,6 +15,13 @@
  * (ReDoS regex, infinite loop, huge CSV) can be hard-killed via worker.terminate()
  * when the wall-clock deadline fires. Promise.race over op.run() cannot do this
  * because the JS event loop is already blocked before the timeout callback queues.
+ *
+ * Worker concurrency cap (gauntlet w2 fix):
+ * Rapid MCP calls with no cap would spawn an unbounded number of OS threads, each
+ * pegging a core for up to the timeout (15 s). WORKER_CONCURRENCY_CAP limits
+ * in-flight workers; excess calls queue on a FIFO list of resolve callbacks
+ * (implemented as a minimal counting semaphore). The cap is intentionally small
+ * (default 8) -- MCP callers are interactive assistants, not batch pipelines.
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
@@ -46,6 +53,61 @@ export function toContent(value: unknown): { type: "text"; text: string }[] {
 // CSV payloads from hanging the stdio connection indefinitely.
 export const OP_TIMEOUT_MS = Number(process.env.JUNKYARD_OP_TIMEOUT_MS ?? 15_000);
 
+// Maximum number of Workers running concurrently. Excess calls are queued (FIFO)
+// until a slot is released. Set low intentionally: MCP callers are interactive
+// assistants, not batch pipelines. Overridable via env for testing.
+export const WORKER_CONCURRENCY_CAP = Number(
+  process.env.JUNKYARD_WORKER_CONCURRENCY_CAP ?? 8,
+);
+
+// Minimal counting semaphore used to bound concurrent Worker spawns.
+// _available tracks free slots; _queue parks callers waiting for a slot.
+// Exported for testing.
+export class WorkerSemaphore {
+  private _available: number;
+  private _cap: number;
+  private _queue: Array<() => void> = [];
+
+  constructor(cap: number) {
+    this._cap = cap;
+    this._available = cap;
+  }
+
+  // Number of currently in-flight (acquired) slots.
+  get active(): number {
+    return this._cap - this._available;
+  }
+
+  // Number of calls queued waiting for a slot.
+  get queued(): number {
+    return this._queue.length;
+  }
+
+  acquire(): Promise<void> {
+    if (this._available > 0) {
+      this._available--;
+      return Promise.resolve();
+    }
+    // No slot available: park the caller on the queue.
+    return new Promise<void>((resolve) => {
+      this._queue.push(resolve);
+    });
+  }
+
+  release(): void {
+    const next = this._queue.shift();
+    if (next) {
+      // Hand the slot directly to the next waiter (no available increment needed).
+      next();
+    } else {
+      this._available++;
+    }
+  }
+}
+
+// Module-level semaphore shared by all runInWorker calls.
+export const workerSemaphore = new WorkerSemaphore(WORKER_CONCURRENCY_CAP);
+
 // Input length caps -- fast rejection before a Worker is even spawned.
 // These defend against the most obvious abuse vectors with cheap string-length checks.
 export const INPUT_LIMITS: Record<string, number> = {
@@ -58,6 +120,8 @@ export const INPUT_LIMITS: Record<string, number> = {
   input: 100_000,
   // cron expression: no legitimate expression exceeds 200 chars
   expr: 200,
+  // json.format takes a `json` arg; a multi-MB string must not bypass the cap
+  json: 100_000,
 };
 
 // Returns an error string if any arg exceeds its limit, otherwise null.
@@ -86,20 +150,43 @@ export function runWithTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 // worker.terminate(). Unlike Promise.race, terminating the worker actually stops
 // synchronous CPU work (ReDoS regex, infinite loop, huge CSV parse) so the main
 // thread event loop is never blocked.
-export function runInWorker(
+//
+// Concurrency: acquires a slot from workerSemaphore before spawning; releases it
+// when the Worker settles (resolve, reject, or timeout). Spawn errors (e.g. path
+// not found) are caught and surfaced as clean rejections with no half-open worker.
+export async function runInWorker(
   slug: string,
   opName: string,
   args: unknown,
   ms: number,
 ): Promise<unknown> {
+  // Wait for a concurrency slot. This parks the caller (yields the event loop)
+  // if WORKER_CONCURRENCY_CAP workers are already in flight.
+  await workerSemaphore.acquire();
+
   return new Promise((resolve, reject) => {
     let settled = false;
-    const worker = new Worker(WORKER_PATH);
+
+    let worker: Worker;
+    try {
+      worker = new Worker(WORKER_PATH);
+    } catch (spawnErr) {
+      // Synchronous spawn failure (e.g. file not found). Release the slot and
+      // surface a clean error without leaving any half-open state.
+      workerSemaphore.release();
+      reject(
+        new Error(
+          `Worker spawn failed: ${spawnErr instanceof Error ? spawnErr.message : String(spawnErr)}`,
+        ),
+      );
+      return;
+    }
 
     const cleanup = (fn: () => void) => {
       if (settled) return;
       settled = true;
       worker.terminate();
+      workerSemaphore.release();
       fn();
     };
 

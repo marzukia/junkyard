@@ -15,7 +15,7 @@ DIST="$ROOT/dist"
 
 echo "==> Building hub into $DIST"
 cd "$ROOT/hub"
-bun install
+bun install --frozen-lockfile
 # Generate the catalogue - bun runs the script directly with no deps needed.
 # We invoke vite directly below rather than `bun run build`, so the prebuild
 # hook does not fire - generate explicitly.
@@ -69,10 +69,11 @@ echo ""
 echo "==> Build complete"
 echo "    Apps built: $built"
 echo -n "    dist/index.html: "
-test -f "$DIST/index.html" && echo "OK" || echo "MISSING"
+test -f "$DIST/index.html" || { echo "MISSING"; exit 1; }
+echo "OK"
 
 # Spot-check a few app index files
 for slug in json css pdf depth; do
   echo -n "    dist/$slug/index.html: "
-  test -f "$DIST/$slug/index.html" && echo "OK" || echo "MISSING (app may not exist)"
+  if test -f "$DIST/$slug/index.html"; then echo "OK"; else echo "MISSING"; exit 1; fi
 done
