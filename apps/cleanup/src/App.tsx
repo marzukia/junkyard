@@ -656,13 +656,30 @@ export function App() {
     setMaskState(null);
   }, [inputUrl, resultUrl]);
 
-  // Clean up blob URLs on unmount
+  // Track current blob URLs in a ref so the unmount-only effect can revoke the
+  // final pair without re-running on every inputUrl/resultUrl change.
+  //
+  // Why a ref rather than deps: all *transition* revocations are already handled
+  // explicitly — setInputFile revokes prior input+result, setResult revokes prior
+  // result, handleReset revokes both, handleEraseAgain revokes oldInput (keeping
+  // oldResult alive as the new inputUrl). Running this effect on every URL change
+  // caused it to revoke the previous render's inputUrl/resultUrl in its cleanup,
+  // which after handleEraseAgain meant the freshly-promoted inputUrl (= oldResult)
+  // was revoked immediately, blanking the image.
+  const urlsRef = useRef<{ inputUrl: string | null; resultUrl: string | null }>({
+    inputUrl,
+    resultUrl,
+  });
+  useEffect(() => {
+    urlsRef.current = { inputUrl, resultUrl };
+  });
   useEffect(() => {
     return () => {
-      if (inputUrl) URL.revokeObjectURL(inputUrl);
-      if (resultUrl) URL.revokeObjectURL(resultUrl);
+      const { inputUrl: u, resultUrl: r } = urlsRef.current;
+      if (u) URL.revokeObjectURL(u);
+      if (r) URL.revokeObjectURL(r);
     };
-  }, [inputUrl, resultUrl]);
+  }, []);
 
   return (
     <div className="app-root">
