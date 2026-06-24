@@ -405,6 +405,11 @@ export function App() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        setError("Logo must be an image file.");
+        e.target.value = "";
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result;
@@ -412,11 +417,12 @@ export function App() {
           setLogo(result, file.name);
         }
       };
+      reader.onerror = () => setError("Couldn't read that logo file.");
       reader.readAsDataURL(file);
       // Reset so same file can be re-selected
       e.target.value = "";
     },
-    [setLogo]
+    [setLogo, setError]
   );
 
   // Fix contrast: set fg to best contrast for current bg

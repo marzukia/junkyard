@@ -18,12 +18,18 @@ export function InvoiceForm() {
   function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Logo must be an image file.");
+      e.target.value = "";
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
         store.setLogoDataUrl(reader.result);
       }
     };
+    reader.onerror = () => alert("Could not read that logo file.");
     reader.readAsDataURL(file);
   }
 
