@@ -33,7 +33,7 @@ Each app is built independently with Vite's `--base` flag set to `/<slug>/`, so 
 - `components/MobileWarning.tsx` + `MobileWarning.css` - mobile warning overlay for heavy AI apps
 - `components/BrandMark.tsx`, `Header.tsx`, `Footer.tsx`, `ThemeToggle.tsx` - shared UI shells
 
-The kit is **vendored** rather than published to npm. `scripts/vendor-switcher.mjs` copies `AppSwitcher.*` into every app's `src/` tree. `scripts/vendor-mobilewarn.mjs` copies `MobileWarning.*` into the 9 heavy-AI apps. CI checks that vendored copies match the canonical source, preventing drift.
+The kit is **vendored** rather than published to npm. `scripts/vendor-switcher.mjs` copies `AppSwitcher.*`, `scripts/vendor-themetoggle.mjs` copies `ThemeToggle.*`, `scripts/vendor-format.mjs` copies the format helpers, and `scripts/vendor-transformers-env.mjs` copies the transformers environment shim into each app's `src/` tree. CI checks that these vendored copies match the canonical source, preventing drift. `MobileWarning` is hand-maintained per heavy-AI app (`bg, caption, depth, summarize, transcribe, translate, upscale, chat, video`) — `scripts/vendor-mobilewarn.mjs` was removed; there is no CI guard for MobileWarning drift (see CONTRIBUTING.md).
 
 This approach was chosen over a published workspace package so that parallel tool builds have no dependency on a package registry publish step. The natural extraction point to a real `@junkyard/ui` package would be after the component API has stabilised across several tools.
 
