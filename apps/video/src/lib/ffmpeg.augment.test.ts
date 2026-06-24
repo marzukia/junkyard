@@ -5,38 +5,41 @@
  *
  * Bug-1 guard: runFFmpeg now throws a proper Error with the ffmpeg log tail
  * when exec returns a non-zero exit code, so the App.tsx catch can surface a
- * real message instead of the generic "Processing failed".  The WEBM codec
- * args (libvpx-vp9 + libopus) are supported by @ffmpeg/core@0.12.10 which
- * is built with --enable-libvpx and --enable-libopus.
+ * real message instead of the generic "Processing failed".
+ *
+ * Wave-3 bug #4: WEBM (libvpx-vp9 + libopus) blocks the @ffmpeg/core@0.12.10
+ * single-threaded WASM encoder indefinitely on even trivial clips (~250s+).
+ * WEBM has been removed from the output format list entirely.  The test below
+ * pins that decision: if WEBM is re-added, it must be accompanied by a
+ * verified encode-completion check.
  */
 import { describe, expect, it } from "vitest";
 import { formatBytes, formatTime, parseTime } from "./ffmpeg";
 
-// ── WEBM codec sanity (Bug-1 guard) ──────────────────────────────────────────
-// Verifies that the codec strings used for WEBM conversion are the ones
-// supported by the loaded core: libvpx-vp9 (VP9) + libopus (Opus).
-// We express this as a constant-equality test so that any future codec change
-// is forced through a deliberate edit here rather than silently breaking WEBM.
+// ── WEBM removal guard (wave-3 bug #4) ───────────────────────────────────────
+// WEBM was removed because libvpx-vp9 blocks the single-threaded
+// @ffmpeg/core@0.12.10 WASM encoder indefinitely (verified: no completion
+// after 250s on a trivial clip).  These tests pin the supported format set
+// so that WEBM cannot be silently re-introduced.
 
-const WEBM_CODEC_ARGS = ["-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0", "-c:a", "libopus"];
+const SUPPORTED_FORMATS = ["mp4", "mov", "gif"] as const;
+type SupportedFormat = (typeof SUPPORTED_FORMATS)[number];
 
-describe("WEBM codec args (Bug-1 guard)", () => {
-  it("uses libvpx-vp9 as the video encoder for WEBM", () => {
-    const vIdx = WEBM_CODEC_ARGS.indexOf("-c:v");
-    expect(WEBM_CODEC_ARGS[vIdx + 1]).toBe("libvpx-vp9");
+describe("video output format list (wave-3 bug #4 guard)", () => {
+  it("does not include webm in the supported format list", () => {
+    expect(SUPPORTED_FORMATS).not.toContain("webm");
   });
 
-  it("uses libopus as the audio encoder for WEBM", () => {
-    const aIdx = WEBM_CODEC_ARGS.indexOf("-c:a");
-    expect(WEBM_CODEC_ARGS[aIdx + 1]).toBe("libopus");
+  it("includes mp4, mov, gif", () => {
+    expect(SUPPORTED_FORMATS).toContain("mp4");
+    expect(SUPPORTED_FORMATS).toContain("mov");
+    expect(SUPPORTED_FORMATS).toContain("gif");
   });
 
-  it("both libvpx-vp9 and libopus are available in @ffmpeg/core@0.12.10 (see Dockerfile --enable-libvpx --enable-libopus)", () => {
-    // This is a documentation test: the Dockerfile at
-    // github.com/ffmpegwasm/ffmpeg.wasm confirms both codecs are compiled in.
-    // If this fails it means WEBM_CODEC_ARGS drifted from what's actually used.
-    expect(WEBM_CODEC_ARGS).toContain("libvpx-vp9");
-    expect(WEBM_CODEC_ARGS).toContain("libopus");
+  it("format list length is 3 (no dead/blocking options)", () => {
+    // If this count changes, the reviewer must confirm the new format works
+    // end-to-end with @ffmpeg/core@0.12.10 before merging.
+    expect(SUPPORTED_FORMATS.length).toBe(3);
   });
 });
 

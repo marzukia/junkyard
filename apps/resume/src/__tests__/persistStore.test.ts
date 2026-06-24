@@ -6,7 +6,7 @@
  * what comes back) rather than mounting React, so there are no hydration
  * concerns and no React dependency here.
  */
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PERSIST_KEY, SAMPLE_DATA } from "../store/useResumeStore";
 
 // Minimal localStorage shim (jsdom provides one, but we want explicit control)
@@ -97,5 +97,70 @@ describe("persist round-trip", () => {
 
   it("SAMPLE_DATA skills string is non-empty", () => {
     expect(SAMPLE_DATA.skills.trim().length).toBeGreaterThan(0);
+  });
+});
+
+// Regression: wrong-typed persisted fields fall back to safe defaults (Bug 3).
+// The Import-JSON path is guarded; this pins the rehydration path to the same
+// behaviour so a poisoned localStorage can't white-screen the app permanently.
+describe("persist rehydration — wrong-typed field guard", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.resetModules();
+  });
+
+  it("falls back to [] when persisted experience is a string", async () => {
+    localStorage.setItem(
+      PERSIST_KEY,
+      JSON.stringify({ state: { experience: "not-an-array" }, version: 0 })
+    );
+    const { useResumeStore } = await import("../store/useResumeStore");
+    // Must not throw; experience must be an array so .map() is safe
+    expect(Array.isArray(useResumeStore.getState().experience)).toBe(true);
+  });
+
+  it("falls back to [] when persisted education is a number", async () => {
+    localStorage.setItem(
+      PERSIST_KEY,
+      JSON.stringify({ state: { education: 42 }, version: 0 })
+    );
+    const { useResumeStore } = await import("../store/useResumeStore");
+    expect(Array.isArray(useResumeStore.getState().education)).toBe(true);
+  });
+
+  it("falls back to [] when persisted projects is an object (not array)", async () => {
+    localStorage.setItem(
+      PERSIST_KEY,
+      JSON.stringify({ state: { projects: { name: "oops" } }, version: 0 })
+    );
+    const { useResumeStore } = await import("../store/useResumeStore");
+    expect(Array.isArray(useResumeStore.getState().projects)).toBe(true);
+  });
+
+  it("falls back to '' when persisted fullName is a number", async () => {
+    localStorage.setItem(
+      PERSIST_KEY,
+      JSON.stringify({ state: { fullName: 99 }, version: 0 })
+    );
+    const { useResumeStore } = await import("../store/useResumeStore");
+    expect(typeof useResumeStore.getState().fullName).toBe("string");
+  });
+
+  it("falls back to 'clean' when persisted template is an invalid value", async () => {
+    localStorage.setItem(
+      PERSIST_KEY,
+      JSON.stringify({ state: { template: "invalid-template" }, version: 0 })
+    );
+    const { useResumeStore } = await import("../store/useResumeStore");
+    expect(["clean", "compact", "bold"]).toContain(useResumeStore.getState().template);
+  });
+
+  it("experience.map does not throw after rehydrating wrong-typed experience", async () => {
+    localStorage.setItem(
+      PERSIST_KEY,
+      JSON.stringify({ state: { experience: "bad" }, version: 0 })
+    );
+    const { useResumeStore } = await import("../store/useResumeStore");
+    expect(() => useResumeStore.getState().experience.map((e) => e.id)).not.toThrow();
   });
 });

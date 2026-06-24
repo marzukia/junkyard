@@ -79,8 +79,8 @@ export function App() {
           ? pending.height
           : (pending as HTMLImageElement).naturalHeight;
       const ratio = naturalW / naturalH;
-      canvas.width = Math.min(naturalW, CANVAS_MAX);
-      canvas.height = Math.round(canvas.width / ratio);
+      canvas.width = Math.max(1, Math.min(naturalW, CANVAS_MAX));
+      canvas.height = Math.max(1, Math.round(canvas.width / ratio));
       sourceRef.current = pending;
       pendingSourceRef.current = null;
     }

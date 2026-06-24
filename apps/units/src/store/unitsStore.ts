@@ -225,12 +225,25 @@ export const useUnitsStore = create<UnitsState>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
-        const { categoryId, fromUnit, toUnit, inputValue, fullPrecision } = state;
-        // Defensive: if the rehydrated ids are still unrecognised after migration
-        // (e.g. corruption / third-party storage tampering), fall back to category
-        // defaults so we never render a blank screen.
-        const safeFrom = fromUnit || defaultUnits(categoryId).fromUnit;
-        const safeTo = toUnit || defaultUnits(categoryId).toUnit;
+        const { fromUnit, toUnit, inputValue, fullPrecision } = state;
+        // Validate categoryId: if unknown/non-string, fall back to "length".
+        const knownCategoryIds = new Set(CATEGORIES.map((c) => c.id));
+        const categoryId: CategoryId =
+          typeof state.categoryId === "string" && knownCategoryIds.has(state.categoryId as CategoryId)
+            ? (state.categoryId as CategoryId)
+            : initialCat;
+        if (categoryId !== state.categoryId) state.categoryId = categoryId;
+
+        // Validate unit ids: if not a known id for the category, fall back to defaults.
+        const cat = CATEGORIES.find((c) => c.id === categoryId);
+        const knownUnitIds = new Set(cat?.units.map((u) => u.id) ?? []);
+        const defaults = defaultUnits(categoryId);
+        const safeFrom =
+          typeof fromUnit === "string" && knownUnitIds.has(fromUnit)
+            ? fromUnit
+            : defaults.fromUnit;
+        const safeTo =
+          typeof toUnit === "string" && knownUnitIds.has(toUnit) ? toUnit : defaults.toUnit;
         if (safeFrom !== fromUnit) state.fromUnit = safeFrom;
         if (safeTo !== toUnit) state.toUnit = safeTo;
         Object.assign(

@@ -109,6 +109,18 @@ export const usePasswordStore = create<PasswordState>()(
     }),
     {
       name: "pw-generator-settings",
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        // Clamp persisted numeric settings to valid ranges so poisoned
+        // localStorage can never produce empty passwords or unbounded counts.
+        const length = Number(state.length);
+        state.length = Number.isFinite(length) && length >= 4 ? Math.floor(length) : 20;
+        const wordCount = Number(state.wordCount);
+        state.wordCount = Number.isFinite(wordCount) && wordCount >= 1 ? Math.floor(wordCount) : 5;
+        const count = Number(state.count);
+        state.count =
+          Number.isFinite(count) && count >= 1 && count <= 20 ? Math.floor(count) : 5;
+      },
       // Only persist settings, not derived functions
       partialize: (s) => ({
         mode: s.mode,

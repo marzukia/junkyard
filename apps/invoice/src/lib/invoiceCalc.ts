@@ -63,14 +63,19 @@ export function calcTotals(
 
 /** Format a monetary value with the given currency code. */
 export function formatMoney(amount: number, currency: string): string {
+  // Guard non-finite values (Infinity, -Infinity, NaN) that arise from extreme
+  // line-item quantities/prices before calcTotals' clampMoney has a chance to
+  // normalise them.  Without this guard, Intl.NumberFormat.format(Infinity)
+  // renders "$∞" directly in the line-item Amount column.
+  const safe = Number.isFinite(amount) ? amount : 0;
   try {
     return new Intl.NumberFormat(undefined, {
       style: "currency",
       currency,
-    }).format(amount);
+    }).format(safe);
   } catch {
     // Fallback for unrecognised currency codes
-    return `${currency} ${amount.toFixed(2)}`;
+    return `${currency} ${safe.toFixed(2)}`;
   }
 }
 

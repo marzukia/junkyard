@@ -665,6 +665,34 @@ export const useResumeStore = create<ResumeState>()(
         languages: s.languages,
         template: s.template,
       }),
+      // Validate persisted shape on rehydrate so a wrong-typed field (e.g.
+      // experience:"x" instead of an array) falls back to the in-memory default
+      // rather than crashing render with a .map() TypeError.
+      // Mirrors the per-field type-checking used by the Import-JSON path.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Record<string, unknown>;
+        const strField = (key: keyof ResumeData): string =>
+          typeof p[key] === "string" ? (p[key] as string) : (current as Record<string, unknown>)[key] as string;
+        return {
+          ...current,
+          fullName: strField("fullName"),
+          email: strField("email"),
+          phone: strField("phone"),
+          location: strField("location"),
+          linkedin: strField("linkedin"),
+          website: strField("website"),
+          summary: strField("summary"),
+          skills: strField("skills"),
+          languages: strField("languages"),
+          experience: Array.isArray(p.experience) ? (p.experience as ExperienceEntry[]) : (current as ResumeState).experience,
+          education: Array.isArray(p.education) ? (p.education as EducationEntry[]) : (current as ResumeState).education,
+          projects: Array.isArray(p.projects) ? (p.projects as ProjectEntry[]) : (current as ResumeState).projects,
+          certifications: Array.isArray(p.certifications) ? (p.certifications as CertificationEntry[]) : (current as ResumeState).certifications,
+          template: (["clean", "compact", "bold"] as TemplateId[]).includes(p.template as TemplateId)
+            ? (p.template as TemplateId)
+            : (current as ResumeState).template,
+        };
+      },
     }
   )
 );

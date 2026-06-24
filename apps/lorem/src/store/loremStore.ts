@@ -67,7 +67,11 @@ export const useLoremStore = create<LoremStore>()(
       seed: Date.now(),
       wordBank: "classic" as WordBank,
       classicStart: false,
-      setMode: (mode) => set({ mode }),
+      setMode: (mode) => set((s) => {
+        const maxCount = mode === "words" ? 200 : mode === "list" ? 30 : 20;
+        const clampedCount = Math.min(s.count, maxCount);
+        return { mode, count: clampedCount };
+      }),
       setCount: (count) => set({ count }),
       setListStyle: (listStyle) => set({ listStyle }),
       setOutput: (output) => set({ output }),

@@ -69,7 +69,11 @@ function deriveSync(
     } catch {
       output = input;
     }
-    tree = buildTree(value);
+    try {
+      tree = buildTree(value);
+    } catch {
+      tree = null;
+    }
   }
 
   return { output, parseError: null, tree };

@@ -544,9 +544,11 @@ export function App() {
     const img = new Image();
     img.onload = () => setImgDims({ w: img.naturalWidth, h: img.naturalHeight });
     img.onerror = () => {
-      // Undecodable file: surface an error and reset to the dropzone
+      // Undecodable file: surface an error.  setError() transitions to
+      // phase="error", which renders .cl-error-msg and a new DropZone
+      // (line 801+), so reset() must NOT be called here — it would clear
+      // errorMsg immediately, leaving the user on an empty idle screen.
       setError(`Could not load the image. The file may be corrupt or unsupported.`);
-      reset();
     };
     img.src = inputUrl;
   }, [inputUrl, setError, reset]);

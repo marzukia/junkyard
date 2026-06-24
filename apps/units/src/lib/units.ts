@@ -164,6 +164,8 @@ export function getCommonConversions(categoryId: CategoryId): CommonConversion[]
         p(1, "mpgUK", "kml"),   // canonical: mpgUK (not mpguk)
         p(1, "kml", "l100km"),
       ].filter(notNull);
+    default:
+      return [];
   }
 }
 
