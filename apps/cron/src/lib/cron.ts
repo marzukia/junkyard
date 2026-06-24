@@ -264,6 +264,15 @@ function validateSinglePart(raw: string, spec: FieldSpec): string | null {
     }
     return null;
   }
+  // N/step: start value + step (Vixie-cron form, e.g. 0/15 = 0,15,30,45)
+  const nStepMatch = part.match(/^(\d+)\/(\d+)$/);
+  if (nStepMatch) {
+    const start = Number(nStepMatch[1]);
+    const step = Number(nStepMatch[2]);
+    if (start < spec.min || start > spec.max) return `${start} out of range ${spec.min}-${spec.max}`;
+    if (step < 1) return "Step must be >= 1";
+    return null;
+  }
   // Plain number
   if (/^\d+$/.test(part)) {
     const n = Number(part);
@@ -311,6 +320,13 @@ function expandField(raw: string, spec: FieldSpec): number[] {
       const hi = Number(rangeMatch[2]);
       const step = rangeMatch[3] ? Math.max(1, Number(rangeMatch[3])) : 1;
       for (let i = lo; i <= hi; i += step) result.add(i);
+      continue;
+    }
+    const nStepMatch = segment.match(/^(\d+)\/(\d+)$/);
+    if (nStepMatch) {
+      const start = Number(nStepMatch[1]);
+      const step = Math.max(1, Number(nStepMatch[2]));
+      for (let i = start; i <= spec.max; i += step) result.add(i);
       continue;
     }
     if (/^\d+$/.test(segment)) {
