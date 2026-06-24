@@ -33,13 +33,28 @@ const DEFAULT_SYSTEM_PROMPT =
   "You are a helpful, concise assistant running entirely in the user's browser. " +
   "No data is sent to any server. Keep answers clear and to the point.";
 
+/** Return true only for objects that look like a valid Conversation. */
+function isValidConversation(v: unknown): v is Conversation {
+  if (v === null || typeof v !== "object") return false;
+  const c = v as Record<string, unknown>;
+  return (
+    typeof c.id === "string" &&
+    c.id.length > 0 &&
+    typeof c.title === "string" &&
+    Array.isArray(c.messages) &&
+    typeof c.createdAt === "number" &&
+    typeof c.updatedAt === "number"
+  );
+}
+
 function loadConversations(): Conversation[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_CONVERSATIONS);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
-    return parsed as Conversation[];
+    // Filter out null/malformed elements so poisoned storage never throws
+    return parsed.filter(isValidConversation);
   } catch {
     return [];
   }

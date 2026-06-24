@@ -242,6 +242,11 @@ export function App() {
           store.setStatus("running");
           store.setProgress(pct, msg);
         },
+        // Suppress uncaught worker-level errors: the try/catch around
+        // worker.recognize() already shows the friendly UI message.
+        // Without this, corrupt-file errors escape to window as a second
+        // uncaught error even though the UX is already graceful.
+        errorHandler: () => {},
       });
 
       const result = await worker.recognize(sourceFile);
@@ -287,6 +292,7 @@ export function App() {
             store.setStatus("running");
             store.setProgress(pct, `${item.file.name} - Scanning... ${pct}%`);
           },
+          errorHandler: () => {},
         });
         const result = await worker.recognize(item.file);
         const text = normaliseText(result.data.text);
