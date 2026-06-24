@@ -1,12 +1,12 @@
 # Contributing to junkyard
 
-A monorepo of 44 free, client-side web tools served at `junkyard.sh/<slug>/`.
+A monorepo of 45 free, client-side web tools served at `junkyard.sh/<slug>/`.
 
 ## Repo layout
 
 ```
 junkyard/
-  apps/<slug>/        # 44 standalone Vite apps, one per tool
+  apps/<slug>/        # 45 standalone Vite apps, one per tool
   kit/                # shared design-system kit (vendored into each app)
   hub/                # landing page (Vite + React 18 + TS, built to dist root)
   packages/

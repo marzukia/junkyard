@@ -46,4 +46,5 @@
   <!-- video and cleanup added 2026-06; sitemap is hand-maintained; should eventually be generated from catalogue -->
   <url><loc>https://junkyard.sh/video/</loc></url>
   <url><loc>https://junkyard.sh/cleanup/</loc></url>
+  <url><loc>https://junkyard.sh/screen-recorder/</loc></url>
 </urlset>

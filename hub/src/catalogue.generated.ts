@@ -364,4 +364,12 @@ export const TOOLS: Tool[] = [
     tags: ["beta"],
     mcpExposed: false,
   },
+  {
+    name: "Screen Recorder",
+    slug: "screen-recorder",
+    yard: "image",
+    tagline: "Record your screen in-browser, no upload, no account",
+    incumbent: "Loom",
+    mcpExposed: false,
+  },
 ];
