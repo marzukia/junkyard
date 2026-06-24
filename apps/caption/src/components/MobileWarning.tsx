@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import "./MobileWarning.css";
 
+// Tag vocabulary mirrored from scripts/catalogue-schema.ts AppTag.
+// Keep in sync if new tags are added to the catalogue schema.
+type AppTag = "webgpu" | "on-device-ai" | "large-download" | "beta";
+
 // Pure decision function - extracted for unit testing.
 // Returns the warning message string or null if no warning should be shown.
 export function mobileWarningMessage(
-  tags: string[],
+  tags: AppTag[],
   isPhone: boolean,
   dismissed: boolean,
 ): string | null {
@@ -55,7 +59,7 @@ function slugFromPath(pathname: string): string {
 interface CatalogueEntry {
   slug: string;
   path: string;
-  tags?: string[];
+  tags?: AppTag[];
 }
 
 export function MobileWarning() {
@@ -82,7 +86,7 @@ export function MobileWarning() {
         const entry = entries.find(
           (e) => e.path === `/${currentSlug}/` || e.slug === currentSlug,
         );
-        const tags: string[] = entry?.tags ?? [];
+        const tags: AppTag[] = entry?.tags ?? [];
         const msg = mobileWarningMessage(tags, isPhone, dismissed);
         setMessage(msg);
       })

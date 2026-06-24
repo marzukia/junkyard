@@ -68,6 +68,43 @@ jobs:
           node scripts/vendor-transformers-env.mjs
           git diff --exit-code -- kit/components/transformersEnv.ts apps/bg/src/lib/transformersEnv.ts apps/caption/src/lib/transformersEnv.ts apps/depth/src/lib/transformersEnv.ts apps/translate/src/lib/transformersEnv.ts apps/upscale/src/lib/transformersEnv.ts
 
+      - name: Check vendored workerTask copies are up to date
+        # Fails if kit/lib/workerTask.ts was changed without running vendor-workertask.mjs.
+        # Editing the canonical source without re-vendoring leaves the 7 AI apps
+        # (bg, caption, depth, summarize, transcribe, translate, upscale) diverged from kit.
+        run: |
+          node scripts/vendor-workertask.mjs
+          git diff --exit-code -- kit/lib/workerTask.ts apps/bg/src/lib/workerTask.ts apps/caption/src/lib/workerTask.ts apps/depth/src/lib/workerTask.ts apps/summarize/src/lib/workerTask.ts apps/transcribe/src/lib/workerTask.ts apps/translate/src/lib/workerTask.ts apps/upscale/src/lib/workerTask.ts
+
+      - name: Check vendored MobileWarning copies are up to date
+        # Fails if kit/components/MobileWarning.{tsx,css} were changed without running
+        # vendor-mobilewarning.mjs. Covers all 10 apps that ship MobileWarning.
+        run: |
+          node scripts/vendor-mobilewarning.mjs
+          git diff --exit-code -- kit/components/MobileWarning.tsx kit/components/MobileWarning.css apps/bg/src/components/MobileWarning.tsx apps/caption/src/components/MobileWarning.tsx apps/chat/src/components/MobileWarning.tsx apps/depth/src/components/MobileWarning.tsx apps/screen-recorder/src/components/MobileWarning.tsx apps/summarize/src/components/MobileWarning.tsx apps/transcribe/src/components/MobileWarning.tsx apps/translate/src/components/MobileWarning.tsx apps/upscale/src/components/MobileWarning.tsx apps/video/src/components/MobileWarning.tsx
+
+      - name: Check vendored Header copies are up to date
+        # Fails if kit/components/Header.tsx was changed without running vendor-header.mjs.
+        # The canonical includes AppSwitcher; all 45 app Header.tsx copies must match.
+        run: |
+          node scripts/vendor-header.mjs
+          git diff --exit-code -- kit/components/Header.tsx apps/*/src/components/Header.tsx
+
+      - name: Check vendored Footer copies are up to date
+        # Fails if kit/components/Footer.tsx was changed without running vendor-footer.mjs.
+        # Canonical wording is "More tools" (capital M); all 45 app Footer.tsx copies must match.
+        run: |
+          node scripts/vendor-footer.mjs
+          git diff --exit-code -- kit/components/Footer.tsx apps/*/src/components/Footer.tsx
+
+      - name: Check vendored BrandMark (wrapper-form) copies are up to date
+        # Fails if kit/components/BrandMark.tsx was changed without running vendor-brandmark.mjs.
+        # The 9 custom-glyph apps (collage/convert/crop/exif/gif/meme/og/screenshot/video)
+        # are intentionally excluded — their BrandMark is tool-specific artwork, not drift.
+        run: |
+          node scripts/vendor-brandmark.mjs
+          git diff --exit-code -- kit/components/BrandMark.tsx apps/barcode/src/components/BrandMark.tsx apps/base64/src/components/BrandMark.tsx apps/bg/src/components/BrandMark.tsx apps/caption/src/components/BrandMark.tsx apps/chat/src/components/BrandMark.tsx apps/cleanup/src/components/BrandMark.tsx apps/colours/src/components/BrandMark.tsx apps/cron/src/components/BrandMark.tsx apps/css/src/components/BrandMark.tsx apps/csv/src/components/BrandMark.tsx apps/depth/src/components/BrandMark.tsx apps/diff/src/components/BrandMark.tsx apps/favicon/src/components/BrandMark.tsx apps/hash/src/components/BrandMark.tsx apps/invoice/src/components/BrandMark.tsx apps/json/src/components/BrandMark.tsx apps/jwt/src/components/BrandMark.tsx apps/lorem/src/components/BrandMark.tsx apps/markdown/src/components/BrandMark.tsx apps/ocr/src/components/BrandMark.tsx apps/password/src/components/BrandMark.tsx apps/pdf/src/components/BrandMark.tsx apps/qr/src/components/BrandMark.tsx apps/regex/src/components/BrandMark.tsx apps/resume/src/components/BrandMark.tsx apps/screen-recorder/src/components/BrandMark.tsx apps/sign/src/components/BrandMark.tsx apps/subs/src/components/BrandMark.tsx apps/summarize/src/components/BrandMark.tsx apps/svg/src/components/BrandMark.tsx apps/timestamp/src/components/BrandMark.tsx apps/transcribe/src/components/BrandMark.tsx apps/translate/src/components/BrandMark.tsx apps/units/src/components/BrandMark.tsx apps/upscale/src/components/BrandMark.tsx apps/uuid/src/components/BrandMark.tsx
+
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).

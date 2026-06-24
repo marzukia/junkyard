@@ -24,8 +24,13 @@ export function Footer({ blurb }: FooterProps) {
         </a>
       </span>
       <span className="site-footer-sep">·</span>
-      <a href="https://junkyard.sh/" target="_blank" rel="noreferrer" className="site-footer-link">
-        more tools
+      <a
+        href="https://junkyard.sh/"
+        target="_blank"
+        rel="noreferrer"
+        className="site-footer-link"
+      >
+        More tools
       </a>
     </footer>
   );

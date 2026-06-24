@@ -12,7 +12,7 @@ interface BrandMarkProps {
 }
 
 /**
- * Brand mark wrapper, renders the tool's unique SVG glyph at the correct
+ * Brand mark wrapper — renders the tool's unique SVG glyph at the correct
  * size tracked to the header title cap-height (via .brand-mark CSS class).
  *
  * Usage:

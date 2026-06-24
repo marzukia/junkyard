@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import "./MobileWarning.css";
 
+// Tag vocabulary mirrored from scripts/catalogue-schema.ts AppTag.
+// Keep in sync if new tags are added to the catalogue schema.
+type AppTag = "webgpu" | "on-device-ai" | "large-download" | "beta";
+
 // Pure decision function - extracted for unit testing.
 // Returns the warning message string or null if no warning should be shown.
 export function mobileWarningMessage(
-  tags: string[],
+  tags: AppTag[],
   isPhone: boolean,
-  dismissed: boolean
+  dismissed: boolean,
 ): string | null {
   if (!isPhone) return null;
   if (dismissed) return null;
@@ -29,7 +33,8 @@ export function mobileWarningMessage(
 function detectPhone(): boolean {
   if (typeof window === "undefined" || typeof navigator === "undefined") return false;
 
-  const phoneUA = /Android.*Mobile|iPhone|iPod|Windows Phone|BlackBerry|Opera Mini|IEMobile/i;
+  const phoneUA =
+    /Android.*Mobile|iPhone|iPod|Windows Phone|BlackBerry|Opera Mini|IEMobile/i;
   if (phoneUA.test(navigator.userAgent)) return true;
 
   // Coarse pointer (touch) AND narrow viewport
@@ -54,7 +59,7 @@ function slugFromPath(pathname: string): string {
 interface CatalogueEntry {
   slug: string;
   path: string;
-  tags?: string[];
+  tags?: AppTag[];
 }
 
 export function MobileWarning() {
@@ -78,8 +83,10 @@ export function MobileWarning() {
       .then((r) => r.json())
       .then((entries: CatalogueEntry[]) => {
         // Match by path /<slug>/
-        const entry = entries.find((e) => e.path === `/${currentSlug}/` || e.slug === currentSlug);
-        const tags: string[] = entry?.tags ?? [];
+        const entry = entries.find(
+          (e) => e.path === `/${currentSlug}/` || e.slug === currentSlug,
+        );
+        const tags: AppTag[] = entry?.tags ?? [];
         const msg = mobileWarningMessage(tags, isPhone, dismissed);
         setMessage(msg);
       })

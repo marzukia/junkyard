@@ -1,7 +1,13 @@
 interface FooterProps {
+  /**
+   * Optional short blurb about the tool's internals, shown before the author credit.
+   */
   blurb?: string;
 }
 
+/**
+ * Shared site footer: optional blurb + "Made by Andryo Marzuki" + portfolio cross-link.
+ */
 export function Footer({ blurb }: FooterProps) {
   return (
     <footer className="site-footer">
@@ -18,7 +24,12 @@ export function Footer({ blurb }: FooterProps) {
         </a>
       </span>
       <span className="site-footer-sep">·</span>
-      <a href="https://junkyard.sh/" target="_blank" rel="noreferrer" className="site-footer-link">
+      <a
+        href="https://junkyard.sh/"
+        target="_blank"
+        rel="noreferrer"
+        className="site-footer-link"
+      >
         More tools
       </a>
     </footer>
