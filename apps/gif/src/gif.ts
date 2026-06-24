@@ -78,9 +78,12 @@ export function msToFpsLabel(ms: number): string {
   return `${fps.toFixed(1)} fps`;
 }
 
-/** Generate a stable id string. */
+/** Generate a collision-safe ID string. */
 export function makeId(): string {
-  return Math.random().toString(36).slice(2, 10);
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
 }
 
 /** A single GIF frame as held in state. */

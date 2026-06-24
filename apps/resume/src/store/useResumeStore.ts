@@ -112,7 +112,10 @@ export interface ResumeState {
 }
 
 function uid(): string {
-  return Math.random().toString(36).slice(2, 10);
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
 }
 
 function moveItem<T extends { id: string }>(arr: T[], id: string, dir: "up" | "down"): T[] {

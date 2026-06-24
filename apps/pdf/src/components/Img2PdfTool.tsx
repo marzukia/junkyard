@@ -17,7 +17,7 @@ export function Img2PdfTool() {
   const addFiles = (files: File[]) => {
     setEntries((prev) => [
       ...prev,
-      ...files.map((f) => ({ file: f, id: `${f.name}-${Date.now()}-${Math.random()}` })),
+      ...files.map((f) => ({ file: f, id: (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") ? crypto.randomUUID() : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2) })),
     ]);
     setError(null);
     setDone(false);
