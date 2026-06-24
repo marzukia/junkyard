@@ -43,6 +43,7 @@ export function App() {
 
   const [dragging, setDragging] = useState(false);
   const [converting, setConverting] = useState(false);
+  const [zipping, setZipping] = useState(false);
   const [batchSummary, setBatchSummary] = useState<BatchSummary | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   // Stable ref so the keyboard handler always calls the latest convertAll without re-subscribing
@@ -148,15 +149,20 @@ export function App() {
   const downloadAllZip = async () => {
     const done = files.filter((f) => f.status === "done" && f.outputBlob && f.outputName);
     if (done.length === 0) return;
-    const zip = await buildZip(
-      done.map((f) => ({ name: f.outputName as string, blob: f.outputBlob as Blob }))
-    );
-    const url = URL.createObjectURL(zip);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "converted-images.zip";
-    a.click();
-    URL.revokeObjectURL(url);
+    setZipping(true);
+    try {
+      const zip = await buildZip(
+        done.map((f) => ({ name: f.outputName as string, blob: f.outputBlob as Blob }))
+      );
+      const url = URL.createObjectURL(zip);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "converted-images.zip";
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setZipping(false);
+    }
   };
 
   // Cmd/Ctrl+Enter triggers convert — registered once, calls ref to avoid re-subscribing
@@ -424,8 +430,14 @@ export function App() {
               </button>
 
               {doneCount > 0 && (
-                <button type="button" className="btn-secondary" onClick={downloadAllZip}>
-                  Download all as zip ({doneCount})
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={downloadAllZip}
+                  disabled={zipping}
+                  aria-busy={zipping}
+                >
+                  {zipping ? "Zipping…" : `Download all as zip (${doneCount})`}
                 </button>
               )}
 

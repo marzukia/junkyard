@@ -28,6 +28,7 @@ export function App() {
   const [copying, setCopying] = useState(false);
   const [copyFlash, setCopyFlash] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [resizeWStr, setResizeWStr] = useState("");
   const [resizeHStr, setResizeHStr] = useState("");
   const [socialOpen, setSocialOpen] = useState(false);
@@ -57,12 +58,17 @@ export function App() {
 
   const loadFile = useCallback(
     (file: File) => {
+      setLoadError(null);
       const url = URL.createObjectURL(file);
       const img = new Image();
       img.onload = () => {
         store.loadImage(file, url, img.naturalWidth, img.naturalHeight);
         setResizeWStr("");
         setResizeHStr("");
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        setLoadError(`Could not load "${file.name}" as an image.`);
       };
       img.src = url;
     },
@@ -74,14 +80,25 @@ export function App() {
       e.preventDefault();
       setDragging(false);
       const file = e.dataTransfer.files[0];
-      if (file?.type.startsWith("image/")) loadFile(file);
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        setLoadError("Drop an image file (JPEG, PNG, WebP, …).");
+        return;
+      }
+      loadFile(file);
     },
     [loadFile]
   );
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) loadFile(file);
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        setLoadError("Please select an image file (JPEG, PNG, WebP, …).");
+      } else {
+        loadFile(file);
+      }
+    }
     e.target.value = "";
   };
 
@@ -327,6 +344,21 @@ export function App() {
               style={{ display: "none" }}
             />
           </label>
+        )}
+
+        {loadError && (
+          <p
+            role="alert"
+            aria-live="assertive"
+            style={{
+              color: "var(--error, #c0392b)",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.85rem",
+              margin: "0.75rem 0",
+            }}
+          >
+            {loadError}
+          </p>
         )}
 
         {hasImage && (
