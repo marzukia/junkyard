@@ -144,11 +144,11 @@ describe("convert — energy", () => {
 });
 
 describe("convert — edge cases", () => {
-  it("NaN input returns NaN", () => {
-    expect(Number.isNaN(convert(Number.NaN, "m", "ft", "length"))).toBe(true);
+  it("NaN input throws a clear error", () => {
+    expect(() => convert(Number.NaN, "m", "ft", "length")).toThrow(/non-finite/i);
   });
-  it("Infinity input returns NaN", () => {
-    expect(Number.isNaN(convert(Number.POSITIVE_INFINITY, "m", "ft", "length"))).toBe(true);
+  it("Infinity input throws a clear error", () => {
+    expect(() => convert(Number.POSITIVE_INFINITY, "m", "ft", "length")).toThrow(/non-finite/i);
   });
 });
 
@@ -223,8 +223,8 @@ describe("convert — fuel economy", () => {
     const back = convert(kml, "kml", "mpg", "fuel");
     expect(approx(back, 30, 1e-5)).toBe(true);
   });
-  it("L/100km with 0 returns NaN", () => {
-    expect(Number.isNaN(convert(0, "l100", "kml", "fuel"))).toBe(true);
+  it("L/100km with 0 throws (division by zero)", () => {
+    expect(() => convert(0, "l100", "kml", "fuel")).toThrow(/non-finite/i);
   });
   it("same unit returns same value", () => {
     expect(convert(25, "mpg", "mpg", "fuel")).toBe(25);

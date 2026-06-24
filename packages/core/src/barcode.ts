@@ -62,6 +62,9 @@ function validateValue(value: string, format: BarcodeFormat): string | null {
       return null;
     case "EAN8":
       if (!/^\d{7,8}$/.test(value)) return "EAN-8 must be 7 or 8 digits.";
+      if (value.length === 8) {
+        if (Number(value[7]) !== ean8CheckDigit(value.slice(0, 7))) return "Invalid EAN-8 check digit.";
+      }
       return null;
     case "CODE128":
       if (value.length === 0) return "Enter at least one character.";

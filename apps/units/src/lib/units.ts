@@ -375,10 +375,10 @@ export function convert(
   toId: string,
   categoryId: CategoryId
 ): number {
-  if (!Number.isFinite(value)) return Number.NaN;
-  if (fromId === toId) return value;
+  if (!Number.isFinite(value)) throw new Error(`Cannot convert non-finite value: ${value}`);
 
   if (categoryId === "temperature") {
+    if (fromId === toId) return value;
     const kelvin = tempToKelvin(value, fromId);
     return kelvinToUnit(kelvin, toId);
   }
@@ -386,16 +386,23 @@ export function convert(
   // Fuel economy: l/100km is the inverse of km/L, so we cannot use a simple
   // scale factor. Convert everything through km/L as the intermediate.
   if (categoryId === "fuel") {
-    return convertFuel(value, fromId, toId);
+    if (fromId === toId) return value;
+    const result = convertFuel(value, fromId, toId);
+    if (!Number.isFinite(result)) throw new Error(`Conversion produced non-finite result: ${value} ${fromId} -> ${toId} (check for zero division)`);
+    return result;
   }
 
   const cat = getCategoryById(categoryId);
   const from = cat.units.find((u) => u.id === fromId);
   const to = cat.units.find((u) => u.id === toId);
-  if (!from || !to) throw new Error(`Unknown unit ${fromId} or ${toId} in ${categoryId}`);
+  if (!from) throw new Error(`Unknown unit: ${fromId}`);
+  if (!to) throw new Error(`Unknown unit: ${toId}`);
+  if (fromId === toId) return value;
 
   const base = value * from.toBase;
-  return base / to.toBase;
+  const result = base / to.toBase;
+  if (!Number.isFinite(result)) throw new Error(`Conversion produced non-finite result for ${value} ${fromId} -> ${toId}`);
+  return result;
 }
 
 // ── Common conversions (quick reference) ─────────────────────────────────────

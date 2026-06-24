@@ -348,12 +348,19 @@ export function jsonToCsv(jsonText: string, delimiter: Delimiter): ConvertResult
 /**
  * Escape a single CSV field value. Wraps in double-quotes if the field contains
  * the delimiter, a double-quote, or a newline. Double-quotes inside are doubled.
+ *
+ * Formula injection (OWASP): cells whose first character is a formula trigger
+ * (= + - @ or tab/CR) are prefixed with a single quote so spreadsheet apps
+ * treat them as text rather than executing them as formulas on import.
  */
 export function csvEscape(val: string, delimiter: Delimiter): string {
-  if (val.includes('"') || val.includes(delimiter) || val.includes("\n") || val.includes("\r")) {
-    return `"${val.replace(/"/g, '""')}"`;
+  // Prefix formula-trigger cells with a single quote to neutralise injection.
+  const FORMULA_TRIGGERS = /^[=+\-@\t\r]/;
+  let out = FORMULA_TRIGGERS.test(val) ? "'" + val : val;
+  if (out.includes('"') || out.includes(delimiter) || out.includes("\n") || out.includes("\r")) {
+    return `"${out.replace(/"/g, '""')}"`;
   }
-  return val;
+  return out;
 }
 
 // ── Additional output formats ─────────────────────────────────────────────────
