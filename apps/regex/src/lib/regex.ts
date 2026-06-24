@@ -36,6 +36,80 @@ export interface RegexError {
 
 export type RegexOutcome = RegexResult | RegexError;
 
+// ── Group-name parser ─────────────────────────────────────────────────────────
+
+/**
+ * Parse a regex pattern string and return a Map of named-group-name to its
+ * 1-based positional capture index.
+ *
+ * Counting rules (per ECMA-262):
+ *   - Every `(` that is NOT `(?:`, `(?=`, `(?!`, `(?<=`, `(?<!` is a capturing group.
+ *   - Named groups `(?<name>` are capturing (they count in the positional index too).
+ *   - Escaped `\(` are not groups.
+ *   - Character classes `[...]` may contain `(` that must be skipped.
+ */
+export function parseGroupNames(pattern: string): Map<string, number> {
+  const result = new Map<string, number>();
+  let i = 0;
+  let groupIndex = 0; // counts capturing groups seen so far
+
+  while (i < pattern.length) {
+    const ch = pattern[i];
+
+    if (ch === "\\") {
+      // Escaped character - skip the next char
+      i += 2;
+      continue;
+    }
+
+    if (ch === "[") {
+      // Character class - skip until the closing `]`, accounting for `\]`
+      i++;
+      while (i < pattern.length && !(pattern[i] === "]" && pattern[i - 1] !== "\\")) {
+        i++;
+      }
+      i++; // skip `]`
+      continue;
+    }
+
+    if (ch === "(") {
+      // Determine if this is a capturing group
+      if (pattern[i + 1] === "?") {
+        const after = pattern[i + 2];
+        if (after === ":" || after === "=" || after === "!") {
+          // Non-capturing or lookahead
+          i++;
+          continue;
+        }
+        if (after === "<") {
+          const afterLt = pattern[i + 3];
+          if (afterLt === "=" || afterLt === "!") {
+            // Lookbehind
+            i++;
+            continue;
+          }
+          // Named capturing group (?<name>...)
+          groupIndex++;
+          const nameStart = i + 3;
+          const nameEnd = pattern.indexOf(">", nameStart);
+          if (nameEnd !== -1) {
+            const name = pattern.slice(nameStart, nameEnd);
+            result.set(name, groupIndex);
+            i = nameEnd + 1;
+            continue;
+          }
+        }
+      }
+      // Plain capturing group
+      groupIndex++;
+    }
+
+    i++;
+  }
+
+  return result;
+}
+
 // ── Execute ───────────────────────────────────────────────────────────────────
 
 /**
@@ -61,6 +135,14 @@ export function execRegex(pattern: string, flags: Set<RegexFlag>, text: string):
     };
   }
 
+  // Derive the name->1-based-positional-index map by scanning the pattern.
+  // We count opening `(` characters that start capturing groups, skipping:
+  //   - non-capturing groups  (?:
+  //   - lookaheads/lookbehinds (?= (?! (?<= (?<!
+  //   - escaped parens  \(
+  // Named groups (?<name>...) ARE capturing, so they advance the counter too.
+  const groupIndexByName = parseGroupNames(pattern);
+
   const spans: MatchSpan[] = [];
   let matchIndex = 0;
 
@@ -72,11 +154,7 @@ export function execRegex(pattern: string, flags: Set<RegexFlag>, text: string):
 
       const groups: CaptureGroup[] = [];
 
-      // Named groups first (if any)
-      const namedGroups = m.groups ?? {};
-      const namedKeys = Object.keys(namedGroups);
-
-      // Build positional groups (index 1+)
+      // Build positional groups (index 1+) with no names yet
       for (let i = 1; i < m.length; i++) {
         const val = m[i];
         groups.push({
@@ -85,14 +163,9 @@ export function execRegex(pattern: string, flags: Set<RegexFlag>, text: string):
         });
       }
 
-      // Attach names where known (we scan m.groups to resolve name->position)
-      // The spec doesn't expose name->position directly, so we reconstruct:
-      for (const name of namedKeys) {
-        // Find first group whose value matches the named group value at this position.
-        // This is imperfect for duplicate values but the best available without
-        // parsing the pattern ourselves.
-        const namedVal = namedGroups[name] !== undefined ? namedGroups[name] : null;
-        const g = groups.find((x) => x.value === namedVal && x.name === undefined);
+      // Attach names using the pattern-derived index map (not value matching)
+      for (const [name, idx] of groupIndexByName) {
+        const g = groups[idx - 1]; // groups array is 0-based, idx is 1-based
         if (g) g.name = name;
       }
 

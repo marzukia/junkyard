@@ -50,7 +50,10 @@ export function buildWifiPayload(fields: WifiFields): string {
   const ssid = escapeWifiField(fields.ssid);
   const password = escapeWifiField(fields.password);
   const hidden = fields.hidden ? "H:true;" : "";
-  return `WIFI:T:${fields.security};S:${ssid};P:${password};${hidden};`;
+  // nopass networks have no password; omit the P: segment entirely to avoid leaking
+  // any value the user may have typed into the password field before switching mode.
+  const passwordSegment = fields.security === "nopass" ? "" : `P:${password};`;
+  return `WIFI:T:${fields.security};S:${ssid};${passwordSegment}${hidden};`;
 }
 
 /** Assembles a vCard 3.0 QR payload string. */

@@ -168,6 +168,48 @@ export function sortKeys(value: unknown): unknown {
 // ── JSON repair ───────────────────────────────────────────────────────────────
 
 /**
+ * Tokenise a JSON string into segments: double-quoted string literals and
+ * everything else. This lets repair passes skip over string content so they
+ * never corrupt a value like {"a":"x ,] y"} by treating its interior as
+ * structural JSON.
+ */
+function tokeniseJson(s: string): Array<{ str: true; raw: string } | { str: false; raw: string }> {
+  const tokens: Array<{ str: true; raw: string } | { str: false; raw: string }> = [];
+  let i = 0;
+  let nonStr = "";
+  while (i < s.length) {
+    if (s[i] === '"') {
+      if (nonStr) {
+        tokens.push({ str: false, raw: nonStr });
+        nonStr = "";
+      }
+      // Consume the full double-quoted string (handle backslash escapes)
+      let literal = '"';
+      i++;
+      while (i < s.length) {
+        if (s[i] === "\\") {
+          literal += s[i] + (s[i + 1] ?? "");
+          i += 2;
+        } else if (s[i] === '"') {
+          literal += '"';
+          i++;
+          break;
+        } else {
+          literal += s[i];
+          i++;
+        }
+      }
+      tokens.push({ str: true, raw: literal });
+    } else {
+      nonStr += s[i];
+      i++;
+    }
+  }
+  if (nonStr) tokens.push({ str: false, raw: nonStr });
+  return tokens;
+}
+
+/**
  * Best-effort JSON repair for common authoring mistakes:
  *   - trailing commas in objects and arrays
  *   - single-quoted strings
@@ -175,29 +217,51 @@ export function sortKeys(value: unknown): unknown {
  *   - missing quotes around string values that look like identifiers
  *
  * Returns the repaired string on success, or throws if it still can't parse.
+ * If the input is already valid JSON it is returned untouched (fast path).
  */
 export function repairJson(raw: string): string {
-  let s = raw.trim();
+  const s = raw.trim();
 
-  // 1. Convert single-quoted strings to double-quoted
-  //    e.g. {'key': 'val'} -> {"key": "val"}
-  //    Careful: only replace outside of existing double-quoted strings
-  s = s.replace(/'([^'\\]*(\\.[^'\\]*)*)'/g, (_, inner: string) => {
-    // Escape any unescaped double quotes inside
-    return `"${inner.replace(/"/g, '\\"')}"`;
-  });
+  // Fast path: already valid - return immediately without any mutation.
+  try {
+    JSON.parse(s);
+    return s;
+  } catch {
+    // fall through to repair passes
+  }
 
-  // 2. Remove trailing commas before ] or }
-  //    e.g. [1, 2, 3,] -> [1, 2, 3]
-  s = s.replace(/,(\s*[}\]])/g, "$1");
+  // Tokenise so repair passes operate only on non-string segments.
+  const tokens = tokeniseJson(s);
 
-  // 3. Quote unquoted object keys:  { key: value } -> { "key": value }
-  //    Match word-like keys not already quoted
-  s = s.replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)(\s*:)/g, '$1"$2"$3');
+  // Pass 1: convert single-quoted string literals to double-quoted.
+  // Only applies to non-string tokens (single quotes cannot be inside a valid
+  // double-quoted JSON string without escaping, so this is safe).
+  const afterSingleQuote = tokens
+    .map((t) => {
+      if (t.str) return t.raw;
+      return t.raw.replace(/'([^'\\]*(\\.[^'\\]*)*)'/g, (_: string, inner: string) => {
+        return `"${inner.replace(/"/g, '\\"')}"`;
+      });
+    })
+    .join("");
 
-  // Verify it's now valid
-  JSON.parse(s);
-  return s;
+  // Re-tokenise after single-quote conversion (new double-quoted strings may have appeared)
+  const tokens2 = tokeniseJson(afterSingleQuote);
+
+  // Pass 2: remove trailing commas before ] or } - structural tokens only.
+  // Pass 3: quote unquoted object keys - structural tokens only.
+  const repaired = tokens2
+    .map((t) => {
+      if (t.str) return t.raw;
+      return t.raw
+        .replace(/,(\s*[}\]])/g, "$1")
+        .replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)(\s*:)/g, '$1"$2"$3');
+    })
+    .join("");
+
+  // Verify repaired string parses (throws if still broken)
+  JSON.parse(repaired);
+  return repaired;
 }
 
 // ── JSONPath query ─────────────────────────────────────────────────────────────
@@ -242,25 +306,30 @@ export function queryJsonPath(root: unknown, expr: string): QueryResult[] {
     if (recursiveMatch) {
       const key = recursiveMatch[1];
       const rest = recursiveMatch[2];
-      // Apply to current node and all descendants
-      function descend(v: unknown, p: string): void {
+      // `$..*` means all descendants of the root, not including the root itself.
+      // We track whether we are still at the node where the `..` was applied so
+      // we can skip emitting it for wildcard descent.
+      function descend(v: unknown, p: string, isOrigin: boolean): void {
         if (key === "*") {
-          traverse(v, rest, p);
+          // Emit this node only if it is not the origin of the `..` operator
+          if (!isOrigin) {
+            traverse(v, rest, p);
+          }
         } else if (isObj(v) && key in (v as Record<string, unknown>)) {
           traverse((v as Record<string, unknown>)[key], rest, `${p}.${key}`);
         }
-        // Recurse into children
+        // Recurse into children regardless
         if (Array.isArray(v)) {
           for (let i = 0; i < v.length; i++) {
-            descend(v[i], `${p}[${i}]`);
+            descend(v[i], `${p}[${i}]`, false);
           }
         } else if (isObj(v)) {
           for (const k of Object.keys(v as Record<string, unknown>)) {
-            descend((v as Record<string, unknown>)[k], `${p}.${k}`);
+            descend((v as Record<string, unknown>)[k], `${p}.${k}`, false);
           }
         }
       }
-      descend(value, currentPath);
+      descend(value, currentPath, true);
       return;
     }
 

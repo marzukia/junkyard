@@ -226,6 +226,28 @@ describe("csvToYaml", () => {
     expect(result.value).toContain("- name: Alice");
     expect(result.value).toContain("age: 30");
   });
+
+  // Regression: header containing `:` must be quoted so the YAML key is valid
+  it("quotes header key containing a colon", () => {
+    const parsed = parseCsv("first:last,age\nAliceDoe,30", { delimiter: ",", hasHeader: true });
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    const result = csvToYaml(parsed.value);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    // The key "first:last" must be double-quoted in YAML
+    expect(result.value).toContain('"first:last"');
+  });
+
+  it("quotes header key starting with a hash", () => {
+    const parsed = parseCsv("#id,value\n1,foo", { delimiter: ",", hasHeader: true });
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    const result = csvToYaml(parsed.value);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value).toContain('"#id"');
+  });
 });
 
 // ── coerceValue ────────────────────────────────────────────────────────────────

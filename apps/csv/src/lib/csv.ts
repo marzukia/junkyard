@@ -472,12 +472,26 @@ function yamlVal(s: string): string {
 }
 
 /**
+ * Quote a YAML mapping key when it contains characters that would make the
+ * bare key ambiguous or invalid (: # leading/trailing space, and anything
+ * that yamlVal would also quote for values).
+ */
+function yamlKey(s: string): string {
+  if (s === "") return '""';
+  // Quote if the key contains YAML-special chars or leading/trailing whitespace
+  if (/[:#\[\]{},&*?|<>=!%@`\n\r\\"]/.test(s) || s.startsWith(" ") || s.endsWith(" ")) {
+    return `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+  }
+  return s;
+}
+
+/**
  * Convert parsed CSV to YAML (array of mappings).
  */
 export function csvToYaml(parsed: ParsedCsv): ConvertResult<string> {
   try {
     const blocks = parsed.rows.map((row) => {
-      const fields = parsed.headers.map((h, i) => `  ${h}: ${yamlVal(row[i] ?? "")}`);
+      const fields = parsed.headers.map((h, i) => `  ${yamlKey(h)}: ${yamlVal(row[i] ?? "")}`);
       return `- ${fields[0]?.trimStart() ?? ""}\n${fields.slice(1).join("\n")}`;
     });
     return { ok: true, value: blocks.join("\n") };

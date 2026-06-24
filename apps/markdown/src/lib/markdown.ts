@@ -1,7 +1,7 @@
 import DOMPurify from "dompurify";
-import { marked } from "marked";
+import { Marked, marked } from "marked";
 
-// Configure marked for GFM + line breaks
+// Configure the global marked instance for GFM + line breaks (used by parseInline helpers)
 marked.setOptions({
   gfm: true,
   breaks: false,
@@ -10,9 +10,38 @@ marked.setOptions({
 /**
  * Converts markdown string to sanitized HTML.
  * Uses marked for GFM parsing and DOMPurify for sanitization.
+ *
+ * Headings h1-h3 are emitted with `id` attributes matching the deduped slugs
+ * produced by extractToc, so TOC anchor links resolve correctly even when the
+ * same heading text appears more than once.
  */
 export function renderMarkdown(md: string): string {
-  const raw = marked.parse(md) as string;
+  // Per-render slug dedup counter so repeated headings get `setup`, `setup-1`, ...
+  const seenSlugs = new Map<string, number>();
+
+  // Use a local Marked instance so the heading renderer (with per-call state) does
+  // not mutate the global marked instance used elsewhere.
+  const localMarked = new Marked({ gfm: true, breaks: false });
+  localMarked.use({
+    renderer: {
+      heading({ tokens, depth }: { tokens: marked.Token[]; depth: number }): string {
+        // Reconstruct the raw heading text to derive the slug
+        const rawText = tokens
+          .map((t) => ("raw" in t && typeof t.raw === "string" ? t.raw : ""))
+          .join("");
+        const plainText = rawText.replace(/\*+|`/g, "");
+        const base = slugify(plainText);
+        const count = seenSlugs.get(base) ?? 0;
+        seenSlugs.set(base, count + 1);
+        const id = count === 0 ? base : `${base}-${count}`;
+        // Render the inline content through marked's inline parser
+        const inner = marked.parseInline(rawText) as string;
+        return `<h${depth} id="${id}">${inner}</h${depth}>\n`;
+      },
+    },
+  });
+
+  const raw = localMarked.parse(md) as string;
   // DOMPurify may not be available in test environment (no DOM)
   if (typeof window === "undefined") return raw;
   return DOMPurify.sanitize(raw, {
@@ -132,30 +161,43 @@ export interface TocEntry {
   slug: string;
 }
 
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+/**
+ * Build a deduplicated slug using the same counter logic used by renderMarkdown's
+ * heading renderer. Returns `slug`, `slug-1`, `slug-2`, ... for repeated headings.
+ */
+function deduplicatedSlug(text: string, seen: Map<string, number>): string {
+  const base = slugify(text);
+  const count = seen.get(base) ?? 0;
+  seen.set(base, count + 1);
+  return count === 0 ? base : `${base}-${count}`;
+}
+
 /**
  * Extract headings (h1-h3) from raw markdown source for a table of contents.
- * Does not rely on the DOM; regex-based for use in non-browser environments too.
+ * Duplicate heading texts get disambiguated slugs (`setup`, `setup-1`, ...) so
+ * they match the ids emitted by renderMarkdown.
  */
 export function extractToc(md: string): TocEntry[] {
   const entries: TocEntry[] = [];
+  const seen = new Map<string, number>();
   const lines = md.split("\n");
   for (const line of lines) {
     const m = line.match(/^(#{1,3})\s+(.+)$/);
     if (!m) continue;
     const level = m[1].length as 1 | 2 | 3;
     const text = m[2].trim();
-    const slug = slugify(text);
+    const slug = deduplicatedSlug(text, seen);
     entries.push({ level, text, slug });
   }
   return entries;
-}
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
 }
 
 /**
