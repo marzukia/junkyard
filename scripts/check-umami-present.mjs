@@ -2,21 +2,14 @@
 // Guard: every app slug must appear in umami-ids.txt with a valid id.
 import { readdirSync, readFileSync } from "fs";
 import { join } from "path";
+import { UUID_RE, parseUmamiIds } from "./umami-ids.mjs";
 
 const root = new URL("../", import.meta.url).pathname;
 const appsDir = join(root, "apps");
 const umamiFile = join(root, "umami-ids.txt");
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 // Parse umami-ids.txt -> Map<slug, uuid>
-const umamiMap = new Map();
-for (const line of readFileSync(umamiFile, "utf8").split("\n")) {
-  const trimmed = line.trim();
-  if (!trimmed || trimmed.startsWith("#")) continue;
-  const [slug, uuid] = trimmed.split(/\s+/);
-  if (slug && uuid) umamiMap.set(slug, uuid);
-}
+const umamiMap = parseUmamiIds(readFileSync(umamiFile, "utf8"));
 
 const slugs = readdirSync(appsDir, { withFileTypes: true })
   .filter((d) => d.isDirectory())

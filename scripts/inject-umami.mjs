@@ -7,6 +7,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { UUID_RE, parseUmamiIds } from "./umami-ids.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
@@ -28,18 +29,7 @@ if (!existsSync(idsPath)) {
   );
   process.exit(1);
 }
-const idsRaw = readFileSync(idsPath, "utf8");
-const slugMap = new Map();
-for (const line of idsRaw.split("\n")) {
-  const trimmed = line.trim();
-  if (!trimmed || trimmed.startsWith("#")) continue;
-  const parts = trimmed.split(/\s+/);
-  if (parts.length < 2) continue;
-  slugMap.set(parts[0], parts[1]);
-}
-
-// Loose UUID validator: 8-4-4-4-12 hex groups
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const slugMap = parseUmamiIds(readFileSync(idsPath, "utf8"));
 
 const DIST = join(ROOT, "dist");
 if (!existsSync(DIST)) {
