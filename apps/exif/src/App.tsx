@@ -75,16 +75,27 @@ async function parseExif(file: File): Promise<{
   }
 }
 
-function DropZone({ onFiles }: { onFiles: (files: File[]) => void }) {
+function DropZone({
+  onFiles,
+  onUnsupported,
+}: {
+  onFiles: (files: File[]) => void;
+  onUnsupported?: () => void;
+}) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
-      const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith("image/"));
-      if (files.length) onFiles(files);
+      const all = Array.from(e.dataTransfer.files);
+      const images = all.filter((f) => f.type.startsWith("image/"));
+      if (images.length) {
+        onFiles(images);
+      } else if (all.length > 0) {
+        onUnsupported?.();
+      }
     },
-    [onFiles]
+    [onFiles, onUnsupported]
   );
 
   const handleChange = useCallback(
@@ -666,6 +677,18 @@ function BatchStrip() {
 export function App() {
   const { images, selectedId, addImages, setExif, selectImage, removeImage, clearAll } =
     useExifStore();
+  const [dropError, setDropError] = useState<string | null>(null);
+  const dropErrorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showDropError = useCallback((msg: string) => {
+    if (dropErrorTimer.current) clearTimeout(dropErrorTimer.current);
+    setDropError(msg);
+    dropErrorTimer.current = setTimeout(() => setDropError(null), 3000);
+  }, []);
+
+  const handleUnsupported = useCallback(() => {
+    showDropError("Unsupported file — drop an image.");
+  }, [showDropError]);
 
   // Parse EXIF/XMP/IPTC for any newly-added images (loading=true, exif=undefined)
   useEffect(() => {
@@ -680,9 +703,14 @@ export function App() {
       <Header title="EXIF" subtitle="view and remove photo metadata" brandMark={<BrandMark />} />
 
       <main className="site-main">
+        {dropError && (
+          <p className="drop-error-msg" role="alert">
+            {dropError}
+          </p>
+        )}
         {images.length === 0 ? (
           <div className="welcome-section">
-            <DropZone onFiles={addImages} />
+            <DropZone onFiles={addImages} onUnsupported={handleUnsupported} />
             <div className="welcome-features">
               <div className="feature-chip">
                 <span className="feature-chip-icon">🔍</span>
@@ -706,7 +734,7 @@ export function App() {
           <div className="workspace">
             <div className="sidebar">
               <div className="sidebar-toolbar">
-                <DropZone onFiles={addImages} />
+                <DropZone onFiles={addImages} onUnsupported={handleUnsupported} />
                 <button
                   type="button"
                   className="clear-btn"

@@ -115,6 +115,7 @@ export function App() {
       // Expand PDFs into individual page image files
       if (pdfFiles.length > 0) {
         setPdfLoading(true);
+        let pdfPagesRendered = 0;
         try {
           for (const pdf of pdfFiles) {
             const pageCount = await getPdfPageCount(pdf);
@@ -132,14 +133,28 @@ export function App() {
                 pageFiles.push(renamedFile);
               }
             }
+            pdfPagesRendered += pageFiles.length;
             imageFiles.push(...pageFiles);
           }
         } finally {
           setPdfLoading(false);
         }
+        // Every PDF produced zero usable pages — encrypted or corrupt
+        if (pdfPagesRendered === 0 && imageFiles.length === 0) {
+          store.setStatus("error");
+          store.setProgress(0, "Couldn't read that PDF — it may be encrypted or corrupt.");
+          return;
+        }
       }
 
-      if (imageFiles.length === 0) return;
+      if (imageFiles.length === 0) {
+        // Files were provided but none were usable
+        if (files.length > 0) {
+          store.setStatus("error");
+          store.setProgress(0, "Unsupported file — drop a PNG/JPG/PDF.");
+        }
+        return;
+      }
 
       if (imageFiles.length === 1 && store.queue.length === 0) {
         store.setImage(imageFiles[0]);
