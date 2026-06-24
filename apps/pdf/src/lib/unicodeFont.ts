@@ -92,5 +92,5 @@ export async function embedUnicodeFonts(doc: PDFDocument): Promise<UnicodeFontSe
  * document is produced (with mangled text) rather than throwing.
  */
 export function sanitizeWinAnsi(text: string): string {
-  return text.replace(/[^\x20-\xff]/g, "?");
+  return text.replace(/[^\x20-\x7e\xa0-\xff]/g, "?");
 }
