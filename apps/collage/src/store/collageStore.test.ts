@@ -153,3 +153,65 @@ describe("undo: undo with empty stack is a no-op", () => {
     expect(() => useCollageStore.getState().undo()).not.toThrow();
   });
 });
+
+describe("library: blob URL lifecycle (H2)", () => {
+  beforeEach(() => {
+    // Reset library between tests
+    useCollageStore.setState({ library: [] });
+  });
+
+  it("removeFromLibrary revokes the object URL before dropping the entry", () => {
+    const revokedUrls: string[] = [];
+    const originalRevoke = URL.revokeObjectURL.bind(URL);
+    URL.revokeObjectURL = (url: string) => {
+      revokedUrls.push(url);
+      originalRevoke(url);
+    };
+
+    // Stub createObjectURL so we control the returned string
+    const originalCreate = URL.createObjectURL.bind(URL);
+    let counter = 0;
+    URL.createObjectURL = () => `blob:stub-${++counter}`;
+
+    const fakeFile = new File(["x"], "photo.jpg");
+    useCollageStore.getState().addPhotos([fakeFile]);
+    const { library } = useCollageStore.getState();
+    expect(library.length).toBe(1);
+    const addedUrl = library[0].url;
+
+    useCollageStore.getState().removeFromLibrary(addedUrl);
+
+    expect(useCollageStore.getState().library.length).toBe(0);
+    expect(revokedUrls).toContain(addedUrl);
+
+    // Restore
+    URL.revokeObjectURL = originalRevoke;
+    URL.createObjectURL = originalCreate;
+  });
+
+  it("clearLibrary revokes all library URLs", () => {
+    const revokedUrls: string[] = [];
+    const originalRevoke = URL.revokeObjectURL.bind(URL);
+    URL.revokeObjectURL = (url: string) => {
+      revokedUrls.push(url);
+      originalRevoke(url);
+    };
+    let counter = 0;
+    const originalCreate = URL.createObjectURL.bind(URL);
+    URL.createObjectURL = () => `blob:stub-${++counter}`;
+
+    const files = [new File(["a"], "a.jpg"), new File(["b"], "b.jpg")];
+    useCollageStore.getState().addPhotos(files);
+    const urls = useCollageStore.getState().library.map((e) => e.url);
+    expect(urls.length).toBe(2);
+
+    useCollageStore.getState().clearLibrary();
+    expect(useCollageStore.getState().library.length).toBe(0);
+    for (const url of urls) {
+      expect(revokedUrls).toContain(url);
+    }
+
+    URL.revokeObjectURL = originalRevoke;
+    URL.createObjectURL = originalCreate;
+  });
+});

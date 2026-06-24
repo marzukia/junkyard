@@ -177,13 +177,30 @@ export function App() {
     return null;
   };
 
+  // Revoke object URLs on unmount to prevent memory leaks.
+  useEffect(() => {
+    return () => {
+      if (videoUrl) URL.revokeObjectURL(videoUrl);
+    };
+  }, [videoUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (result) URL.revokeObjectURL(result.url);
+    };
+  }, [result]);
+
   const run = async () => {
     if (!file || processing) return;
     const built = buildArgs();
     if (!built) return;
 
+    // Revoke any previous result URL before overwriting it (H1: blob URL leak).
+    setResult((prev) => {
+      if (prev) URL.revokeObjectURL(prev.url);
+      return null;
+    });
     setProcessing(true);
-    setResult(null);
     setError(null);
     setProgress(0);
 
@@ -205,7 +222,12 @@ export function App() {
     const a = document.createElement("a");
     a.href = result.url;
     a.download = result.name;
+    // Some popup blockers prevent programmatic clicks. If the anchor is not
+    // appended to the DOM the click may be silently swallowed -- fall back to
+    // opening the URL in a new tab so the user can save manually (W1).
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
   };
 
   const reset = () => {

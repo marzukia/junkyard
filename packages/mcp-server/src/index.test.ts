@@ -7,7 +7,7 @@
  * the production functions is caught immediately here.
  */
 import { describe, it, expect } from "bun:test";
-import { sanitiseName, toContent } from "./index.ts";
+import { sanitiseName, toContent, runWithTimeout } from "./index.ts";
 
 describe("sanitiseName", () => {
   it("produces expected names for normal slug+opName", () => {
@@ -56,5 +56,24 @@ describe("toContent", () => {
   it("serialises null correctly", () => {
     const result = toContent(null);
     expect(result[0].text).toBe("null");
+  });
+});
+
+describe("runWithTimeout", () => {
+  it("resolves with the value when op completes before the deadline", async () => {
+    const result = await runWithTimeout(Promise.resolve("ok"), 1000);
+    expect(result).toBe("ok");
+  });
+
+  it("rejects with a timeout message when op exceeds the deadline", async () => {
+    const never = new Promise<never>(() => {});
+    await expect(runWithTimeout(never, 10)).rejects.toThrow("operation timed out after 10ms");
+  });
+
+  it("clears the timer after a fast resolution (no dangling timer)", async () => {
+    // Verifies that a fast op does not leave a timer that delays test exit.
+    // If clearTimeout is omitted this test suite would hang for `ms` after completing.
+    const result = await runWithTimeout(Promise.resolve(42), 5000);
+    expect(result).toBe(42);
   });
 });
