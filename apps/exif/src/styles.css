@@ -741,6 +741,13 @@ body {
   width: 100%;
 }
 
+.drop-error-msg {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #d9594c;
+  padding: 0.5rem 0;
+}
+
 /* ─── EXIF table section ────────────────────────────────────────────────── */
 
 .exif-section {
