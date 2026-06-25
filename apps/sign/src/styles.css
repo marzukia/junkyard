@@ -749,6 +749,9 @@ output {
   border-radius: 4px;
   display: flex;
   align-items: stretch;
+  /* Transparent background so the overlay never obscures PDF body text in
+     either light or dark mode. The dashed border alone shows the bounds. */
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .sig-overlay:focus-visible {

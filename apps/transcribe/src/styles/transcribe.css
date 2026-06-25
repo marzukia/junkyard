@@ -124,6 +124,16 @@
   cursor: pointer;
   outline: none;
   transition: border-color 0.14s;
+  /* Opt the native select into the active colour-scheme so the browser renders
+     it with dark-mode chrome in dark mode, then our CSS vars layer on top. */
+  color-scheme: light dark;
+}
+
+[data-mantine-color-scheme="dark"] .tr-language-select {
+  color-scheme: dark;
+  background: var(--surface-sunken);
+  color: var(--ink);
+  border-color: var(--rule);
 }
 
 .tr-language-select:hover {
