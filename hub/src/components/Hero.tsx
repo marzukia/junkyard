@@ -1,8 +1,16 @@
 import { TOOLS } from "../tools";
 
+const MCP_TOOL_NAMES = [
+  "junkyard_json_format",
+  "junkyard_qr_generate",
+  "junkyard_hash_sha256",
+  "junkyard_base64_encode",
+  "junkyard_uuid_generate",
+];
+
 export function Hero() {
   return (
-    <section className="hero hero--solo">
+    <section className="hero">
       <div className="hero-left">
         <h1>
           <span className="lock">
@@ -43,6 +51,55 @@ export function Hero() {
             <b>open source</b>
           </span>
         </div>
+      </div>
+
+      <div className="hero-right">
+        <div className="term">
+          <div className="term-bar">
+            <span className="term-dot term-dot--teal" />
+            <span className="term-dot term-dot--amber" />
+            <span className="term-dot term-dot--coral" />
+            <span className="term-label">junkyard — mcp</span>
+          </div>
+          <pre className="term-body">
+            <span className="t-prompt">$</span>
+            {" "}
+            <span className="t-cmd">git clone</span>
+            {" "}
+            <span className="t-path">github.com/marzukia/junkyard</span>
+            {"\n"}
+            <span className="t-prompt">$</span>
+            {" "}
+            <span className="t-cmd">cd junkyard</span>
+            {" && "}
+            <span className="t-cmd">bun install</span>
+            {"\n"}
+            <span className="t-prompt">$</span>
+            {" "}
+            <span className="t-cmd">bun run</span>
+            {" "}
+            <span className="t-path">packages/mcp-server/src/index.ts</span>
+            {"\n"}
+            <span className="t-ok">✓</span>
+            {" "}
+            <span className="t-num">17</span>
+            {" tools · "}
+            <span className="t-num">25</span>
+            {" ops exposed over "}
+            <span className="t-ok">MCP</span>
+            {"\n"}
+            {MCP_TOOL_NAMES.map((name, i) => (
+              <span key={name} className={i % 2 === 0 ? "t-tool-teal" : "t-tool-coral"}>
+                {name}
+                {i < MCP_TOOL_NAMES.length - 1 ? " · " : " …"}
+              </span>
+            ))}
+          </pre>
+        </div>
+        <p className="term-caption">
+          Every tool also runs headless over MCP — wire it into Claude Desktop or Claude Code.
+        </p>
+        <span className="bun-badge">Built with Bun ⚡</span>
       </div>
     </section>
   );
