@@ -276,3 +276,16 @@ export function toJsxComponent(svg: string, componentName = "SvgIcon"): string {
 
   return `export function ${componentName}(props: React.SVGProps<SVGSVGElement>) {\n  return (\n    ${jsx.replace(/\n/g, "\n    ")}\n  );\n}`;
 }
+
+/**
+ * Check if SVG markup contains <script> tags or event handler attributes (on*).
+ * These are valid SVG but risky if the output is inlined into a host page.
+ */
+export function containsScripting(svg: string): boolean {
+  const lower = svg.toLowerCase();
+  // <script> tag
+  if (/<script[\s>]/i.test(lower)) return true;
+  // on* event handlers (onload, onclick, onerror, onmouseover, etc.)
+  if (/\son\w+\s*=/i.test(lower)) return true;
+  return false;
+}

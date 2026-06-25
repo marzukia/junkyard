@@ -5,6 +5,7 @@ import { Header } from "./components/Header";
 import { useSvgStore } from "./store";
 import {
   byteLength,
+  containsScripting,
   formatBytes,
   optimizeSvg,
   parseFriendlyError,
@@ -493,6 +494,14 @@ export function App() {
           <div className="svg-error" role="alert" aria-live="polite">
             <span className="svg-error-icon">!</span>
             <span>{store.error}</span>
+          </div>
+        )}
+
+        {/* Scripting warning */}
+        {store.result && containsScripting(store.result) && (
+          <div className="svg-warning" role="alert">
+            <span className="svg-warning-icon">⚠</span>
+            <span>Optimized SVG contains &lt;script&gt; or event-handler attributes (on*). Safe in this preview (rendered as image), but dangerous if inlined into a host page.</span>
           </div>
         )}
 
