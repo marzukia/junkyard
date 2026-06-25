@@ -59,7 +59,7 @@ export function Hero() {
             <span className="term-dot term-dot--teal" />
             <span className="term-dot term-dot--amber" />
             <span className="term-dot term-dot--coral" />
-            <span className="term-label">junkyard — mcp</span>
+            <span className="term-label">junkyard / mcp</span>
           </div>
           <pre className="term-body">
             <span className="t-prompt">$</span>
@@ -97,7 +97,7 @@ export function Hero() {
           </pre>
         </div>
         <p className="term-caption">
-          Every tool also runs headless over MCP — wire it into Claude, Hermes, or your favourite agent harness.
+          Every tool also runs headless over MCP. Wire it into Claude, Hermes, or your favourite agent harness.
         </p>
         <span className="bun-badge">Built with Bun ⚡</span>
       </div>
