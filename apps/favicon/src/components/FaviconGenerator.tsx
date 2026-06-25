@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FAVICON_SIZES,
   buildHtmlSnippet,
@@ -45,6 +45,12 @@ export function FaviconGenerator() {
     setProgress,
   } = useFaviconStore();
 
+  // Monotonically-increasing generation token.  Incremented at the start of
+  // every generate() call.  Each in-flight generate() captures its own token
+  // and compares against tokenRef.current after every await — if they differ,
+  // a newer generation started and this one is stale.
+  const tokenRef = useRef(0);
+
   const isReady =
     (sourceMode === "image" && !!sourceUrl) ||
     ((sourceMode === "text" || sourceMode === "emoji") && sourceText.trim().length > 0);
@@ -52,11 +58,23 @@ export function FaviconGenerator() {
   const generate = useCallback(async () => {
     if (!isReady) return;
 
-    // Snapshot the source at the moment generation starts.  If the user switches
-    // mode mid-run, setSourceMode() revokes sourceUrl — loading it after that
-    // throws "Failed to load image".  We bail quietly instead of showing an error.
-    const snapMode = sourceMode;
-    const snapUrl = sourceUrl;
+    // Capture a generation token and snapshot the source URL at start-time.
+    // After every await we check:
+    //   1. tokenRef.current === myToken  — no newer generate() was called
+    //   2. live store mode/url still match the snapshot — mode-switch hasn't revoked the URL
+    // If either check fails this is a stale run; bail silently (no error status).
+    const myToken = ++tokenRef.current;
+    const snapMode = useFaviconStore.getState().sourceMode;
+    const snapUrl = useFaviconStore.getState().sourceUrl;
+
+    // Helper: returns true when this generation is stale and should stop.
+    const isStale = () => {
+      if (tokenRef.current !== myToken) return true;
+      const live = useFaviconStore.getState();
+      if (live.sourceMode !== snapMode) return true;
+      if (snapMode === "image" && live.sourceUrl !== snapUrl) return true;
+      return false;
+    };
 
     setStatus("generating");
     setProgress(0);
@@ -73,21 +91,28 @@ export function FaviconGenerator() {
       const previews = [];
 
       for (const entry of FAVICON_SIZES) {
-        // Bail if the source was changed/revoked since we started
-        if (snapMode !== sourceMode || (snapMode === "image" && snapUrl !== sourceUrl)) {
-          setStatus("idle");
-          return;
-        }
         let canvas: HTMLCanvasElement;
 
         if (snapMode === "image" && snapUrl) {
-          const img = await loadImage(snapUrl);
+          // loadImage may throw if snapUrl was revoked (mode switch happened
+          // mid-await).  Catch that specific failure, check staleness, and bail
+          // quietly rather than surfacing "Failed to load image".
+          let img: HTMLImageElement;
+          try {
+            img = await loadImage(snapUrl);
+          } catch (loadErr) {
+            if (isStale()) { setStatus("idle"); return; }
+            throw loadErr; // Genuine load failure on a still-current source.
+          }
+          if (isStale()) { setStatus("idle"); return; }
           canvas = drawToCanvas(img, entry.size, canvasOptions);
         } else {
+          if (isStale()) { setStatus("idle"); return; }
           canvas = drawTextToCanvas(sourceText.trim(), entry.size, canvasOptions);
         }
 
         const blob = await canvasToBlob(canvas);
+        if (isStale()) { setStatus("idle"); return; }
         pngBlobs.push({ size: entry.size, blob, filename: entry.filename });
         previews.push({
           size: entry.size,
@@ -101,9 +126,6 @@ export function FaviconGenerator() {
       setPreviews(previews);
 
       // Build favicon.ico from 16, 32, 48 frames.
-      // The Promise.all is wrapped in its own try/catch: if the source URL was
-      // revoked mid-await (mode switch), loadImage rejects with "Failed to load
-      // image".  We treat that as a stale-run bail, not an error.
       const icoSizes = [16, 32, 48];
       let icoFrames: { size: number; data: Uint8Array }[];
       try {
@@ -122,18 +144,12 @@ export function FaviconGenerator() {
           })
         );
       } catch (icoErr) {
-        // If source/mode changed during the ico frames build, bail quietly.
-        if (snapMode !== sourceMode || (snapMode === "image" && snapUrl !== sourceUrl)) {
-          setStatus("idle");
-          return;
-        }
+        // Any rejection during ico frames: check staleness first.
+        if (isStale()) { setStatus("idle"); return; }
         throw icoErr; // Re-throw genuine errors (unexpected canvas/blob failures).
       }
-      // Post-Promise.all bail: source may have changed while awaiting frames.
-      if (snapMode !== sourceMode || (snapMode === "image" && snapUrl !== sourceUrl)) {
-        setStatus("idle");
-        return;
-      }
+      if (isStale()) { setStatus("idle"); return; }
+
       const icoBytes = buildIco(icoFrames);
       tick();
 
@@ -154,18 +170,20 @@ export function FaviconGenerator() {
       zip.file("README.txt", buildReadme(safeName));
 
       const zipBlob = await zip.generateAsync({ type: "blob" });
+      if (isStale()) { setStatus("idle"); return; }
       const url = URL.createObjectURL(zipBlob);
       setZipUrl(url);
       setStatus("done");
       setProgress(100);
     } catch (err) {
+      // Final guard: if the run became stale while we were awaiting, don't
+      // surface an error — just reset to idle.
+      if (isStale()) { setStatus("idle"); return; }
       const msg = err instanceof Error ? err.message : "Unknown error";
       setStatus("error", msg);
     }
   }, [
     isReady,
-    sourceMode,
-    sourceUrl,
     sourceText,
     appName,
     canvasOptions,
