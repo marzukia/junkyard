@@ -140,17 +140,18 @@ function LoremPanel() {
   const clampTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const maxCount = mode === "words" ? 200 : mode === "list" ? 30 : 20;
+  const safeCount = Math.min(count, maxCount);
 
   useEffect(() => {
     let result = "";
     if (mode === "paragraphs") {
-      result = generateParagraphs(count, seed, wordBank);
+      result = generateParagraphs(safeCount, seed, wordBank);
     } else if (mode === "sentences") {
-      result = generateSentences(count, seed, wordBank);
+      result = generateSentences(safeCount, seed, wordBank);
     } else if (mode === "words") {
-      result = generateWords(count, seed, wordBank);
+      result = generateWords(safeCount, seed, wordBank);
     } else {
-      result = generateList(count, seed, listStyle === "ordered", wordBank).join("\n");
+      result = generateList(safeCount, seed, listStyle === "ordered", wordBank).join("\n");
     }
     if (classicStart && (mode === "paragraphs" || mode === "sentences")) {
       result = withClassicStart(result, mode);

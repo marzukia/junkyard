@@ -72,7 +72,10 @@ export const useLoremStore = create<LoremStore>()(
         const clampedCount = Math.min(s.count, maxCount);
         return { mode, count: clampedCount };
       }),
-      setCount: (count) => set({ count }),
+      setCount: (count) => set((state) => {
+        const maxCount = state.mode === "words" ? 200 : state.mode === "list" ? 30 : 20;
+        return { count: Math.min(count, maxCount) };
+      }),
       setListStyle: (listStyle) => set({ listStyle }),
       setOutput: (output) => set({ output }),
       regenerate: () => set({ seed: Date.now() }),
