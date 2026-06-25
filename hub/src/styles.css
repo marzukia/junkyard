@@ -55,13 +55,13 @@ html {
   scroll-behavior: smooth;
 }
 body {
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
   background: var(--canvas);
   line-height: 1.5;
   min-height: 100vh;
 }
 .mono {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
 }
 .wrap {
   max-width: 1180px;
@@ -111,7 +111,7 @@ header {
 .logo .wm {
   display: inline-flex;
   align-items: baseline;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   line-height: 1;
 }
 .logo .wm .wm-j {
@@ -141,7 +141,7 @@ header {
   border: 1px solid var(--rule);
 }
 .space-btn {
-  font-family: "Inter", sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0;
@@ -196,12 +196,12 @@ header {
   flex: none;
 }
 .gh-link {
-  display: flex;
-  align-items: center;
+  font-family: "Roboto Mono", monospace;
+  font-size: 12.5px;
   color: var(--ink-mid);
   text-decoration: none;
   transition: color .15s;
-  line-height: 0;
+  letter-spacing: .02em;
 }
 .gh-link:hover {
   color: var(--accent);
@@ -215,6 +215,11 @@ header {
   align-items: center;
   padding: 60px 0 36px;
 }
+/* single-column hero: no browser-window mockup, text breathes */
+.hero--solo {
+  grid-template-columns: 1fr;
+  max-width: 720px;
+}
 .hero-left {
   min-width: 0;
 }
@@ -225,7 +230,7 @@ header {
   flex-wrap: wrap;
 }
 .btn {
-  font-family: "Inter", sans-serif;
+  font-family: "Roboto", sans-serif;
   font-weight: 600;
   font-size: 14.5px;
   padding: 12px 21px;
@@ -351,13 +356,13 @@ header {
   justify-content: space-between;
 }
 .mnum {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 9.5px;
   color: var(--ink-faint);
   letter-spacing: .06em;
 }
 .mfree {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 8.5px;
   font-weight: 600;
   letter-spacing: .05em;
@@ -373,7 +378,7 @@ header {
   margin-top: 11px;
 }
 .mdesc {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 10px;
   color: var(--ink-faint);
   margin-top: 5px;
@@ -397,8 +402,8 @@ header {
   }
 }
 .hero h1 {
-  font-family: "JetBrains Mono", monospace;
-  font-size: clamp(40px, 6.6vw, 68px);
+  font-family: "Roboto Mono", monospace;
+  font-size: clamp(38px, 7vw, 68px);
   font-weight: 800;
   letter-spacing: -.045em;
   line-height: 1;
@@ -408,7 +413,7 @@ header {
   align-items: baseline;
 }
 .hero h1 .sh {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-weight: 800;
   color: var(--accent);
   letter-spacing: -.1em;
@@ -431,7 +436,7 @@ header {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 26px;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 12px;
 }
 .pill {
@@ -472,7 +477,7 @@ header {
 }
 .search input {
   width: 100%;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 14px;
   color: var(--ink);
   background: var(--surface);
@@ -495,7 +500,7 @@ header {
   top: 50%;
   transform: translateY(-50%);
   color: var(--ink-faint);
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-weight: 600;
   pointer-events: none;
 }
@@ -504,7 +509,7 @@ header {
   right: 11px;
   top: 50%;
   transform: translateY(-50%);
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 11px;
   color: var(--ink-faint);
   border: 1px solid var(--rule);
@@ -520,7 +525,7 @@ header {
   flex-wrap: wrap;
 }
 .chip {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 12px;
   letter-spacing: .02em;
   color: var(--ink-mid);
@@ -538,15 +543,12 @@ header {
   color: var(--ink);
 }
 .chip.on {
-  background: var(--accent);
-  color: var(--accent-ink);
-  border-color: var(--accent);
-  font-weight: 600;
-}
-/* Light mode: #fff on --accent (#2f9d8d) = 3.32:1 (fails AA).
-   Override to dark ink: #1a2530 on #2f9d8d = 4.68:1 (WCAG AA pass). */
-[data-scheme="light"] .chip.on {
+  /* amber (#e8b04b) is the active filter colour — gives amber a functional job
+     beyond decorative use. #1a2530 on #e8b04b = 8.5:1 (WCAG AAA). */
+  background: var(--amber);
   color: var(--ink);
+  border-color: var(--amber);
+  font-weight: 600;
 }
 .chip .n {
   opacity: 0.6;
@@ -585,8 +587,8 @@ header {
 .shead h2::after {
   content: "";
   display: block;
-  width: 34px;
-  height: 3px;
+  width: 50px;
+  height: 4px;
   border-radius: 2px;
   background: linear-gradient(
     90deg,
@@ -596,7 +598,7 @@ header {
   margin-top: 9px;
 }
 .shead .c {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 12px;
   color: var(--ink-faint);
   letter-spacing: .06em;
@@ -640,11 +642,10 @@ header {
 }
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-pop);
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
+  box-shadow: 0 4px 14px rgba(26, 37, 48, 0.1);
 }
-.card:hover::before {
-  opacity: 1;
+[data-scheme="dark"] .card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 .card .top {
   display: flex;
@@ -652,20 +653,10 @@ header {
   justify-content: space-between;
 }
 .card .num {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 11px;
   color: var(--ink-faint);
   letter-spacing: .08em;
-}
-.card .free {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  color: var(--accent);
-  background: var(--accent-soft);
-  padding: 3px 8px;
-  border-radius: 999px;
 }
 .card h3 {
   font-size: 1.12rem;
@@ -673,9 +664,7 @@ header {
   letter-spacing: -.01em;
   margin-top: 13px;
 }
-.card:hover h3 {
-  color: var(--accent);
-}
+/* card hover: title stays default ink (accent only on arrow slide) */
 .card p {
   font-size: .86rem;
   color: var(--ink-mid);
@@ -690,7 +679,7 @@ header {
   margin-top: 10px;
 }
 .tag-badge {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 9.5px;
   font-weight: 600;
   letter-spacing: .04em;
@@ -717,7 +706,7 @@ header {
   border-top: 1px solid var(--rule);
 }
 .card .vs {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 11px;
   color: var(--ink-faint);
 }
@@ -726,7 +715,7 @@ header {
   text-decoration-thickness: 1px;
 }
 .card .go {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 12px;
   font-weight: 600;
   color: var(--ink-faint);
@@ -766,7 +755,7 @@ header {
   padding: 48px 0;
   text-align: center;
   color: var(--ink-faint);
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
 }
 .empty b {
   color: var(--accent);
@@ -822,7 +811,7 @@ header {
   flex-wrap: wrap;
   gap: 10px 22px;
   margin-top: 28px;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 13px;
   color: var(--ink-faint);
 }
@@ -835,23 +824,26 @@ header {
   text-decoration: underline;
 }
 .manifesto .disclaimer {
-  margin-top: 20px;
-  font-size: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-size: 15px;
+  font-family: "Roboto", system-ui, sans-serif;
   color: var(--ink-faint);
-  opacity: 0.7;
-  font-family: "JetBrains Mono", monospace;
+  font-style: italic;
   line-height: 1.6;
 }
 footer {
-  padding: 24px 0 56px;
+  padding: 28px 0 56px;
+  border-top: 1px solid var(--rule);
 }
 .fbar {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px 18px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11.5px;
+  font-family: "Roboto Mono", monospace;
+  font-size: 12.5px;
   color: var(--ink-faint);
   letter-spacing: .03em;
 }
