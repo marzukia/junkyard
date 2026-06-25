@@ -40,6 +40,32 @@ export interface WorkerTaskHandlers<TResult> {
 }
 
 /**
+ * Decides whether a transformers.js progress event should be forwarded to the
+ * UI. Throttles to whole-percent boundaries so the rapid per-chunk callbacks
+ * don't cause a re-render storm, while always letting through:
+ *   - first event (lastPct === -1)
+ *   - indeterminate state (total === 0, byte count is meaningless)
+ *   - 100% completion
+ *   - status transitions (e.g. "download" → "done")
+ *   - any event where the rounded whole-percent has changed
+ *
+ * Exported for unit testing. Not intended for direct use outside this module.
+ */
+export function shouldEmitProgress(
+  loaded: number,
+  total: number,
+  status: string,
+  lastPct: number,
+  lastStatus: string,
+): boolean {
+  if (lastPct === -1) return true; // first event
+  if (total === 0) return true; // indeterminate
+  if (status !== lastStatus) return true; // status transition
+  const pct = Math.round((loaded / total) * 100);
+  return pct !== lastPct; // includes pct === 100 (completion)
+}
+
+/**
  * Returns { run, cancel }.
  *
  * run(createWorker, args, handlers) - creates a worker via the factory,
@@ -79,12 +105,22 @@ export function useWorkerTask<TArgs, TResult>() {
         const worker = createWorker();
         workerRef.current = worker;
 
+        // Per-run throttle state; resets for each new inference job.
+        let lastPct = -1;
+        let lastStatus = "";
+
         worker.onmessage = (e: MessageEvent<WorkerMsg<TResult>>) => {
           const msg = e.data;
           switch (msg.type) {
-            case "progress":
-              handlers.onProgress(msg.loaded, msg.total, msg.status);
+            case "progress": {
+              const { loaded, total, status } = msg;
+              if (shouldEmitProgress(loaded, total, status, lastPct, lastStatus)) {
+                lastPct = total > 0 ? Math.round((loaded / total) * 100) : -1;
+                lastStatus = status;
+                handlers.onProgress(loaded, total, status);
+              }
               break;
+            }
             case "chunk_progress":
               handlers.onChunkProgress?.(msg.done, msg.total);
               break;
