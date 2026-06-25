@@ -976,6 +976,7 @@ body {
 
 .copy-btn {
   flex: 1;
+  white-space: nowrap;
   font-family: var(--font-text);
   font-size: 0.78rem;
   font-weight: 500;
