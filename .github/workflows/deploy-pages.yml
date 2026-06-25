@@ -32,6 +32,35 @@ jobs:
         with:
           bun-version: latest
 
+      # ── Lint ────────────────────────────────────────────────────────────
+      # Biome CI on hub, kit, and all 47 apps. Runs in parallel per app.
+      - name: Lint hub
+        run: cd hub && bun install --frozen-lockfile 2>/dev/null && bun run ci
+      - name: Lint kit
+        run: cd kit && bun install --frozen-lockfile 2>/dev/null && bun run ci
+      - name: Lint all apps
+        run: |
+          export ONNXRUNTIME_NODE_INSTALL_CUDA=skip
+          for app_dir in apps/*/; do
+            bun run --cwd "$app_dir" ci &
+          done
+          wait
+
+      # ── Typecheck ──────────────────────────────────────────────────────
+      - name: Typecheck hub
+        run: cd hub && bun install --frozen-lockfile 2>/dev/null && bunx tsc --noEmit
+
+      # ── Test ────────────────────────────────────────────────────────────
+      - name: Test kit
+        run: cd kit && bun install --frozen-lockfile 2>/dev/null && bun test
+      - name: Test AI apps
+        run: |
+          export ONNXRUNTIME_NODE_INSTALL_CUDA=skip
+          for app in bg caption depth summarize transcribe translate upscale; do
+            cd "apps/$app" && bun install --frozen-lockfile 2>/dev/null && bun test &
+          done
+          wait
+
       - name: Check catalogue is up to date
         # Fails if any apps/*/junkyard.ts was edited without regenerating the
         # catalogue artifacts. The generator also validates description quality
