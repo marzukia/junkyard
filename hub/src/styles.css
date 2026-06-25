@@ -16,6 +16,11 @@
   /* amber-text: dark amber for text on light bg (#8a6a24 on #fafafa = 4.83:1 WCAG AA) */
   --amber-text: #8a6a24;
   --coral: #d9594c;
+  --coral-text: #aa382b;   /* coral darkened for AA text on light tint */
+  --orange: #e07a3f;
+  --orange-text: #b0571e;
+  --slate: #5d6b73;
+  --slate-text: #46515a;
   --shadow-card: 0 1px 2px rgba(26, 37, 48, 0.04), 0 8px 28px rgba(26, 37, 48, 0.06);
   --shadow-pop: 0 10px 34px rgba(26, 37, 48, 0.12);
 }
@@ -36,6 +41,11 @@
   /* amber-text: in dark mode amber on dark surface = 8.31:1, fine as-is */
   --amber-text: #e8b04b;
   --coral: #d9594c;
+  --coral-text: #ea7d70;
+  --orange: #e8854a;
+  --orange-text: #ec9a6b;
+  --slate: #8595a0;
+  --slate-text: #a6b4bd;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
   --shadow-pop: 0 10px 34px rgba(0, 0, 0, 0.5);
 }
@@ -642,6 +652,26 @@ header {
   color: var(--mcp-badge-ink);
   background: var(--accent-soft);
   border-color: color-mix(in srgb, var(--accent) 28%, var(--rule));
+}
+.tag-badge--beta {
+  color: var(--amber-text);
+  background: color-mix(in srgb, var(--amber) 14%, transparent);
+  border-color: color-mix(in srgb, var(--amber) 34%, transparent);
+}
+.tag-badge--large-download {
+  color: var(--coral-text);
+  background: color-mix(in srgb, var(--coral) 13%, transparent);
+  border-color: color-mix(in srgb, var(--coral) 32%, transparent);
+}
+.tag-badge--on-device-ai {
+  color: var(--orange-text);
+  background: color-mix(in srgb, var(--orange) 13%, transparent);
+  border-color: color-mix(in srgb, var(--orange) 32%, transparent);
+}
+.tag-badge--webgpu {
+  color: var(--slate-text);
+  background: color-mix(in srgb, var(--slate) 14%, transparent);
+  border-color: color-mix(in srgb, var(--slate) 34%, transparent);
 }
 .card .foot {
   display: flex;
