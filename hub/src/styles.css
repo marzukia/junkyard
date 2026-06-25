@@ -544,11 +544,17 @@ header {
 }
 .chip.on {
   /* amber (#e8b04b) is the active filter colour — gives amber a functional job
-     beyond decorative use. #1a2530 on #e8b04b = 8.5:1 (WCAG AAA). */
+     beyond decorative use. #15130F on #e8b04b ≈ 8:1 (WCAG AAA).
+     Text is a fixed dark literal (not var(--ink)) so it stays legible in dark
+     mode, where --ink flips to near-white. */
   background: var(--amber);
-  color: var(--ink);
+  color: #15130F;
   border-color: var(--amber);
   font-weight: 600;
+}
+/* Ensure dark-mode cascade cannot re-inherit a light --ink value on the chip. */
+[data-scheme="dark"] .chip.on {
+  color: #15130F;
 }
 .chip .n {
   opacity: 0.6;
