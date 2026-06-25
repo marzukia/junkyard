@@ -38,14 +38,6 @@ export function Header() {
           </span>
         </a>
         <div className="hcontrols">
-          <a
-            className="gh-link"
-            href="https://github.com/marzukia/junkyard"
-            target="_blank"
-            rel="noreferrer"
-          >
-            View source
-          </a>
           <ThemeToggle />
         </div>
       </div>

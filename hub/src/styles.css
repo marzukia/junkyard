@@ -195,17 +195,6 @@ header {
   gap: 10px;
   flex: none;
 }
-.gh-link {
-  font-family: "Roboto Mono", monospace;
-  font-size: 12.5px;
-  color: var(--ink-mid);
-  text-decoration: none;
-  transition: color .15s;
-  letter-spacing: .02em;
-}
-.gh-link:hover {
-  color: var(--accent);
-}
 
 /* hero */
 .hero {
