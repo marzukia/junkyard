@@ -679,8 +679,7 @@ body {
   }
 
   .copy-btn {
-    flex: 1 1 calc(50% - 0.25rem);
-    min-width: 0;
+    flex: 0 0 auto;
     text-align: center;
   }
 }
@@ -975,7 +974,7 @@ body {
 }
 
 .copy-btn {
-  flex: 1;
+  flex: 0 0 auto;
   white-space: nowrap;
   font-family: var(--font-text);
   font-size: 0.78rem;
