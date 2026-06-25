@@ -66,9 +66,7 @@ export function Hero() {
                   <span className="mfree">FREE</span>
                 </div>
                 <div className="mname">QR Code</div>
-                <div className="mdesc">
-                  vs <s>qr-generator</s>
-                </div>
+                <div className="mdesc">free alternative to qr-generator</div>
               </div>
               <div className="mini">
                 <div className="mtop">
@@ -76,9 +74,7 @@ export function Hero() {
                   <span className="mfree">FREE</span>
                 </div>
                 <div className="mname">Background Remover</div>
-                <div className="mdesc">
-                  vs <s>remove.bg</s>
-                </div>
+                <div className="mdesc">free alternative to remove.bg</div>
               </div>
               <div className="mini">
                 <div className="mtop">
@@ -86,9 +82,7 @@ export function Hero() {
                   <span className="mfree">FREE</span>
                 </div>
                 <div className="mname">JSON Formatter</div>
-                <div className="mdesc">
-                  vs <s>jsonformatter</s>
-                </div>
+                <div className="mdesc">free alternative to jsonformatter</div>
               </div>
               <div className="mini">
                 <div className="mtop">
@@ -96,9 +90,7 @@ export function Hero() {
                   <span className="mfree">FREE</span>
                 </div>
                 <div className="mname">PDF Toolkit</div>
-                <div className="mdesc">
-                  vs <s>iLovePDF</s>
-                </div>
+                <div className="mdesc">free alternative to iLovePDF</div>
               </div>
             </div>
           </div>

@@ -810,6 +810,13 @@ body {
   text-decoration-color: var(--accent);
 }
 
+.site-footer-disclaimer {
+  width: 100%;
+  text-align: center;
+  opacity: 0.6;
+}
+
+
 /* Canvas footer bar (crop info + quick export button) */
 
 .canvas-footer-bar {

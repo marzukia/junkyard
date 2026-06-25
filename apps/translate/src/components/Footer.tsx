@@ -32,6 +32,12 @@ export function Footer({ blurb }: FooterProps) {
       >
         More tools
       </a>
+      <span className="site-footer-sep">·</span>
+      <span className="site-footer-disclaimer">
+        junkyard is an independent open-source project — not affiliated with or endorsed by any
+        product it compares to. Product names and trademarks are the property of their respective
+        owners.
+      </span>
     </footer>
   );
 }
