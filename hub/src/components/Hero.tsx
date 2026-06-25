@@ -97,7 +97,7 @@ export function Hero() {
           </pre>
         </div>
         <p className="term-caption">
-          Every tool also runs headless over MCP. Wire it into Claude, Hermes, or your favourite agent harness.
+          17 tools also run headless over MCP. Wire them into Claude, Hermes, or your favourite agent harness.
         </p>
         <span className="bun-badge">Built with Bun ⚡</span>
       </div>
