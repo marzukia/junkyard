@@ -67,6 +67,7 @@ export function App() {
           searchRef={searchRef}
         />
         <main id="yard">
+          {/* biome-ignore lint/a11y/useSemanticElements: <output> breaks TS JSX types */}
           <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
             {q
               ? totalShown === 0

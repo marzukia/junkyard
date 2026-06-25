@@ -1,4 +1,4 @@
-import type { AppTag as _AppTag, Category } from "../../scripts/catalogue-schema.ts";
+import type { Category, AppTag as _AppTag } from "../../scripts/catalogue-schema.ts";
 
 // Yard is the hub-internal name for catalogue Category.
 export type Yard = Category;

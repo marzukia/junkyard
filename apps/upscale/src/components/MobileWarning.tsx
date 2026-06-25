@@ -10,7 +10,7 @@ type AppTag = "webgpu" | "on-device-ai" | "large-download" | "beta";
 export function mobileWarningMessage(
   tags: AppTag[],
   isPhone: boolean,
-  dismissed: boolean,
+  dismissed: boolean
 ): string | null {
   if (!isPhone) return null;
   if (dismissed) return null;
@@ -33,8 +33,7 @@ export function mobileWarningMessage(
 function detectPhone(): boolean {
   if (typeof window === "undefined" || typeof navigator === "undefined") return false;
 
-  const phoneUA =
-    /Android.*Mobile|iPhone|iPod|Windows Phone|BlackBerry|Opera Mini|IEMobile/i;
+  const phoneUA = /Android.*Mobile|iPhone|iPod|Windows Phone|BlackBerry|Opera Mini|IEMobile/i;
   if (phoneUA.test(navigator.userAgent)) return true;
 
   // Coarse pointer (touch) AND narrow viewport
@@ -83,9 +82,7 @@ export function MobileWarning() {
       .then((r) => r.json())
       .then((entries: CatalogueEntry[]) => {
         // Match by path /<slug>/
-        const entry = entries.find(
-          (e) => e.path === `/${currentSlug}/` || e.slug === currentSlug,
-        );
+        const entry = entries.find((e) => e.path === `/${currentSlug}/` || e.slug === currentSlug);
         const tags: AppTag[] = entry?.tags ?? [];
         const msg = mobileWarningMessage(tags, isPhone, dismissed);
         setMessage(msg);

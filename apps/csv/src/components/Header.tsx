@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { ThemeToggle } from "./ThemeToggle";
 import { AppSwitcher } from "./AppSwitcher";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface HeaderProps {
   /** The tool's display name, e.g. "Typecheck" */

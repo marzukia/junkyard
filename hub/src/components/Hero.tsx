@@ -62,27 +62,17 @@ export function Hero() {
             <span className="term-label">junkyard / mcp</span>
           </div>
           <pre className="term-body">
-            <span className="t-prompt">$</span>
-            {" "}
-            <span className="t-cmd">git clone</span>
-            {" "}
+            <span className="t-prompt">$</span> <span className="t-cmd">git clone</span>{" "}
             <span className="t-path">github.com/marzukia/junkyard</span>
             {"\n"}
-            <span className="t-prompt">$</span>
-            {" "}
-            <span className="t-cmd">cd junkyard</span>
+            <span className="t-prompt">$</span> <span className="t-cmd">cd junkyard</span>
             {" && "}
             <span className="t-cmd">bun install</span>
             {"\n"}
-            <span className="t-prompt">$</span>
-            {" "}
-            <span className="t-cmd">bun run</span>
-            {" "}
+            <span className="t-prompt">$</span> <span className="t-cmd">bun run</span>{" "}
             <span className="t-path">packages/mcp-server/src/index.ts</span>
             {"\n"}
-            <span className="t-ok">✓</span>
-            {" "}
-            <span className="t-num">17</span>
+            <span className="t-ok">✓</span> <span className="t-num">17</span>
             {" tools · "}
             <span className="t-num">25</span>
             {" ops exposed over "}
@@ -97,7 +87,8 @@ export function Hero() {
           </pre>
         </div>
         <p className="term-caption">
-          17 tools also run headless over MCP. Wire them into Claude, Hermes, or your favourite agent harness.
+          17 tools also run headless over MCP. Wire them into Claude, Hermes, or your favourite
+          agent harness.
         </p>
         <span className="bun-badge">Built with Bun ⚡</span>
       </div>
