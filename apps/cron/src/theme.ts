@@ -10,7 +10,7 @@ export const fleetTheme = createTheme({
   fontFamilyMonospace: "'Roboto Mono', 'Courier New', monospace",
   headings: {
     fontFamily: "'Roboto', system-ui, sans-serif",
-    fontWeight: "800",
+    fontWeight: "700",
   },
   primaryColor: "teal",
   defaultRadius: "md",
