@@ -108,17 +108,30 @@ export function useWorkerTask<TArgs, TResult>() {
         // Per-run throttle state; resets for each new inference job.
         let lastPct = -1;
         let lastStatus = "";
+        let maxPct = -1;
 
         worker.onmessage = (e: MessageEvent<WorkerMsg<TResult>>) => {
           const msg = e.data;
           switch (msg.type) {
             case "progress": {
               const { loaded, total, status } = msg;
-              if (shouldEmitProgress(loaded, total, status, lastPct, lastStatus)) {
-                lastPct = total > 0 ? Math.round((loaded / total) * 100) : -1;
-                lastStatus = status;
-                handlers.onProgress(loaded, total, status);
+              const rawPct = total > 0 ? Math.round((loaded / total) * 100) : -1;
+              const displayPct = maxPct === -1 ? rawPct : Math.max(maxPct, rawPct);
+
+              // Throttle decision uses displayPct so the bar never regresses.
+              // Always emit first event, indeterminate, and status transitions.
+              // Otherwise suppress if displayPct hasn't increased.
+              if (lastPct !== -1 && total !== 0 && status === lastStatus && displayPct === lastPct) {
+                break; // suppress — no meaningful change
               }
+
+              maxPct = displayPct;
+              lastPct = displayPct;
+              lastStatus = status;
+
+              // Adjust loaded so the UI renders displayPct, not the raw regressed pct
+              const adjustedLoaded = total > 0 ? Math.ceil((displayPct / 100) * total) : loaded;
+              handlers.onProgress(adjustedLoaded, total, status);
               break;
             }
             case "chunk_progress":
