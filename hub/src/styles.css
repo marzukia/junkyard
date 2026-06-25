@@ -55,13 +55,13 @@ html {
   scroll-behavior: smooth;
 }
 body {
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
   background: var(--canvas);
   line-height: 1.5;
   min-height: 100vh;
 }
 .mono {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
 }
 .wrap {
   max-width: 1180px;
@@ -111,7 +111,7 @@ header {
 .logo .wm {
   display: inline-flex;
   align-items: baseline;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   line-height: 1;
 }
 .logo .wm .wm-j {
@@ -124,7 +124,7 @@ header {
   font-weight: 800;
   font-size: 18px;
   letter-spacing: -.1em;
-  color: var(--accent);
+  color: var(--coral);
   margin-left: -.1em;
 }
 .space-toggle-wrapper {
@@ -141,7 +141,7 @@ header {
   border: 1px solid var(--rule);
 }
 .space-btn {
-  font-family: "Inter", sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0;
@@ -196,12 +196,12 @@ header {
   flex: none;
 }
 .gh-link {
-  display: flex;
-  align-items: center;
+  font-family: "Roboto Mono", monospace;
+  font-size: 12.5px;
   color: var(--ink-mid);
   text-decoration: none;
   transition: color .15s;
-  line-height: 0;
+  letter-spacing: .02em;
 }
 .gh-link:hover {
   color: var(--accent);
@@ -210,13 +210,95 @@ header {
 /* hero */
 .hero {
   display: grid;
-  grid-template-columns: 1.02fr .98fr;
+  grid-template-columns: 1fr 1fr;
   gap: 52px;
   align-items: center;
   padding: 60px 0 36px;
 }
 .hero-left {
   min-width: 0;
+}
+
+/* terminal panel (right column) */
+.hero-right {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.term {
+  background: #0f1419;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 14px;
+  background: #1a2230;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.term-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex: none;
+}
+.term-dot--teal  { background: #2f9d8d; }
+.term-dot--amber { background: #e8b04b; }
+.term-dot--coral { background: #d9594c; }
+.term-label {
+  font-family: "Roboto Mono", monospace;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.38);
+  letter-spacing: .06em;
+  margin-left: 4px;
+}
+.term-body {
+  font-family: "Roboto Mono", monospace;
+  font-size: 13px;
+  line-height: 1.75;
+  padding: 18px 20px 20px;
+  color: rgba(255, 255, 255, 0.72);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+/* terminal syntax colours */
+.t-prompt   { color: #e8b04b; font-weight: 700; }   /* amber: prompt $ */
+.t-cmd      { color: #ffffff; font-weight: 600; }   /* white: commands */
+.t-path     { color: rgba(255, 255, 255, 0.55); }   /* muted: file paths */
+.t-ok       { color: #2f9d8d; font-weight: 700; }   /* teal: tick and MCP keyword */
+.t-num      { color: #e8b04b; font-weight: 700; }   /* amber: counts */
+.t-tool-teal  { color: #2f9d8d; }                   /* teal: even-indexed tool names */
+.t-tool-coral { color: #d9594c; }                   /* coral: odd-indexed tool names */
+
+.term-caption {
+  font-size: 13px;
+  color: var(--ink-faint);
+  line-height: 1.55;
+}
+.bun-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "Roboto Mono", monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--amber-text);
+  background: color-mix(in srgb, var(--amber) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--amber) 32%, transparent);
+  border-radius: 999px;
+  padding: 5px 12px;
+  letter-spacing: .03em;
+  width: fit-content;
+}
+[data-scheme="dark"] .bun-badge {
+  color: var(--amber);
+  background: color-mix(in srgb, var(--amber) 10%, transparent);
+  border-color: color-mix(in srgb, var(--amber) 24%, transparent);
 }
 .cta {
   display: flex;
@@ -225,7 +307,7 @@ header {
   flex-wrap: wrap;
 }
 .btn {
-  font-family: "Inter", sans-serif;
+  font-family: "Roboto", sans-serif;
   font-weight: 600;
   font-size: 14.5px;
   padding: 12px 21px;
@@ -260,127 +342,6 @@ header {
   border-color: var(--accent);
   transform: translateY(-2px);
 }
-/* hero showcase window */
-.hero-right {
-  position: relative;
-  min-width: 0;
-}
-
-.window {
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 16px;
-  box-shadow: var(--shadow-pop);
-  overflow: hidden;
-  transform: rotate(.7deg);
-  transition: transform .35s cubic-bezier(0.2, 0.8, 0.3, 1);
-}
-.hero-right:hover .window {
-  transform: rotate(0deg) translateY(-3px);
-}
-.winbar {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 11px 15px;
-  border-bottom: 1px solid var(--rule);
-  background: var(--surface-sunken);
-}
-.dots {
-  display: flex;
-  gap: 7px;
-}
-.dots i {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  display: block;
-}
-.dots i:nth-child(1) {
-  background: var(--coral);
-}
-.dots i:nth-child(2) {
-  background: var(--amber);
-}
-.dots i:nth-child(3) {
-  background: var(--accent);
-}
-.url {
-  font-size: 12px;
-  color: var(--ink-faint);
-  letter-spacing: .02em;
-}
-.winbody {
-  padding: 16px;
-  background: var(--canvas);
-}
-.mini-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 11px;
-}
-.mini {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  padding: 14px;
-  position: relative;
-  overflow: hidden;
-}
-.mini::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    var(--accent) 0 33.3%,
-    var(--amber) 33.3% 66.6%,
-    var(--coral) 66.6%
-  );
-  opacity: 1;
-}
-.mtop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.mnum {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 9.5px;
-  color: var(--ink-faint);
-  letter-spacing: .06em;
-}
-.mfree {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 8.5px;
-  font-weight: 600;
-  letter-spacing: .05em;
-  color: var(--accent);
-  background: var(--accent-soft);
-  padding: 2px 6px;
-  border-radius: 999px;
-}
-.mname {
-  font-weight: 700;
-  font-size: 14.5px;
-  letter-spacing: -.01em;
-  margin-top: 11px;
-}
-.mdesc {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  color: var(--ink-faint);
-  margin-top: 5px;
-}
-.mdesc s {
-  color: var(--coral);
-}
 @media (max-width: 920px) {
   .hero {
     grid-template-columns: 1fr;
@@ -388,17 +349,12 @@ header {
     padding: 44px 0 30px;
   }
   .hero-right {
-    max-width: 480px;
-  }
-}
-@media (max-width: 540px) {
-  .hero-right {
-    display: none;
+    max-width: 600px;
   }
 }
 .hero h1 {
-  font-family: "JetBrains Mono", monospace;
-  font-size: clamp(40px, 6.6vw, 68px);
+  font-family: "Roboto Mono", monospace;
+  font-size: clamp(38px, 7vw, 68px);
   font-weight: 800;
   letter-spacing: -.045em;
   line-height: 1;
@@ -408,9 +364,9 @@ header {
   align-items: baseline;
 }
 .hero h1 .sh {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-weight: 800;
-  color: var(--accent);
+  color: var(--coral);
   letter-spacing: -.1em;
   font-size: 1em;
   margin-left: -.1em;
@@ -431,7 +387,7 @@ header {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 26px;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 12px;
 }
 .pill {
@@ -472,7 +428,7 @@ header {
 }
 .search input {
   width: 100%;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 14px;
   color: var(--ink);
   background: var(--surface);
@@ -495,7 +451,7 @@ header {
   top: 50%;
   transform: translateY(-50%);
   color: var(--ink-faint);
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-weight: 600;
   pointer-events: none;
 }
@@ -504,7 +460,7 @@ header {
   right: 11px;
   top: 50%;
   transform: translateY(-50%);
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 11px;
   color: var(--ink-faint);
   border: 1px solid var(--rule);
@@ -520,7 +476,7 @@ header {
   flex-wrap: wrap;
 }
 .chip {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 12px;
   letter-spacing: .02em;
   color: var(--ink-mid);
@@ -538,15 +494,18 @@ header {
   color: var(--ink);
 }
 .chip.on {
-  background: var(--accent);
-  color: var(--accent-ink);
-  border-color: var(--accent);
+  /* amber (#e8b04b) is the active filter colour; gives amber a functional job
+     beyond decorative use. #15130F on #e8b04b ≈ 8:1 (WCAG AAA).
+     Text is a fixed dark literal (not var(--ink)) so it stays legible in dark
+     mode, where --ink flips to near-white. */
+  background: var(--amber);
+  color: #15130F;
+  border-color: var(--amber);
   font-weight: 600;
 }
-/* Light mode: #fff on --accent (#2f9d8d) = 3.32:1 (fails AA).
-   Override to dark ink: #1a2530 on #2f9d8d = 4.68:1 (WCAG AA pass). */
-[data-scheme="light"] .chip.on {
-  color: var(--ink);
+/* Ensure dark-mode cascade cannot re-inherit a light --ink value on the chip. */
+[data-scheme="dark"] .chip.on {
+  color: #15130F;
 }
 .chip .n {
   opacity: 0.6;
@@ -585,8 +544,8 @@ header {
 .shead h2::after {
   content: "";
   display: block;
-  width: 34px;
-  height: 3px;
+  width: 50px;
+  height: 4px;
   border-radius: 2px;
   background: linear-gradient(
     90deg,
@@ -596,7 +555,7 @@ header {
   margin-top: 9px;
 }
 .shead .c {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 12px;
   color: var(--ink-faint);
   letter-spacing: .06em;
@@ -640,11 +599,10 @@ header {
 }
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-pop);
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
+  box-shadow: 0 4px 14px rgba(26, 37, 48, 0.1);
 }
-.card:hover::before {
-  opacity: 1;
+[data-scheme="dark"] .card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 .card .top {
   display: flex;
@@ -652,20 +610,10 @@ header {
   justify-content: space-between;
 }
 .card .num {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 11px;
   color: var(--ink-faint);
   letter-spacing: .08em;
-}
-.card .free {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  color: var(--accent);
-  background: var(--accent-soft);
-  padding: 3px 8px;
-  border-radius: 999px;
 }
 .card h3 {
   font-size: 1.12rem;
@@ -673,9 +621,7 @@ header {
   letter-spacing: -.01em;
   margin-top: 13px;
 }
-.card:hover h3 {
-  color: var(--accent);
-}
+/* card hover: title stays default ink (accent only on arrow slide) */
 .card p {
   font-size: .86rem;
   color: var(--ink-mid);
@@ -690,7 +636,7 @@ header {
   margin-top: 10px;
 }
 .tag-badge {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 9.5px;
   font-weight: 600;
   letter-spacing: .04em;
@@ -717,7 +663,7 @@ header {
   border-top: 1px solid var(--rule);
 }
 .card .vs {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 11px;
   color: var(--ink-faint);
 }
@@ -726,7 +672,7 @@ header {
   text-decoration-thickness: 1px;
 }
 .card .go {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 12px;
   font-weight: 600;
   color: var(--ink-faint);
@@ -766,7 +712,7 @@ header {
   padding: 48px 0;
   text-align: center;
   color: var(--ink-faint);
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
 }
 .empty b {
   color: var(--accent);
@@ -822,7 +768,7 @@ header {
   flex-wrap: wrap;
   gap: 10px 22px;
   margin-top: 28px;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Roboto Mono", monospace;
   font-size: 13px;
   color: var(--ink-faint);
 }
@@ -835,23 +781,26 @@ header {
   text-decoration: underline;
 }
 .manifesto .disclaimer {
-  margin-top: 20px;
-  font-size: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-size: 15px;
+  font-family: "Roboto", system-ui, sans-serif;
   color: var(--ink-faint);
-  opacity: 0.7;
-  font-family: "JetBrains Mono", monospace;
+  font-style: italic;
   line-height: 1.6;
 }
 footer {
-  padding: 24px 0 56px;
+  padding: 28px 0 56px;
+  border-top: 1px solid var(--rule);
 }
 .fbar {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px 18px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11.5px;
+  font-family: "Roboto Mono", monospace;
+  font-size: 12.5px;
   color: var(--ink-faint);
   letter-spacing: .03em;
 }
@@ -878,6 +827,7 @@ footer {
   .hero h1,
   .hero p.lead,
   .hero .statline,
+  .hero-right,
   .tools-top {
     opacity: 0;
     animation: fadeUp .55s cubic-bezier(0.2, 0.75, 0.3, 1) forwards;
@@ -890,6 +840,9 @@ footer {
   }
   .hero .statline {
     animation-delay: .2s;
+  }
+  .hero-right {
+    animation-delay: .18s;
   }
   .tools-top {
     animation-delay: .27s;
@@ -920,6 +873,7 @@ footer {
   }
   .hero {
     padding: 40px 0 22px;
+    gap: 28px;
   }
   .hero h1 {
     line-height: 1.02;

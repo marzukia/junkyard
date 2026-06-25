@@ -15,8 +15,6 @@ const TAG_LABELS: Record<AppTag, string> = {
 
 export function ToolCard({ tool, index, animationDelay }: ToolCardProps) {
   const cardNum = String(index + 1).padStart(2, "0");
-  // "free alternative to <incumbent>" when an incumbent exists, otherwise "free forever"
-  const vsContent = tool.incumbent ? `free alternative to ${tool.incumbent}` : "free forever";
 
   // Path-based routing - apps are served under /<slug>/ on the same site.
   const href = `/${tool.slug}/`;
@@ -27,7 +25,6 @@ export function ToolCard({ tool, index, animationDelay }: ToolCardProps) {
     <a className="card" href={href} style={{ animationDelay: `${animationDelay}s` }}>
       <div className="top">
         <span className="num">#{cardNum}</span>
-        <span className="free">FREE</span>
       </div>
       <h3>{tool.name}</h3>
       <p>{tool.tagline}</p>
@@ -50,7 +47,11 @@ export function ToolCard({ tool, index, animationDelay }: ToolCardProps) {
         </div>
       )}
       <div className="foot">
-        <span className="vs">{vsContent}</span>
+        {tool.incumbent ? (
+          <span className="vs">free alternative to {tool.incumbent}</span>
+        ) : (
+          <span />
+        )}
         <span className="go">
           open <span className="a">&#x2192;</span>
         </span>
