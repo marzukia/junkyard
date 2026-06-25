@@ -31,7 +31,7 @@ export function ToolCard({ tool, index, animationDelay }: ToolCardProps) {
       {hasTags && (
         <div className="card-tags">
           {tool.tags?.map((tag) => (
-            <span key={tag} className="tag-badge">
+            <span key={tag} className={`tag-badge tag-badge--${tag}`}>
               {TAG_LABELS[tag]}
             </span>
           ))}
