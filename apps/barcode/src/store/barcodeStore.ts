@@ -88,10 +88,28 @@ export const useBarcodeStore = create<BarcodeState>()(
         margin: state.margin,
         displayValue: state.displayValue,
       }),
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.validationError = validate(state.format, state.input);
-        }
+      merge: (persisted, current) => {
+        const p = persisted as Partial<BarcodeState>;
+        const format: BarcodeFormat =
+          typeof p.format === "string" && p.format in FORMAT_META
+            ? (p.format as BarcodeFormat)
+            : DEFAULT_FORMAT;
+        const input = typeof p.input === "string" ? p.input : DEFAULT_INPUT;
+        const width = typeof p.width === "number" ? p.width : current.width;
+        const height = typeof p.height === "number" ? p.height : current.height;
+        const margin = typeof p.margin === "number" ? p.margin : current.margin;
+        const displayValue =
+          typeof p.displayValue === "boolean" ? p.displayValue : current.displayValue;
+        return {
+          ...current,
+          format,
+          input,
+          width,
+          height,
+          margin,
+          displayValue,
+          validationError: validate(format, input),
+        };
       },
     }
   )
