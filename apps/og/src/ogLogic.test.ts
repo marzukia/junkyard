@@ -78,12 +78,12 @@ describe("resolveBgCss", () => {
 });
 
 describe("resolveFontFamily", () => {
-  it("returns Inter for 'inter'", () => {
-    expect(resolveFontFamily("inter")).toContain("Inter");
+  it("returns Roboto for 'inter'", () => {
+    expect(resolveFontFamily("inter")).toContain("Roboto");
   });
 
-  it("returns JetBrains Mono for 'mono'", () => {
-    expect(resolveFontFamily("mono")).toContain("JetBrains Mono");
+  it("returns Roboto Mono for 'mono'", () => {
+    expect(resolveFontFamily("mono")).toContain("Roboto Mono");
   });
 
   it("returns Georgia for 'serif'", () => {

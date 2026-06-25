@@ -45,7 +45,7 @@ function renderSvgOffscreen(value: string, format: BarcodeFormat): SVGSVGElement
       displayValue: true,
       lineColor: "#1a2530",
       background: "#ffffff",
-      font: "Inter, system-ui, sans-serif",
+      font: "Roboto, system-ui, sans-serif",
       fontSize: 12,
       textMargin: 4,
     });
@@ -106,7 +106,7 @@ function BatchPreviewItem({ item, format }: { item: BatchItem; format: BarcodeFo
           displayValue: true,
           lineColor: "#1a2530",
           background: "#ffffff",
-          font: "Inter, system-ui, sans-serif",
+          font: "Roboto, system-ui, sans-serif",
           fontSize: 11,
           textMargin: 3,
         });

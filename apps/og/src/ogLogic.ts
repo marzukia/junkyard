@@ -114,11 +114,11 @@ export function resolveBgCss(
 export function resolveFontFamily(font: FontPreset): string {
   switch (font) {
     case "mono":
-      return "'JetBrains Mono', 'Courier New', monospace";
+      return "'Roboto Mono', 'Courier New', monospace";
     case "serif":
       return "Georgia, 'Times New Roman', serif";
     default:
-      return "'Inter', system-ui, sans-serif";
+      return "'Roboto', system-ui, sans-serif";
   }
 }
 

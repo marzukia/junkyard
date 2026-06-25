@@ -550,7 +550,7 @@ export function renderPlaceholderSvg(cfg: PlaceholderConfig): string {
   <text
     x="${width / 2}"
     y="${height / 2}"
-    font-family="Inter, system-ui, sans-serif"
+    font-family="Roboto, system-ui, sans-serif"
     font-size="${fontSize}"
     font-weight="600"
     fill="${textColor}"

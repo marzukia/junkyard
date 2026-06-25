@@ -24,8 +24,8 @@
   --accent-soft: #eaf6f3;
   --shadow-card: 0 1px 2px rgba(26, 37, 48, 0.04), 0 8px 28px rgba(26, 37, 48, 0.06);
   --shadow-pop: 0 6px 28px rgba(26, 37, 48, 0.14);
-  --font-text: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --font-text: "Roboto", system-ui, -apple-system, sans-serif;
+  --font-mono: "Roboto Mono", "Courier New", monospace;
   --radius: 16px;
   --radius-sm: 10px;
 }
@@ -140,7 +140,7 @@ body {
 .site-title-main {
   font-family: var(--font-text);
   font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1;
   color: var(--ink);
@@ -261,7 +261,7 @@ body {
 .btn-primary {
   font-family: var(--font-text);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0;
   padding: 0.5rem 1.1rem;
   border: none;
@@ -410,7 +410,7 @@ body {
 .md-tool-btn {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.28rem 0.55rem;
   border: 1px solid var(--rule);
   border-radius: var(--radius-sm);
@@ -484,7 +484,7 @@ body {
 }
 
 .md-toc-h1 {
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
 }
 
@@ -525,7 +525,7 @@ body {
   background: rgba(47, 157, 141, 0.12);
   font-family: var(--font-mono);
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--accent);
   pointer-events: none;
   border-radius: var(--radius-sm);
@@ -602,7 +602,7 @@ body {
 .md-prose h5,
 .md-prose h6 {
   font-family: var(--font-text);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.2;
   margin-top: 1.5em;
@@ -706,7 +706,7 @@ body {
 
 .md-prose th {
   background: var(--surface-sunken);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.8rem;
 }
 
@@ -782,7 +782,7 @@ body {
 .md-stat-val {
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
 }
 
@@ -819,7 +819,7 @@ body {
 .md-tab-btn {
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.3rem 0.7rem;
   min-height: 32px;
   border: none;

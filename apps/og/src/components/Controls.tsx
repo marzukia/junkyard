@@ -20,8 +20,8 @@ const LAYOUT_OPTIONS: { value: Layout; label: string }[] = [
 ];
 
 const FONT_OPTIONS: { value: FontPreset; label: string }[] = [
-  { value: "inter", label: "Inter (sans)" },
-  { value: "mono", label: "JetBrains Mono" },
+  { value: "inter", label: "Roboto (sans)" },
+  { value: "mono", label: "Roboto Mono" },
   { value: "serif", label: "Serif" },
 ];
 

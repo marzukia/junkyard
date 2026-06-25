@@ -24,8 +24,8 @@
   --accent-soft: #eaf6f3;
   --shadow-card: 0 1px 2px rgba(26, 37, 48, 0.04), 0 8px 28px rgba(26, 37, 48, 0.06);
   --shadow-pop: 0 6px 28px rgba(26, 37, 48, 0.14);
-  --font-text: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --font-text: "Roboto", system-ui, -apple-system, sans-serif;
+  --font-mono: "Roboto Mono", "Courier New", monospace;
   --radius: 16px;
   --radius-sm: 10px;
 }
@@ -140,7 +140,7 @@ body {
 .site-title-main {
   font-family: var(--font-text);
   font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1;
   color: var(--ink);
@@ -272,7 +272,7 @@ body {
 .btn-primary {
   font-family: var(--font-text);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0;
   padding: 0.5rem 1.1rem;
   border: none;
@@ -450,7 +450,7 @@ body {
 .rx-flag-btn {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   width: 1.4rem;
   height: 1.4rem;
   display: flex;
@@ -567,7 +567,7 @@ body {
 
 .rx-stat--matches {
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* Test text area */
@@ -713,7 +713,7 @@ body {
 .rx-match-badge {
   font-family: var(--font-mono);
   font-size: 0.6rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.06em;
   color: var(--accent-ink);
   background: var(--accent);
@@ -845,7 +845,7 @@ body {
 .rx-explain-token {
   font-family: var(--font-mono);
   font-size: 12.5px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
   flex-shrink: 0;
   min-width: 3.5rem;
@@ -888,7 +888,7 @@ body {
 
 .rx-library-label {
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
   margin-bottom: 0.2rem;
 }
@@ -929,7 +929,7 @@ body {
 .rx-subst-token {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--accent);
   flex-shrink: 0;
   min-width: 5.5rem;

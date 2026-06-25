@@ -8,7 +8,7 @@ the source of truth for that package.
 
 ```
 kit/
-  theme.ts                  — Mantine createTheme (Inter + JetBrains Mono, teal primary)
+  theme.ts                  — Mantine createTheme (Roboto + Roboto Mono, teal primary)
   styles.css                — Design-system CSS vars light+dark, card/pill/button/footer
   components/
     BrandMark.tsx           — SVG glyph wrapper (pass glyph as children)
@@ -206,8 +206,8 @@ Do NOT push — the orchestrator creates repos and deploys.
 | `--ink-faint`      | `#9aa3ac`      | `#5f6e78`  |
 | `--accent`         | `#2f9d8d`      | `#41b6a6`  |
 | `--radius`         | `16px`         | `16px`     |
-| `--font-text`      | Inter          | Inter      |
-| `--font-mono`      | JetBrains Mono | JetBrains Mono |
+| `--font-text`      | Roboto         | Roboto     |
+| `--font-mono`      | Roboto Mono    | Roboto Mono    |
 
 Brand palette (use for glyphs/accents): teal `#2f9d8d`, amber `#e8b04b`, coral `#d9594c`.
 

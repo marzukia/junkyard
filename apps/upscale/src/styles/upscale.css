@@ -37,7 +37,7 @@
   min-height: 40px;
   min-width: 44px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .up-scale-btn.space-btn--active {
@@ -97,7 +97,7 @@
 .up-dropzone-label {
   font-family: var(--font-text);
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
 }
 

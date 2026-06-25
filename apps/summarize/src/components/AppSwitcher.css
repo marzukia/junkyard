@@ -205,7 +205,7 @@
 .jy-switcher__item-name {
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
   line-height: 1.2;
 }

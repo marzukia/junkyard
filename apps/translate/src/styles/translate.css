@@ -479,7 +479,7 @@
 
 .lp-option--selected {
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .lp-option--selected.lp-option--active {

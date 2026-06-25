@@ -24,8 +24,8 @@
   --accent-soft: #eaf6f3;
   --shadow-card: 0 1px 2px rgba(26, 37, 48, 0.04), 0 8px 28px rgba(26, 37, 48, 0.06);
   --shadow-pop: 0 6px 28px rgba(26, 37, 48, 0.14);
-  --font-text: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --font-text: "Roboto", system-ui, -apple-system, sans-serif;
+  --font-mono: "Roboto Mono", "Courier New", monospace;
   --radius: 16px;
   --radius-sm: 10px;
 }
@@ -140,7 +140,7 @@ body {
 .site-title-main {
   font-family: var(--font-text);
   font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1;
   color: var(--ink);
@@ -261,7 +261,7 @@ body {
 .btn-primary {
   font-family: var(--font-text);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0;
   padding: 0.5rem 1.1rem;
   border: none;
@@ -395,7 +395,7 @@ body {
 .ocr-dropzone-label {
   font-family: var(--font-text);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
 }
 
@@ -471,7 +471,7 @@ body {
 .ocr-sample-btn {
   font-family: var(--font-mono);
   font-size: 0.65rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 0.38rem 0.9rem;
@@ -658,7 +658,7 @@ body {
 .ocr-confidence-badge {
   font-family: var(--font-mono);
   font-size: 0.62rem;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
   letter-spacing: 0.02em;
@@ -808,7 +808,7 @@ body {
   gap: 0.5rem;
   font-family: var(--font-mono);
   font-size: 0.62rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--accent);
@@ -821,7 +821,7 @@ body {
 .ocr-crop-clear-btn {
   font-family: var(--font-mono);
   font-size: 0.6rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.04em;
   color: var(--accent);
   background: transparent;
@@ -1055,7 +1055,7 @@ body {
 .ocr-highlight-toggle {
   font-family: var(--font-mono);
   font-size: 0.62rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.04em;
   padding: 0.2rem 0.6rem;
   border: 1px solid var(--rule);

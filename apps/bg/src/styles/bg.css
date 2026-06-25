@@ -54,7 +54,7 @@
 .bg-dropzone-label {
   font-family: var(--font-text);
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
 }
 
