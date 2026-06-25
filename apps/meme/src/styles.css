@@ -24,8 +24,8 @@
   --accent-soft: #eaf6f3;
   --shadow-card: 0 1px 2px rgba(26, 37, 48, 0.04), 0 8px 28px rgba(26, 37, 48, 0.06);
   --shadow-pop: 0 6px 28px rgba(26, 37, 48, 0.14);
-  --font-text: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --font-text: "Roboto", system-ui, -apple-system, sans-serif;
+  --font-mono: "Roboto Mono", "Courier New", monospace;
   --radius: 16px;
   --radius-sm: 10px;
 }
@@ -135,7 +135,7 @@ body {
 .site-title-main {
   font-family: var(--font-text);
   font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1;
   color: var(--ink);
@@ -268,7 +268,7 @@ body {
 .btn-primary {
   font-family: var(--font-text);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0;
   padding: 0.5rem 1.1rem;
   border: none;
@@ -302,7 +302,7 @@ body {
 .btn-accent {
   font-family: var(--font-text);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0;
   padding: 0.5rem 1.1rem;
   border: none;
@@ -394,7 +394,7 @@ body {
 .drop-zone-title {
   font-family: var(--font-text);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
 }
 
@@ -507,7 +507,7 @@ body {
 .format-btn {
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 0.28rem 0.75rem;
@@ -630,7 +630,7 @@ body {
 
 .canvas-placeholder-title {
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink-mid);
 }
 
@@ -660,7 +660,7 @@ body {
 .sidebar-section-title {
   font-family: var(--font-mono);
   font-size: 0.6rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-faint);
@@ -685,7 +685,7 @@ body {
 .text-input {
   font-family: var(--font-text);
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.55rem 0.75rem;
   border: 1px solid var(--rule);
   border-radius: var(--radius-sm);
@@ -821,7 +821,7 @@ body {
 .layer-control-label {
   font-family: var(--font-mono);
   font-size: 0.58rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-faint);
@@ -838,7 +838,7 @@ body {
 .btn-add-layer {
   font-family: var(--font-mono);
   font-size: 0.6rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 0.25rem 0.6rem;
@@ -960,7 +960,7 @@ body {
 
 .font-btn {
   font-size: 0.62rem;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.2rem 0.45rem;
   border: none;
   border-radius: 6px;

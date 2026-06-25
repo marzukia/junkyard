@@ -13,13 +13,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@fontsource/inter": "^5.2.8",
-    "@fontsource/jetbrains-mono": "^5.1.2",
     "@mantine/core": "^7.17.4",
     "@mlc-ai/web-llm": "^0.2.79",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zustand": "^5.0.5"
+    "zustand": "^5.0.5",
+    "@fontsource/roboto": "^5.2.10",
+    "@fontsource/roboto-mono": "^5.2.9"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

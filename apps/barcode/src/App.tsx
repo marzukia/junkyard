@@ -312,7 +312,7 @@ function BarcodeTab() {
         lineColor: "#1a2530",
         background: "#ffffff",
         fontOptions: "500",
-        font: "Inter, system-ui, sans-serif",
+        font: "Roboto, system-ui, sans-serif",
         fontSize: 14,
         textMargin: 6,
       });

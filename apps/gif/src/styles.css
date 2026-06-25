@@ -24,8 +24,8 @@
   --accent-soft: #eaf6f3;
   --shadow-card: 0 1px 2px rgba(26, 37, 48, 0.04), 0 8px 28px rgba(26, 37, 48, 0.06);
   --shadow-pop: 0 6px 28px rgba(26, 37, 48, 0.14);
-  --font-text: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --font-text: "Roboto", system-ui, -apple-system, sans-serif;
+  --font-mono: "Roboto Mono", "Courier New", monospace;
   --radius: 16px;
   --radius-sm: 10px;
 }
@@ -141,7 +141,7 @@ body {
 .site-title-main {
   font-family: var(--font-text);
   font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1;
   color: var(--ink);
@@ -262,7 +262,7 @@ body {
 .btn-primary {
   font-family: var(--font-text);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0;
   padding: 0.5rem 1.1rem;
   border: none;
@@ -425,7 +425,7 @@ body {
 .drop-zone-title {
   font-family: var(--font-text);
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
 }
 
@@ -472,7 +472,7 @@ body {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0;
 }
 
@@ -495,7 +495,7 @@ body {
 .btn-accent {
   font-family: var(--font-text);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.5rem 1.25rem;
   border: none;
   border-radius: 999px;

@@ -46,7 +46,7 @@
 .chat-sidebar-new-btn {
   font-family: var(--font-mono);
   font-size: 0.6rem;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.25rem 0.5rem;
   border: 1px solid var(--rule);
   border-radius: 999px;
@@ -102,7 +102,7 @@
 .chat-sidebar-item-btn--active {
   background: var(--accent-soft);
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .chat-sidebar-del-btn {
@@ -186,7 +186,7 @@
     gap: 0.4rem;
     font-family: var(--font-mono);
     font-size: 0.65rem;
-    font-weight: 600;
+    font-weight: 500;
     padding: 0.4rem 0.75rem;
     border: 1px solid var(--rule);
     border-radius: 999px;
@@ -608,7 +608,7 @@
   gap: 0.4rem;
   font-family: var(--font-mono);
   font-size: 0.58rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-faint);
@@ -848,7 +848,7 @@
 .chat-copy-flash {
   font-family: var(--font-mono);
   font-size: 0.58rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--accent);
   letter-spacing: 0.04em;
 }

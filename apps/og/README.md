@@ -8,7 +8,7 @@ Design Open Graph images, Twitter cards, and social share banners at the standar
 - Canvas-based 1200x630 image rendering
 - Layout options: centered, left, brand
 - Background: solid colour or gradient with configurable angle
-- Font presets: Inter, Mono, Serif
+- Font presets: Roboto, Mono, Serif
 - Title, subtitle, and badge fields
 - Logo image upload with configurable size
 - Background image overlay with opacity control

@@ -128,7 +128,7 @@ export function wrapHtmlDocument(bodyHtml: string, title: string): string {
   <style>
     body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; color: #1a2530; }
     pre { background: #f4f5f6; border-radius: 6px; padding: 1rem; overflow-x: auto; }
-    code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; }
+    code { font-family: 'Roboto Mono', monospace; font-size: 0.88em; }
     pre code { background: none; padding: 0; }
     blockquote { border-left: 3px solid #2f9d8d; margin: 0; padding-left: 1rem; color: #5b6671; }
     table { border-collapse: collapse; width: 100%; }

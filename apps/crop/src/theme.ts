@@ -6,10 +6,10 @@ import { createTheme } from "@mantine/core";
  * Do not modify per-tool — extend via MantineProvider's `theme` merge if needed.
  */
 export const fleetTheme = createTheme({
-  fontFamily: "'Inter', system-ui, sans-serif",
-  fontFamilyMonospace: "'JetBrains Mono', 'Courier New', monospace",
+  fontFamily: "'Roboto', system-ui, sans-serif",
+  fontFamilyMonospace: "'Roboto Mono', 'Courier New', monospace",
   headings: {
-    fontFamily: "'Inter', system-ui, sans-serif",
+    fontFamily: "'Roboto', system-ui, sans-serif",
     fontWeight: "800",
   },
   primaryColor: "teal",
@@ -33,7 +33,7 @@ export const fleetTheme = createTheme({
     TextInput: {
       styles: {
         input: {
-          fontFamily: "'JetBrains Mono', monospace",
+          fontFamily: "'Roboto Mono', monospace",
           fontSize: "13px",
           border: "1px solid var(--rule)",
           background: "var(--surface)",
