@@ -217,8 +217,8 @@ header {
 }
 /* single-column hero: no browser-window mockup, text breathes */
 .hero--solo {
-  grid-template-columns: 1fr;
-  max-width: 720px;
+  display: block;
+  max-width: 700px;
 }
 .hero-left {
   min-width: 0;
@@ -265,140 +265,9 @@ header {
   border-color: var(--accent);
   transform: translateY(-2px);
 }
-/* hero showcase window */
-.hero-right {
-  position: relative;
-  min-width: 0;
-}
-
-.window {
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 16px;
-  box-shadow: var(--shadow-pop);
-  overflow: hidden;
-  transform: rotate(.7deg);
-  transition: transform .35s cubic-bezier(0.2, 0.8, 0.3, 1);
-}
-.hero-right:hover .window {
-  transform: rotate(0deg) translateY(-3px);
-}
-.winbar {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 11px 15px;
-  border-bottom: 1px solid var(--rule);
-  background: var(--surface-sunken);
-}
-.dots {
-  display: flex;
-  gap: 7px;
-}
-.dots i {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  display: block;
-}
-.dots i:nth-child(1) {
-  background: var(--coral);
-}
-.dots i:nth-child(2) {
-  background: var(--amber);
-}
-.dots i:nth-child(3) {
-  background: var(--accent);
-}
-.url {
-  font-size: 12px;
-  color: var(--ink-faint);
-  letter-spacing: .02em;
-}
-.winbody {
-  padding: 16px;
-  background: var(--canvas);
-}
-.mini-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 11px;
-}
-.mini {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  padding: 14px;
-  position: relative;
-  overflow: hidden;
-}
-.mini::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    var(--accent) 0 33.3%,
-    var(--amber) 33.3% 66.6%,
-    var(--coral) 66.6%
-  );
-  opacity: 1;
-}
-.mtop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.mnum {
-  font-family: "Roboto Mono", monospace;
-  font-size: 9.5px;
-  color: var(--ink-faint);
-  letter-spacing: .06em;
-}
-.mfree {
-  font-family: "Roboto Mono", monospace;
-  font-size: 8.5px;
-  font-weight: 600;
-  letter-spacing: .05em;
-  color: var(--accent);
-  background: var(--accent-soft);
-  padding: 2px 6px;
-  border-radius: 999px;
-}
-.mname {
-  font-weight: 700;
-  font-size: 14.5px;
-  letter-spacing: -.01em;
-  margin-top: 11px;
-}
-.mdesc {
-  font-family: "Roboto Mono", monospace;
-  font-size: 10px;
-  color: var(--ink-faint);
-  margin-top: 5px;
-}
-.mdesc s {
-  color: var(--coral);
-}
 @media (max-width: 920px) {
   .hero {
-    grid-template-columns: 1fr;
-    gap: 36px;
     padding: 44px 0 30px;
-  }
-  .hero-right {
-    max-width: 480px;
-  }
-}
-@media (max-width: 540px) {
-  .hero-right {
-    display: none;
   }
 }
 .hero h1 {
