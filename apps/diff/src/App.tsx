@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
-import { buildUnifiedPatch, computeDiff, wordLevelStats } from "./lib/diff";
+import { buildUnifiedPatch, computeDiff, LARGE_INPUT_LINE_THRESHOLD, wordLevelStats } from "./lib/diff";
 import type { InlineLine, SideBySideLine, WordChange } from "./lib/diff";
 import type { DiffLevel, ViewMode } from "./store/diffStore";
 import { useDiffStore } from "./store/diffStore";
@@ -898,6 +898,13 @@ export function App() {
                   onPrev={goPrev}
                   onNext={goNext}
                 />
+              )}
+
+              {/* Word diff disabled notice */}
+              {diffResult.wordDiffDisabled && (
+                <output className="diff-word-notice" role="status" aria-live="polite">
+                  <span>Word-level highlighting disabled for large input ({LARGE_INPUT_LINE_THRESHOLD}+ lines). Line-level diff remains.</span>
+                </output>
               )}
 
               <div className="card diff-output-card">
