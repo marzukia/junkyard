@@ -11,6 +11,7 @@ import {
   batchConvert,
   computeDiff,
   detectUnit,
+  hasExplicitTimezone,
   parseDiffInput,
 } from "./lib/timestamp";
 import { useTimestampStore } from "./store/timestampStore";
@@ -504,6 +505,12 @@ export function App() {
                   autoComplete="off"
                 />
               </div>
+              {/* TZ notice */}
+              {inputMode === "date" && dateInput.trim() !== "" && !hasExplicitTimezone(dateInput) && (
+                <output className="ts-tz-notice" role="status" aria-live="polite">
+                  <span>⚠ No timezone offset detected — parsed in your browser's local timezone, not the selected "{timezone}" timezone. Add Z (UTC) or +HH:MM for explicit timezone.</span>
+                </output>
+              )}
               {parseError && (
                 <div className="ts-input-error" role="alert" aria-live="polite">
                   <span>&#x2715;</span>
