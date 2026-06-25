@@ -233,6 +233,34 @@ export const useCsvStore = create<CsvState>()(
         hasHeader: state.hasHeader,
         outputFormat: state.outputFormat,
       }),
+      merge: (persisted, current) => {
+        const p = persisted as Partial<CsvState>;
+        const VALID_MODES: ConvertMode[] = ["csv-to-json", "json-to-csv"];
+        const VALID_DELIMITERS: Delimiter[] = [",", "\t", ";", "|"];
+        const VALID_FORMATS: OutputFormat[] = ["json", "markdown", "sql", "xml", "yaml"];
+        return {
+          ...current,
+          mode:
+            typeof p.mode === "string" && VALID_MODES.includes(p.mode as ConvertMode)
+              ? (p.mode as ConvertMode)
+              : current.mode,
+          delimiter:
+            typeof p.delimiter === "string" &&
+            VALID_DELIMITERS.includes(p.delimiter as Delimiter)
+              ? (p.delimiter as Delimiter)
+              : current.delimiter,
+          autoDelimiter:
+            typeof p.autoDelimiter === "boolean" ? p.autoDelimiter : current.autoDelimiter,
+          hasHeader: typeof p.hasHeader === "boolean" ? p.hasHeader : current.hasHeader,
+          outputFormat:
+            typeof p.outputFormat === "string" &&
+            VALID_FORMATS.includes(p.outputFormat as OutputFormat)
+              ? (p.outputFormat as OutputFormat)
+              : current.outputFormat,
+          // Guard input: not persisted but could be injected by a poisoned store.
+          input: typeof p.input === "string" ? p.input : current.input,
+        };
+      },
     }
   )
 );

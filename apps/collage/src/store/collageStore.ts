@@ -33,7 +33,24 @@ function loadSettings(): Partial<PersistedSettings> {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return {};
-    return JSON.parse(raw) as Partial<PersistedSettings>;
+    const parsed: unknown = JSON.parse(raw);
+    // Guard: must be a non-null plain object (not null, not array, not primitive).
+    // JSON.parse("null") returns null, which caused white-screen when callers accessed
+    // .templateId on the result. An array or primitive is equally invalid here.
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return {};
+    const obj = parsed as Record<string, unknown>;
+    // Validate each persisted field and drop any with wrong type so the store
+    // defaults take over rather than crashing on unexpected values.
+    const out: Partial<PersistedSettings> = {};
+    if (typeof obj.templateId === "string") out.templateId = obj.templateId;
+    if (typeof obj.aspectId === "string") out.aspectId = obj.aspectId;
+    if (typeof obj.background === "string") out.background = obj.background;
+    if (typeof obj.collageShape === "string") out.collageShape = obj.collageShape as CollageShapeId;
+    if (typeof obj.borderColor === "string") out.borderColor = obj.borderColor;
+    if (typeof obj.gutter === "number" && isFinite(obj.gutter)) out.gutter = obj.gutter;
+    if (typeof obj.radius === "number" && isFinite(obj.radius)) out.radius = obj.radius;
+    if (typeof obj.borderWidth === "number" && isFinite(obj.borderWidth)) out.borderWidth = obj.borderWidth;
+    return out;
   } catch {
     return {};
   }

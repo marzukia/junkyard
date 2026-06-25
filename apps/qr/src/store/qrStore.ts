@@ -53,6 +53,32 @@ export const useQRStore = create<QRState>()(
         dotStyle: state.dotStyle,
         eyeStyle: state.eyeStyle,
       }),
+      merge: (persisted, current) => {
+        const p = persisted as Partial<QRState>;
+        const VALID_ECL: ErrorCorrectionLevel[] = ["L", "M", "Q", "H"];
+        const VALID_DOT: DotStyle[] = ["square", "rounded", "dots", "classy"];
+        const VALID_EYE: EyeStyle[] = ["square", "rounded", "circle", "leaf"];
+        return {
+          ...current,
+          // Guard text: not in partialize but could be injected by a poisoned store.
+          text: typeof p.text === "string" ? p.text : current.text,
+          fgColor: typeof p.fgColor === "string" ? p.fgColor : current.fgColor,
+          bgColor: typeof p.bgColor === "string" ? p.bgColor : current.bgColor,
+          errorCorrectionLevel:
+            typeof p.errorCorrectionLevel === "string" &&
+            VALID_ECL.includes(p.errorCorrectionLevel as ErrorCorrectionLevel)
+              ? (p.errorCorrectionLevel as ErrorCorrectionLevel)
+              : current.errorCorrectionLevel,
+          dotStyle:
+            typeof p.dotStyle === "string" && VALID_DOT.includes(p.dotStyle as DotStyle)
+              ? (p.dotStyle as DotStyle)
+              : current.dotStyle,
+          eyeStyle:
+            typeof p.eyeStyle === "string" && VALID_EYE.includes(p.eyeStyle as EyeStyle)
+              ? (p.eyeStyle as EyeStyle)
+              : current.eyeStyle,
+        };
+      },
     }
   )
 );
