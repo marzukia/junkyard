@@ -380,6 +380,16 @@ function StripPanel({
   const outputType = canvasOutputType(entry.file.type);
   const filename = cleanFilename(entry.file.name, outputType);
 
+  // Trigger download when cleanUrl is set
+  useEffect(() => {
+    if (entry.cleanUrl) {
+      const a = document.createElement("a");
+      a.href = entry.cleanUrl;
+      a.download = filename;
+      a.click();
+    }
+  }, [entry.cleanUrl, filename]);
+
   return (
     <div className="strip-panel">
       <div className="strip-panel-header">
@@ -387,16 +397,14 @@ function StripPanel({
         <span className="strip-panel-hint">Canvas re-encode, all metadata removed</span>
       </div>
       {entry.cleanUrl ? (
-        <a href={entry.cleanUrl} download={filename} className="strip-download-btn">
-          Download {filename}
-        </a>
+        <span className="strip-downloaded-badge">Downloaded ✓</span>
       ) : (
         <button
           type="button"
           className="strip-btn"
           onClick={() => onStrip(entry.id)}
           disabled={entry.stripping}
-          aria-label="Strip EXIF and prepare clean download"
+          aria-label="Strip EXIF and download clean copy"
         >
           {entry.stripping ? "Stripping..." : "Strip & Download"}
         </button>
