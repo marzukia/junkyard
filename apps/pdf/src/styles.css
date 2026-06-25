@@ -394,6 +394,13 @@ body {
   text-decoration-color: var(--accent);
 }
 
+.site-footer-disclaimer {
+  width: 100%;
+  text-align: center;
+  opacity: 0.6;
+}
+
+
 /* ─── iOS / touch: prevent focus-zoom ───────────────────────────────────── */
 /* Mobile Safari auto-zooms when a focused input's font-size is < 16px.
    Bump all inputs to 16px on coarse (touch) pointers — stops page zoom on

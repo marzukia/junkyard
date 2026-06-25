@@ -19,6 +19,11 @@ export function Manifesto() {
           <a href="https://github.com/marzukia/junkyard">Source on GitHub</a>
           <a href="https://mrzk.io">mrzk.io</a>
         </div>
+        <p className="disclaimer">
+          junkyard is an independent open-source project — not affiliated with or endorsed by any
+          product it compares to. Product names and trademarks are the property of their respective
+          owners.
+        </p>
       </div>
     </section>
   );

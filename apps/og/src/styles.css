@@ -806,6 +806,13 @@ body {
   text-decoration-color: var(--accent);
 }
 
+.site-footer-disclaimer {
+  width: 100%;
+  text-align: center;
+  opacity: 0.6;
+}
+
+
 /* ─── Character count / label row ──────────────────────────────────────── */
 
 .og-field-label-row {
