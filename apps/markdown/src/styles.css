@@ -908,3 +908,14 @@ body {
     width: 100%;
   }
 }
+
+/* iOS Safari auto-zooms when focusing a control with font-size < 16px. Force 16px on
+   iOS only (desktop sizing untouched, pinch-zoom preserved) so focus never triggers a
+   zoom. !important beats per-component class specificity (incl. Mantine + multi-class). */
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
