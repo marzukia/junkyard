@@ -21,6 +21,7 @@ import {
   renderPdfPageToFile,
 } from "./ocrUtils";
 import { useOcrStore } from "./store";
+import { shouldEmitOcrProgress } from "./lib/progressThrottle";
 
 // ── OCR glyph: scan-frame mark (teal corner brackets + amber scan line + coral text hints)
 function OcrGlyph() {
@@ -223,6 +224,8 @@ export function App() {
     }
 
     let worker: Awaited<ReturnType<typeof createWorker>> | null = null;
+    let lastSinglePct = -1;
+    let lastSingleMsg = "";
     try {
       worker = await createWorker(store.language, 1, {
         logger: (m: { status: string; progress: number }) => {
@@ -239,6 +242,9 @@ export function App() {
                     : m.status === "recognizing text"
                       ? `Scanning... ${pct}%`
                       : m.status;
+          if (!shouldEmitOcrProgress(pct, msg, lastSinglePct, lastSingleMsg)) return;
+          lastSinglePct = pct;
+          lastSingleMsg = msg;
           store.setStatus("running");
           store.setProgress(pct, msg);
         },
@@ -283,14 +289,20 @@ export function App() {
       store.setActiveIndex(store.queue.findIndex((q) => q.id === item.id));
 
       let worker: Awaited<ReturnType<typeof createWorker>> | null = null;
+      let lastBatchPct = -1;
+      let lastBatchMsg = "";
       try {
         store.setStatus("loading");
         store.setProgress(0, `Processing ${item.file.name}...`);
         worker = await createWorker(store.language, 1, {
           logger: (m: { status: string; progress: number }) => {
             const pct = Math.round((m.progress ?? 0) * 100);
+            const msg = `${item.file.name} - Scanning... ${pct}%`;
+            if (!shouldEmitOcrProgress(pct, msg, lastBatchPct, lastBatchMsg)) return;
+            lastBatchPct = pct;
+            lastBatchMsg = msg;
             store.setStatus("running");
-            store.setProgress(pct, `${item.file.name} - Scanning... ${pct}%`);
+            store.setProgress(pct, msg);
           },
           errorHandler: () => {},
         });
