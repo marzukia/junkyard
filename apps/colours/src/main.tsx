@@ -9,6 +9,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import "@junkyardsh/ui/styles.css";
+import "./styles.css";
 
 const theme = createTheme({
   fontFamily: "'Roboto', system-ui, sans-serif",
