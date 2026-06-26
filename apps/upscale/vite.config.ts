@@ -19,6 +19,11 @@ export default defineConfig({
       external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
     },
   },
+    worker: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,

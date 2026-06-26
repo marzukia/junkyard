@@ -14,6 +14,11 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ["@huggingface/transformers"],
   },
+    worker: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,
