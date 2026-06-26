@@ -8,7 +8,7 @@
  * required for WebGPU); WASM single-thread is the fallback.
  */
 import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 import { MAX_INFER_SIDE, MODEL_ID } from "./bgConstants";
 
 export type ProgressCallback = (loaded: number, total: number, status: string) => void;
@@ -25,7 +25,7 @@ let segmenter: ImageSegmentationPipeline | null = null;
 export async function loadModel(onProgress?: ProgressCallback): Promise<void> {
   if (segmenter) return;
 
-  configureTransformersEnv();
+  await configureTransformersEnv();
 
   const progressCb = (event: TransformersProgressEvent) => {
     if (!onProgress) return;

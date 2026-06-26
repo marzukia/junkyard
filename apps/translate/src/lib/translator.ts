@@ -10,7 +10,7 @@
  * (no isolation required); single-thread WASM is the fallback.
  */
 import { pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 import { DETECT_CODE, splitIntoChunks } from "./languages";
 
 const MODEL_ID = "Xenova/nllb-200-distilled-600M";
@@ -39,7 +39,7 @@ let translator: TranslationPipeline | null = null;
 /** Load (or return cached) the translation pipeline. */
 export async function loadTranslator(onProgress?: ProgressCallback): Promise<void> {
   if (translator) return;
-  configureTransformersEnv();
+  await configureTransformersEnv();
 
   const progressCb = (event: TransformersProgressEvent) => {
     if (!onProgress) return;

@@ -8,7 +8,7 @@
  * required for WebGPU); WASM single-thread is the fallback.
  */
 import { RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 
 // Approx download size is ~90 MB for ViT-GPT2 image captioning.
 export const MODEL_ID = "Xenova/vit-gpt2-image-captioning";
@@ -33,7 +33,7 @@ let captioner: ImageToTextPipeline | null = null;
 /** Load (or return cached) the image-to-text pipeline. */
 export async function loadModel(onProgress?: ProgressCallback): Promise<void> {
   if (captioner) return;
-  configureTransformersEnv();
+  await configureTransformersEnv();
 
   const progressCb = (event: TransformersProgressEvent) => {
     if (!onProgress) return;

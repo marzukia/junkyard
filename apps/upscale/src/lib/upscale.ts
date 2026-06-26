@@ -11,7 +11,7 @@
  * required); WASM single-thread is the fallback.
  */
 import { RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 import type { OutputFormat } from "./imageHelpers";
 import { outputMime } from "./imageHelpers";
 

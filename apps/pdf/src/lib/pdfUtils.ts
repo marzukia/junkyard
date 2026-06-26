@@ -1,4 +1,4 @@
-import { sanitizeWinAnsi } from "@junkyardsh/ui";
+import { sanitizeWinAnsi } from "@junkyardsh/ui/pdf";
 import { PDFDocument, StandardFonts, degrees, rgb } from "pdf-lib";
 
 /**

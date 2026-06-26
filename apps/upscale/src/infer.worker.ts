@@ -7,7 +7,7 @@ import { RawImage, pipeline } from "@huggingface/transformers";
  * The main thread creates the blob URL after receiving the result.
  */
 import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
-import { configureTransformersEnv } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 import type { OutputFormat } from "./lib/imageHelpers";
 import { outputMime } from "./lib/imageHelpers";
 import type { ScaleFactor } from "./lib/upscale";

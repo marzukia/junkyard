@@ -4,7 +4,7 @@ import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface
  * Returns image bytes as ArrayBuffer (blob URLs don't cross worker boundaries).
  */
 import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
-import { configureTransformersEnv } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 import { MAX_INFER_SIDE, MODEL_ID } from "./lib/bgConstants";
 
 type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
@@ -27,7 +27,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!segmenter) {
-      configureTransformersEnv();
+      await configureTransformersEnv();
       segmenter = (await (
         pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
       )("image-segmentation", MODEL_ID, {

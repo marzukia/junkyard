@@ -15,7 +15,7 @@
   "dependencies": {
     "@fontsource/roboto": "^5.2.10",
     "@fontsource/roboto-mono": "^5.2.9",
-    "@junkyardsh/ui": "^1.0.4",
+    "@junkyardsh/ui": "^1.0.5",
     "@mantine/core": "^7.17.4",
     "browser-image-compression": "^2.0.2",
     "heic2any": "^0.0.4",

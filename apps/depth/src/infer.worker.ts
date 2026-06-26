@@ -5,7 +5,7 @@ import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/t
  * Also returns the raw depth cache data for colourmap re-renders without re-inference.
  */
 import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
-import { configureTransformersEnv } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 import type { ColourMap } from "./lib/depthEstimation";
 import { MODEL_ID, applyColourMap } from "./lib/depthEstimation";
 
@@ -33,7 +33,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!estimator) {
-      configureTransformersEnv();
+      await configureTransformersEnv();
       estimator = (await (
         pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
       )("depth-estimation", MODEL_ID, {

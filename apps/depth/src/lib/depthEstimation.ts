@@ -8,7 +8,7 @@
  * required for WebGPU); WASM single-thread is the fallback.
  */
 import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 
 export const MODEL_ID = "onnx-community/depth-anything-v2-small";
 
@@ -27,7 +27,7 @@ let estimator: DepthEstimationPipeline | null = null;
 /** Load (or return cached) the depth-estimation pipeline. */
 export async function loadModel(onProgress?: ProgressCallback): Promise<void> {
   if (estimator) return;
-  configureTransformersEnv();
+  await configureTransformersEnv();
 
   const progressCb = (event: TransformersProgressEvent) => {
     if (!onProgress) return;
