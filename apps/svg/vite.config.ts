@@ -15,6 +15,11 @@ export default defineConfig({
     // to svgo's browser-safe bundle (no Node.js fs/path deps).
     conditions: ["browser", "module", "import", "default"],
   },
+    worker: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,

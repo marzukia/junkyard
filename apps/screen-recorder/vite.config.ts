@@ -10,6 +10,11 @@ export default defineConfig({
     },
     target: "es2022",
   },
+    worker: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,

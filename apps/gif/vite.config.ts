@@ -8,6 +8,9 @@ export default defineConfig({
     rollupOptions: {
       external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
     },
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
     target: "es2022",
   },
 });

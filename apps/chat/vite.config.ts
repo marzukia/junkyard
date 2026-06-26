@@ -14,6 +14,11 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ["@mlc-ai/web-llm"],
   },
+    worker: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,
