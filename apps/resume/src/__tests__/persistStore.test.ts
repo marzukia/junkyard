@@ -120,10 +120,7 @@ describe("persist rehydration — wrong-typed field guard", () => {
   });
 
   it("falls back to [] when persisted education is a number", async () => {
-    localStorage.setItem(
-      PERSIST_KEY,
-      JSON.stringify({ state: { education: 42 }, version: 0 })
-    );
+    localStorage.setItem(PERSIST_KEY, JSON.stringify({ state: { education: 42 }, version: 0 }));
     const { useResumeStore } = await import("../store/useResumeStore");
     expect(Array.isArray(useResumeStore.getState().education)).toBe(true);
   });
@@ -138,10 +135,7 @@ describe("persist rehydration — wrong-typed field guard", () => {
   });
 
   it("falls back to '' when persisted fullName is a number", async () => {
-    localStorage.setItem(
-      PERSIST_KEY,
-      JSON.stringify({ state: { fullName: 99 }, version: 0 })
-    );
+    localStorage.setItem(PERSIST_KEY, JSON.stringify({ state: { fullName: 99 }, version: 0 }));
     const { useResumeStore } = await import("../store/useResumeStore");
     expect(typeof useResumeStore.getState().fullName).toBe("string");
   });
@@ -156,10 +150,7 @@ describe("persist rehydration — wrong-typed field guard", () => {
   });
 
   it("experience.map does not throw after rehydrating wrong-typed experience", async () => {
-    localStorage.setItem(
-      PERSIST_KEY,
-      JSON.stringify({ state: { experience: "bad" }, version: 0 })
-    );
+    localStorage.setItem(PERSIST_KEY, JSON.stringify({ state: { experience: "bad" }, version: 0 }));
     const { useResumeStore } = await import("../store/useResumeStore");
     expect(() => useResumeStore.getState().experience.map((e) => e.id)).not.toThrow();
   });

@@ -11,10 +11,9 @@
  * required); WASM single-thread is the fallback.
  */
 import { RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "./transformersEnv";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 import type { OutputFormat } from "./imageHelpers";
 import { outputMime } from "./imageHelpers";
-
 
 export const MODEL_ID = "Xenova/swin2SR-classical-sr-x2-64";
 // Approx download size shown to the user.

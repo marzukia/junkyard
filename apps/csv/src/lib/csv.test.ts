@@ -432,7 +432,10 @@ describe("csvToYaml – newline-containing cells", () => {
     const parsed = {
       headers: ["val"],
       rows: [["foo\r\nbar"]],
-      rowCount: 1, colCount: 1, nonEmptyLineCount: 2, raggedWarnings: [],
+      rowCount: 1,
+      colCount: 1,
+      nonEmptyLineCount: 2,
+      raggedWarnings: [],
     };
     const result = csvToYaml(parsed);
     expect(result.ok).toBe(true);
@@ -445,7 +448,10 @@ describe("csvToYaml – newline-containing cells", () => {
     const parsed = {
       headers: ["col\nnewline"],
       rows: [["value"]],
-      rowCount: 1, colCount: 1, nonEmptyLineCount: 2, raggedWarnings: [],
+      rowCount: 1,
+      colCount: 1,
+      nonEmptyLineCount: 2,
+      raggedWarnings: [],
     };
     const result = csvToYaml(parsed);
     expect(result.ok).toBe(true);
@@ -482,7 +488,10 @@ describe("csvToMarkdown – newline-containing cells", () => {
     const parsed = {
       headers: ["val"],
       rows: [["foo\r\nbar"]],
-      rowCount: 1, colCount: 1, nonEmptyLineCount: 2, raggedWarnings: [],
+      rowCount: 1,
+      colCount: 1,
+      nonEmptyLineCount: 2,
+      raggedWarnings: [],
     };
     const result = csvToMarkdown(parsed);
     expect(result.ok).toBe(true);
@@ -500,7 +509,10 @@ describe("csvToJson – __proto__ column guard", () => {
     const parsed = {
       headers: ["__proto__", "name"],
       rows: [["polluted", "Alice"]],
-      rowCount: 1, colCount: 2, nonEmptyLineCount: 2, raggedWarnings: [],
+      rowCount: 1,
+      colCount: 2,
+      nonEmptyLineCount: 2,
+      raggedWarnings: [],
     };
     const result = csvToJson(parsed);
     expect(result.ok).toBe(true);

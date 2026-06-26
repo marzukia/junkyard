@@ -1,5 +1,5 @@
+import { embedUnicodeFonts, sanitizeWinAnsi } from "@junkyardsh/ui/pdf";
 import { PDFDocument, type PDFPage, rgb } from "pdf-lib";
-import { embedUnicodeFonts, sanitizeWinAnsi } from "./unicodeFont";
 
 export interface SignaturePlacement {
   /** Data URL of the signature PNG */
@@ -120,7 +120,7 @@ export function canvasToPageCoords(
   hFrac: number,
   rotation: number,
   pageW: number,
-  pageH: number,
+  pageH: number
 ): { x: number; y: number; w: number; h: number } {
   const angle = ((rotation % 360) + 360) % 360;
 
@@ -172,7 +172,7 @@ export function canvasToPageCoords(
 function drawPlacementOnPage(
   page: PDFPage,
   pngImage: Awaited<ReturnType<PDFDocument["embedPng"]>>,
-  placement: Omit<SignaturePlacement, "dataUrl" | "pageIndex">,
+  placement: Omit<SignaturePlacement, "dataUrl" | "pageIndex">
 ): void {
   const rotation = page.getRotation().angle;
   const { width: pageW, height: pageH } = page.getSize();
@@ -184,7 +184,7 @@ function drawPlacementOnPage(
     placement.hFrac,
     rotation,
     pageW,
-    pageH,
+    pageH
   );
 
   page.drawImage(pngImage, { x, y, width: w, height: h });
@@ -201,7 +201,7 @@ function drawPlacementOnPage(
 export async function embedSignatureInPdf(
   pdfBytes: ArrayBuffer,
   placement: SignaturePlacement,
-  annotations?: TextAnnotation[],
+  annotations?: TextAnnotation[]
 ): Promise<Uint8Array> {
   const pdfDoc = await PDFDocument.load(pdfBytes);
   const pages = pdfDoc.getPages();
@@ -235,7 +235,7 @@ export async function embedSignatureOnPages(
   pdfBytes: ArrayBuffer,
   placement: SignaturePlacement,
   pageIndices: number[],
-  annotations?: TextAnnotation[],
+  annotations?: TextAnnotation[]
 ): Promise<Uint8Array> {
   if (pageIndices.length === 0) return embedSignatureInPdf(pdfBytes, placement, annotations);
 
@@ -267,7 +267,7 @@ async function embedTextAnnotation(
   pdfDoc: PDFDocument,
   page: PDFPage,
   ann: TextAnnotation,
-  unicodeFont: Awaited<ReturnType<PDFDocument["embedFont"]>> | null,
+  unicodeFont: Awaited<ReturnType<PDFDocument["embedFont"]>> | null
 ): Promise<void> {
   const { width: pageW, height: pageH } = page.getSize();
   const rotation = page.getRotation().angle;
@@ -283,7 +283,7 @@ async function embedTextAnnotation(
     fontSize / (rotation === 90 || rotation === 270 ? pageH : pageH),
     rotation,
     pageW,
-    pageH,
+    pageH
   );
 
   const safeText = unicodeFont ? ann.text : sanitizeWinAnsi(ann.text);
@@ -358,7 +358,7 @@ export function textToPngDataUrl(
   text: string,
   inkColor: string,
   fontSize = 72,
-  fontSpec?: string,
+  fontSpec?: string
 ): string | null {
   if (!text.trim()) return null;
 

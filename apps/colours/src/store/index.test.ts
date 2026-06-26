@@ -102,7 +102,6 @@ describe("resetPalette", () => {
   });
 });
 
-
 // ── W4: undo coverage for lock-toggle, manual-color-set, count-change ─────────
 
 describe("togglePaletteLock is undoable (W4)", () => {

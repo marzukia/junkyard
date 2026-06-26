@@ -4,7 +4,7 @@
  * Added for gauntlet wave-4 finding 1.
  */
 import { describe, expect, it } from "vitest";
-import { validateField, expressionToFields, nextRuns } from "./cron";
+import { expressionToFields, nextRuns, validateField } from "./cron";
 
 describe("validateField N/step form", () => {
   it("accepts 0/15 in minute field", () => {

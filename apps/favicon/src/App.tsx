@@ -1,7 +1,7 @@
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/ui";
 import { FaviconGenerator } from "./components/FaviconGenerator";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
-import { BrandMark } from "./components/BrandMark";
 
 function FaviconBrandGlyph() {
   return (
@@ -21,7 +21,11 @@ export function App() {
       <Header
         title="Favicon Generator"
         subtitle="PNG or SVG → full favicon set, in your browser"
-        brandMark={<BrandMark><FaviconBrandGlyph /></BrandMark>}
+        brandMark={
+          <BrandMark>
+            <FaviconBrandGlyph />
+          </BrandMark>
+        }
       />
 
       <main className="site-main">

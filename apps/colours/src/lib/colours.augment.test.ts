@@ -6,7 +6,13 @@
  * - share.ts: encodeState/decodeState additional error paths
  */
 import { describe, expect, it } from "vitest";
-import { COLOR_SPACES, interpolateThree, interpolateTwo, normalizeHex, useBlackText } from "./color";
+import {
+  COLOR_SPACES,
+  interpolateThree,
+  interpolateTwo,
+  normalizeHex,
+  useBlackText,
+} from "./color";
 import { contrastRatio, wcagAssessment } from "./contrast";
 import { decodeState, encodeState } from "./share";
 import type { ShareableState } from "./share";
@@ -72,15 +78,15 @@ describe("interpolateTwo - additional cases", () => {
 
   it("first result is red-ish for red start", () => {
     const result = interpolateTwo("#ff0000", "#0000ff", 5, "lab");
-    const r = parseInt(result[0].slice(1, 3), 16);
-    const b = parseInt(result[0].slice(5, 7), 16);
+    const r = Number.parseInt(result[0].slice(1, 3), 16);
+    const b = Number.parseInt(result[0].slice(5, 7), 16);
     expect(r).toBeGreaterThan(b);
   });
 
   it("last result is blue-ish for blue end", () => {
     const result = interpolateTwo("#ff0000", "#0000ff", 5, "lab");
-    const r = parseInt(result[4].slice(1, 3), 16);
-    const b = parseInt(result[4].slice(5, 7), 16);
+    const r = Number.parseInt(result[4].slice(1, 3), 16);
+    const b = Number.parseInt(result[4].slice(5, 7), 16);
     expect(b).toBeGreaterThan(r);
   });
 
@@ -106,9 +112,9 @@ describe("interpolateThree - additional cases", () => {
     // 5 steps: midIdx = round((5-1)/2) = 2
     const result = interpolateThree("#ff0000", "#00ff00", "#0000ff", 5, "rgb");
     expect(result).toHaveLength(5);
-    const g = parseInt(result[2].slice(3, 5), 16);
-    const r = parseInt(result[2].slice(1, 3), 16);
-    const b = parseInt(result[2].slice(5, 7), 16);
+    const g = Number.parseInt(result[2].slice(3, 5), 16);
+    const r = Number.parseInt(result[2].slice(1, 3), 16);
+    const b = Number.parseInt(result[2].slice(5, 7), 16);
     expect(g).toBeGreaterThan(r);
     expect(g).toBeGreaterThan(b);
   });
@@ -215,7 +221,6 @@ describe("encodeState / decodeState - additional error paths", () => {
     }
   });
 });
-
 
 // ── useBlackText - NaN/undefined guard (culori wcagLuminance) ─────────────────
 

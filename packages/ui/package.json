@@ -1,0 +1,43 @@
+{
+  "name": "@junkyardsh/ui",
+  "version": "1.0.5",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./ai": {
+      "import": "./dist/ai.js",
+      "types": "./dist/ai.d.ts"
+    },
+    "./pdf": {
+      "import": "./dist/pdf.js",
+      "types": "./dist/pdf.d.ts"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@mantine/core": "^7.17.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.2",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^5.0.3"
+  },
+  "description": "Shared UI components and utilities for junkyard.sh tools",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marzukia/junkyard.git",
+    "directory": "packages/ui"
+  }
+}

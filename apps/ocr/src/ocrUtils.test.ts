@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { scaleBboxToPdfCoords } from "./ocrPdfUtils";
-import { useOcrStore } from "./store";
 import {
   LANG_STORAGE_KEY,
   buildBatchFilename,
@@ -12,6 +11,7 @@ import {
   normaliseText,
   persistLanguage,
 } from "./ocrUtils";
+import { useOcrStore } from "./store";
 
 describe("normaliseText", () => {
   it("trims leading and trailing whitespace", () => {

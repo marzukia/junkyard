@@ -13,9 +13,16 @@
  * Vendored into: apps/{bg,caption,depth,translate,upscale}/src/lib/
  * To update all copies: node scripts/vendor-transformers-env.mjs
  */
-import { env } from "@huggingface/transformers";
+/**
+ * Lazy-imported @huggingface/transformers env configuration.
+ *
+ * The static import was replaced with a dynamic import so that apps which
+ * don't use AI features (barcode, base64, colours, …) don't pull the
+ * ~2 MB @huggingface/transformers bundle into their production build.
+ */
 
-export function configureTransformersEnv(): void {
+export async function configureTransformersEnv(): Promise<void> {
+  const { env } = await import("@huggingface/transformers");
   // Disable multi-threaded WASM (requires SharedArrayBuffer / COOP+COEP).
   // GitHub Pages cannot send cross-origin isolation headers, so we route
   // entirely through the single-threaded WASM backend.

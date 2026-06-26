@@ -40,11 +40,15 @@ describe("loadConversations shape-guard: poisoned storage never throws", () => {
   });
 
   it("rejects object with empty-string id", () => {
-    expect(sanitise([{ id: "", title: "x", messages: [], createdAt: 1, updatedAt: 1 }])).toEqual([]);
+    expect(sanitise([{ id: "", title: "x", messages: [], createdAt: 1, updatedAt: 1 }])).toEqual(
+      []
+    );
   });
 
   it("rejects object where messages is not an array", () => {
-    expect(sanitise([{ id: "a", title: "x", messages: null, createdAt: 1, updatedAt: 1 }])).toEqual([]);
+    expect(sanitise([{ id: "a", title: "x", messages: null, createdAt: 1, updatedAt: 1 }])).toEqual(
+      []
+    );
   });
 
   it("keeps a well-shaped conversation alongside malformed entries", () => {

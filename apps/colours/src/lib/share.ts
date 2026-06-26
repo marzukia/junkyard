@@ -12,12 +12,12 @@
  * returns null; callers should fall back to store defaults.
  */
 
+import { decodeBase64Url, encodeBase64Url } from "@junkyardsh/ui";
 import type { PaletteState, ThreePointState, TwoPointState } from "../store";
 import { COLOR_SPACES, normalizeHex } from "./color";
 import type { ColorSpace } from "./color";
 import { HARMONY_MODES, MIN_PALETTE_COUNT, clampCount } from "./palette";
 import type { HarmonyMode } from "./palette";
-import { encodeBase64Url, decodeBase64Url } from "./base64url";
 
 // ── Abbreviated key shape written to the hash ─────────────────────────────────
 

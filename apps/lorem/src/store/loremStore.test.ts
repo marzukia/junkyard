@@ -131,8 +131,13 @@ describe("loremStore persistence", () => {
 // ── Bug 3: setMode clamps count to new mode's max ────────────────────────────
 
 describe("loremStore setMode count clamping", () => {
-  beforeEach(() => { localStorage.clear(); });
-  afterEach(() => { localStorage.clear(); vi.resetModules(); });
+  beforeEach(() => {
+    localStorage.clear();
+  });
+  afterEach(() => {
+    localStorage.clear();
+    vi.resetModules();
+  });
 
   it("switching from words (max 200) to paragraphs (max 20) clamps count to 20", async () => {
     const store = await freshStore();

@@ -111,7 +111,6 @@ describe("formatDuration", () => {
   });
 });
 
-
 describe("msToFpsLabel consistency", () => {
   it("shows no decimal for fps >= 10 (integral result)", () => {
     // 100ms = 10fps -> toFixed(0)

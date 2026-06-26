@@ -14,9 +14,7 @@ function loadPersistedSettings(): BeautifySettings {
     // If bgKind was "image" there's no live object URL, so fall back to the
     // default bgKind (gradient) to avoid a silently-white background.
     const bgKindOverride =
-      (parsed.bgKind as string | undefined) === "image"
-        ? DEFAULT_SETTINGS.bgKind
-        : parsed.bgKind;
+      (parsed.bgKind as string | undefined) === "image" ? DEFAULT_SETTINGS.bgKind : parsed.bgKind;
     const merged: BeautifySettings = {
       ...DEFAULT_SETTINGS,
       ...parsed,

@@ -13,7 +13,7 @@
  * 50 rows cannot be within pdf-lib's compact layout).
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { generateInvoicePdf } from "../lib/invoicePdf";
 import type { LineItem } from "../store/useInvoiceStore";
 
@@ -32,7 +32,11 @@ import type { LineItem } from "../store/useInvoiceStore";
 // woff2 from disk requires node fs access which vitest/jsdom supports.
 
 const MOCK_FETCH_FAIL = () =>
-  Promise.resolve({ ok: false, status: 503, arrayBuffer: async () => new ArrayBuffer(0) } as Response);
+  Promise.resolve({
+    ok: false,
+    status: 503,
+    arrayBuffer: async () => new ArrayBuffer(0),
+  } as Response);
 
 function makeItems(count: number): LineItem[] {
   return Array.from({ length: count }, (_, i) => ({

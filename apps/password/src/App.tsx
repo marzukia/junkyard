@@ -1,8 +1,7 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCmdEnter } from "./components/useCmdEnter";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import {
   entropyToCrackTime,
   entropyToStrength,
@@ -364,7 +363,22 @@ export function App() {
     // Include concrete option values so changing length/charsets/passphrase settings
     // gives `generate` a new identity and triggers the auto-generate effect.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, count, length, upper, lower, digits, symbols, excludeAmbiguous, minDigits, minSymbols, wordCount, separator, capitalize, appendNumber]);
+  }, [
+    mode,
+    count,
+    length,
+    upper,
+    lower,
+    digits,
+    symbols,
+    excludeAmbiguous,
+    minDigits,
+    minSymbols,
+    wordCount,
+    separator,
+    capitalize,
+    appendNumber,
+  ]);
 
   // Auto-generate on settings change.
   useEffect(() => {
@@ -376,9 +390,16 @@ export function App() {
   }, [generate, mode, hasAtLeastOne]);
 
   // Cmd/Ctrl+Enter regenerates.
-  useCmdEnter(() => {
-    if (!(mode === "random" && !hasAtLeastOne)) generate();
-  });
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        if (!(mode === "random" && !hasAtLeastOne)) generate();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [generate, mode, hasAtLeastOne]);
 
   // Entropy for the current settings.
   const bits =

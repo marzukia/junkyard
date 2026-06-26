@@ -107,9 +107,7 @@ export const useUpscaleStore = create<UpscaleState>()(
       setOutputFormat: (format) => set({ outputFormat: format }),
 
       setPhase: (phase) =>
-        set((s) =>
-          phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {}
-        ),
+        set((s) => (phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {})),
 
       setModelProgress: (loaded, total, status) =>
         set({ modelProgress: { loaded, total, status } }),

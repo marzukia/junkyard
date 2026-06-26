@@ -130,7 +130,10 @@ function findErrorOffset(raw: string): number {
   function consumeNumber(): boolean {
     const start = c.i;
     if (c.i < n && raw[c.i] === "-") c.i++;
-    if (c.i >= n || raw[c.i] < "0" || raw[c.i] > "9") { c.i = start; return false; }
+    if (c.i >= n || raw[c.i] < "0" || raw[c.i] > "9") {
+      c.i = start;
+      return false;
+    }
     while (c.i < n && raw[c.i] >= "0" && raw[c.i] <= "9") c.i++;
     if (c.i < n && raw[c.i] === ".") {
       c.i++;
@@ -155,9 +158,18 @@ function findErrorOffset(raw: string): number {
     if (ch === '"') return consumeString();
     if (ch === "{") return parseObject();
     if (ch === "[") return parseArray();
-    if (raw.startsWith("true", c.i)) { c.i += 4; return true; }
-    if (raw.startsWith("false", c.i)) { c.i += 5; return true; }
-    if (raw.startsWith("null", c.i)) { c.i += 4; return true; }
+    if (raw.startsWith("true", c.i)) {
+      c.i += 4;
+      return true;
+    }
+    if (raw.startsWith("false", c.i)) {
+      c.i += 5;
+      return true;
+    }
+    if (raw.startsWith("null", c.i)) {
+      c.i += 4;
+      return true;
+    }
     if (ch === "-" || (ch >= "0" && ch <= "9")) return consumeNumber();
 
     return false; // unexpected character
@@ -166,7 +178,10 @@ function findErrorOffset(raw: string): number {
   function parseObject(): boolean {
     c.i++; // consume '{'
     skipWs();
-    if (c.i < n && raw[c.i] === "}") { c.i++; return true; } // empty object
+    if (c.i < n && raw[c.i] === "}") {
+      c.i++;
+      return true;
+    } // empty object
 
     while (c.i < n) {
       skipWs();
@@ -177,7 +192,10 @@ function findErrorOffset(raw: string): number {
       if (!parseValue()) return false;
       skipWs();
       if (c.i >= n) return false;
-      if (raw[c.i] === "}") { c.i++; return true; }
+      if (raw[c.i] === "}") {
+        c.i++;
+        return true;
+      }
       if (raw[c.i] !== ",") return false; // expected comma or }
       c.i++;
     }
@@ -187,13 +205,19 @@ function findErrorOffset(raw: string): number {
   function parseArray(): boolean {
     c.i++; // consume '['
     skipWs();
-    if (c.i < n && raw[c.i] === "]") { c.i++; return true; } // empty array
+    if (c.i < n && raw[c.i] === "]") {
+      c.i++;
+      return true;
+    } // empty array
 
     while (c.i < n) {
       if (!parseValue()) return false;
       skipWs();
       if (c.i >= n) return false;
-      if (raw[c.i] === "]") { c.i++; return true; }
+      if (raw[c.i] === "]") {
+        c.i++;
+        return true;
+      }
       if (raw[c.i] !== ",") return false; // expected comma or ]
       c.i++;
     }

@@ -1,13 +1,13 @@
+import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/transformers";
 /**
  * Web Worker for depth: runs model load + inference off the main thread.
  * Returns image bytes (ArrayBuffer) instead of blob URL (not cross-context).
  * Also returns the raw depth cache data for colourmap re-renders without re-inference.
  */
-import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
-import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "./lib/transformersEnv";
+import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 import type { ColourMap } from "./lib/depthEstimation";
-import { applyColourMap, MODEL_ID } from "./lib/depthEstimation";
+import { MODEL_ID, applyColourMap } from "./lib/depthEstimation";
 
 type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
 
@@ -33,23 +33,36 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!estimator) {
-      configureTransformersEnv();
-      estimator = (await (pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>)(
-        "depth-estimation",
-        MODEL_ID,
-        {
-          progress_callback: (event: TransformersProgressEvent) => {
-            if (event.status === "progress" || event.status === "download") {
-              const msg: WorkerMsg<DepthWorkerResult> = { type: "progress", loaded: event.loaded ?? 0, total: event.total ?? 1, status: event.status };
-              self.postMessage(msg);
-            } else if (event.status === "initiate") {
-              self.postMessage({ type: "progress", loaded: 0, total: 1, status: "initiate" } as WorkerMsg<DepthWorkerResult>);
-            } else if (event.status === "done") {
-              self.postMessage({ type: "progress", loaded: 1, total: 1, status: "done" } as WorkerMsg<DepthWorkerResult>);
-            }
-          },
-        }
-      )) as DepthEstimationPipeline;
+      await configureTransformersEnv();
+      estimator = (await (
+        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+      )("depth-estimation", MODEL_ID, {
+        progress_callback: (event: TransformersProgressEvent) => {
+          if (event.status === "progress" || event.status === "download") {
+            const msg: WorkerMsg<DepthWorkerResult> = {
+              type: "progress",
+              loaded: event.loaded ?? 0,
+              total: event.total ?? 1,
+              status: event.status,
+            };
+            self.postMessage(msg);
+          } else if (event.status === "initiate") {
+            self.postMessage({
+              type: "progress",
+              loaded: 0,
+              total: 1,
+              status: "initiate",
+            } as WorkerMsg<DepthWorkerResult>);
+          } else if (event.status === "done") {
+            self.postMessage({
+              type: "progress",
+              loaded: 1,
+              total: 1,
+              status: "done",
+            } as WorkerMsg<DepthWorkerResult>);
+          }
+        },
+      })) as DepthEstimationPipeline;
     }
 
     const bitmap = await createImageBitmap(file);

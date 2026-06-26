@@ -16,10 +16,22 @@ export function Img2PdfTool() {
 
   const addFiles = (files: File[]) => {
     const accepted = files.filter(
-      (f) => f.type === "image/png" || f.type === "image/jpeg" || f.name.toLowerCase().endsWith(".png") || f.name.toLowerCase().endsWith(".jpg") || f.name.toLowerCase().endsWith(".jpeg")
+      (f) =>
+        f.type === "image/png" ||
+        f.type === "image/jpeg" ||
+        f.name.toLowerCase().endsWith(".png") ||
+        f.name.toLowerCase().endsWith(".jpg") ||
+        f.name.toLowerCase().endsWith(".jpeg")
     );
     const rejected = files.filter(
-      (f) => !(f.type === "image/png" || f.type === "image/jpeg" || f.name.toLowerCase().endsWith(".png") || f.name.toLowerCase().endsWith(".jpg") || f.name.toLowerCase().endsWith(".jpeg"))
+      (f) =>
+        !(
+          f.type === "image/png" ||
+          f.type === "image/jpeg" ||
+          f.name.toLowerCase().endsWith(".png") ||
+          f.name.toLowerCase().endsWith(".jpg") ||
+          f.name.toLowerCase().endsWith(".jpeg")
+        )
     );
     if (rejected.length > 0) {
       const names = rejected.map((f) => f.name).join(", ");
@@ -34,7 +46,13 @@ export function Img2PdfTool() {
     if (accepted.length > 0) {
       setEntries((prev) => [
         ...prev,
-        ...accepted.map((f) => ({ file: f, id: (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") ? crypto.randomUUID() : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2) })),
+        ...accepted.map((f) => ({
+          file: f,
+          id:
+            typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+              ? crypto.randomUUID()
+              : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2),
+        })),
       ]);
       setDone(false);
     }

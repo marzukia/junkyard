@@ -1,7 +1,7 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import {
   FIELD_ORDER,
   FIELD_SPECS,
@@ -187,15 +187,8 @@ function FieldRow({ field, value, error, onChange }: FieldRowProps) {
 // ─── Main App ─────────────────────────────────────────────────────────────────
 
 export function App() {
-  const {
-    expression,
-    fields,
-    description,
-    fieldErrors,
-    globalError,
-    setExpression,
-    setField,
-  } = useCronStore();
+  const { expression, fields, description, fieldErrors, globalError, setExpression, setField } =
+    useCronStore();
 
   const [timezone, setTimezone] = useState<string>(() => {
     try {
@@ -220,7 +213,7 @@ export function App() {
   // shows midnight in Tokyo when Tokyo is selected, not midnight local.
   const runs = useMemo(
     () => (isValid ? nextRuns(fields, 5, undefined, timezone) : []),
-    [fields, isValid, timezone],
+    [fields, isValid, timezone]
   );
 
   return (

@@ -9,8 +9,9 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import "./shell.css";
+import "@junkyardsh/ui/styles.css";
 import "./styles.css";
-import { fleetTheme } from "./theme";
+import { fleetTheme } from "@junkyardsh/ui";
 
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("Root element not found");

@@ -121,8 +121,7 @@ function buildInitialState(): {
   const persisted = loadPalette();
   const count = persisted?.count ?? INITIAL_COUNT;
   const harmonyMode: HarmonyMode = persisted?.harmonyMode ?? "analogous";
-  const colors =
-    persisted?.colors ?? generatePalette(count, harmonyMode, seedCounter + 1);
+  const colors = persisted?.colors ?? generatePalette(count, harmonyMode, seedCounter + 1);
   const locked = persisted?.locked ?? Array(count).fill(false);
 
   const palette: PaletteState = { colors, locked, count, harmonyMode };
@@ -131,8 +130,11 @@ function buildInitialState(): {
 
 export const useColoursStore = create<ColoursStore>((set, _get) => {
   // Lazy init: all side-effectful setup happens here, inside create(), not at module scope.
-  const { palette: initialPalette, seedCounter: initialSeed, recentPalettes: initialRecent } =
-    buildInitialState();
+  const {
+    palette: initialPalette,
+    seedCounter: initialSeed,
+    recentPalettes: initialRecent,
+  } = buildInitialState();
 
   return {
     space: "lab",

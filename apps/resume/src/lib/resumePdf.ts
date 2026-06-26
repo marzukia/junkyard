@@ -1,4 +1,5 @@
-import { PDFDocument, PageSizes, StandardFonts, type PDFFont, rgb } from "pdf-lib";
+import { embedUnicodeFonts, sanitizeWinAnsi } from "@junkyardsh/ui/pdf";
+import { PDFDocument, type PDFFont, PageSizes, StandardFonts, rgb } from "pdf-lib";
 import type {
   CertificationEntry,
   EducationEntry,
@@ -8,7 +9,6 @@ import type {
 } from "../store/useResumeStore";
 import { tokenizeLine } from "./mdInline";
 import { filteredBullets, formatDateRange, parseSkills } from "./resumeUtils";
-import { embedUnicodeFonts, sanitizeWinAnsi } from "./unicodeFont";
 
 export interface ResumePdfInput {
   fullName: string;
@@ -112,7 +112,7 @@ function drawText(
     font?: "bold" | "regular";
     color?: ReturnType<typeof rgb>;
     maxWidth?: number;
-  },
+  }
 ): void {
   const font = opts.font === "bold" ? ctx.boldFont : ctx.regularFont;
   const color = opts.color ?? INK;
@@ -156,7 +156,7 @@ function drawMdText(
     size: number;
     color?: ReturnType<typeof rgb>;
     maxWidth?: number;
-  },
+  }
 ): void {
   const startX = opts.x ?? MARGIN;
   const maxWidth = opts.maxWidth ?? CONTENT_WIDTH;
@@ -267,7 +267,7 @@ function drawTwoCol(
     leftFont?: "bold" | "regular";
     leftColor?: ReturnType<typeof rgb>;
     rightColor?: ReturnType<typeof rgb>;
-  },
+  }
 ): void {
   ensureSpace(ctx, opts.leftSize + 6);
   const leftFont = opts.leftFont === "bold" ? ctx.boldFont : ctx.regularFont;
@@ -310,7 +310,9 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
     italicFont = unicodeFonts.regular;
     unicodeMode = true;
   } else {
-    console.warn("[resume-pdf] Unicode font unavailable; falling back to Helvetica (non-Latin chars will be sanitized)");
+    console.warn(
+      "[resume-pdf] Unicode font unavailable; falling back to Helvetica (non-Latin chars will be sanitized)"
+    );
     boldFont = await doc.embedFont(StandardFonts.HelveticaBold);
     regularFont = await doc.embedFont(StandardFonts.Helvetica);
     italicFont = await doc.embedFont(StandardFonts.HelveticaOblique);
@@ -382,7 +384,7 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
 
   // ---- Experience ----
   const expEntries = input.experience.filter(
-    (e) => e.company.trim() || e.title.trim() || filteredBullets(e.bullets).length > 0,
+    (e) => e.company.trim() || e.title.trim() || filteredBullets(e.bullets).length > 0
   );
   if (expEntries.length > 0) {
     drawSectionHeading(ctx, "Experience");
@@ -424,7 +426,7 @@ export async function generateResumePdf(input: ResumePdfInput): Promise<Uint8Arr
 
   // ---- Education ----
   const eduEntries = input.education.filter(
-    (e) => e.institution.trim() || e.degree.trim() || e.field.trim(),
+    (e) => e.institution.trim() || e.degree.trim() || e.field.trim()
   );
   if (eduEntries.length > 0) {
     drawSectionHeading(ctx, "Education");

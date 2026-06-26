@@ -41,6 +41,10 @@ jobs:
         with:
           bun-version: latest
 
+      # ── Build package ──────────────────────────────────────────────────
+      - name: Build @junkyardsh/ui package
+        run: cd packages/ui && bun install --frozen-lockfile && bun run build
+
       # ── Lint ────────────────────────────────────────────────────────────
       # Biome CI on hub, kit, and all 47 apps. Runs in parallel per app.
       - name: Lint hub
@@ -78,130 +82,6 @@ jobs:
           bun scripts/gen-catalogue.ts
           git diff --exit-code hub/src/catalogue.generated.ts hub/public/catalogue.json
 
-      - name: Check vendored AppSwitcher copies are up to date
-        # Fails if kit/AppSwitcher.* was changed without running vendor-switcher.mjs
-        run: |
-          bun scripts/vendor-switcher.mjs
-          git diff --exit-code
-
-      - name: Check vendored ThemeToggle copies are up to date
-        # Fails if kit/ThemeToggle.tsx was changed without running vendor-themetoggle.mjs
-        run: |
-          node scripts/vendor-themetoggle.mjs
-          git diff --exit-code
-
-      - name: Check vendored format copies are up to date
-        # Fails if kit/components/format.ts was changed without running vendor-format.mjs.
-        # Editing the canonical source without re-vendoring leaves the 6 target apps
-        # (bg, caption, cleanup, depth, transcribe, upscale) diverged from kit.
-        run: |
-          node scripts/vendor-format.mjs
-          git diff --exit-code
-
-      - name: Check vendored transformersEnv copies are up to date
-        # Fails if kit/components/transformersEnv.ts was changed without running
-        # vendor-transformers-env.mjs. Editing the canonical source without re-vendoring
-        # leaves the 5 target AI apps (bg, caption, depth, translate, upscale) diverged from kit.
-        run: |
-          node scripts/vendor-transformers-env.mjs
-          git diff --exit-code -- kit/components/transformersEnv.ts apps/bg/src/lib/transformersEnv.ts apps/caption/src/lib/transformersEnv.ts apps/depth/src/lib/transformersEnv.ts apps/translate/src/lib/transformersEnv.ts apps/upscale/src/lib/transformersEnv.ts
-
-      - name: Check vendored workerTask copies are up to date
-        # Fails if kit/lib/workerTask.ts was changed without running vendor-workertask.mjs.
-        # Editing the canonical source without re-vendoring leaves the 7 AI apps
-        # (bg, caption, depth, summarize, transcribe, translate, upscale) diverged from kit.
-        run: |
-          node scripts/vendor-workertask.mjs
-          git diff --exit-code -- kit/lib/workerTask.ts apps/bg/src/lib/workerTask.ts apps/caption/src/lib/workerTask.ts apps/depth/src/lib/workerTask.ts apps/summarize/src/lib/workerTask.ts apps/transcribe/src/lib/workerTask.ts apps/translate/src/lib/workerTask.ts apps/upscale/src/lib/workerTask.ts
-
-      - name: Check vendored MobileWarning copies are up to date
-        # Fails if kit/components/MobileWarning.{tsx,css} were changed without running
-        # vendor-mobilewarning.mjs. Covers all 10 apps that ship MobileWarning.
-        run: |
-          node scripts/vendor-mobilewarning.mjs
-          git diff --exit-code -- kit/components/MobileWarning.tsx kit/components/MobileWarning.css apps/bg/src/components/MobileWarning.tsx apps/caption/src/components/MobileWarning.tsx apps/chat/src/components/MobileWarning.tsx apps/depth/src/components/MobileWarning.tsx apps/screen-recorder/src/components/MobileWarning.tsx apps/summarize/src/components/MobileWarning.tsx apps/transcribe/src/components/MobileWarning.tsx apps/translate/src/components/MobileWarning.tsx apps/upscale/src/components/MobileWarning.tsx apps/video/src/components/MobileWarning.tsx
-
-      - name: Check vendored Header copies are up to date
-        # Fails if kit/components/Header.tsx was changed without running vendor-header.mjs.
-        # The canonical includes AppSwitcher; all 45 app Header.tsx copies must match.
-        run: |
-          node scripts/vendor-header.mjs
-          git diff --exit-code -- kit/components/Header.tsx apps/*/src/components/Header.tsx
-
-      - name: Check vendored Footer copies are up to date
-        # Fails if kit/components/Footer.tsx was changed without running vendor-footer.mjs.
-        # Canonical wording is "More tools" (capital M); all 45 app Footer.tsx copies must match.
-        run: |
-          node scripts/vendor-footer.mjs
-          git diff --exit-code -- kit/components/Footer.tsx apps/*/src/components/Footer.tsx
-
-      - name: Check vendored BrandMark (wrapper-form) copies are up to date
-        # Fails if kit/components/BrandMark.tsx was changed without running vendor-brandmark.mjs.
-        # The 9 custom-glyph apps (collage/convert/crop/exif/gif/meme/og/screenshot/video)
-        # are intentionally excluded — their BrandMark is tool-specific artwork, not drift.
-        run: |
-          node scripts/vendor-brandmark.mjs
-          git diff --exit-code -- kit/components/BrandMark.tsx apps/barcode/src/components/BrandMark.tsx apps/base64/src/components/BrandMark.tsx apps/bg/src/components/BrandMark.tsx apps/caption/src/components/BrandMark.tsx apps/chat/src/components/BrandMark.tsx apps/cleanup/src/components/BrandMark.tsx apps/colours/src/components/BrandMark.tsx apps/cron/src/components/BrandMark.tsx apps/css/src/components/BrandMark.tsx apps/csv/src/components/BrandMark.tsx apps/depth/src/components/BrandMark.tsx apps/diff/src/components/BrandMark.tsx apps/favicon/src/components/BrandMark.tsx apps/hash/src/components/BrandMark.tsx apps/invoice/src/components/BrandMark.tsx apps/json/src/components/BrandMark.tsx apps/jwt/src/components/BrandMark.tsx apps/lorem/src/components/BrandMark.tsx apps/markdown/src/components/BrandMark.tsx apps/ocr/src/components/BrandMark.tsx apps/password/src/components/BrandMark.tsx apps/pdf/src/components/BrandMark.tsx apps/qr/src/components/BrandMark.tsx apps/regex/src/components/BrandMark.tsx apps/resume/src/components/BrandMark.tsx apps/screen-recorder/src/components/BrandMark.tsx apps/sign/src/components/BrandMark.tsx apps/subs/src/components/BrandMark.tsx apps/summarize/src/components/BrandMark.tsx apps/svg/src/components/BrandMark.tsx apps/timestamp/src/components/BrandMark.tsx apps/transcribe/src/components/BrandMark.tsx apps/translate/src/components/BrandMark.tsx apps/units/src/components/BrandMark.tsx apps/upscale/src/components/BrandMark.tsx apps/uuid/src/components/BrandMark.tsx
-
-      - name: Check vendored theme.ts copies are up to date
-        # Fails if kit/theme.ts was changed without running vendor-theme.mjs.
-        # kit/theme.ts is the SUPERSET canonical (TextInput + Slider + Popover).
-        # The 4 non-Mantine apps (colours/exif/favicon/ocr) have no src/theme.ts
-        # and are intentionally skipped by the script.
-        run: |
-          node scripts/vendor-theme.mjs
-          git diff --exit-code -- kit/theme.ts apps/*/src/theme.ts
-
-      - name: Check vendored unicodeFont.ts copies are up to date
-        # Fails if kit/lib/unicodeFont.ts was changed without running vendor-unicodefont.mjs.
-        # Targets: apps/invoice/pdf/resume/sign src/lib/unicodeFont.ts.
-        # apps/ocr uses a superset (ocrPdfUtils.ts) with per-script font selection;
-        # its Noto Sans base URL is identical and documented with a cross-reference.
-        run: |
-          node scripts/vendor-unicodefont.mjs
-          git diff --exit-code -- kit/lib/unicodeFont.ts apps/invoice/src/lib/unicodeFont.ts apps/pdf/src/lib/unicodeFont.ts apps/resume/src/lib/unicodeFont.ts apps/sign/src/lib/unicodeFont.ts
-
-      - name: Check vendored base64url.ts copies are up to date
-        # Fails if kit/lib/base64url.ts was changed without running vendor-base64url.mjs.
-        # Targets: apps/base64/jwt/colours src/lib/base64url.ts.
-        run: |
-          node scripts/vendor-base64url.mjs
-          git diff --exit-code -- kit/lib/base64url.ts apps/base64/src/lib/base64url.ts apps/jwt/src/lib/base64url.ts apps/colours/src/lib/base64url.ts
-
-      - name: Check vendored unitsData.ts copies are up to date
-        # Fails if kit/lib/unitsData.ts was changed without running vendor-units.mjs.
-        # unitsData.ts is the canonical unit-ids/factors + convert({value,from,to,category}).
-        # Editing the canonical source without re-vendoring leaves apps/units diverged from kit.
-        run: |
-          node scripts/vendor-units.mjs
-          git diff --exit-code -- kit/lib/unitsData.ts apps/units/src/lib/unitsData.ts
-
-      - name: Check vendored csvParse.ts copies are up to date
-        # Fails if kit/lib/csvParse.ts was changed without running vendor-csvparse.mjs.
-        # csvParse.ts is the canonical RFC 4180 parser + delimiter-detection heuristic.
-        # Editing the canonical source without re-vendoring leaves apps/csv diverged from kit.
-        run: |
-          node scripts/vendor-csvparse.mjs
-          git diff --exit-code -- kit/lib/csvParse.ts apps/csv/src/lib/csvParse.ts
-
-      - name: Check vendored qrContent.ts copies are up to date
-        # Fails if kit/lib/qrContent.ts was changed without running vendor-qrcontent.mjs.
-        # qrContent.ts is the canonical WiFi (meCard) and vCard 3.0 QR payload builder.
-        # Both apps/qr and apps/barcode vendor this file; editing without re-vendoring
-        # causes the two apps to diverge — exactly the bug fixed in #61.
-        run: |
-          node scripts/vendor-qrcontent.mjs
-          git diff --exit-code -- kit/lib/qrContent.ts apps/qr/src/lib/qrContent.ts apps/barcode/src/lib/qrContent.ts
-
-      - name: Check vendored cronGrammar.ts copies are up to date
-        # Fails if kit/lib/cronGrammar.ts was changed without running vendor-cron-grammar.mjs.
-        # cronGrammar.ts is the canonical cron field-grammar (CRON_MACROS, FIELD_SPECS,
-        # FIELD_ORDER, expandMacro, normaliseNames, validateSinglePart, expandField).
-        # apps/cron vendors this file; packages/core keeps its own reconciled copy
-        # (SYNC: cronGrammar comments) so core stays standalone. Fixed in #53.
-        run: |
-          node scripts/vendor-cron-grammar.mjs
-          git diff --exit-code -- kit/lib/cronGrammar.ts apps/cron/src/lib/cronGrammar.ts
 
       - name: Check vendored useCmdEnter.ts copies are up to date
         # Fails if kit/components/useCmdEnter.ts was changed without running vendor-cmdenter.mjs.

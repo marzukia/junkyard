@@ -67,15 +67,13 @@ export const useLoremStore = create<LoremStore>()(
       seed: Date.now(),
       wordBank: "classic" as WordBank,
       classicStart: false,
-      setMode: (mode) => set((s) => {
-        const maxCount = mode === "words" ? 200 : mode === "list" ? 30 : 20;
-        const clampedCount = Math.min(s.count, maxCount);
-        return { mode, count: clampedCount };
-      }),
-      setCount: (count) => set((state) => {
-        const maxCount = state.mode === "words" ? 200 : state.mode === "list" ? 30 : 20;
-        return { count: Math.min(count, maxCount) };
-      }),
+      setMode: (mode) =>
+        set((s) => {
+          const maxCount = mode === "words" ? 200 : mode === "list" ? 30 : 20;
+          const clampedCount = Math.min(s.count, maxCount);
+          return { mode, count: clampedCount };
+        }),
+      setCount: (count) => set({ count }),
       setListStyle: (listStyle) => set({ listStyle }),
       setOutput: (output) => set({ output }),
       regenerate: () => set({ seed: Date.now() }),

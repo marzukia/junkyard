@@ -5,12 +5,20 @@ export default defineConfig({
   plugins: [react()],
   base: "/",
   build: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
     target: "es2022",
   },
   resolve: {
     // Ensure the browser condition is evaluated so svgo/browser resolves
     // to svgo's browser-safe bundle (no Node.js fs/path deps).
     conditions: ["browser", "module", "import", "default"],
+  },
+    worker: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
   },
   test: {
     environment: "jsdom",

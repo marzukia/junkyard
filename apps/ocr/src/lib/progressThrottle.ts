@@ -22,7 +22,7 @@ export function shouldEmitOcrProgress(
   pct: number,
   message: string,
   lastPct: number,
-  lastMessage: string,
+  lastMessage: string
 ): boolean {
   if (lastPct === -1) return true; // first event of this run
   if (pct === 0 || pct === 100) return true; // sentinel values always pass

@@ -5,10 +5,18 @@ export default defineConfig({
   plugins: [react()],
   base: "/",
   build: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
     target: "es2022",
   },
   optimizeDeps: {
     exclude: ["pdfjs-dist"],
+  },
+    worker: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
   },
   test: {
     environment: "jsdom",

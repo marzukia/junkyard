@@ -8,17 +8,12 @@ import {
   encodeOutput,
   hexToBase64,
   md5Hex,
-  sha224Hex,
   sha3_256Hex,
   sha3_512Hex,
+  sha224Hex,
 } from "./hash";
-import {
-  ALGO_LENGTHS,
-  detectAlgos,
-  matchedAlgo,
-  rowMatchStatus,
-} from "./verify";
 import type { HashResult } from "./hash";
+import { ALGO_LENGTHS, detectAlgos, matchedAlgo, rowMatchStatus } from "./verify";
 
 // ── md5Hex negative/edge cases ────────────────────────────────────────────────
 
@@ -83,9 +78,7 @@ describe("crc32Hex — edge and negative cases", () => {
 
 describe("sha224Hex — additional cases", () => {
   it('hashes "abc" to the FIPS reference', async () => {
-    expect(await sha224Hex("abc")).toBe(
-      "23097d223405d8228642a477bda255b32aadbce4bda0b3f7e36c9da7"
-    );
+    expect(await sha224Hex("abc")).toBe("23097d223405d8228642a477bda255b32aadbce4bda0b3f7e36c9da7");
   });
 
   it("produces 56-char hex output always", async () => {

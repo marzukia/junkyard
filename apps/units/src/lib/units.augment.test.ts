@@ -48,7 +48,9 @@ describe("convert -- zero input", () => {
 
   it("0 C to K is 273.15", () => {
     // 0 Celsius = 273.15 Kelvin
-    expect(approx(convert({ value: 0, from: "C", to: "K", category: "temperature" }), 273.15)).toBe(true);
+    expect(approx(convert({ value: 0, from: "C", to: "K", category: "temperature" }), 273.15)).toBe(
+      true
+    );
   });
 
   it("0 J to cal is 0", () => {
@@ -60,15 +62,21 @@ describe("convert -- zero input", () => {
 
 describe("convert -- negative values", () => {
   it("-1 m is -100 cm", () => {
-    expect(approx(convert({ value: -1, from: "m", to: "cm", category: "length" }), -100)).toBe(true);
+    expect(approx(convert({ value: -1, from: "m", to: "cm", category: "length" }), -100)).toBe(
+      true
+    );
   });
 
   it("-40 C = -40 F (the crossover)", () => {
-    expect(approx(convert({ value: -40, from: "C", to: "F", category: "temperature" }), -40)).toBe(true);
+    expect(approx(convert({ value: -40, from: "C", to: "F", category: "temperature" }), -40)).toBe(
+      true
+    );
   });
 
   it("-273.15 C = 0 K (absolute zero)", () => {
-    expect(approx(convert({ value: -273.15, from: "C", to: "K", category: "temperature" }), 0, 1e-9)).toBe(true);
+    expect(
+      approx(convert({ value: -273.15, from: "C", to: "K", category: "temperature" }), 0, 1e-9)
+    ).toBe(true);
   });
 });
 
@@ -104,7 +112,9 @@ describe("convert -- roundtrip", () => {
 
 describe("convert -- Rankine", () => {
   it("0 K = 0 R", () => {
-    expect(approx(convert({ value: 0, from: "K", to: "R", category: "temperature" }), 0)).toBe(true);
+    expect(approx(convert({ value: 0, from: "K", to: "R", category: "temperature" }), 0)).toBe(
+      true
+    );
   });
 
   it("Rankine -> K -> Rankine roundtrip", () => {

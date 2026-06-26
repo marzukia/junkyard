@@ -163,7 +163,7 @@ describe("needsChunking -- additional cases", () => {
 // ── chunkText negative / edge cases ──────────────────────────────────────────
 
 describe("chunkText -- edge cases", () => {
-  it("returns [] for empty string (fixed: was returning [\"\"])", () => {
+  it('returns [] for empty string (fixed: was returning [""])', () => {
     const chunks = chunkText("", 100);
     expect(chunks).toEqual([]);
   });

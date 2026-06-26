@@ -13,8 +13,8 @@ import { describe, expect, it } from "vitest";
 import {
   FIELD_ORDER,
   PRESETS,
-  describeRaw,
   describeCron,
+  describeRaw,
   expressionToFields,
   fieldLabel,
   macroLabel,
@@ -220,11 +220,7 @@ describe("nextRuns dom+dow OR semantics", () => {
     // Anchor is the 15th; next dom=1 is Feb 1 (also a Thursday, not Sunday).
     // Next Sunday from Jan 15 is Jan 21.
     // With OR semantics, the earlier of these is Jan 21 (Sunday).
-    const runs = nextRuns(
-      { minute: "0", hour: "12", dom: "1", month: "*", dow: "0" },
-      1,
-      anchor
-    );
+    const runs = nextRuns({ minute: "0", hour: "12", dom: "1", month: "*", dow: "0" }, 1, anchor);
     expect(runs).toHaveLength(1);
     // Result should be strictly after anchor
     expect(runs[0].getTime()).toBeGreaterThan(anchor.getTime());
@@ -237,11 +233,7 @@ describe("nextRuns dom+dow OR semantics", () => {
   it("fires when dow matches even if dom does not", () => {
     // dom=31 (not this month at all for Feb) or dow=1 (Monday).
     // From Jan 15 (Monday), next Mon is Jan 22.
-    const runs = nextRuns(
-      { minute: "0", hour: "12", dom: "31", month: "*", dow: "1" },
-      1,
-      anchor
-    );
+    const runs = nextRuns({ minute: "0", hour: "12", dom: "31", month: "*", dow: "1" }, 1, anchor);
     expect(runs).toHaveLength(1);
     // Result is strictly after anchor
     expect(runs[0].getTime()).toBeGreaterThan(anchor.getTime());

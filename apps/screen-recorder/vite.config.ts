@@ -5,7 +5,15 @@ export default defineConfig({
   plugins: [react()],
   base: "/screen-recorder/",
   build: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
     target: "es2022",
+  },
+    worker: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
   },
   test: {
     environment: "jsdom",

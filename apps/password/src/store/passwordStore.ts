@@ -118,8 +118,7 @@ export const usePasswordStore = create<PasswordState>()(
         const wordCount = Number(state.wordCount);
         state.wordCount = Number.isFinite(wordCount) && wordCount >= 1 ? Math.floor(wordCount) : 5;
         const count = Number(state.count);
-        state.count =
-          Number.isFinite(count) && count >= 1 && count <= 20 ? Math.floor(count) : 5;
+        state.count = Number.isFinite(count) && count >= 1 && count <= 20 ? Math.floor(count) : 5;
       },
       // Only persist settings, not derived functions
       partialize: (s) => ({

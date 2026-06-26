@@ -1,10 +1,10 @@
 import { create } from "zustand";
+import type { CommonPattern, RegexFlag, RegexOutcome } from "../lib/regex";
+import type { WorkerRequest, WorkerResponse } from "../regex.worker";
 // Vite worker import — statically analysable so Vite compiles this to a real chunk,
 // not an inlined data URL. `new RegexWorker()` at the call site is required for
 // Vite to detect the worker and emit it as a separate chunk.
 import RegexWorker from "../regex.worker.ts?worker";
-import type { WorkerRequest, WorkerResponse } from "../regex.worker";
-import type { CommonPattern, RegexFlag, RegexOutcome } from "../lib/regex";
 
 export type ActiveTab = "matches" | "replace" | "explain" | "export" | "library";
 
@@ -142,12 +142,7 @@ function dispatchToWorker(
 export const useRegexStore = create<RegexState>((set, get) => {
   const storedFlags = loadStoredFlags();
 
-  function runMatch(
-    pattern: string,
-    flags: Set<RegexFlag>,
-    testText: string,
-    replacement: string
-  ) {
+  function runMatch(pattern: string, flags: Set<RegexFlag>, testText: string, replacement: string) {
     if (!pattern) {
       cancelPending();
       set({

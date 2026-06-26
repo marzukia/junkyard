@@ -64,7 +64,7 @@ describe("savePalette / loadPalette", () => {
     // Should return null (not silently substitute grey) and warn about the bad entry.
     expect(loaded).toBeNull();
     expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("[colours]"),
+      expect.stringContaining("[colours]")
       // message includes the bad value
     );
     warnSpy.mockRestore();

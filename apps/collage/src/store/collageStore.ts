@@ -49,7 +49,8 @@ function loadSettings(): Partial<PersistedSettings> {
     if (typeof obj.borderColor === "string") out.borderColor = obj.borderColor;
     if (typeof obj.gutter === "number" && isFinite(obj.gutter)) out.gutter = obj.gutter;
     if (typeof obj.radius === "number" && isFinite(obj.radius)) out.radius = obj.radius;
-    if (typeof obj.borderWidth === "number" && isFinite(obj.borderWidth)) out.borderWidth = obj.borderWidth;
+    if (typeof obj.borderWidth === "number" && isFinite(obj.borderWidth))
+      out.borderWidth = obj.borderWidth;
     return out;
   } catch {
     return {};

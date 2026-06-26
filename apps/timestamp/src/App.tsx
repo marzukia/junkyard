@@ -1,8 +1,7 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCmdEnter } from "./components/useCmdEnter";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import {
   type BatchRow,
   COMMON_TIMEZONES,
@@ -12,7 +11,6 @@ import {
   batchConvert,
   computeDiff,
   detectUnit,
-  hasExplicitTimezone,
   parseDiffInput,
 } from "./lib/timestamp";
 import { useTimestampStore } from "./store/timestampStore";
@@ -366,9 +364,16 @@ export function App() {
     rawDetectedUnit === "s" && epochNum !== null && Number.isFinite(epochNum) && epochNum > 1e9; // looks like a plausible unix second but could also be ms
 
   // Keyboard shortcut: Cmd/Ctrl+Enter loads "use now" (primary action) in epoch mode
-  useCmdEnter(() => {
-    loadNow();
-  });
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        loadNow();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [loadNow]);
 
   return (
     <div className="app-root">
@@ -499,12 +504,6 @@ export function App() {
                   autoComplete="off"
                 />
               </div>
-              {/* TZ notice */}
-              {inputMode === "date" && dateInput.trim() !== "" && !hasExplicitTimezone(dateInput) && (
-                <output className="ts-tz-notice" role="status" aria-live="polite">
-                  <span>⚠ No timezone offset detected — parsed in your browser's local timezone, not the selected "{timezone}" timezone. Add Z (UTC) or +HH:MM for explicit timezone.</span>
-                </output>
-              )}
               {parseError && (
                 <div className="ts-input-error" role="alert" aria-live="polite">
                   <span>&#x2715;</span>

@@ -5,6 +5,9 @@ export default defineConfig({
   plugins: [react()],
   base: "/",
   build: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
     target: "es2022",
     rollupOptions: {
       // Force @pdf-lib/fontkit and its transitive dep pako to always be bundled.
@@ -14,6 +17,11 @@ export default defineConfig({
       // a bare import specifier in the production output — which causes browsers to
       // throw "Failed to resolve module specifier" and renders the app blank.
       noExternal: ["@pdf-lib/fontkit", "pako"],
+    },
+  },
+    worker: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
     },
   },
   test: {

@@ -29,18 +29,24 @@ import { formatBytes, formatProgress, outputFilename } from "./imageHelpers";
 describe("viridisColour boundary segments", () => {
   it("t=0.143 (exact stop boundary) produces valid RGB", () => {
     const [r, g, b] = viridisColour(0.143);
-    expect(r).toBeGreaterThanOrEqual(0); expect(r).toBeLessThanOrEqual(255);
-    expect(g).toBeGreaterThanOrEqual(0); expect(g).toBeLessThanOrEqual(255);
-    expect(b).toBeGreaterThanOrEqual(0); expect(b).toBeLessThanOrEqual(255);
+    expect(r).toBeGreaterThanOrEqual(0);
+    expect(r).toBeLessThanOrEqual(255);
+    expect(g).toBeGreaterThanOrEqual(0);
+    expect(g).toBeLessThanOrEqual(255);
+    expect(b).toBeGreaterThanOrEqual(0);
+    expect(b).toBeLessThanOrEqual(255);
   });
 
   it("values at all 8 stop boundaries are in 0-255", () => {
     const stops = [0, 0.143, 0.286, 0.429, 0.571, 0.714, 0.857, 1.0];
     for (const t of stops) {
       const [r, g, b] = viridisColour(t);
-      expect(r).toBeGreaterThanOrEqual(0); expect(r).toBeLessThanOrEqual(255);
-      expect(g).toBeGreaterThanOrEqual(0); expect(g).toBeLessThanOrEqual(255);
-      expect(b).toBeGreaterThanOrEqual(0); expect(b).toBeLessThanOrEqual(255);
+      expect(r).toBeGreaterThanOrEqual(0);
+      expect(r).toBeLessThanOrEqual(255);
+      expect(g).toBeGreaterThanOrEqual(0);
+      expect(g).toBeLessThanOrEqual(255);
+      expect(b).toBeGreaterThanOrEqual(0);
+      expect(b).toBeLessThanOrEqual(255);
     }
   });
 
@@ -57,9 +63,12 @@ describe("viridisColour boundary segments", () => {
 describe("magmaColour additional tests", () => {
   it("t=0.5 produces valid mid-range colour", () => {
     const [r, g, b] = magmaColour(0.5);
-    expect(r).toBeGreaterThanOrEqual(0); expect(r).toBeLessThanOrEqual(255);
-    expect(g).toBeGreaterThanOrEqual(0); expect(g).toBeLessThanOrEqual(255);
-    expect(b).toBeGreaterThanOrEqual(0); expect(b).toBeLessThanOrEqual(255);
+    expect(r).toBeGreaterThanOrEqual(0);
+    expect(r).toBeLessThanOrEqual(255);
+    expect(g).toBeGreaterThanOrEqual(0);
+    expect(g).toBeLessThanOrEqual(255);
+    expect(b).toBeGreaterThanOrEqual(0);
+    expect(b).toBeLessThanOrEqual(255);
   });
 
   it("t=0.5 is distinctly between the t=0 and t=1 endpoints", () => {
@@ -75,9 +84,12 @@ describe("magmaColour additional tests", () => {
     const stops = [0, 0.143, 0.286, 0.429, 0.571, 0.714, 0.857, 1.0];
     for (const t of stops) {
       const [r, g, b] = magmaColour(t);
-      expect(r).toBeGreaterThanOrEqual(0); expect(r).toBeLessThanOrEqual(255);
-      expect(g).toBeGreaterThanOrEqual(0); expect(g).toBeLessThanOrEqual(255);
-      expect(b).toBeGreaterThanOrEqual(0); expect(b).toBeLessThanOrEqual(255);
+      expect(r).toBeGreaterThanOrEqual(0);
+      expect(r).toBeLessThanOrEqual(255);
+      expect(g).toBeGreaterThanOrEqual(0);
+      expect(g).toBeLessThanOrEqual(255);
+      expect(b).toBeGreaterThanOrEqual(0);
+      expect(b).toBeLessThanOrEqual(255);
     }
   });
 });
@@ -95,9 +107,12 @@ describe("turboColour additional tests", () => {
     const stops = [0, 0.143, 0.286, 0.429, 0.571, 0.714, 0.857, 1.0];
     for (const t of stops) {
       const [r, g, b] = turboColour(t);
-      expect(r).toBeGreaterThanOrEqual(0); expect(r).toBeLessThanOrEqual(255);
-      expect(g).toBeGreaterThanOrEqual(0); expect(g).toBeLessThanOrEqual(255);
-      expect(b).toBeGreaterThanOrEqual(0); expect(b).toBeLessThanOrEqual(255);
+      expect(r).toBeGreaterThanOrEqual(0);
+      expect(r).toBeLessThanOrEqual(255);
+      expect(g).toBeGreaterThanOrEqual(0);
+      expect(g).toBeLessThanOrEqual(255);
+      expect(b).toBeGreaterThanOrEqual(0);
+      expect(b).toBeLessThanOrEqual(255);
     }
   });
 
@@ -118,9 +133,12 @@ describe("plasmaColour additional tests", () => {
     const stops = [0, 0.143, 0.286, 0.429, 0.571, 0.714, 0.857, 1.0];
     for (const t of stops) {
       const [r, g, b] = plasmaColour(t);
-      expect(r).toBeGreaterThanOrEqual(0); expect(r).toBeLessThanOrEqual(255);
-      expect(g).toBeGreaterThanOrEqual(0); expect(g).toBeLessThanOrEqual(255);
-      expect(b).toBeGreaterThanOrEqual(0); expect(b).toBeLessThanOrEqual(255);
+      expect(r).toBeGreaterThanOrEqual(0);
+      expect(r).toBeLessThanOrEqual(255);
+      expect(g).toBeGreaterThanOrEqual(0);
+      expect(g).toBeLessThanOrEqual(255);
+      expect(b).toBeGreaterThanOrEqual(0);
+      expect(b).toBeLessThanOrEqual(255);
     }
   });
 
@@ -171,9 +189,12 @@ describe("applyColourMap routes all colour maps", () => {
     it(`applyColourMap delegates ${cm} for t=0`, () => {
       expect(() => applyColourMap(0, cm)).not.toThrow();
       const [r, g, b] = applyColourMap(0, cm);
-      expect(r).toBeGreaterThanOrEqual(0); expect(r).toBeLessThanOrEqual(255);
-      expect(g).toBeGreaterThanOrEqual(0); expect(g).toBeLessThanOrEqual(255);
-      expect(b).toBeGreaterThanOrEqual(0); expect(b).toBeLessThanOrEqual(255);
+      expect(r).toBeGreaterThanOrEqual(0);
+      expect(r).toBeLessThanOrEqual(255);
+      expect(g).toBeGreaterThanOrEqual(0);
+      expect(g).toBeLessThanOrEqual(255);
+      expect(b).toBeGreaterThanOrEqual(0);
+      expect(b).toBeLessThanOrEqual(255);
     });
   }
 });

@@ -140,9 +140,7 @@ export const useTranscribeStore = create<TranscribeState>((set) => ({
   setInputFile: (file) => set({ inputFile: file, transcript: "", chunks: [], errorMsg: null }),
 
   setPhase: (phase) =>
-    set((s) =>
-      phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {}
-    ),
+    set((s) => (phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {})),
 
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
 
@@ -168,7 +166,8 @@ export const useTranscribeStore = create<TranscribeState>((set) => ({
     set({ translateToEnglish: v });
   },
 
-  setTranscribeProgress: (p) => set((s) => ({ transcribeProgress: { ...s.transcribeProgress, ...p } })),
+  setTranscribeProgress: (p) =>
+    set((s) => ({ transcribeProgress: { ...s.transcribeProgress, ...p } })),
 
   reset: () => set({ ...INITIAL }),
 }));

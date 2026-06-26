@@ -61,7 +61,12 @@ export function ImagePalette() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Revoke the object URL when it changes or when the component unmounts.
-  useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
+  useEffect(
+    () => () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    },
+    [previewUrl]
+  );
 
   const processFile = useCallback(
     async (file: File) => {
@@ -86,7 +91,10 @@ export function ImagePalette() {
         setState("idle");
       } catch {
         setState("corrupt");
-        setPreviewUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
+        setPreviewUrl((prev) => {
+          if (prev) URL.revokeObjectURL(prev);
+          return null;
+        });
         setTimeout(() => setState("idle"), 2500);
       }
     },

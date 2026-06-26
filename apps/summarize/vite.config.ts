@@ -5,11 +5,19 @@ export default defineConfig({
   plugins: [react()],
   base: "/",
   build: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
     target: "es2022",
   },
   // Allow transformers.js to use its own worker/wasm resolution
   optimizeDeps: {
     exclude: ["@huggingface/transformers"],
+  },
+    worker: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
   },
   test: {
     environment: "jsdom",

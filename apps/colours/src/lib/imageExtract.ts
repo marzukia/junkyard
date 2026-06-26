@@ -257,12 +257,12 @@ export function extractPaletteFromPixels(
   count: number,
   seed = DEFAULT_EXTRACT_SEED
 ): string[] {
-  if (pixels.length === 0) return Array(count).fill('#808080');
+  if (pixels.length === 0) return Array(count).fill("#808080");
   const rand = mulberry32(seed);
   const centroids = kMeans(pixels, count, rand);
   centroids.sort((a, b) => perceivedLightness(b) - perceivedLightness(a));
   return centroids.map((c) => {
     const hex = rgbToHex(c);
-    return normalizeHex(hex) ?? '#808080';
+    return normalizeHex(hex) ?? "#808080";
   });
 }

@@ -177,7 +177,10 @@ export function FreeformCanvas({ canvasWidth, canvasHeight }: Props) {
     for (const file of files) {
       const url = URL.createObjectURL(file);
       const newCard: FreeformCard = {
-        id: (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") ? `card-${crypto.randomUUID()}` : `card-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        id:
+          typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+            ? `card-${crypto.randomUUID()}`
+            : `card-${Date.now()}-${Math.random().toString(36).slice(2)}`,
         photoUrl: url,
         x: Math.max(0, dropX - 0.15),
         y: Math.max(0, dropY - 0.15),
@@ -196,7 +199,10 @@ export function FreeformCanvas({ canvasWidth, canvasHeight }: Props) {
     for (const file of Array.from(e.target.files)) {
       const url = URL.createObjectURL(file);
       const newCard: FreeformCard = {
-        id: (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") ? `card-${crypto.randomUUID()}` : `card-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        id:
+          typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+            ? `card-${crypto.randomUUID()}`
+            : `card-${Date.now()}-${Math.random().toString(36).slice(2)}`,
         photoUrl: url,
         x,
         y,

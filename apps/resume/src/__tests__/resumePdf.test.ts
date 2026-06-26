@@ -7,11 +7,15 @@
  * the sanitize-fallback path is exercised.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { generateResumePdf } from "../lib/resumePdf";
 
 const MOCK_FETCH_FAIL = () =>
-  Promise.resolve({ ok: false, status: 503, arrayBuffer: async () => new ArrayBuffer(0) } as Response);
+  Promise.resolve({
+    ok: false,
+    status: 503,
+    arrayBuffer: async () => new ArrayBuffer(0),
+  } as Response);
 
 const BASE_INPUT = {
   fullName: "Jane Smith",

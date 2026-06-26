@@ -1,8 +1,7 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCmdEnter } from "./components/useCmdEnter";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import type { HmacAlgo, OutputEncoding } from "./lib/hash";
 import { encodeOutput } from "./lib/hash";
 import type { HashResult } from "./lib/hash";
@@ -420,9 +419,16 @@ export function App() {
   }, [text, inputMode, compute]);
 
   // Cmd/Ctrl+Enter triggers compute (fleet-wide power-user shortcut)
-  useCmdEnter(() => {
-    void compute();
-  });
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        void compute();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [compute]);
 
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

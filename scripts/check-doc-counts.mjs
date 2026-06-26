@@ -66,11 +66,11 @@ const DOC_CHECKS = [
   },
   {
     file: "docs/ARCHITECTURE.md",
-    // Matches: "The 44 apps have divergent"
-    //          "across all 44 apps and must be full-build-verified"
+    // Matches: "The 45 apps have divergent"
+    //          "reads all 45 of these files"
     patterns: [
       /The\s+(\d+)\s+apps\s+have\s+divergent/,
-      /all\s+(\d+)\s+apps\s+and\s+must\s+be\s+full-build-verified/,
+      /reads\s+all\s+(\d+)\s+of\s+these\s+files/,
     ],
   },
   // ── coreCount (17) guards — authoritative: TOOLS.length ────────────────────

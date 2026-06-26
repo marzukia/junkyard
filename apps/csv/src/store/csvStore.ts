@@ -245,8 +245,7 @@ export const useCsvStore = create<CsvState>()(
               ? (p.mode as ConvertMode)
               : current.mode,
           delimiter:
-            typeof p.delimiter === "string" &&
-            VALID_DELIMITERS.includes(p.delimiter as Delimiter)
+            typeof p.delimiter === "string" && VALID_DELIMITERS.includes(p.delimiter as Delimiter)
               ? (p.delimiter as Delimiter)
               : current.delimiter,
           autoDelimiter:

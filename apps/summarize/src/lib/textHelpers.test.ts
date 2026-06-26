@@ -300,7 +300,6 @@ describe("extractTextFromHtml", () => {
   });
 });
 
-
 describe("chunkText empty/whitespace input", () => {
   it("returns [] for empty string", () => {
     expect(chunkText("")).toEqual([]);

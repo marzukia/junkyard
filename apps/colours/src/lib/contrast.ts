@@ -22,7 +22,7 @@ function linearise(c8: number): number {
  */
 export function relativeLuminance(hex: string): number {
   const stripped = hex.replace(/^#/, "");
-  if (!/^[0-9a-fA-F]{6}$/.test(stripped)) return NaN;
+  if (!/^[0-9a-fA-F]{6}$/.test(stripped)) return Number.NaN;
   const r = linearise(Number.parseInt(stripped.slice(0, 2), 16));
   const g = linearise(Number.parseInt(stripped.slice(2, 4), 16));
   const b = linearise(Number.parseInt(stripped.slice(4, 6), 16));
@@ -36,7 +36,7 @@ export function relativeLuminance(hex: string): number {
 export function contrastRatio(fg: string, bg: string): number {
   const l1 = relativeLuminance(fg);
   const l2 = relativeLuminance(bg);
-  if (Number.isNaN(l1) || Number.isNaN(l2)) return NaN;
+  if (Number.isNaN(l1) || Number.isNaN(l2)) return Number.NaN;
   const lighter = Math.max(l1, l2);
   const darker = Math.min(l1, l2);
   return (lighter + 0.05) / (darker + 0.05);

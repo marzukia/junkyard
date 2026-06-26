@@ -78,7 +78,13 @@ export interface OcrState {
     lowConfWords?: Array<{ text: string; confidence: number }>,
     ocrWords?: OcrWord[]
   ) => void;
-  setQueueItemResult: (id: string, text: string, confidence: number, errorMsg?: string, words?: OcrWord[]) => void;
+  setQueueItemResult: (
+    id: string,
+    text: string,
+    confidence: number,
+    errorMsg?: string,
+    words?: OcrWord[]
+  ) => void;
   setEditedText: (text: string) => void;
   setCopyDone: (v: boolean) => void;
   setCropRect: (rect: CropRect | null) => void;

@@ -178,8 +178,15 @@ function makePngBytes(size: number): Uint8Array {
   const iendLen = new Uint8Array([0, 0, 0, 0]);
   const iendType = new TextEncoder().encode("IEND");
   const iendCrc = new Uint8Array([174, 66, 96, 130]);
-  const total = sig.length + ihdrLen.length + ihdrType.length + ihdrData.length + ihdrCrc.length
-    + iendLen.length + iendType.length + iendCrc.length;
+  const total =
+    sig.length +
+    ihdrLen.length +
+    ihdrType.length +
+    ihdrData.length +
+    ihdrCrc.length +
+    iendLen.length +
+    iendType.length +
+    iendCrc.length;
   const out = new Uint8Array(total);
   let pos = 0;
   for (const chunk of [sig, ihdrLen, ihdrType, ihdrData, ihdrCrc, iendLen, iendType, iendCrc]) {

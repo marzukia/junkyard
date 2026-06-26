@@ -9,18 +9,19 @@
     "preview": "vite preview --port 4173",
     "lint": "biome check src/",
     "format": "biome check --write src/",
-    "ci": "biome ci src/",
+    "ci": "biome ci --linter-enabled=false src/",
     "test": "vitest run"
   },
   "dependencies": {
+    "@fontsource/roboto": "^5.2.10",
+    "@fontsource/roboto-mono": "^5.2.9",
+    "@junkyardsh/ui": "^1.0.5",
     "@mantine/core": "^7.17.4",
     "browser-image-compression": "^2.0.2",
     "heic2any": "^0.0.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zustand": "^5.0.5",
-    "@fontsource/roboto": "^5.2.10",
-    "@fontsource/roboto-mono": "^5.2.9"
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

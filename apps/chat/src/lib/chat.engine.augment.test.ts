@@ -5,7 +5,6 @@
  * - renderMarkdown.ts additional edge cases
  */
 import { describe, expect, it } from "vitest";
-import { MODEL_ID, MODEL_SIZE_LABEL, abortGeneration, isEngineLoaded } from "./llmEngine";
 import {
   buildSystemPrompt,
   exportConversation,
@@ -13,6 +12,7 @@ import {
   formatEta,
   trimMessage,
 } from "./chatHelpers";
+import { MODEL_ID, MODEL_SIZE_LABEL, abortGeneration, isEngineLoaded } from "./llmEngine";
 import { renderMarkdown } from "./renderMarkdown";
 
 // ── llmEngine.ts pure state ───────────────────────────────────────────────────

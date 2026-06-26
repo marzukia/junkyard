@@ -1,8 +1,10 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { useWorkerTask } from "@junkyardsh/ui";
 import { useCallback, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import { LanguagePicker } from "./components/LanguagePicker";
+import InferWorker from "./infer.worker.ts?worker";
 import {
   DETECT_CODE,
   HARD_MAX_CHARS,
@@ -12,11 +14,9 @@ import {
   validateLanguagePair,
 } from "./lib/languages";
 import type { TranslationResult } from "./lib/translator";
-import InferWorker from "./infer.worker.ts?worker";
-import { useWorkerTask } from "./lib/workerTask";
 import { useTranslateStore } from "./store/translateStore";
 import "./styles/translate.css";
-import { MobileWarning } from "./components/MobileWarning";
+import { MobileWarning } from "@junkyardsh/ui";
 
 // ── Brand glyph: globe + bidirectional arrows ─────────────────────────────────
 

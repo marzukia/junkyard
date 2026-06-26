@@ -7,7 +7,7 @@
 import {
   decodeBase64Url as decodeBase64UrlCanonical,
   encodeBase64Url as encodeBase64UrlString,
-} from "./base64url";
+} from "@junkyardsh/ui";
 
 export interface JwtHeader {
   alg?: string;
