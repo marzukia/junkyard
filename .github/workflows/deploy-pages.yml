@@ -158,6 +158,24 @@ jobs:
           bun install --frozen-lockfile
           bun test
 
+  build-verify:
+    if: github.event_name == 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Build consolidated site
+        run: bash scripts/build-site.sh
+
+      - name: Check for bare import specifiers in built bundles
+        run: node scripts/check-bare-imports.mjs
+
   build:
     if: github.event_name == 'push'
     needs: verify
