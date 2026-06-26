@@ -4,7 +4,7 @@ import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface
  * Returns image bytes as ArrayBuffer (blob URLs don't cross worker boundaries).
  */
 import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
-import { configureTransformersEnv } from "../../../kit/components/transformersEnv";
+import { configureTransformersEnv } from "@junkyardsh/ui";
 import { MAX_INFER_SIDE, MODEL_ID } from "./lib/bgConstants";
 
 type TransformersProgressEvent = { status: string; loaded?: number; total?: number };

@@ -80,6 +80,9 @@ export default defineConfig({
   },
   base: "/",
   build: {
+    rollupOptions: {
+      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+    },
     target: "es2022",
   },
   test: {

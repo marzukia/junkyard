@@ -1,4 +1,4 @@
-import { embedUnicodeFonts, sanitizeWinAnsi } from "../../../kit/lib/unicodeFont";
+import { embedUnicodeFonts, sanitizeWinAnsi } from "@junkyardsh/ui";
 import { PDFDocument, type PDFFont, PageSizes, StandardFonts, rgb } from "pdf-lib";
 import type {
   CertificationEntry,

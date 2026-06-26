@@ -5,7 +5,7 @@ import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/t
  * Also returns the raw depth cache data for colourmap re-renders without re-inference.
  */
 import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
-import { configureTransformersEnv } from "../../../kit/components/transformersEnv";
+import { configureTransformersEnv } from "@junkyardsh/ui";
 import type { ColourMap } from "./lib/depthEstimation";
 import { MODEL_ID, applyColourMap } from "./lib/depthEstimation";
 

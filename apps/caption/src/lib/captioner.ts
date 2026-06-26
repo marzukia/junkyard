@@ -8,7 +8,7 @@
  * required for WebGPU); WASM single-thread is the fallback.
  */
 import { RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "../../../kit/components/transformersEnv";
+import { configureTransformersEnv } from "@junkyardsh/ui";
 
 // Approx download size is ~90 MB for ViT-GPT2 image captioning.
 export const MODEL_ID = "Xenova/vit-gpt2-image-captioning";

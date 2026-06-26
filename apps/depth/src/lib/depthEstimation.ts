@@ -8,7 +8,7 @@
  * required for WebGPU); WASM single-thread is the fallback.
  */
 import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "../../../kit/components/transformersEnv";
+import { configureTransformersEnv } from "@junkyardsh/ui";
 
 export const MODEL_ID = "onnx-community/depth-anything-v2-small";
 
