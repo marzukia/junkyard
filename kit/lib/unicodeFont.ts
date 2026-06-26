@@ -24,7 +24,6 @@
  */
 
 import type { PDFDocument, PDFFont } from "pdf-lib";
-import fontkit from "@pdf-lib/fontkit";
 
 // Noto Sans covers Latin-ext + virtually all non-CJK/Arabic scripts including
 // ₹ (Rupee), ₿ (Bitcoin), Devanagari, Greek, Cyrillic, Vietnamese, etc.
@@ -70,6 +69,7 @@ export interface UnicodeFontSet {
  * Call once per PDFDocument; the returned fonts can be reused across all pages.
  */
 export async function embedUnicodeFonts(doc: PDFDocument): Promise<UnicodeFontSet | null> {
+  const fontkit = (await import("@pdf-lib/fontkit")).default;
   doc.registerFontkit(fontkit);
 
   const [regularBytes, boldBytes] = await Promise.all([
