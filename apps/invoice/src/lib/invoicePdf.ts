@@ -1,7 +1,7 @@
-import { PDFDocument, StandardFonts, type PDFFont, type PDFPage, rgb } from "pdf-lib";
+import { embedUnicodeFonts, sanitizeWinAnsi } from "@junkyardsh/ui";
+import { PDFDocument, type PDFFont, type PDFPage, StandardFonts, rgb } from "pdf-lib";
 import type { DocType, LineItem } from "../store/useInvoiceStore";
 import { calcTotals, formatMoney } from "./invoiceCalc";
-import { embedUnicodeFonts, sanitizeWinAnsi } from "./unicodeFont";
 
 const DOC_TITLE_MAP: Record<DocType, string> = {
   invoice: "INVOICE",
@@ -71,8 +71,20 @@ function addPage(state: DrawState): void {
 
 function drawAccentBars(page: PDFPage): void {
   page.drawRectangle({ x: 0, y: PAGE_H - 6, width: PAGE_W * 0.55, height: 6, color: TEAL });
-  page.drawRectangle({ x: PAGE_W * 0.55, y: PAGE_H - 6, width: PAGE_W * 0.28, height: 6, color: AMBER });
-  page.drawRectangle({ x: PAGE_W * 0.83, y: PAGE_H - 6, width: PAGE_W * 0.17, height: 6, color: CORAL });
+  page.drawRectangle({
+    x: PAGE_W * 0.55,
+    y: PAGE_H - 6,
+    width: PAGE_W * 0.28,
+    height: 6,
+    color: AMBER,
+  });
+  page.drawRectangle({
+    x: PAGE_W * 0.83,
+    y: PAGE_H - 6,
+    width: PAGE_W * 0.17,
+    height: 6,
+    color: CORAL,
+  });
   page.drawRectangle({ x: 0, y: 0, width: PAGE_W * 0.55, height: 3, color: TEAL });
   page.drawRectangle({ x: PAGE_W * 0.55, y: 0, width: PAGE_W * 0.28, height: 3, color: AMBER });
   page.drawRectangle({ x: PAGE_W * 0.83, y: 0, width: PAGE_W * 0.17, height: 3, color: CORAL });
@@ -160,7 +172,9 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
     oblique = unicodeFonts.regular; // best available without a third fetch
     unicodeMode = true;
   } else {
-    console.warn("[invoice-pdf] Unicode font unavailable; falling back to Helvetica (non-Latin chars will be sanitized)");
+    console.warn(
+      "[invoice-pdf] Unicode font unavailable; falling back to Helvetica (non-Latin chars will be sanitized)"
+    );
     bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     regular = await pdfDoc.embedFont(StandardFonts.Helvetica);
     oblique = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
@@ -187,9 +201,7 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
       const isJpeg =
         data.logoDataUrl.startsWith("data:image/jpeg") ||
         data.logoDataUrl.startsWith("data:image/jpg");
-      const logoImg = isJpeg
-        ? await pdfDoc.embedJpg(logoBytes)
-        : await pdfDoc.embedPng(logoBytes);
+      const logoImg = isJpeg ? await pdfDoc.embedJpg(logoBytes) : await pdfDoc.embedPng(logoBytes);
       const logoMax = { w: 120, h: 60 };
       const scale = Math.min(logoMax.w / logoImg.width, logoMax.h / logoImg.height);
       const logoW = logoImg.width * scale;
@@ -202,7 +214,7 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
       });
     } catch (logoErr) {
       throw new Error(
-        `Logo could not be embedded in the PDF: ${logoErr instanceof Error ? logoErr.message : String(logoErr)}. Remove the logo or use a valid PNG/JPEG file.`,
+        `Logo could not be embedded in the PDF: ${logoErr instanceof Error ? logoErr.message : String(logoErr)}. Remove the logo or use a valid PNG/JPEG file.`
       );
     }
   }
@@ -268,7 +280,7 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
     email: string,
     address: string,
     startX: number,
-    startY: number,
+    startY: number
   ): number => {
     let ly = startY;
     state.page.drawText(enc(state, label), { x: startX, y: ly, size: 7, font: bold, color: TEAL });
@@ -278,7 +290,13 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
       ly -= 13;
     }
     if (email) {
-      state.page.drawText(enc(state, email), { x: startX, y: ly, size: 8, font: regular, color: INK_MID });
+      state.page.drawText(enc(state, email), {
+        x: startX,
+        y: ly,
+        size: 8,
+        font: regular,
+        color: INK_MID,
+      });
       ly -= 12;
     }
     if (address) {
@@ -297,7 +315,7 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
     data.senderEmail,
     data.senderAddress,
     MARGIN_X,
-    state.y,
+    state.y
   );
   const toBottom = drawParty(
     data.docType === "receipt" ? "RECEIVED FROM" : "BILL TO",
@@ -305,7 +323,7 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
     data.clientEmail,
     data.clientAddress,
     MARGIN_X + colW + 20,
-    state.y,
+    state.y
   );
 
   state.y = Math.min(fromBottom, toBottom) - 18;
@@ -411,7 +429,7 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
     data.discountPercent,
     data.shipping,
     data.amountPaid,
-    data.taxOnGross,
+    data.taxOnGross
   );
   const totalsX = PAGE_W - MARGIN_X - 200;
 
@@ -467,7 +485,7 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
   if (data.discountPercent > 0) {
     drawTotalRow(
       `Discount (${data.discountPercent}%)`,
-      `-${formatMoney(totals.discountAmount, data.currency)}`,
+      `-${formatMoney(totals.discountAmount, data.currency)}`
     );
   }
   if (data.taxRate > 0) {
@@ -493,12 +511,24 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Uint8Arr
       color: RULE,
     });
     state.y -= 14;
-    state.page.drawText("NOTES", { x: MARGIN_X, y: state.y, size: 7, font: bold, color: INK_FAINT });
+    state.page.drawText("NOTES", {
+      x: MARGIN_X,
+      y: state.y,
+      size: 7,
+      font: bold,
+      color: INK_FAINT,
+    });
     state.y -= 12;
     const noteLines = splitLines(enc(state, data.notes), oblique, 9, CONTENT_W);
     for (const line of noteLines) {
       ensureSpace(state, 14);
-      state.page.drawText(line, { x: MARGIN_X, y: state.y, size: 9, font: oblique, color: INK_MID });
+      state.page.drawText(line, {
+        x: MARGIN_X,
+        y: state.y,
+        size: 9,
+        font: oblique,
+        color: INK_MID,
+      });
       state.y -= 12;
     }
   }

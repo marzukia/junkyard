@@ -8,8 +8,8 @@
  * required for WebGPU); WASM single-thread is the fallback.
  */
 import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "./transformersEnv";
-import { MODEL_ID, MAX_INFER_SIDE } from "./bgConstants";
+import { configureTransformersEnv } from "@junkyardsh/ui";
+import { MAX_INFER_SIDE, MODEL_ID } from "./bgConstants";
 
 export type ProgressCallback = (loaded: number, total: number, status: string) => void;
 

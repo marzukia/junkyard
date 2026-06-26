@@ -9,11 +9,11 @@ import { describe, expect, it } from "vitest";
 import {
   decode,
   decodeBase64Url,
-  encodeBase64Url,
   encode,
+  encodeBase64Url,
   looksLikeBase64,
-  stripDataUri,
   parseDataUri,
+  stripDataUri,
 } from "./base64";
 
 // ── encode/decode dispatch ─────────────────────────────────────────────────────

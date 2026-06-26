@@ -5,9 +5,9 @@
  */
 import { describe, expect, it } from "vitest";
 import {
-  DETECT_CODE,
   DEFAULT_SOURCE,
   DEFAULT_TARGET,
+  DETECT_CODE,
   HARD_MAX_CHARS,
   LANGUAGES,
   MAX_CHUNK_CHARS,
@@ -116,12 +116,12 @@ describe("LANGUAGES -- structural invariants", () => {
 // ── splitIntoChunks -- additional edge cases ──────────────────────────────────
 
 describe("splitIntoChunks -- additional edge cases", () => {
-  it("returns [] for empty string (fixed: was returning [\"\"])", () => {
+  it('returns [] for empty string (fixed: was returning [""])', () => {
     const chunks = splitIntoChunks("", 100);
     expect(chunks).toEqual([]);
   });
 
-  it("returns [] for whitespace-only string (fixed: was returning [\"   \"])", () => {
+  it('returns [] for whitespace-only string (fixed: was returning ["   "])', () => {
     const chunks = splitIntoChunks("   ", 100);
     expect(chunks).toEqual([]);
   });

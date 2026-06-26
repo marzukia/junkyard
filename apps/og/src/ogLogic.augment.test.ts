@@ -284,7 +284,6 @@ describe("DEFAULT_CONFIG — completeness", () => {
   });
 });
 
-
 // ── DEFAULT_CONFIG domain ─────────────────────────────────────────────────────
 
 describe("DEFAULT_CONFIG — domain", () => {

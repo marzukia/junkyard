@@ -111,7 +111,7 @@ describe("formatJson — additional cases", () => {
 
 describe("minifyJson — additional cases", () => {
   it("minifies nested arrays", () => {
-    const out = minifyJson('[[1, 2], [3, 4]]');
+    const out = minifyJson("[[1, 2], [3, 4]]");
     expect(out).toBe("[[1,2],[3,4]]");
   });
 

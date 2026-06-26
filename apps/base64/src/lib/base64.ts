@@ -40,8 +40,8 @@ export function decodeBase64(encoded: string): string {
 // ── Base64 URL-safe variant ───────────────────────────────────────────────────
 // RFC 4648 §5 — canonical implementation lives in kit/lib/base64url.ts,
 // vendored here via scripts/vendor-base64url.mjs.
-export { encodeBase64Url, decodeBase64Url } from "./base64url";
-import { encodeBase64Url, decodeBase64Url } from "./base64url";
+export { encodeBase64Url, decodeBase64Url } from "@junkyardsh/ui";
+import { decodeBase64Url, encodeBase64Url } from "@junkyardsh/ui";
 
 // ── Hex encoding ─────────────────────────────────────────────────────────────
 

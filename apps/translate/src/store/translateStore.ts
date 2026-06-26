@@ -123,9 +123,7 @@ export const useTranslateStore = create<TranslateState>((set, get) => ({
     persistLangs(get().sourceLang, code);
   },
   setPhase: (phase) =>
-    set((s) =>
-      phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {}
-    ),
+    set((s) => (phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {})),
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
   setChunkProgress: (done, total) => set({ chunkProgress: { done, total } }),
   setResult: (text, detectedLang) =>

@@ -1,7 +1,7 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import type { Delimiter, OutputFormat } from "./lib/csv";
 import { useCsvStore } from "./store/csvStore";
 
@@ -145,7 +145,9 @@ function FileUpload({
       file.type !== "application/json" &&
       !["", "application/csv"].includes(file.type)
     ) {
-      onError(`Cannot read "${file.name}" — only CSV, TSV, JSON, or plain-text files are supported.`);
+      onError(
+        `Cannot read "${file.name}" — only CSV, TSV, JSON, or plain-text files are supported.`
+      );
       if (inputRef.current) inputRef.current.value = "";
       return;
     }
@@ -438,7 +440,13 @@ export function App() {
                 </span>
               )}
               <div className="csv-panel-actions">
-                <FileUpload onLoad={(t) => { setUploadError(null); setInput(t); }} onError={(m) => setUploadError(m || null)} />
+                <FileUpload
+                  onLoad={(t) => {
+                    setUploadError(null);
+                    setInput(t);
+                  }}
+                  onError={(m) => setUploadError(m || null)}
+                />
                 {!input.trim() && (
                   <button
                     type="button"

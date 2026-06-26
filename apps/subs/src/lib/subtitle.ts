@@ -421,7 +421,9 @@ export function fixOverlaps(cues: Cue[]): Cue[] {
   // Build an index to restore original order after overlap resolution.
   const indexed = cues.map((c, i) => ({ cue: c, origIdx: i }));
   // Sort by start time for overlap detection; use origIdx as tiebreaker to stay stable.
-  const sorted = [...indexed].sort((a, b) => a.cue.startMs - b.cue.startMs || a.origIdx - b.origIdx);
+  const sorted = [...indexed].sort(
+    (a, b) => a.cue.startMs - b.cue.startMs || a.origIdx - b.origIdx
+  );
   for (let i = 1; i < sorted.length; i++) {
     const prev = sorted[i - 1].cue;
     const cur = sorted[i].cue;

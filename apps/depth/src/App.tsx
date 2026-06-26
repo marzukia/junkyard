@@ -1,14 +1,10 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { useWorkerTask } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
-import {
-  exportRaw16bit,
-  renderDepthFromCache,
-  revokeResult,
-} from "./lib/depthEstimation";
 import InferWorker from "./infer.worker.ts?worker";
-import { useWorkerTask } from "./lib/workerTask";
+import { exportRaw16bit, renderDepthFromCache, revokeResult } from "./lib/depthEstimation";
 
 type DepthWorkerResult = {
   imageBytes: ArrayBuffer;
@@ -64,8 +60,8 @@ function DepthBrandGlyph() {
 
 // ── Colourmap toggle ──────────────────────────────────────────────────────────
 
+import { MobileWarning } from "@junkyardsh/ui";
 import type { ColourMap } from "./lib/depthEstimation";
-import { MobileWarning } from "./components/MobileWarning";
 
 const COLOURMAPS: { value: ColourMap; label: string; title: string }[] = [
   { value: "viridis", label: "Viridis", title: "Viridis: yellow = close, purple = far" },
@@ -527,7 +523,9 @@ export function App() {
             setResult(outUrl, cache);
           },
           onError: (message) => {
-            const msg = message || "An error occurred while generating the depth map. Please try another image.";
+            const msg =
+              message ||
+              "An error occurred while generating the depth map. Please try another image.";
             setError(msg);
           },
         }

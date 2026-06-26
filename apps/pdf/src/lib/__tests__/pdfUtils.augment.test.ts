@@ -149,9 +149,7 @@ describe("compressPdf", () => {
     const validPdf = await makePdf(1);
     const raw = new TextDecoder("latin1").decode(validPdf);
     const tampered = raw.replace("startxref", "/Encrypt << >> startxref");
-    const tamperedBytes = Uint8Array.from(
-      Array.from(tampered).map((c) => c.charCodeAt(0))
-    );
+    const tamperedBytes = Uint8Array.from(Array.from(tampered).map((c) => c.charCodeAt(0)));
     // Either the encryption guard fires (message includes "encrypted") or the generic
     // parse error fires -- either way the promise must reject, never resolve.
     await expect(compressPdf(tamperedBytes)).rejects.toThrow();

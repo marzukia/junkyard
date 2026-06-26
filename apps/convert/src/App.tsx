@@ -1,8 +1,8 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import { buildZip, formatBytes } from "./convert";
 import type { OutputFormat } from "./convert";
 import { processFile } from "./processor";

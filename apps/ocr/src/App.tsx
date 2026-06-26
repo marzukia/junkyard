@@ -1,10 +1,11 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createWorker } from "tesseract.js";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import { RegionSelector } from "./components/RegionSelector";
 import { WordHighlightView } from "./components/WordHighlightView";
+import { shouldEmitOcrProgress } from "./lib/progressThrottle";
 import { type OcrWord, buildMultiPageSearchablePdf, buildSearchablePdf } from "./ocrPdfUtils";
 import {
   buildBatchFilename,
@@ -21,7 +22,6 @@ import {
   renderPdfPageToFile,
 } from "./ocrUtils";
 import { useOcrStore } from "./store";
-import { shouldEmitOcrProgress } from "./lib/progressThrottle";
 
 // ── OCR glyph: scan-frame mark (teal corner brackets + amber scan line + coral text hints)
 function OcrGlyph() {

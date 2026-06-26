@@ -187,7 +187,11 @@ export function relativeTime(epochMs: number, nowMs: number): string {
  * tz: a valid IANA timezone string (e.g. "America/New_York") or "" for UTC.
  */
 export function convertEpoch(epochMs: number, tz: string, nowMs: number): ConversionResult {
-  if (!Number.isFinite(epochMs) || isNaN(new Date(epochMs).getTime()) || Math.abs(epochMs) > 8.64e15) {
+  if (
+    !Number.isFinite(epochMs) ||
+    isNaN(new Date(epochMs).getTime()) ||
+    Math.abs(epochMs) > 8.64e15
+  ) {
     throw new Error(`Cannot parse timestamp: out-of-range epoch ${epochMs}`);
   }
   const d = new Date(epochMs);

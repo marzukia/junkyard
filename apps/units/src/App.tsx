@@ -1,11 +1,11 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import { CATEGORIES, convert, formatResultHuman, getCommonConversions } from "./lib/units";
 import type { CategoryId } from "./lib/units";
 import { useUnitsStore } from "./store/unitsStore";
-import "./styles.css";
+import "@junkyardsh/ui/styles.css";
 
 // ── Brand glyph: ruler + arrows, flat, bg-less ────────────────────────────────
 
@@ -361,7 +361,9 @@ function AllUnitsCard() {
           } catch {
             result = Number.NaN;
           }
-          const formatted = !Number.isFinite(result) ? "—" : formatResultHuman(result, fullPrecision);
+          const formatted = !Number.isFinite(result)
+            ? "—"
+            : formatResultHuman(result, fullPrecision);
           return (
             <button
               key={u.id}

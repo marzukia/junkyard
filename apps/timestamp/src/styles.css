@@ -358,7 +358,6 @@ body {
   opacity: 0.6;
 }
 
-
 /* ─── iOS / touch: prevent focus-zoom + minimum tap targets ─────────────── */
 
 @media (pointer: coarse) {

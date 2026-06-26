@@ -1,8 +1,8 @@
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/ui";
 import { CueList } from "./components/CueList";
 import { DropZone } from "./components/DropZone";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
-import { BrandMark } from "./components/BrandMark";
 import { Toolbar } from "./components/Toolbar";
 import { useSubsStore } from "./store/useSubsStore";
 
@@ -31,7 +31,11 @@ export function App() {
       <Header
         title="Subs"
         subtitle="Edit, shift &amp; convert .srt / .vtt subtitles"
-        brandMark={<BrandMark><SubsBrandGlyph /></BrandMark>}
+        brandMark={
+          <BrandMark>
+            <SubsBrandGlyph />
+          </BrandMark>
+        }
       />
 
       <main className="site-main">

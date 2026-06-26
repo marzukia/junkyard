@@ -1,10 +1,10 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BRAND_SOLIDS, GRADIENT_PRESETS, SIZE_PRESETS, clamp, exportFilename } from "./beautifier";
 import type { BeautifySettings, BgKind, ExportFormat, WindowFrameType } from "./beautifier";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import { renderToBlob, renderToDataUrl } from "./renderer";
 import { useScreenshotStore } from "./store";
 

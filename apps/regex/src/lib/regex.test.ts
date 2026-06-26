@@ -136,7 +136,7 @@ describe("execRegex named group slot", () => {
     const groups = r.matches[0].groups;
     expect(groups).toHaveLength(2);
     expect(groups[0].name).toBeUndefined(); // first group is unnamed
-    expect(groups[1].name).toBe("b");       // second group is named 'b'
+    expect(groups[1].name).toBe("b"); // second group is named 'b'
   });
 });
 

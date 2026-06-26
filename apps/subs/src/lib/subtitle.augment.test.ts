@@ -113,7 +113,6 @@ describe("formatExtension", () => {
   });
 });
 
-
 // ── W7: genId safe fallback ───────────────────────────────────────────────────
 
 describe("genId safe ID generation (W7)", () => {

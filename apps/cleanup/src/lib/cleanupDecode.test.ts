@@ -32,7 +32,9 @@ beforeEach(() => {
 describe("cleanupStore: decode-failure path via onerror", () => {
   it("setError transitions phase to 'error' with a message (error is visible)", () => {
     useCleanupStore.getState().setInputFile(fakeFile(), "blob:fake");
-    useCleanupStore.getState().setError("Could not load the image. The file may be corrupt or unsupported.");
+    useCleanupStore
+      .getState()
+      .setError("Could not load the image. The file may be corrupt or unsupported.");
     const s = useCleanupStore.getState();
     expect(s.phase).toBe("error");
     expect(s.errorMsg).toContain("Could not load");
@@ -41,7 +43,9 @@ describe("cleanupStore: decode-failure path via onerror", () => {
   it("errorMsg is non-null after decode failure — message is rendered to the user", () => {
     // Simulate the corrected onerror handler: setError() only, no reset().
     useCleanupStore.getState().setInputFile(fakeFile(), "blob:fake");
-    useCleanupStore.getState().setError("Could not load the image. The file may be corrupt or unsupported.");
+    useCleanupStore
+      .getState()
+      .setError("Could not load the image. The file may be corrupt or unsupported.");
     // errorMsg must be populated so .cl-error-msg renders.
     expect(useCleanupStore.getState().errorMsg).not.toBeNull();
   });

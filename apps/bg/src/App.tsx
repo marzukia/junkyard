@@ -1,10 +1,10 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { useWorkerTask } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
-import { revokeResult } from "./lib/bgRemoval";
 import InferWorker from "./infer.worker.ts?worker";
-import { useWorkerTask } from "./lib/workerTask";
+import { revokeResult } from "./lib/bgRemoval";
 
 type BgWorkerResult = { imageBytes: ArrayBuffer; width: number; height: number };
 import {
@@ -17,7 +17,7 @@ import {
 } from "./lib/imageHelpers";
 import { useBgStore } from "./store/bgStore";
 import "./styles/bg.css";
-import { MobileWarning } from "./components/MobileWarning";
+import { MobileWarning } from "@junkyardsh/ui";
 
 // ── Brand mark glyph ──────────────────────────────────────────────────────────
 // A clean flat scissors/cutout mark: foreground shape in teal, shadow in amber,
@@ -837,7 +837,9 @@ export function App() {
   const [gradient, setGradient] = useState<GradientConfig>(GRADIENT_PRESETS[0]);
   const [bgImageFile, setBgImageFile] = useState<File | null>(null);
   const [bgImageUrl, setBgImageUrl] = useState<string | null>(null);
-  const [copyLabel, setCopyLabel] = useState<"Copy PNG" | "Copied!" | "Copy not supported, use Download">("Copy PNG");
+  const [copyLabel, setCopyLabel] = useState<
+    "Copy PNG" | "Copied!" | "Copy not supported, use Download"
+  >("Copy PNG");
 
   const busy = phase === "model-loading" || phase === "processing";
 
@@ -856,10 +858,7 @@ export function App() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [phase]);
 
-  const { run: runWorker, cancel: cancelWorker } = useWorkerTask<
-    { file: File },
-    BgWorkerResult
-  >();
+  const { run: runWorker, cancel: cancelWorker } = useWorkerTask<{ file: File }, BgWorkerResult>();
 
   const handleCancel = useCallback(() => {
     cancelWorker();

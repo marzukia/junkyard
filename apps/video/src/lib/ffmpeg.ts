@@ -91,10 +91,11 @@ export async function runFFmpeg(
     if (ret !== 0) {
       // Surface the last meaningful ffmpeg log line as the error message so
       // codec/format failures (e.g. unsupported encoder) are diagnosable.
-      const detail = logLines.filter((l) => l.trim()).slice(-3).join(" | ");
-      throw new Error(
-        `ffmpeg exited with code ${ret}${detail ? `: ${detail}` : ""}`,
-      );
+      const detail = logLines
+        .filter((l) => l.trim())
+        .slice(-3)
+        .join(" | ");
+      throw new Error(`ffmpeg exited with code ${ret}${detail ? `: ${detail}` : ""}`);
     }
 
     const data = await ff.readFile(outputName);

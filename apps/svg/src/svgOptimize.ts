@@ -67,7 +67,8 @@ export function formatBytes(n: number): string {
 
 export function optimizeSvg(input: string, opts: OptimizeOptions): OptimizeResult {
   if (!input.trim()) throw new Error("Input is not an SVG: received empty string.");
-  if (!/<svg[\s>]/i.test(input)) throw new Error("Input is not an SVG: no <svg> root element found.");
+  if (!/<svg[\s>]/i.test(input))
+    throw new Error("Input is not an SVG: no <svg> root element found.");
   const originalBytes = byteLength(input);
 
   // Build the plugin list from user options. We use preset-default as the base and

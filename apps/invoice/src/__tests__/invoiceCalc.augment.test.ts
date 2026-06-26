@@ -97,20 +97,20 @@ describe("formatMoney — additional edge and negative cases", () => {
 
 describe("formatMoney — non-finite line-item amounts must never render $∞", () => {
   it("Infinity renders as $0.00 (clamped), not '$∞'", () => {
-    const result = formatMoney(Infinity, "USD");
+    const result = formatMoney(Number.POSITIVE_INFINITY, "USD");
     expect(result).not.toContain("∞");
     // Must render a valid currency string for zero
     expect(result).toMatch(/0/);
   });
 
   it("-Infinity renders as $0.00 (clamped), not '-$∞'", () => {
-    const result = formatMoney(-Infinity, "USD");
+    const result = formatMoney(Number.NEGATIVE_INFINITY, "USD");
     expect(result).not.toContain("∞");
     expect(result).toMatch(/0/);
   });
 
   it("NaN renders as $0.00 (clamped), not 'NaN' or '$NaN'", () => {
-    const result = formatMoney(NaN, "USD");
+    const result = formatMoney(Number.NaN, "USD");
     expect(result).not.toMatch(/NaN/i);
     expect(result).toMatch(/0/);
   });

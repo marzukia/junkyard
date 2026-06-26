@@ -369,7 +369,6 @@ body {
   opacity: 0.6;
 }
 
-
 /* ─── iOS / touch: prevent focus-zoom ───────────────────────────────────── */
 
 @media (pointer: coarse) {

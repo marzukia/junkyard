@@ -1,9 +1,9 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import JsBarcode from "jsbarcode";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BatchTab } from "./components/BatchTab";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import { QrTab } from "./components/QrTab";
 import { FORMAT_META, FORMAT_ORDER, ean8Autofix, ean13Autofix, upcaAutofix } from "./lib/barcode";
 import type { BarcodeFormat } from "./lib/barcode";

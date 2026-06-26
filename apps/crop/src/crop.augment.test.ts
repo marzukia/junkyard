@@ -130,27 +130,18 @@ describe("fitRectToAspect for all ASPECT_PRESETS", () => {
 
 describe("snapToAspect additional cases", () => {
   it("4:3 ratio adjusts height from width", () => {
-    const result = snapToAspect(
-      { x: 0, y: 0, w: 400, h: 100 },
-      { label: "4:3", w: 4, h: 3 }
-    );
+    const result = snapToAspect({ x: 0, y: 0, w: 400, h: 100 }, { label: "4:3", w: 4, h: 3 });
     expect(result.h).toBe(Math.round(400 / (4 / 3)));
     expect(result.w).toBe(400);
   });
 
   it("9:16 ratio adjusts height to be taller than wide", () => {
-    const result = snapToAspect(
-      { x: 0, y: 0, w: 180, h: 0 },
-      { label: "9:16", w: 9, h: 16 }
-    );
+    const result = snapToAspect({ x: 0, y: 0, w: 180, h: 0 }, { label: "9:16", w: 9, h: 16 });
     expect(result.h).toBeGreaterThan(result.w);
   });
 
   it("preserves x and y from original rect", () => {
-    const result = snapToAspect(
-      { x: 10, y: 20, w: 160, h: 100 },
-      { label: "16:9", w: 16, h: 9 }
-    );
+    const result = snapToAspect({ x: 10, y: 20, w: 160, h: 100 }, { label: "16:9", w: 16, h: 9 });
     expect(result.x).toBe(10);
     expect(result.y).toBe(20);
   });

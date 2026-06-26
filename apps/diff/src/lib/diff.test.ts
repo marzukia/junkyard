@@ -214,7 +214,6 @@ describe("wordLevelStats", () => {
   });
 });
 
-
 describe("computeDiff empty-side stats", () => {
   it("stats.added=0 when new side is empty", () => {
     const result = computeDiff("hello\nworld", "");

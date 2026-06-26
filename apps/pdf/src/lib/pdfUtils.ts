@@ -1,5 +1,5 @@
+import { sanitizeWinAnsi } from "@junkyardsh/ui";
 import { PDFDocument, StandardFonts, degrees, rgb } from "pdf-lib";
-import { sanitizeWinAnsi } from "./unicodeFont";
 
 /**
  * Guard: load a PDF and verify its page tree is traversable.
@@ -14,18 +14,13 @@ import { sanitizeWinAnsi } from "./unicodeFont";
  * Use this instead of a bare PDFDocument.load() call in any op that will
  * subsequently access pages.
  */
-async function assertReadable(
-  bytes: Uint8Array,
-  label?: string
-): Promise<PDFDocument> {
+async function assertReadable(bytes: Uint8Array, label?: string): Promise<PDFDocument> {
   let doc: PDFDocument;
   try {
     doc = await PDFDocument.load(bytes);
   } catch {
     const who = label ? `"${label}"` : "The PDF";
-    throw new Error(
-      `${who} appears to be corrupted or incomplete and could not be loaded.`
-    );
+    throw new Error(`${who} appears to be corrupted or incomplete and could not be loaded.`);
   }
   try {
     doc.getPageIndices();
@@ -229,9 +224,7 @@ export async function splitPdfToZip(pdfBytes: Uint8Array, name: string): Promise
  *   other → application/pdf  (legacy default, matches the original behaviour)
  */
 export function downloadBytes(bytes: Uint8Array, filename: string): void {
-  const mime = filename.toLowerCase().endsWith(".zip")
-    ? "application/zip"
-    : "application/pdf";
+  const mime = filename.toLowerCase().endsWith(".zip") ? "application/zip" : "application/pdf";
   const blob = new Blob([bytes.buffer as ArrayBuffer], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");

@@ -1,7 +1,9 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { useWorkerTask } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
+import InferWorker from "./infer.worker.ts?worker";
 import {
   checkImageSize,
   deviceMemoryBudgetMB,
@@ -16,8 +18,6 @@ import {
 import type { OutputFormat } from "./lib/imageHelpers";
 import { MODEL_SIZE_MB, revokeResult } from "./lib/upscale";
 import type { ScaleFactor } from "./lib/upscale";
-import InferWorker from "./infer.worker.ts?worker";
-import { useWorkerTask } from "./lib/workerTask";
 
 /** Shape returned by infer.worker.ts for upscale. */
 type UpscaleWorkerResult = {
@@ -29,7 +29,7 @@ type UpscaleWorkerResult = {
 };
 import { useUpscaleStore } from "./store/upscaleStore";
 import "./styles/upscale.css";
-import { MobileWarning } from "./components/MobileWarning";
+import { MobileWarning } from "@junkyardsh/ui";
 
 // ── Brand mark glyph ──────────────────────────────────────────────────────────
 // Outer teal frame (upscaled), inner coral frame (original), amber corner
@@ -625,7 +625,8 @@ export function App() {
           },
           onResult: ({ imageBytes, width, height, resultSize: size, format }) => {
             const blob = new Blob([imageBytes], {
-              type: format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp",
+              type:
+                format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp",
             });
             const outUrl = URL.createObjectURL(blob);
             setResult(outUrl, width, height, size);

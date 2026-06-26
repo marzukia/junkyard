@@ -113,7 +113,6 @@ describe("splitIntoChunks", () => {
   });
 });
 
-
 describe("splitIntoChunks empty/whitespace input", () => {
   it("returns [] for empty string", () => {
     expect(splitIntoChunks("")).toEqual([]);

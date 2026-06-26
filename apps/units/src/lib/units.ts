@@ -11,11 +11,11 @@
 // it calls convert() and getCommonConversions() only.
 //
 
-export type { CategoryId, UnitDef, Category, ConvertOptions } from "./unitsData";
-export { CATEGORIES, getCategoryById, findUnit, TEMP_UNITS, convert } from "./unitsData";
+export type { CategoryId, UnitDef, Category, ConvertOptions } from "@junkyardsh/ui";
+export { CATEGORIES, getCategoryById, findUnit, TEMP_UNITS, convert } from "@junkyardsh/ui";
 
-import { CATEGORIES, getCategoryById, convert } from "./unitsData";
-import type { CategoryId } from "./unitsData";
+import { CATEGORIES, convert, getCategoryById } from "@junkyardsh/ui";
+import type { CategoryId } from "@junkyardsh/ui";
 
 // ── Common conversions (quick reference) ─────────────────────────────────────
 
@@ -88,7 +88,7 @@ export function getCommonConversions(categoryId: CategoryId): CommonConversion[]
         p(1, "mph", "kmh"),
         p(1, "kmh", "mph"),
         p(1, "kn", "kmh"),
-        p(1, "mps", "kmh"),  // canonical: mps (not ms)
+        p(1, "mps", "kmh"), // canonical: mps (not ms)
         p(100, "kmh", "mph"),
         p(60, "mph", "kmh"),
       ].filter(notNull);
@@ -157,11 +157,11 @@ export function getCommonConversions(categoryId: CategoryId): CommonConversion[]
       ].filter(notNull);
     case "fuel":
       return [
-        p(1, "mpgUS", "kml"),   // canonical: mpgUS (not mpg)
+        p(1, "mpgUS", "kml"), // canonical: mpgUS (not mpg)
         p(1, "kml", "mpgUS"),
-        p(10, "l100km", "mpgUS"),  // canonical: l100km (not l100)
+        p(10, "l100km", "mpgUS"), // canonical: l100km (not l100)
         p(30, "mpgUS", "l100km"),
-        p(1, "mpgUK", "kml"),   // canonical: mpgUK (not mpguk)
+        p(1, "mpgUK", "kml"), // canonical: mpgUK (not mpguk)
         p(1, "kml", "l100km"),
       ].filter(notNull);
     default:

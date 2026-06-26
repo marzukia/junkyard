@@ -1,7 +1,9 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { useWorkerTask } from "@junkyardsh/ui";
 import { type MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
+import InferWorker from "./infer.worker.ts?worker";
 import {
   ACCEPT_ATTR,
   downloadTextFile,
@@ -16,14 +18,12 @@ import {
 } from "./lib/audioHelpers";
 import { MODEL_SIZE_MB } from "./lib/transcription";
 import type { TranscriptionResult } from "./lib/transcription";
-import InferWorker from "./infer.worker.ts?worker";
-import { useWorkerTask } from "./lib/workerTask";
 
 /** Track whether the model has been loaded at least once (persists across re-renders). */
 const modelEverLoaded = { current: false };
 import { LANGUAGE_OPTIONS, useTranscribeStore } from "./store/transcribeStore";
 import "./styles/transcribe.css";
-import { MobileWarning } from "./components/MobileWarning";
+import { MobileWarning } from "@junkyardsh/ui";
 
 // ── Brand mark glyph, waveform for audio transcription ──────────────────────
 // Clean line-art: teal waveform bars + amber speech-to-text arrow + coral mic dot
@@ -493,15 +493,13 @@ export function App() {
   }, [mediaUrl]);
 
   const startElapsedTimer = useCallback(() => {
-      if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
-      const startTime = Date.now();
-      elapsedTimerRef.current = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        setTranscribeProgress({ elapsedSec: elapsed });
-      }, 500);
-    },
-    [setTranscribeProgress]
-  );
+    if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
+    const startTime = Date.now();
+    elapsedTimerRef.current = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      setTranscribeProgress({ elapsedSec: elapsed });
+    }, 500);
+  }, [setTranscribeProgress]);
 
   const stopElapsedTimer = useCallback(() => {
     if (elapsedTimerRef.current) {

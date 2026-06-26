@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 import { SIZE_PRESETS, TEMPLATES, clamp, estimateTitleLines } from "../ogLogic";
 import type { BgType, FontPreset, Layout } from "../ogLogic";
 import { useOgStore } from "../store";
@@ -107,56 +107,66 @@ export function Controls() {
   const titleOverflow = titleLines > 2;
   const titleTooLong = config.title.length > CHAR_BUDGET;
 
-  const handleBgImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    // Reset the input value so re-uploading the same file re-triggers onChange
-    e.target.value = "";
-    if (!file) return;
-    setBgImageError(null);
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const dataUrl = ev.target?.result;
-      if (typeof dataUrl !== "string") return;
-      // Validate that the data URL is actually a decodable image before storing it.
-      // This catches non-image files (e.g. .txt renamed to .png) that the
-      // browser's file picker would otherwise accept via accept="image/*".
-      const img = new window.Image();
-      img.onload = () => {
-        setBgImageError(null);
-        store.setBgImage(dataUrl);
+  const handleBgImageUpload = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      // Reset the input value so re-uploading the same file re-triggers onChange
+      e.target.value = "";
+      if (!file) return;
+      setBgImageError(null);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target?.result;
+        if (typeof dataUrl !== "string") return;
+        // Validate that the data URL is actually a decodable image before storing it.
+        // This catches non-image files (e.g. .txt renamed to .png) that the
+        // browser's file picker would otherwise accept via accept="image/*".
+        const img = new window.Image();
+        img.onload = () => {
+          setBgImageError(null);
+          store.setBgImage(dataUrl);
+        };
+        img.onerror = () => {
+          setBgImageError(
+            "File could not be decoded as an image. Please upload a valid image file (JPEG, PNG, WebP, etc.)."
+          );
+        };
+        img.src = dataUrl;
       };
-      img.onerror = () => {
-        setBgImageError("File could not be decoded as an image. Please upload a valid image file (JPEG, PNG, WebP, etc.).");
-      };
-      img.src = dataUrl;
-    };
-    reader.readAsDataURL(file);
-  }, [store]);
+      reader.readAsDataURL(file);
+    },
+    [store]
+  );
 
-  const handleLogoUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    // Reset the input value so re-uploading the same file re-triggers onChange
-    e.target.value = "";
-    if (!file) return;
-    setLogoImageError(null);
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const dataUrl = ev.target?.result;
-      if (typeof dataUrl !== "string") return;
-      // Validate the file is a decodable image before storing, matching bg-image validation.
-      // Catches non-image files that pass accept="image/*" filtering.
-      const img = new window.Image();
-      img.onload = () => {
-        setLogoImageError(null);
-        store.setLogoImage(dataUrl);
+  const handleLogoUpload = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      // Reset the input value so re-uploading the same file re-triggers onChange
+      e.target.value = "";
+      if (!file) return;
+      setLogoImageError(null);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target?.result;
+        if (typeof dataUrl !== "string") return;
+        // Validate the file is a decodable image before storing, matching bg-image validation.
+        // Catches non-image files that pass accept="image/*" filtering.
+        const img = new window.Image();
+        img.onload = () => {
+          setLogoImageError(null);
+          store.setLogoImage(dataUrl);
+        };
+        img.onerror = () => {
+          setLogoImageError(
+            "File could not be decoded as an image. Please upload a valid image file (JPEG, PNG, WebP, etc.)."
+          );
+        };
+        img.src = dataUrl;
       };
-      img.onerror = () => {
-        setLogoImageError("File could not be decoded as an image. Please upload a valid image file (JPEG, PNG, WebP, etc.).");
-      };
-      img.src = dataUrl;
-    };
-    reader.readAsDataURL(file);
-  }, [store]);
+      reader.readAsDataURL(file);
+    },
+    [store]
+  );
 
   return (
     <div className="og-controls">
@@ -327,7 +337,10 @@ export function Controls() {
                   <button
                     type="button"
                     className="og-upload-clear"
-                    onClick={() => { store.setBgImage(null); setBgImageError(null); }}
+                    onClick={() => {
+                      store.setBgImage(null);
+                      setBgImageError(null);
+                    }}
                     aria-label="Remove background image"
                   >
                     remove
@@ -385,7 +398,10 @@ export function Controls() {
                   <button
                     type="button"
                     className="og-upload-clear"
-                    onClick={() => { store.setLogoImage(null); setLogoImageError(null); }}
+                    onClick={() => {
+                      store.setLogoImage(null);
+                      setLogoImageError(null);
+                    }}
                     aria-label="Remove logo"
                   >
                     remove

@@ -1,8 +1,8 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
 import { CropCanvas } from "./components/CropCanvas";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import {
   ASPECT_PRESETS,
   SOCIAL_PRESETS,

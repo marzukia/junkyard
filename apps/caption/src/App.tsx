@@ -1,11 +1,11 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { useWorkerTask } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
+import InferWorker from "./infer.worker.ts?worker";
 import { captionImage, fetchImageFromUrl, isModelLoaded, loadModel } from "./lib/captioner";
 import type { CaptionResult } from "./lib/captioner";
-import InferWorker from "./infer.worker.ts?worker";
-import { useWorkerTask } from "./lib/workerTask";
 import {
   type BatchCaptionRow,
   batchToCsv,
@@ -18,7 +18,7 @@ import {
 } from "./lib/imageHelpers";
 import { useCaptionStore } from "./store/captionStore";
 import "./styles/caption.css";
-import { MobileWarning } from "./components/MobileWarning";
+import { MobileWarning } from "@junkyardsh/ui";
 
 // ── Brand mark glyph ──────────────────────────────────────────────────────────
 // Speech bubble with an eye inside, "describe what you see"
@@ -360,7 +360,10 @@ function BatchPanel({ onStart, disabled, onSample }: BatchPanelProps) {
   const [done, setDone] = useState(false);
   const [batchError, setBatchError] = useState<string | null>(null);
   const cancelRef = useRef(false);
-  const [batchDownloadProgress, setBatchDownloadProgress] = useState<{ loaded: number; total: number } | null>(null);
+  const [batchDownloadProgress, setBatchDownloadProgress] = useState<{
+    loaded: number;
+    total: number;
+  } | null>(null);
 
   const handleFiles = useCallback((files: File[]) => {
     const valid = files.filter(isSupportedImage);
@@ -499,7 +502,8 @@ function BatchPanel({ onStart, disabled, onSample }: BatchPanelProps) {
             )}
             {running && batchDownloadProgress && (
               <span className="cap-status-label" aria-live="polite">
-                Downloading model ({formatProgress(batchDownloadProgress.loaded, batchDownloadProgress.total)})...
+                Downloading model (
+                {formatProgress(batchDownloadProgress.loaded, batchDownloadProgress.total)})...
               </span>
             )}
             {running && !batchDownloadProgress && (
@@ -839,8 +843,13 @@ export function App() {
         {phase === "processing" && (
           <div className="card">
             <div className="cap-status-wrap" role="status" aria-live="polite">
-              <div className="cap-spinner" aria-label={urlFetching ? "Fetching image..." : "Generating caption..."} />
-              <p className="cap-status-label">{urlFetching ? "Fetching image..." : "Generating caption..."}</p>
+              <div
+                className="cap-spinner"
+                aria-label={urlFetching ? "Fetching image..." : "Generating caption..."}
+              />
+              <p className="cap-status-label">
+                {urlFetching ? "Fetching image..." : "Generating caption..."}
+              </p>
               {inputUrl && (
                 <img
                   src={inputUrl}

@@ -1,8 +1,8 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useEffect, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
 import { Controls } from "./components/Controls";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import { MetaSnippet } from "./components/MetaSnippet";
 import { OgCanvas, exportToPng } from "./components/OgCanvas";
 import { useOgStore } from "./store";

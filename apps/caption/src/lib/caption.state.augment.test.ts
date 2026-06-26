@@ -5,11 +5,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { MODEL_ID, MODEL_SIZE_MB, isModelLoaded } from "./captioner";
-import {
-  batchToCsv,
-  batchToJson,
-  formatCaption,
-} from "./imageHelpers";
+import { batchToCsv, batchToJson, formatCaption } from "./imageHelpers";
 
 // ── captioner.ts pure state ───────────────────────────────────────────────────
 

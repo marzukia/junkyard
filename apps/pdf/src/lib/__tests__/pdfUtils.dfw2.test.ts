@@ -9,13 +9,7 @@
  */
 import { PDFDocument } from "pdf-lib";
 import { describe, expect, it } from "vitest";
-import {
-  addPageNumbers,
-  addWatermark,
-  rotatePages,
-  splitPdf,
-  splitPdfToZip,
-} from "../pdfUtils";
+import { addPageNumbers, addWatermark, rotatePages, splitPdf, splitPdfToZip } from "../pdfUtils";
 
 async function makePdf(pages = 1): Promise<Uint8Array> {
   const doc = await PDFDocument.create();

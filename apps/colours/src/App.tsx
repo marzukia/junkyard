@@ -1,7 +1,7 @@
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/ui";
 import { ContrastChecker } from "./components/ContrastChecker";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
-import { BrandMark } from "./components/BrandMark";
 import { PaletteGenerator } from "./components/PaletteGenerator";
 import { ShareButton } from "./components/ShareButton";
 import { SpaceToggle } from "./components/SpaceToggle";

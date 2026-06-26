@@ -30,8 +30,8 @@
  * detection, extract ocrFontUtils.ts at that point.
  */
 
-import { PDFDocument, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
+import { PDFDocument, rgb } from "pdf-lib";
 
 // ── Public types ──────────────────────────────────────────────────────────────
 
@@ -64,11 +64,25 @@ export interface ImageDimensions {
  */
 const SCRIPT_RANGES: Array<{ test: (ch: number) => boolean; variant: FontVariant }> = [
   // CJK Unified Ideographs (main block + extensions A-B, CJK Compatibility)
-  { test: (cp) => (cp >= 0x4e00 && cp <= 0x9fff) || (cp >= 0x3400 && cp <= 0x4dbf) || (cp >= 0x20000 && cp <= 0x2a6df) || (cp >= 0xf900 && cp <= 0xfaff), variant: "cjk" },
+  {
+    test: (cp) =>
+      (cp >= 0x4e00 && cp <= 0x9fff) ||
+      (cp >= 0x3400 && cp <= 0x4dbf) ||
+      (cp >= 0x20000 && cp <= 0x2a6df) ||
+      (cp >= 0xf900 && cp <= 0xfaff),
+    variant: "cjk",
+  },
   // Hiragana + Katakana
-  { test: (cp) => (cp >= 0x3040 && cp <= 0x30ff), variant: "cjk" },
+  { test: (cp) => cp >= 0x3040 && cp <= 0x30ff, variant: "cjk" },
   // Arabic + Arabic Supplement + Presentation Forms
-  { test: (cp) => (cp >= 0x0600 && cp <= 0x06ff) || (cp >= 0x0750 && cp <= 0x077f) || (cp >= 0xfb50 && cp <= 0xfdff) || (cp >= 0xfe70 && cp <= 0xfeff), variant: "arabic" },
+  {
+    test: (cp) =>
+      (cp >= 0x0600 && cp <= 0x06ff) ||
+      (cp >= 0x0750 && cp <= 0x077f) ||
+      (cp >= 0xfb50 && cp <= 0xfdff) ||
+      (cp >= 0xfe70 && cp <= 0xfeff),
+    variant: "arabic",
+  },
 ];
 
 export type FontVariant = "noto" | "cjk" | "arabic";
@@ -100,7 +114,8 @@ export function detectFontVariant(texts: string[]): FontVariant {
 const FONT_CDN_URLS: Record<FontVariant, string> = {
   noto: "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5/files/noto-sans-latin-ext-400-normal.woff2",
   cjk: "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5/files/noto-sans-sc-chinese-simplified-400-normal.woff2",
-  arabic: "https://cdn.jsdelivr.net/npm/@fontsource/noto-naskh-arabic@5/files/noto-naskh-arabic-arabic-400-normal.woff2",
+  arabic:
+    "https://cdn.jsdelivr.net/npm/@fontsource/noto-naskh-arabic@5/files/noto-naskh-arabic-arabic-400-normal.woff2",
 };
 
 /**
@@ -209,10 +224,7 @@ interface DrawTextOptions {
  * Draw invisible text onto a PDF page using the embedded Unicode font when
  * available, falling back to pdf-lib's default (Helvetica / Latin-1).
  */
-function drawInvisibleText(
-  page: ReturnType<PDFDocument["addPage"]>,
-  opts: DrawTextOptions
-): void {
+function drawInvisibleText(page: ReturnType<PDFDocument["addPage"]>, opts: DrawTextOptions): void {
   const shared = { x: opts.x, y: opts.y, size: opts.size, color: rgb(0, 0, 0), opacity: 0 };
   if (opts.embeddedFont) {
     page.drawText(opts.text, { ...shared, font: opts.embeddedFont });
@@ -284,11 +296,23 @@ export async function buildSearchablePdf(
       if (!word.text.trim()) continue;
       const coords = scaleBboxToPdfCoords(word.bbox, dims, pageSize);
       const fontSize = Math.max(coords.h, 1);
-      drawInvisibleText(page, { text: word.text, x: coords.x, y: coords.y, size: fontSize, embeddedFont });
+      drawInvisibleText(page, {
+        text: word.text,
+        x: coords.x,
+        y: coords.y,
+        size: fontSize,
+        embeddedFont,
+      });
     }
   } else {
     // Fallback: single invisible block at the top of the page.
-    drawInvisibleText(page, { text: fallbackText || " ", x: 0, y: dims.height - 12, size: 12, embeddedFont });
+    drawInvisibleText(page, {
+      text: fallbackText || " ",
+      x: 0,
+      y: dims.height - 12,
+      size: 12,
+      embeddedFont,
+    });
   }
 
   const raw = await pdfDoc.save();
@@ -348,10 +372,22 @@ export async function buildMultiPageSearchablePdf(
         if (!word.text.trim()) continue;
         const coords = scaleBboxToPdfCoords(word.bbox, dims, pageSize);
         const fontSize = Math.max(coords.h, 1);
-        drawInvisibleText(page, { text: word.text, x: coords.x, y: coords.y, size: fontSize, embeddedFont });
+        drawInvisibleText(page, {
+          text: word.text,
+          x: coords.x,
+          y: coords.y,
+          size: fontSize,
+          embeddedFont,
+        });
       }
     } else {
-      drawInvisibleText(page, { text: pg.fallbackText || " ", x: 0, y: dims.height - 12, size: 12, embeddedFont });
+      drawInvisibleText(page, {
+        text: pg.fallbackText || " ",
+        x: 0,
+        y: dims.height - 12,
+        size: 12,
+        embeddedFont,
+      });
     }
   }
 

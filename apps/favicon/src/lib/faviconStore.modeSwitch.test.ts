@@ -43,8 +43,7 @@ describe("faviconStore: mode-switch mid-generation guard", () => {
     const currentMode = useFaviconStore.getState().sourceMode;
 
     // The guard condition in generate(): snapMode !== currentMode OR snapUrl !== currentUrl
-    const shouldBail =
-      snapMode !== currentMode || (snapMode === "image" && snapUrl !== currentUrl);
+    const shouldBail = snapMode !== currentMode || (snapMode === "image" && snapUrl !== currentUrl);
     expect(shouldBail).toBe(true);
   });
 
@@ -64,8 +63,7 @@ describe("faviconStore: mode-switch mid-generation guard", () => {
     const currentUrl = useFaviconStore.getState().sourceUrl;
     const currentMode = useFaviconStore.getState().sourceMode;
 
-    const shouldBail =
-      snapMode !== currentMode || (snapMode === "image" && snapUrl !== currentUrl);
+    const shouldBail = snapMode !== currentMode || (snapMode === "image" && snapUrl !== currentUrl);
     expect(shouldBail).toBe(false);
   });
 

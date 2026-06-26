@@ -22,9 +22,7 @@ function loadPersistedSettings() {
   if (!raw) return { ...DEFAULT_SETTINGS };
   const parsed = JSON.parse(raw) as Partial<typeof DEFAULT_SETTINGS>;
   const bgKindOverride =
-    (parsed.bgKind as string | undefined) === "image"
-      ? DEFAULT_SETTINGS.bgKind
-      : parsed.bgKind;
+    (parsed.bgKind as string | undefined) === "image" ? DEFAULT_SETTINGS.bgKind : parsed.bgKind;
   return {
     ...DEFAULT_SETTINGS,
     ...parsed,

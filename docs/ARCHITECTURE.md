@@ -23,19 +23,20 @@ All tools are served under `junkyard.sh`:
 
 Each app is built independently with Vite's `--base` flag set to `/<slug>/`, so asset paths are self-contained within the subdirectory.
 
-## Shared kit
+## Shared UI package (`@junkyardsh/ui`)
 
-`kit/` holds the canonical copies of shared UI components and config:
+`kit/` holds the canonical source for shared UI components and config. These are published as the `@junkyardsh/ui` npm package (`packages/ui/`):
 
-- `theme.ts` - Mantine theme (Inter + JetBrains Mono, teal primary `#2f9d8d`)
+- `theme.ts` → `fleetTheme` - Mantine theme (Inter + JetBrains Mono, teal primary `#2f9d8d`)
 - `styles.css` - design-system CSS variables for light and dark modes
-- `components/AppSwitcher.tsx` + `AppSwitcher.css` - nav switcher, fetches `/catalogue.json` at runtime and renders a tool picker
+- `components/AppSwitcher.tsx` + `AppSwitcher.css` - nav switcher, fetches `/catalogue.json` at runtime
 - `components/MobileWarning.tsx` + `MobileWarning.css` - mobile warning overlay for heavy AI apps
 - `components/BrandMark.tsx`, `Header.tsx`, `Footer.tsx`, `ThemeToggle.tsx` - shared UI shells
+- `lib/*` - shared utilities (`base64url`, `cronGrammar`, `csvParse`, `qrContent`, `unicodeFont`, `unitsData`, `workerTask`, `format`, `transformersEnv`)
 
-The kit is **vendored** rather than published to npm. `scripts/vendor-switcher.mjs` copies `AppSwitcher.*`, `scripts/vendor-themetoggle.mjs` copies `ThemeToggle.*`, `scripts/vendor-format.mjs` copies the format helpers, and `scripts/vendor-transformers-env.mjs` copies the transformers environment shim into each app's `src/` tree. CI checks that these vendored copies match the canonical source, preventing drift. `MobileWarning` is hand-maintained per heavy-AI app (`bg, caption, depth, summarize, transcribe, translate, upscale, chat, video`) — `scripts/vendor-mobilewarn.mjs` was removed; there is no CI guard for MobileWarning drift (see CONTRIBUTING.md).
+All 45 apps import from `@junkyardsh/ui` instead of vendoring copies. CI builds the package once in `packages/ui/` and lint checks all apps against it. The package is published to npm public registry under the `@junkyardsh` scope.
 
-This approach was chosen over a published workspace package so that parallel tool builds have no dependency on a package registry publish step. The natural extraction point to a real `@junkyard/ui` package would be after the component API has stabilised across several tools.
+Previously the kit was vendored via 17 `scripts/vendor-*.mjs` scripts with CI drift checks. The extraction to `@junkyardsh/ui` eliminates this maintenance overhead.
 
 ## @junkyard/core and the MCP server
 
@@ -65,4 +66,4 @@ junkyard deliberately has **no root `package.json` / monorepo workspace**. Each 
 - Each app stays portable (can be lifted out or deployed on its own).
 - `scripts/build-site.sh` already parallelizes the per-app `bun install` phase, so there is no single `bun install` for everything but the install cost is bounded.
 
-Trade-off: there is no one-shot `bun install` at the root, and shared code is vendored (AppSwitcher, ThemeToggle, MobileWarning, transformersEnv) via `scripts/vendor-*.mjs` rather than imported from a shared package. A future migration to a real workspace is tracked as a known item but is not planned, since it would change install hoisting across all 45 apps and must be full-build-verified.
+Trade-off: there is no one-shot `bun install` at the root, and shared code was previously vendored via `scripts/vendor-*.mjs`. This has been extracted to `@junkyardsh/ui` (`packages/ui/`) — all apps now import from the npm package. CI builds the package once and lint-checks all apps. The package is published separately; apps pin to `^1.0.1`.

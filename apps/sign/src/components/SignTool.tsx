@@ -672,7 +672,11 @@ export function SignTool() {
                 aria-live="polite"
                 title="Download signed PDF (Ctrl+Enter / Cmd+Enter)"
               >
-                {downloading ? "Preparing..." : downloadDone ? "Downloaded!" : "Download signed PDF"}
+                {downloading
+                  ? "Preparing..."
+                  : downloadDone
+                    ? "Downloaded!"
+                    : "Download signed PDF"}
               </button>
               {overlayHistory.length > 0 && (
                 <button

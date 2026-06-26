@@ -1,10 +1,10 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { useWorkerTask } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
-import type { SummaryResult } from "./lib/summarizer";
 import InferWorker from "./infer.worker.ts?worker";
-import { useWorkerTask } from "./lib/workerTask";
+import type { SummaryResult } from "./lib/summarizer";
 import {
   MODEL_MAX_WORDS,
   SAMPLE_TEXT,
@@ -20,7 +20,7 @@ import {
 } from "./lib/textHelpers";
 import { useSummarizeStore } from "./store/summarizeStore";
 import "./styles/summarize.css";
-import { MobileWarning } from "./components/MobileWarning";
+import { MobileWarning } from "@junkyardsh/ui";
 
 const MIN_INPUT_WORDS = 30;
 

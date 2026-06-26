@@ -1,12 +1,12 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
 import { CellControls } from "./components/CellControls";
 import { ControlPanel } from "./components/ControlPanel";
 import { ExportBar } from "./components/ExportBar";
-import { Footer } from "./components/Footer";
 import { FreeformCanvas } from "./components/FreeformCanvas";
 import { GridCanvas } from "./components/GridCanvas";
-import { Header } from "./components/Header";
 import { ASPECT_PRESETS, canvasPreviewSize } from "./lib/aspectRatios";
 import { LAYOUT_TEMPLATES } from "./lib/layouts";
 import { useCollageStore } from "./store/collageStore";
