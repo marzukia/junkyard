@@ -672,7 +672,9 @@ export const useResumeStore = create<ResumeState>()(
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Record<string, unknown>;
         const strField = (key: keyof ResumeData): string =>
-          typeof p[key] === "string" ? (p[key] as string) : (current as Record<string, unknown>)[key] as string;
+          typeof p[key] === "string"
+            ? (p[key] as string)
+            : ((current as Record<string, unknown>)[key] as string);
         return {
           ...current,
           fullName: strField("fullName"),
@@ -684,11 +686,21 @@ export const useResumeStore = create<ResumeState>()(
           summary: strField("summary"),
           skills: strField("skills"),
           languages: strField("languages"),
-          experience: Array.isArray(p.experience) ? (p.experience as ExperienceEntry[]) : (current as ResumeState).experience,
-          education: Array.isArray(p.education) ? (p.education as EducationEntry[]) : (current as ResumeState).education,
-          projects: Array.isArray(p.projects) ? (p.projects as ProjectEntry[]) : (current as ResumeState).projects,
-          certifications: Array.isArray(p.certifications) ? (p.certifications as CertificationEntry[]) : (current as ResumeState).certifications,
-          template: (["clean", "compact", "bold"] as TemplateId[]).includes(p.template as TemplateId)
+          experience: Array.isArray(p.experience)
+            ? (p.experience as ExperienceEntry[])
+            : (current as ResumeState).experience,
+          education: Array.isArray(p.education)
+            ? (p.education as EducationEntry[])
+            : (current as ResumeState).education,
+          projects: Array.isArray(p.projects)
+            ? (p.projects as ProjectEntry[])
+            : (current as ResumeState).projects,
+          certifications: Array.isArray(p.certifications)
+            ? (p.certifications as CertificationEntry[])
+            : (current as ResumeState).certifications,
+          template: (["clean", "compact", "bold"] as TemplateId[]).includes(
+            p.template as TemplateId
+          )
             ? (p.template as TemplateId)
             : (current as ResumeState).template,
         };

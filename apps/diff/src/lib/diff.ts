@@ -232,9 +232,7 @@ export function computeDiff(oldText: string, newText: string, opts: DiffOptions 
 
     for (let i = 0; i < pairCount; i++) {
       // Large-input guard: skip expensive per-line word diff above threshold.
-      const [lw, rw] = skipWordDiff
-        ? [null, null]
-        : wordDiff(removedBuf[i]!, addedBuf[i]!);
+      const [lw, rw] = skipWordDiff ? [null, null] : wordDiff(removedBuf[i]!, addedBuf[i]!);
       sideBySide.push({
         leftNo: leftNo++,
         rightNo: rightNo++,

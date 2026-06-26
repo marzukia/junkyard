@@ -243,7 +243,9 @@ describe("cell/freeform: object-URL leak guard (gauntlet w3)", () => {
       ],
     });
 
-    useCollageStore.getState().assignPhotoToCell("cell-0", "blob:new-photo", new File(["x"], "a.jpg"));
+    useCollageStore
+      .getState()
+      .assignPhotoToCell("cell-0", "blob:new-photo", new File(["x"], "a.jpg"));
 
     expect(revoke).toHaveBeenCalledWith("blob:old-photo");
     expect(useCollageStore.getState().cells[0].photoUrl).toBe("blob:new-photo");
@@ -253,7 +255,9 @@ describe("cell/freeform: object-URL leak guard (gauntlet w3)", () => {
   it("assignPhotoToCell does NOT revoke when cell was empty", () => {
     const revoke = vi.spyOn(URL, "revokeObjectURL");
 
-    useCollageStore.getState().assignPhotoToCell("cell-0", "blob:first-photo", new File(["x"], "a.jpg"));
+    useCollageStore
+      .getState()
+      .assignPhotoToCell("cell-0", "blob:first-photo", new File(["x"], "a.jpg"));
 
     expect(revoke).not.toHaveBeenCalled();
     revoke.mockRestore();
@@ -351,9 +355,7 @@ describe("loadSettings: poisoned localStorage guard", () => {
     //   return parsed as Partial<PersistedSettings>
     // and callers accessing .templateId on null would throw.
     const result =
-      typeof parsed !== "object" || parsed === null || Array.isArray(parsed)
-        ? {}
-        : parsed;
+      typeof parsed !== "object" || parsed === null || Array.isArray(parsed) ? {} : parsed;
     expect(result).toEqual({});
   });
 
@@ -362,9 +364,7 @@ describe("loadSettings: poisoned localStorage guard", () => {
     const raw = localStorageMock.getItem("collage:settings:v2");
     const parsed: unknown = JSON.parse(raw!);
     const result =
-      typeof parsed !== "object" || parsed === null || Array.isArray(parsed)
-        ? {}
-        : parsed;
+      typeof parsed !== "object" || parsed === null || Array.isArray(parsed) ? {} : parsed;
     expect(result).toEqual({});
   });
 
@@ -373,9 +373,7 @@ describe("loadSettings: poisoned localStorage guard", () => {
     const raw = localStorageMock.getItem("collage:settings:v2");
     const parsed: unknown = JSON.parse(raw!);
     const result =
-      typeof parsed !== "object" || parsed === null || Array.isArray(parsed)
-        ? {}
-        : parsed;
+      typeof parsed !== "object" || parsed === null || Array.isArray(parsed) ? {} : parsed;
     expect(result).toEqual({});
   });
 
@@ -384,9 +382,7 @@ describe("loadSettings: poisoned localStorage guard", () => {
     const raw = localStorageMock.getItem("collage:settings:v2");
     const parsed: unknown = JSON.parse(raw!);
     const result =
-      typeof parsed !== "object" || parsed === null || Array.isArray(parsed)
-        ? {}
-        : parsed;
+      typeof parsed !== "object" || parsed === null || Array.isArray(parsed) ? {} : parsed;
     expect(result).toEqual({});
   });
 
@@ -397,9 +393,9 @@ describe("loadSettings: poisoned localStorage guard", () => {
       templateId: 42,
       aspectId: "16:9",
       gutter: "not-a-number",
-      radius: Infinity,
+      radius: Number.POSITIVE_INFINITY,
       background: "#aabbcc",
-      borderWidth: NaN,
+      borderWidth: Number.NaN,
       borderColor: "#ff0000",
       collageShape: "circle",
     };
@@ -417,7 +413,8 @@ describe("loadSettings: poisoned localStorage guard", () => {
       if (typeof obj.borderColor === "string") out.borderColor = obj.borderColor;
       if (typeof obj.gutter === "number" && isFinite(obj.gutter as number)) out.gutter = obj.gutter;
       if (typeof obj.radius === "number" && isFinite(obj.radius as number)) out.radius = obj.radius;
-      if (typeof obj.borderWidth === "number" && isFinite(obj.borderWidth as number)) out.borderWidth = obj.borderWidth;
+      if (typeof obj.borderWidth === "number" && isFinite(obj.borderWidth as number))
+        out.borderWidth = obj.borderWidth;
     }
     // templateId=42 (number) dropped → absent
     expect(out.templateId).toBeUndefined();
@@ -461,7 +458,8 @@ describe("loadSettings: poisoned localStorage guard", () => {
       if (typeof obj.borderColor === "string") out.borderColor = obj.borderColor;
       if (typeof obj.gutter === "number" && isFinite(obj.gutter as number)) out.gutter = obj.gutter;
       if (typeof obj.radius === "number" && isFinite(obj.radius as number)) out.radius = obj.radius;
-      if (typeof obj.borderWidth === "number" && isFinite(obj.borderWidth as number)) out.borderWidth = obj.borderWidth;
+      if (typeof obj.borderWidth === "number" && isFinite(obj.borderWidth as number))
+        out.borderWidth = obj.borderWidth;
     }
     expect(out).toEqual(valid);
   });
@@ -514,7 +512,9 @@ describe("freeform: addFreeformCard populates freeformCards (bug regression)", (
     useCollageStore.setState({
       cells: [{ id: "cell-0", photoUrl: null, photoFile: null, panX: 0, panY: 0, zoom: 1 }],
     });
-    useCollageStore.getState().assignPhotoToCell("cell-0", "blob:grid-photo", new File(["x"], "a.jpg"));
+    useCollageStore
+      .getState()
+      .assignPhotoToCell("cell-0", "blob:grid-photo", new File(["x"], "a.jpg"));
 
     expect(useCollageStore.getState().freeformCards).toHaveLength(0);
     expect(useCollageStore.getState().cells[0].photoUrl).toBe("blob:grid-photo");

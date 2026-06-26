@@ -10,9 +10,8 @@
  * (no isolation required); single-thread WASM is the fallback.
  */
 import { pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "./transformersEnv";
+import { configureTransformersEnv } from "@junkyardsh/ui";
 import { DETECT_CODE, splitIntoChunks } from "./languages";
-
 
 const MODEL_ID = "Xenova/nllb-200-distilled-600M";
 

@@ -1,8 +1,7 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCmdEnter } from "./components/useCmdEnter";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import {
   generateList,
   generateParagraphs,
@@ -141,18 +140,17 @@ function LoremPanel() {
   const clampTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const maxCount = mode === "words" ? 200 : mode === "list" ? 30 : 20;
-  const safeCount = Math.min(count, maxCount);
 
   useEffect(() => {
     let result = "";
     if (mode === "paragraphs") {
-      result = generateParagraphs(safeCount, seed, wordBank);
+      result = generateParagraphs(count, seed, wordBank);
     } else if (mode === "sentences") {
-      result = generateSentences(safeCount, seed, wordBank);
+      result = generateSentences(count, seed, wordBank);
     } else if (mode === "words") {
-      result = generateWords(safeCount, seed, wordBank);
+      result = generateWords(count, seed, wordBank);
     } else {
-      result = generateList(safeCount, seed, listStyle === "ordered", wordBank).join("\n");
+      result = generateList(count, seed, listStyle === "ordered", wordBank).join("\n");
     }
     if (classicStart && (mode === "paragraphs" || mode === "sentences")) {
       result = withClassicStart(result, mode);
@@ -161,9 +159,16 @@ function LoremPanel() {
   }, [mode, count, listStyle, seed, wordBank, classicStart]);
 
   // Cmd/Ctrl+Enter regenerates
-  useCmdEnter(() => {
-    regenerate();
-  });
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        regenerate();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [regenerate]);
 
   const countLabel =
     mode === "paragraphs"

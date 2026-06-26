@@ -238,7 +238,6 @@ describe("formatBytes", () => {
   });
 });
 
-
 describe("optimizeSvg input validation", () => {
   it("throws for empty input", () => {
     expect(() => optimizeSvg("", DEFAULT_OPTS)).toThrow(/not an SVG/i);
@@ -249,9 +248,9 @@ describe("optimizeSvg input validation", () => {
   });
 
   it("throws for non-SVG HTML input", () => {
-    expect(() =>
-      optimizeSvg("<html><body><p>Hello</p></body></html>", DEFAULT_OPTS)
-    ).toThrow(/not an SVG/i);
+    expect(() => optimizeSvg("<html><body><p>Hello</p></body></html>", DEFAULT_OPTS)).toThrow(
+      /not an SVG/i
+    );
   });
 
   it("throws for plain text input", () => {

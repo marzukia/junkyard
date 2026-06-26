@@ -91,9 +91,7 @@ export const useSvgStore = create<SvgStore>()(
                 ? opts.convertShapes
                 : current.options.convertShapes,
             cleanupIds:
-              typeof opts.cleanupIds === "boolean"
-                ? opts.cleanupIds
-                : current.options.cleanupIds,
+              typeof opts.cleanupIds === "boolean" ? opts.cleanupIds : current.options.cleanupIds,
           },
         };
       },

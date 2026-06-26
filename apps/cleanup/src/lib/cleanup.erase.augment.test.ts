@@ -4,7 +4,6 @@
  * - imageHelpers.ts additional negative and boundary cases
  */
 import { beforeAll, describe, expect, it } from "vitest";
-import { eraseRegion } from "./inpaint";
 import {
   canvasToImageCoords,
   circleBrushOffsets,
@@ -14,6 +13,7 @@ import {
   outputFilename,
   paintMaskCircle,
 } from "./imageHelpers";
+import { eraseRegion } from "./inpaint";
 
 // jsdom does not expose ImageData as a global in this vitest setup.
 // Provide a minimal polyfill so eraseRegion tests work.
@@ -35,7 +35,8 @@ beforeAll(() => {
         }
       }
     }
-    (globalThis as unknown as { ImageData: typeof ImageDataPolyfill }).ImageData = ImageDataPolyfill;
+    (globalThis as unknown as { ImageData: typeof ImageDataPolyfill }).ImageData =
+      ImageDataPolyfill;
   }
 });
 

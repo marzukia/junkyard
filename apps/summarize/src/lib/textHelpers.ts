@@ -92,8 +92,22 @@ export function lengthLabel(maxWords: number): string {
  * Checked case-insensitively against the lowercased word (including its trailing dot).
  */
 const ABBREVS: ReadonlySet<string> = new Set([
-  "dr.", "mr.", "mrs.", "ms.", "prof.", "sr.", "jr.",
-  "e.g.", "i.e.", "etc.", "vs.", "inc.", "corp.", "ltd.", "dept.", "approx.",
+  "dr.",
+  "mr.",
+  "mrs.",
+  "ms.",
+  "prof.",
+  "sr.",
+  "jr.",
+  "e.g.",
+  "i.e.",
+  "etc.",
+  "vs.",
+  "inc.",
+  "corp.",
+  "ltd.",
+  "dept.",
+  "approx.",
 ]);
 
 /** Return true if `word` is a known abbreviation that should not split a sentence. */

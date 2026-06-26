@@ -14,35 +14,35 @@ import { csvEscape, exifToCsv } from "./exif-utils";
 
 describe("csvEscape: OWASP formula injection guard", () => {
   it("prefixes = with a single-quote", () => {
-    expect(csvEscape("=cmd")).toBe("\"'=cmd\"");
+    expect(csvEscape("=cmd")).toBe('"\'=cmd"');
   });
 
   it("prefixes + with a single-quote", () => {
-    expect(csvEscape("+1")).toBe("\"'+1\"");
+    expect(csvEscape("+1")).toBe('"\'+1"');
   });
 
   it("prefixes - with a single-quote", () => {
-    expect(csvEscape("-1")).toBe("\"'-1\"");
+    expect(csvEscape("-1")).toBe('"\'-1"');
   });
 
   it("prefixes @ with a single-quote", () => {
-    expect(csvEscape("@x")).toBe("\"'@x\"");
+    expect(csvEscape("@x")).toBe('"\'@x"');
   });
 
   it("prefixes tab-leading value with a single-quote", () => {
-    expect(csvEscape("\tcell")).toBe("\"'\tcell\"");
+    expect(csvEscape("\tcell")).toBe('"\'\tcell"');
   });
 
   it("prefixes CR-leading value with a single-quote", () => {
-    expect(csvEscape("\rcell")).toBe("\"'\rcell\"");
+    expect(csvEscape("\rcell")).toBe('"\'\rcell"');
   });
 
   it("does NOT prefix a normal string", () => {
-    expect(csvEscape("normal")).toBe("\"normal\"");
+    expect(csvEscape("normal")).toBe('"normal"');
   });
 
   it("does NOT prefix a string that contains = but does not start with =", () => {
-    expect(csvEscape("Canon EOS=5D")).toBe("\"Canon EOS=5D\"");
+    expect(csvEscape("Canon EOS=5D")).toBe('"Canon EOS=5D"');
   });
 
   it("does NOT prefix an empty string", () => {
@@ -51,13 +51,13 @@ describe("csvEscape: OWASP formula injection guard", () => {
 
   it("still escapes internal double quotes after prefixing", () => {
     // value: =say "hi"  → prefixed: ='=say "hi"  → quoted+escaped: "'=say ""hi"""
-    expect(csvEscape('=say "hi"')).toBe("\"'=say \"\"hi\"\"\"");
+    expect(csvEscape('=say "hi"')).toBe('"\'=say ""hi"""');
   });
 });
 
 describe("exifToCsv: formula-injection field in record is prefixed", () => {
   it("prefixes a value starting with = in the CSV output", () => {
-    const csv = exifToCsv({ Software: "=HYPERLINK(\"http://evil.com\",\"click\")" });
+    const csv = exifToCsv({ Software: '=HYPERLINK("http://evil.com","click")' });
     // The value cell must begin with ' to neutralise the formula
     expect(csv).toContain("'=HYPERLINK");
   });

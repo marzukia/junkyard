@@ -5,13 +5,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { isModelLoaded } from "./bgRemoval";
-import {
-  clamp,
-  formatBytes,
-  formatProgress,
-  outputFilename,
-  parseHexColor,
-} from "./imageHelpers";
+import { clamp, formatBytes, formatProgress, outputFilename, parseHexColor } from "./imageHelpers";
 
 // ── bgRemoval.ts pure state ───────────────────────────────────────────────────
 

@@ -1,9 +1,9 @@
 /**
  * Web Worker for caption: runs model load + inference off the main thread.
  */
-import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
+import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
 import type { CaptionResult } from "./lib/captioner";
-import { isModelLoaded, loadModel, captionImage } from "./lib/captioner";
+import { captionImage, isModelLoaded, loadModel } from "./lib/captioner";
 
 type Args = {
   file: File;

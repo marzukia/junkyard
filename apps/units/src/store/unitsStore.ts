@@ -56,7 +56,7 @@ export function defaultUnits(categoryId: CategoryId): { fromUnit: string; toUnit
     case "force":
       return { fromUnit: "N", toUnit: "lbf" };
     case "fuel":
-      return { fromUnit: "mpgUS", toUnit: "kml" };  // canonical: mpgUS (not mpg)
+      return { fromUnit: "mpgUS", toUnit: "kml" }; // canonical: mpgUS (not mpg)
   }
 }
 
@@ -229,7 +229,8 @@ export const useUnitsStore = create<UnitsState>()(
         // Validate categoryId: if unknown/non-string, fall back to "length".
         const knownCategoryIds = new Set(CATEGORIES.map((c) => c.id));
         const categoryId: CategoryId =
-          typeof state.categoryId === "string" && knownCategoryIds.has(state.categoryId as CategoryId)
+          typeof state.categoryId === "string" &&
+          knownCategoryIds.has(state.categoryId as CategoryId)
             ? (state.categoryId as CategoryId)
             : initialCat;
         if (categoryId !== state.categoryId) state.categoryId = categoryId;
@@ -239,9 +240,7 @@ export const useUnitsStore = create<UnitsState>()(
         const knownUnitIds = new Set(cat?.units.map((u) => u.id) ?? []);
         const defaults = defaultUnits(categoryId);
         const safeFrom =
-          typeof fromUnit === "string" && knownUnitIds.has(fromUnit)
-            ? fromUnit
-            : defaults.fromUnit;
+          typeof fromUnit === "string" && knownUnitIds.has(fromUnit) ? fromUnit : defaults.fromUnit;
         const safeTo =
           typeof toUnit === "string" && knownUnitIds.has(toUnit) ? toUnit : defaults.toUnit;
         if (safeFrom !== fromUnit) state.fromUnit = safeFrom;

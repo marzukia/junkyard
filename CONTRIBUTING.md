@@ -7,7 +7,8 @@ A monorepo of 45 free, client-side web tools served at `junkyard.sh/<slug>/`.
 ```
 junkyard/
   apps/<slug>/        # 45 standalone Vite apps, one per tool
-  kit/                # shared design-system kit (vendored into each app)
+  kit/                # canonical source for @junkyardsh/ui package
+  packages/ui/        # @junkyardsh/ui — shared UI components published to npm
   hub/                # landing page (Vite + React 18 + TS, built to dist root)
   packages/
     core/             # @junkyard/core - 17 pure-logic headless tools (Node/vitest)
@@ -16,7 +17,7 @@ junkyard/
     build-site.sh       # consolidated CI build
     gen-catalogue.ts    # reads apps/*/junkyard.ts, emits catalogue artifacts
     catalogue-schema.ts # JunkyardApp type + enums (Category, Runtime, AppTag)
-    vendor-switcher.mjs # copies AppSwitcher into every app (idempotent)
+    (vendor-*.mjs removed — replaced by @junkyardsh/ui package)
     inject-umami.mjs    # injects Umami <script> into dist/<slug>/index.html
     umami.config.json   # { "host": "umami.junkyard.sh" }
   umami-ids.txt       # slug -> Umami website-id map (one line per tool)
@@ -142,17 +143,28 @@ This writes:
 
 CI runs this and fails with `git diff --exit-code` if the artifacts are stale. There is no way to bypass this gate.
 
-### 4. Vendor the shared kit components
+### 4. Shared UI components (`@junkyardsh/ui`)
 
-The AppSwitcher navigation component is vendored (copied) into every app rather than imported from a package. If you edit `kit/components/AppSwitcher.tsx` or `AppSwitcher.css`, run:
+Shared UI components live in `kit/` and are published as `@junkyardsh/ui` from `packages/ui/`. All apps import from the npm package instead of vendoring copies.
+
+If you edit a shared component in `kit/`, rebuild the package and bump the version:
 
 ```bash
-node scripts/vendor-switcher.mjs
+cd packages/ui
+bun run build
+npm publish --access public   # bump version in package.json first
 ```
 
-This copies the canonical files into every `apps/<slug>/src/` directory that contains a `utility-bar` div. The script is idempotent and safe to re-run.
+Then update the dependency version in all apps:
 
-MobileWarning is hand-maintained per app (no vendor script — `scripts/vendor-mobilewarn.mjs` was removed after it generated malformed imports). If you edit `kit/components/MobileWarning.tsx` or `MobileWarning.css`, propagate the change manually to each heavy-AI app (`bg, caption, depth, summarize, transcribe, translate, upscale, chat, video`). There is no CI guard for MobileWarning drift.
+```bash
+for app in apps/*/; do
+  sed -i 's/"@junkyardsh\/ui": "^\^1\.0\.[0-9]+"/"@junkyardsh\/ui": "^1.0.<new>"/g' "$app/package.json"
+  bun install --cwd "$app"
+done
+```
+
+CI builds the package once and lint-checks all apps against it. There are no vendor scripts or drift checks to maintain.
 
 ### 5. SEO and domain rules
 

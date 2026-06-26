@@ -1,7 +1,7 @@
-import { BrandMark } from "./components/BrandMark";
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { ExportButton } from "./components/ExportButton";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import { ImportButton } from "./components/ImportButton";
 import { LoadSampleButton } from "./components/LoadSampleButton";
 import { ResumeForm } from "./components/ResumeForm";

@@ -1,11 +1,11 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { MobileWarning } from "@junkyardsh/ui";
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
-import { formatBytes, formatTime, getFFmpeg, parseTime, runFFmpeg } from "./lib/ffmpeg";
 import { isVideoFile } from "./lib/dropGuard";
-import { MobileWarning } from "./components/MobileWarning";
+import { formatBytes, formatTime, getFFmpeg, parseTime, runFFmpeg } from "./lib/ffmpeg";
 
 // Warn when file exceeds this size
 const LARGE_FILE_THRESHOLD = 500 * 1024 * 1024; // 500 MB
@@ -69,9 +69,7 @@ export function App() {
     if (!file) return;
     setCoreLoading(true);
     getFFmpeg(() => {})
-      .catch(() =>
-        setError("Couldn't load the video engine - check your connection and reload.")
-      )
+      .catch(() => setError("Couldn't load the video engine - check your connection and reload."))
       .finally(() => setCoreLoading(false));
   }, [file]);
 

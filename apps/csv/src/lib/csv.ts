@@ -1,10 +1,10 @@
 // ── Parser (vendored from kit/lib/csvParse.ts) ────────────────────────────────
 // splitCsvRows and detectDelimiter are vendored via scripts/vendor-csvparse.mjs.
 // Do NOT edit csvParse.ts here — edit kit/lib/csvParse.ts and re-run the script.
-export { splitCsvRows, detectDelimiter } from "./csvParse";
-export type { Delimiter } from "./csvParse";
-import { splitCsvRows, detectDelimiter } from "./csvParse";
-import type { Delimiter } from "./csvParse";
+export { splitCsvRows, detectDelimiter } from "@junkyardsh/ui";
+export type { Delimiter } from "@junkyardsh/ui";
+import { detectDelimiter, splitCsvRows } from "@junkyardsh/ui";
+import type { Delimiter } from "@junkyardsh/ui";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export type ConvertMode = "csv-to-json" | "json-to-csv";
@@ -243,7 +243,7 @@ export function jsonToCsv(jsonText: string, delimiter: Delimiter): ConvertResult
 export function csvEscape(val: string, delimiter: Delimiter): string {
   // Prefix formula-trigger cells with a single quote to neutralise injection.
   const FORMULA_TRIGGERS = /^[=+\-@\t\r]/;
-  let out = FORMULA_TRIGGERS.test(val) ? "'" + val : val;
+  const out = FORMULA_TRIGGERS.test(val) ? "'" + val : val;
   if (out.includes('"') || out.includes(delimiter) || out.includes("\n") || out.includes("\r")) {
     return `"${out.replace(/"/g, '""')}"`;
   }

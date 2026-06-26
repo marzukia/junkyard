@@ -11,7 +11,7 @@ export function isSupportedImage(file: File): boolean {
   return (ACCEPTED_TYPES as readonly string[]).includes(file.type);
 }
 
-export { formatBytes } from "./format";
+export { formatBytes } from "@junkyardsh/ui";
 
 /** Format a download progress fraction as a percentage string. */
 export function formatProgress(loaded: number, total: number): string {

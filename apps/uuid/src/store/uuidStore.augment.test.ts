@@ -9,8 +9,8 @@
  * fails because ids is empty (store was just initialised, no build triggered).
  */
 import { describe, expect, it } from "vitest";
-import { useUuidStore } from "./uuidStore";
 import { UUID_NAMESPACES } from "../lib/uuid";
+import { useUuidStore } from "./uuidStore";
 
 const DNS_NS = UUID_NAMESPACES.DNS;
 // RFC 4122 Appendix C test vector: v5 of DNS + "python.org"

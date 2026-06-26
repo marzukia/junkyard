@@ -8,7 +8,7 @@ import { MantineProvider, createTheme } from "@mantine/core";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
-import "./styles.css";
+import "@junkyardsh/ui/styles.css";
 
 const theme = createTheme({
   fontFamily: "'Roboto', system-ui, sans-serif",

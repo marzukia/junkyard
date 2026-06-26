@@ -3,12 +3,7 @@
  * additional negative/edge cases for buildQrContent and buildWifiString.
  */
 import { describe, expect, it } from "vitest";
-import {
-  buildQrContent,
-  buildVCardString,
-  buildWifiString,
-  qrPresetLabel,
-} from "./qr";
+import { buildQrContent, buildVCardString, buildWifiString, qrPresetLabel } from "./qr";
 
 // ── qrPresetLabel ─────────────────────────────────────────────────────────────
 

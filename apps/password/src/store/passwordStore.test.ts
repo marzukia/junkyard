@@ -15,8 +15,13 @@ async function freshStore() {
 }
 
 describe("passwordStore — poisoned localStorage clamping", () => {
-  beforeEach(() => { localStorage.clear(); });
-  afterEach(() => { localStorage.clear(); vi.resetModules(); });
+  beforeEach(() => {
+    localStorage.clear();
+  });
+  afterEach(() => {
+    localStorage.clear();
+    vi.resetModules();
+  });
 
   it("uses safe defaults when no persisted state exists", async () => {
     const store = await freshStore();
@@ -31,10 +36,22 @@ describe("passwordStore — poisoned localStorage clamping", () => {
     localStorage.setItem(
       "pw-generator-settings",
       JSON.stringify({
-        state: { length: 0, wordCount: 5, count: 5, mode: "random",
-                 upper: true, lower: true, digits: true, symbols: true,
-                 excludeAmbiguous: false, minDigits: 0, minSymbols: 0,
-                 separator: "-", capitalize: false, appendNumber: false },
+        state: {
+          length: 0,
+          wordCount: 5,
+          count: 5,
+          mode: "random",
+          upper: true,
+          lower: true,
+          digits: true,
+          symbols: true,
+          excludeAmbiguous: false,
+          minDigits: 0,
+          minSymbols: 0,
+          separator: "-",
+          capitalize: false,
+          appendNumber: false,
+        },
         version: 0,
       })
     );
@@ -46,10 +63,22 @@ describe("passwordStore — poisoned localStorage clamping", () => {
     localStorage.setItem(
       "pw-generator-settings",
       JSON.stringify({
-        state: { length: null, wordCount: 5, count: 5, mode: "random",
-                 upper: true, lower: true, digits: true, symbols: true,
-                 excludeAmbiguous: false, minDigits: 0, minSymbols: 0,
-                 separator: "-", capitalize: false, appendNumber: false },
+        state: {
+          length: null,
+          wordCount: 5,
+          count: 5,
+          mode: "random",
+          upper: true,
+          lower: true,
+          digits: true,
+          symbols: true,
+          excludeAmbiguous: false,
+          minDigits: 0,
+          minSymbols: 0,
+          separator: "-",
+          capitalize: false,
+          appendNumber: false,
+        },
         version: 0,
       })
     );
@@ -61,10 +90,22 @@ describe("passwordStore — poisoned localStorage clamping", () => {
     localStorage.setItem(
       "pw-generator-settings",
       JSON.stringify({
-        state: { length: 20, wordCount: 0, count: 5, mode: "passphrase",
-                 upper: true, lower: true, digits: true, symbols: true,
-                 excludeAmbiguous: false, minDigits: 0, minSymbols: 0,
-                 separator: "-", capitalize: false, appendNumber: false },
+        state: {
+          length: 20,
+          wordCount: 0,
+          count: 5,
+          mode: "passphrase",
+          upper: true,
+          lower: true,
+          digits: true,
+          symbols: true,
+          excludeAmbiguous: false,
+          minDigits: 0,
+          minSymbols: 0,
+          separator: "-",
+          capitalize: false,
+          appendNumber: false,
+        },
         version: 0,
       })
     );
@@ -76,10 +117,22 @@ describe("passwordStore — poisoned localStorage clamping", () => {
     localStorage.setItem(
       "pw-generator-settings",
       JSON.stringify({
-        state: { length: 20, wordCount: 5, count: 500, mode: "random",
-                 upper: true, lower: true, digits: true, symbols: true,
-                 excludeAmbiguous: false, minDigits: 0, minSymbols: 0,
-                 separator: "-", capitalize: false, appendNumber: false },
+        state: {
+          length: 20,
+          wordCount: 5,
+          count: 500,
+          mode: "random",
+          upper: true,
+          lower: true,
+          digits: true,
+          symbols: true,
+          excludeAmbiguous: false,
+          minDigits: 0,
+          minSymbols: 0,
+          separator: "-",
+          capitalize: false,
+          appendNumber: false,
+        },
         version: 0,
       })
     );
@@ -91,10 +144,22 @@ describe("passwordStore — poisoned localStorage clamping", () => {
     localStorage.setItem(
       "pw-generator-settings",
       JSON.stringify({
-        state: { length: 20, wordCount: 5, count: 0, mode: "random",
-                 upper: true, lower: true, digits: true, symbols: true,
-                 excludeAmbiguous: false, minDigits: 0, minSymbols: 0,
-                 separator: "-", capitalize: false, appendNumber: false },
+        state: {
+          length: 20,
+          wordCount: 5,
+          count: 0,
+          mode: "random",
+          upper: true,
+          lower: true,
+          digits: true,
+          symbols: true,
+          excludeAmbiguous: false,
+          minDigits: 0,
+          minSymbols: 0,
+          separator: "-",
+          capitalize: false,
+          appendNumber: false,
+        },
         version: 0,
       })
     );
@@ -106,10 +171,22 @@ describe("passwordStore — poisoned localStorage clamping", () => {
     localStorage.setItem(
       "pw-generator-settings",
       JSON.stringify({
-        state: { length: 16, wordCount: 4, count: 3, mode: "random",
-                 upper: true, lower: true, digits: true, symbols: false,
-                 excludeAmbiguous: false, minDigits: 0, minSymbols: 0,
-                 separator: "-", capitalize: false, appendNumber: false },
+        state: {
+          length: 16,
+          wordCount: 4,
+          count: 3,
+          mode: "random",
+          upper: true,
+          lower: true,
+          digits: true,
+          symbols: false,
+          excludeAmbiguous: false,
+          minDigits: 0,
+          minSymbols: 0,
+          separator: "-",
+          capitalize: false,
+          appendNumber: false,
+        },
         version: 0,
       })
     );

@@ -1,8 +1,7 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCmdEnter } from "./components/useCmdEnter";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import {
   type CopyFormat,
   type InspectResult,
@@ -285,12 +284,19 @@ export function App() {
   }, [generate]);
 
   // Cmd/Ctrl+Enter global hotkey for generate
-  useCmdEnter(() => {
-    // Don't fire if focused inside the inspector input
-    const target = document.activeElement;
-    if (target && target.closest(".uuid-inspect-row")) return;
-    generate();
-  });
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Don't fire if focused inside the inspector input
+      const target = e.target as HTMLElement;
+      if (target.closest(".uuid-inspect-row")) return;
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        generate();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [generate]);
 
   const handleCount = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = Math.max(1, Math.min(1000, Number.parseInt(e.target.value, 10) || 1));

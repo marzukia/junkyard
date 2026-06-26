@@ -5,7 +5,7 @@
  * stack. deriveSync now wraps the buildTree call in try/catch so tree is set
  * to null instead of throwing an uncaught "Maximum call stack size exceeded".
  */
-import { describe, expect, it, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 /** Build a JSON string that nests objects N levels deep: {"a":{"a":{...}}} */
 function deepJson(depth: number): string {

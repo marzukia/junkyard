@@ -16,8 +16,8 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { computeResult, defaultUnits } from "./unitsStore";
 import type { CategoryId } from "../lib/units";
+import { computeResult, defaultUnits } from "./unitsStore";
 
 // ── Inline the migrate logic under test (mirrors unitsStore.ts exactly) ───────
 // We test the migration function in isolation so we can seed arbitrary v0 shapes
@@ -72,7 +72,10 @@ describe("persist v0→v1 migration — id remapping", () => {
   });
 
   it("ms → mps ONLY when categoryId === speed", () => {
-    const speedState = migrate({ categoryId: "speed", fromUnit: "ms", toUnit: "kmh" }, 0) as V0Shape;
+    const speedState = migrate(
+      { categoryId: "speed", fromUnit: "ms", toUnit: "kmh" },
+      0
+    ) as V0Shape;
     expect(speedState.fromUnit).toBe("mps");
   });
 
@@ -149,28 +152,58 @@ describe("computeResult — defensive: unknown ids never throw", () => {
 describe("computeResult — produces valid result after migration", () => {
   it("mpg→mpgUS: computeResult returns a finite result", () => {
     const migrated = migrate({ categoryId: "fuel", fromUnit: "mpg", toUnit: "kml" }, 0) as V0Shape;
-    const result = computeResult("30", migrated.fromUnit!, migrated.toUnit!, "fuel" as CategoryId, false);
+    const result = computeResult(
+      "30",
+      migrated.fromUnit!,
+      migrated.toUnit!,
+      "fuel" as CategoryId,
+      false
+    );
     expect(result.resultValue).not.toBe("—");
     expect(Number.isFinite(result.resultNumeric)).toBe(true);
   });
 
   it("mpguk→mpgUK: computeResult returns a finite result", () => {
-    const migrated = migrate({ categoryId: "fuel", fromUnit: "mpguk", toUnit: "kml" }, 0) as V0Shape;
-    const result = computeResult("40", migrated.fromUnit!, migrated.toUnit!, "fuel" as CategoryId, false);
+    const migrated = migrate(
+      { categoryId: "fuel", fromUnit: "mpguk", toUnit: "kml" },
+      0
+    ) as V0Shape;
+    const result = computeResult(
+      "40",
+      migrated.fromUnit!,
+      migrated.toUnit!,
+      "fuel" as CategoryId,
+      false
+    );
     expect(result.resultValue).not.toBe("—");
     expect(Number.isFinite(result.resultNumeric)).toBe(true);
   });
 
   it("l100→l100km: computeResult returns a finite result", () => {
-    const migrated = migrate({ categoryId: "fuel", fromUnit: "l100", toUnit: "mpgUS" }, 0) as V0Shape;
-    const result = computeResult("8", migrated.fromUnit!, migrated.toUnit!, "fuel" as CategoryId, false);
+    const migrated = migrate(
+      { categoryId: "fuel", fromUnit: "l100", toUnit: "mpgUS" },
+      0
+    ) as V0Shape;
+    const result = computeResult(
+      "8",
+      migrated.fromUnit!,
+      migrated.toUnit!,
+      "fuel" as CategoryId,
+      false
+    );
     expect(result.resultValue).not.toBe("—");
     expect(Number.isFinite(result.resultNumeric)).toBe(true);
   });
 
   it("speed ms→mps: computeResult returns a finite result", () => {
     const migrated = migrate({ categoryId: "speed", fromUnit: "ms", toUnit: "kmh" }, 0) as V0Shape;
-    const result = computeResult("10", migrated.fromUnit!, migrated.toUnit!, "speed" as CategoryId, false);
+    const result = computeResult(
+      "10",
+      migrated.fromUnit!,
+      migrated.toUnit!,
+      "speed" as CategoryId,
+      false
+    );
     expect(result.resultValue).not.toBe("—");
     expect(Number.isFinite(result.resultNumeric)).toBe(true);
   });
@@ -180,8 +213,20 @@ describe("computeResult — produces valid result after migration", () => {
 
 describe("defaultUnits — returns valid unit ids for every category", () => {
   const categories: CategoryId[] = [
-    "length", "mass", "temperature", "area", "volume", "speed",
-    "data", "time", "pressure", "energy", "angle", "power", "force", "fuel",
+    "length",
+    "mass",
+    "temperature",
+    "area",
+    "volume",
+    "speed",
+    "data",
+    "time",
+    "pressure",
+    "energy",
+    "angle",
+    "power",
+    "force",
+    "fuel",
   ];
 
   for (const cat of categories) {

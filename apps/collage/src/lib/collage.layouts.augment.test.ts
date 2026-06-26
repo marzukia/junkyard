@@ -5,8 +5,8 @@
  * - resizeMath.ts additional edge cases for w/h minimum-clamping interactions
  */
 import { describe, expect, it, vi } from "vitest";
-import { LAYOUT_TEMPLATES, getTemplate } from "./layouts";
 import { exportFilename } from "./exportFilename";
+import { LAYOUT_TEMPLATES, getTemplate } from "./layouts";
 import { MIN_FRAC, applyResize } from "./resizeMath";
 
 // ── layouts.ts additional coverage ───────────────────────────────────────────

@@ -8,8 +8,7 @@
  * required for WebGPU); WASM single-thread is the fallback.
  */
 import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "./transformersEnv";
-
+import { configureTransformersEnv } from "@junkyardsh/ui";
 
 export const MODEL_ID = "onnx-community/depth-anything-v2-small";
 
@@ -97,11 +96,11 @@ function interpolateColourMap(
 export function viridisColour(t: number): [number, number, number] {
   // 32 stops sampled uniformly from the matplotlib viridis 256-entry table.
   const stops: [number, number, number, number][] = [
-    [0.0000, 68, 1, 84],
+    [0.0, 68, 1, 84],
     [0.0323, 70, 8, 92],
     [0.0645, 72, 17, 101],
     [0.0968, 72, 26, 108],
-    [0.1290, 71, 35, 116],
+    [0.129, 71, 35, 116],
     [0.1613, 69, 43, 122],
     [0.1935, 66, 51, 126],
     [0.2258, 63, 59, 131],
@@ -124,11 +123,11 @@ export function viridisColour(t: number): [number, number, number] {
     [0.7742, 118, 190, 84],
     [0.8065, 137, 197, 71],
     [0.8387, 157, 203, 58],
-    [0.8710, 177, 210, 44],
+    [0.871, 177, 210, 44],
     [0.9032, 196, 216, 31],
     [0.9355, 215, 222, 22],
     [0.9677, 234, 228, 25],
-    [1.0000, 253, 231, 37],
+    [1.0, 253, 231, 37],
   ];
 
   return interpolateColourMap(stops, t);
@@ -141,11 +140,11 @@ export function viridisColour(t: number): [number, number, number] {
  */
 export function magmaColour(t: number): [number, number, number] {
   const stops: [number, number, number, number][] = [
-    [0.0000, 0, 0, 4],
+    [0.0, 0, 0, 4],
     [0.0323, 3, 3, 18],
     [0.0645, 8, 7, 34],
     [0.0968, 15, 10, 52],
-    [0.1290, 22, 13, 67],
+    [0.129, 22, 13, 67],
     [0.1613, 30, 15, 79],
     [0.1935, 40, 16, 91],
     [0.2258, 52, 16, 100],
@@ -168,11 +167,11 @@ export function magmaColour(t: number): [number, number, number] {
     [0.7742, 241, 159, 33],
     [0.8065, 246, 176, 31],
     [0.8387, 249, 193, 38],
-    [0.8710, 251, 210, 58],
+    [0.871, 251, 210, 58],
     [0.9032, 252, 225, 88],
     [0.9355, 252, 238, 126],
     [0.9677, 252, 248, 166],
-    [1.0000, 252, 253, 191],
+    [1.0, 252, 253, 191],
   ];
 
   return interpolateColourMap(stops, t);
@@ -185,11 +184,11 @@ export function magmaColour(t: number): [number, number, number] {
  */
 export function turboColour(t: number): [number, number, number] {
   const stops: [number, number, number, number][] = [
-    [0.0000, 48, 18, 59],
+    [0.0, 48, 18, 59],
     [0.0323, 55, 35, 96],
     [0.0645, 59, 54, 135],
     [0.0968, 60, 72, 169],
-    [0.1290, 58, 92, 199],
+    [0.129, 58, 92, 199],
     [0.1613, 53, 113, 224],
     [0.1935, 44, 135, 244],
     [0.2258, 33, 155, 255],
@@ -212,11 +211,11 @@ export function turboColour(t: number): [number, number, number] {
     [0.7742, 243, 138, 18],
     [0.8065, 237, 116, 21],
     [0.8387, 228, 95, 23],
-    [0.8710, 214, 72, 23],
+    [0.871, 214, 72, 23],
     [0.9032, 196, 51, 21],
     [0.9355, 174, 31, 17],
     [0.9677, 149, 15, 9],
-    [1.0000, 122, 4, 3],
+    [1.0, 122, 4, 3],
   ];
 
   return interpolateColourMap(stops, t);
@@ -229,11 +228,11 @@ export function turboColour(t: number): [number, number, number] {
  */
 export function plasmaColour(t: number): [number, number, number] {
   const stops: [number, number, number, number][] = [
-    [0.0000, 13, 8, 135],
+    [0.0, 13, 8, 135],
     [0.0323, 27, 5, 142],
     [0.0645, 41, 3, 149],
     [0.0968, 55, 2, 156],
-    [0.1290, 68, 1, 162],
+    [0.129, 68, 1, 162],
     [0.1613, 80, 3, 167],
     [0.1935, 91, 7, 170],
     [0.2258, 103, 11, 173],
@@ -256,11 +255,11 @@ export function plasmaColour(t: number): [number, number, number] {
     [0.7742, 237, 134, 68],
     [0.8065, 241, 145, 56],
     [0.8387, 244, 157, 43],
-    [0.8710, 246, 169, 29],
+    [0.871, 246, 169, 29],
     [0.9032, 248, 182, 15],
     [0.9355, 249, 195, 7],
     [0.9677, 250, 209, 10],
-    [1.0000, 240, 249, 33],
+    [1.0, 240, 249, 33],
   ];
 
   return interpolateColourMap(stops, t);

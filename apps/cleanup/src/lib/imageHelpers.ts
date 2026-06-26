@@ -11,7 +11,7 @@ export function isSupportedImage(file: File): boolean {
   return (ACCEPTED_TYPES as readonly string[]).includes(file.type);
 }
 
-export { formatBytes } from "./format";
+export { formatBytes } from "@junkyardsh/ui";
 
 /** Clamp a number to [min, max]. */
 export function clamp(value: number, min: number, max: number): number {

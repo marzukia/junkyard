@@ -1,8 +1,8 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
+import { MobileWarning } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
-import { MobileWarning } from "./components/MobileWarning";
 import {
   assembleBlob,
   bestMimeType,
@@ -11,7 +11,7 @@ import {
 } from "./lib/recorder";
 import type { ActiveRecording } from "./lib/recorder";
 import { useRecorderStore } from "./store";
-import "./styles.css";
+import "@junkyardsh/ui/styles.css";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 

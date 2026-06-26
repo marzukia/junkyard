@@ -76,7 +76,8 @@ describe("og logo validation (bug #2 regression)", () => {
       useOgStore.getState().setLogoImage(dataUrl);
     };
     img.onerror = () => {
-      logoError = "File could not be decoded as an image. Please upload a valid image file (JPEG, PNG, WebP, etc.).";
+      logoError =
+        "File could not be decoded as an image. Please upload a valid image file (JPEG, PNG, WebP, etc.).";
     };
     img.src = dataUrl;
     await Promise.resolve();

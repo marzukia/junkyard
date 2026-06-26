@@ -101,18 +101,30 @@ export function FaviconGenerator() {
           try {
             img = await loadImage(snapUrl);
           } catch (loadErr) {
-            if (isStale()) { setStatus("idle"); return; }
+            if (isStale()) {
+              setStatus("idle");
+              return;
+            }
             throw loadErr; // Genuine load failure on a still-current source.
           }
-          if (isStale()) { setStatus("idle"); return; }
+          if (isStale()) {
+            setStatus("idle");
+            return;
+          }
           canvas = drawToCanvas(img, entry.size, canvasOptions);
         } else {
-          if (isStale()) { setStatus("idle"); return; }
+          if (isStale()) {
+            setStatus("idle");
+            return;
+          }
           canvas = drawTextToCanvas(sourceText.trim(), entry.size, canvasOptions);
         }
 
         const blob = await canvasToBlob(canvas);
-        if (isStale()) { setStatus("idle"); return; }
+        if (isStale()) {
+          setStatus("idle");
+          return;
+        }
         pngBlobs.push({ size: entry.size, blob, filename: entry.filename });
         previews.push({
           size: entry.size,
@@ -145,10 +157,16 @@ export function FaviconGenerator() {
         );
       } catch (icoErr) {
         // Any rejection during ico frames: check staleness first.
-        if (isStale()) { setStatus("idle"); return; }
+        if (isStale()) {
+          setStatus("idle");
+          return;
+        }
         throw icoErr; // Re-throw genuine errors (unexpected canvas/blob failures).
       }
-      if (isStale()) { setStatus("idle"); return; }
+      if (isStale()) {
+        setStatus("idle");
+        return;
+      }
 
       const icoBytes = buildIco(icoFrames);
       tick();
@@ -170,7 +188,10 @@ export function FaviconGenerator() {
       zip.file("README.txt", buildReadme(safeName));
 
       const zipBlob = await zip.generateAsync({ type: "blob" });
-      if (isStale()) { setStatus("idle"); return; }
+      if (isStale()) {
+        setStatus("idle");
+        return;
+      }
       const url = URL.createObjectURL(zipBlob);
       setZipUrl(url);
       setStatus("done");
@@ -178,20 +199,14 @@ export function FaviconGenerator() {
     } catch (err) {
       // Final guard: if the run became stale while we were awaiting, don't
       // surface an error — just reset to idle.
-      if (isStale()) { setStatus("idle"); return; }
+      if (isStale()) {
+        setStatus("idle");
+        return;
+      }
       const msg = err instanceof Error ? err.message : "Unknown error";
       setStatus("error", msg);
     }
-  }, [
-    isReady,
-    sourceText,
-    appName,
-    canvasOptions,
-    setStatus,
-    setProgress,
-    setPreviews,
-    setZipUrl,
-  ]);
+  }, [isReady, sourceText, appName, canvasOptions, setStatus, setProgress, setPreviews, setZipUrl]);
 
   // Cmd/Ctrl+Enter triggers generate
   useEffect(() => {

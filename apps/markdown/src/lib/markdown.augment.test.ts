@@ -45,7 +45,7 @@ describe("renderMarkdown — additional XSS and negative cases", () => {
   it("strips data: URIs from image src (XSS vector)", () => {
     // DOMPurify strips data: image src; in test env (no DOM) it won't run,
     // but we can verify the raw marked output does not crash
-    const html = renderMarkdown('![x](data:text/html,<script>alert(1)</script>)');
+    const html = renderMarkdown("![x](data:text/html,<script>alert(1)</script>)");
     // In test env (no DOM), DOMPurify is skipped — just verify no throw
     expect(typeof html).toBe("string");
   });
@@ -204,7 +204,7 @@ describe("wrapHtmlDocument — additional cases", () => {
   });
 
   it("body HTML is included verbatim between body tags", () => {
-    const body = '<h1>Main</h1><p>Content here.</p>';
+    const body = "<h1>Main</h1><p>Content here.</p>";
     const doc = wrapHtmlDocument(body, "T");
     expect(doc).toContain(body);
   });

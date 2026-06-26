@@ -27,8 +27,7 @@ let rejectLoadImage: ((e: Error) => void) | null = null;
 const loadImageMock = vi.fn(
   (_url: string) =>
     new Promise<HTMLImageElement>((resolve, reject) => {
-      resolveLoadImage = () =>
-        resolve({ naturalWidth: 64, naturalHeight: 64 } as HTMLImageElement);
+      resolveLoadImage = () => resolve({ naturalWidth: 64, naturalHeight: 64 } as HTMLImageElement);
       rejectLoadImage = (e) => reject(e);
     })
 );
@@ -84,7 +83,14 @@ vi.stubGlobal("URL", {
 // the EXACT same code path, including the stale-check after the loadImage await.
 // ---------------------------------------------------------------------------
 import { FAVICON_SIZES } from "./faviconCore";
-import { drawToCanvas, canvasToBlob, buildIco, buildManifest, buildHtmlSnippet, sanitiseAppName } from "./faviconCore";
+import {
+  buildHtmlSnippet,
+  buildIco,
+  buildManifest,
+  canvasToBlob,
+  drawToCanvas,
+  sanitiseAppName,
+} from "./faviconCore";
 
 let tokenCounter = 0;
 
@@ -115,13 +121,22 @@ async function runGenerate(loadImage: (url: string) => Promise<HTMLImageElement>
       try {
         img = await loadImage(snapUrl!);
       } catch (loadErr) {
-        if (isStale()) { useFaviconStore.getState().setStatus("idle"); return; }
+        if (isStale()) {
+          useFaviconStore.getState().setStatus("idle");
+          return;
+        }
         throw loadErr;
       }
-      if (isStale()) { useFaviconStore.getState().setStatus("idle"); return; }
+      if (isStale()) {
+        useFaviconStore.getState().setStatus("idle");
+        return;
+      }
       const canvas = drawToCanvas(img, entry.size, {} as never);
       const blob = await canvasToBlob(canvas);
-      if (isStale()) { useFaviconStore.getState().setStatus("idle"); return; }
+      if (isStale()) {
+        useFaviconStore.getState().setStatus("idle");
+        return;
+      }
       pngBlobs.push({ size: entry.size, blob, filename: entry.filename });
     }
 
@@ -137,14 +152,23 @@ async function runGenerate(loadImage: (url: string) => Promise<HTMLImageElement>
         })
       );
     } catch (icoErr) {
-      if (isStale()) { useFaviconStore.getState().setStatus("idle"); return; }
+      if (isStale()) {
+        useFaviconStore.getState().setStatus("idle");
+        return;
+      }
       throw icoErr;
     }
-    if (isStale()) { useFaviconStore.getState().setStatus("idle"); return; }
+    if (isStale()) {
+      useFaviconStore.getState().setStatus("idle");
+      return;
+    }
 
     useFaviconStore.getState().setStatus("done");
   } catch (err) {
-    if (isStale()) { useFaviconStore.getState().setStatus("idle"); return; }
+    if (isStale()) {
+      useFaviconStore.getState().setStatus("idle");
+      return;
+    }
     const msg = err instanceof Error ? err.message : "Unknown error";
     useFaviconStore.getState().setStatus("error", msg);
   }
@@ -215,8 +239,8 @@ describe("closure-stale guard: generate() with mid-flight mode switch", () => {
 
   it("completes successfully when no mode switch occurs and loadImage resolves", async () => {
     // Use a loadImage that resolves immediately (no hanging).
-    const immediateLoad = vi.fn(
-      (_url: string) => Promise.resolve({ naturalWidth: 64, naturalHeight: 64 } as HTMLImageElement)
+    const immediateLoad = vi.fn((_url: string) =>
+      Promise.resolve({ naturalWidth: 64, naturalHeight: 64 } as HTMLImageElement)
     );
     const generatePromise = runGenerate(immediateLoad);
     await generatePromise;

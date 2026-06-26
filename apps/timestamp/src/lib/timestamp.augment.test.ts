@@ -119,11 +119,7 @@ describe("convertEpoch -- additional paths", () => {
   });
 
   it("weekOfYear is in 1-53 range for arbitrary dates", () => {
-    const dates = [
-      Date.UTC(2024, 2, 15),
-      Date.UTC(2024, 5, 1),
-      Date.UTC(2024, 11, 1),
-    ];
+    const dates = [Date.UTC(2024, 2, 15), Date.UTC(2024, 5, 1), Date.UTC(2024, 11, 1)];
     for (const ms of dates) {
       const result = convertEpoch(ms, "UTC", now);
       expect(result.weekOfYear).toBeGreaterThanOrEqual(1);

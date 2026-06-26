@@ -1,10 +1,11 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createWorker } from "tesseract.js";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import { RegionSelector } from "./components/RegionSelector";
 import { WordHighlightView } from "./components/WordHighlightView";
+import { shouldEmitOcrProgress } from "./lib/progressThrottle";
 import { type OcrWord, buildMultiPageSearchablePdf, buildSearchablePdf } from "./ocrPdfUtils";
 import {
   buildBatchFilename,
@@ -21,8 +22,6 @@ import {
   renderPdfPageToFile,
 } from "./ocrUtils";
 import { useOcrStore } from "./store";
-import { shouldEmitOcrProgress } from "./lib/progressThrottle";
-import { useCmdEnter } from "./components/useCmdEnter";
 
 // ── OCR glyph: scan-frame mark (teal corner brackets + amber scan line + coral text hints)
 function OcrGlyph() {
@@ -336,15 +335,22 @@ export function App() {
 
   // ── Keyboard shortcut: Cmd/Ctrl + Enter ──────────────────────────────────
 
-  useCmdEnter(() => {
-    if (hasImage && !isRunning && !batchRunning) {
-      if (hasQueue) {
-        runBatch();
-      } else {
-        runOcr();
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        if (hasImage && !isRunning && !batchRunning) {
+          if (hasQueue) {
+            runBatch();
+          } else {
+            runOcr();
+          }
+        }
       }
     }
-  });
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [hasImage, isRunning, batchRunning, hasQueue, runOcr, runBatch]);
 
   // ── Misc handlers ─────────────────────────────────────────────────────────
 

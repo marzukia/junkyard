@@ -1,11 +1,11 @@
+import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface/transformers";
 /**
  * Web Worker for bg (background removal): runs model load + inference off the main thread.
  * Returns image bytes as ArrayBuffer (blob URLs don't cross worker boundaries).
  */
-import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
-import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "./lib/transformersEnv";
-import { MODEL_ID, MAX_INFER_SIDE } from "./lib/bgConstants";
+import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui";
+import { MAX_INFER_SIDE, MODEL_ID } from "./lib/bgConstants";
 
 type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
 
@@ -27,23 +27,36 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!segmenter) {
-    configureTransformersEnv();
-      segmenter = (await (pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>)(
-        "image-segmentation",
-        MODEL_ID,
-        {
-          progress_callback: (event: TransformersProgressEvent) => {
-            if (event.status === "progress" || event.status === "download") {
-              const msg: WorkerMsg<BgWorkerResult> = { type: "progress", loaded: event.loaded ?? 0, total: event.total ?? 1, status: event.status };
-              self.postMessage(msg);
-            } else if (event.status === "initiate") {
-              self.postMessage({ type: "progress", loaded: 0, total: 1, status: "initiate" } as WorkerMsg<BgWorkerResult>);
-            } else if (event.status === "done") {
-              self.postMessage({ type: "progress", loaded: 1, total: 1, status: "done" } as WorkerMsg<BgWorkerResult>);
-            }
-          },
-        }
-      )) as ImageSegmentationPipeline;
+      configureTransformersEnv();
+      segmenter = (await (
+        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+      )("image-segmentation", MODEL_ID, {
+        progress_callback: (event: TransformersProgressEvent) => {
+          if (event.status === "progress" || event.status === "download") {
+            const msg: WorkerMsg<BgWorkerResult> = {
+              type: "progress",
+              loaded: event.loaded ?? 0,
+              total: event.total ?? 1,
+              status: event.status,
+            };
+            self.postMessage(msg);
+          } else if (event.status === "initiate") {
+            self.postMessage({
+              type: "progress",
+              loaded: 0,
+              total: 1,
+              status: "initiate",
+            } as WorkerMsg<BgWorkerResult>);
+          } else if (event.status === "done") {
+            self.postMessage({
+              type: "progress",
+              loaded: 1,
+              total: 1,
+              status: "done",
+            } as WorkerMsg<BgWorkerResult>);
+          }
+        },
+      })) as ImageSegmentationPipeline;
     }
 
     const bitmap = await createImageBitmap(file);

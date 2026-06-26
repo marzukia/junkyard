@@ -6,7 +6,7 @@
  * moving the coord transform logic would immediately surface failures.
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { canvasToPageCoords, hexToRgb } from "../lib/signPdf";
 
 // A4 page: 595 x 842 pt
@@ -59,7 +59,6 @@ describe("canvasToPageCoords – rotation 90", () => {
 
 describe("canvasToPageCoords – rotation 180", () => {
   it("flips both axes compared to rotation 0", () => {
-
     const r180 = canvasToPageCoords(0.1, 0.1, 0.2, 0.1, 180, W, H);
     // x should be mirrored: W - 0.1W - 0.2W = 0.7W
     expect(r180.x).toBeCloseTo(W * 0.7);

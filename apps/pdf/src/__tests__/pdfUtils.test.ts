@@ -10,9 +10,9 @@
  * additional setup.
  */
 
-import { describe, it, expect } from "vitest";
 import { PDFDocument } from "pdf-lib";
-import { addWatermark, addPageNumbers, parsePageRange } from "../lib/pdfUtils";
+import { describe, expect, it } from "vitest";
+import { addPageNumbers, addWatermark, parsePageRange } from "../lib/pdfUtils";
 import { sanitizeWinAnsi } from "../lib/unicodeFont";
 
 async function blankPdf(pageCount = 1): Promise<Uint8Array> {
@@ -97,7 +97,8 @@ describe("sanitizeWinAnsi – C1 control gap fix (gauntlet w3)", () => {
   });
 
   it("preserves printable ASCII (0x20..0x7e)", () => {
-    const ascii = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+    const ascii =
+      " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
     expect(sanitizeWinAnsi(ascii)).toBe(ascii);
   });
 

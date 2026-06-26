@@ -1,3 +1,4 @@
+import { RawImage, pipeline } from "@huggingface/transformers";
 /**
  * Web Worker for upscale: runs model load + inference off the main thread.
  *
@@ -5,15 +6,17 @@
  * this worker returns the raw image bytes as an ArrayBuffer instead of a URL.
  * The main thread creates the blob URL after receiving the result.
  */
-import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
-import { RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "./lib/transformersEnv";
+import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
+import { configureTransformersEnv } from "@junkyardsh/ui";
 import type { OutputFormat } from "./lib/imageHelpers";
 import { outputMime } from "./lib/imageHelpers";
 import type { ScaleFactor } from "./lib/upscale";
 import { MODEL_ID } from "./lib/upscale";
 
-type ImageToImagePipeline = (input: RawImage, options?: Record<string, unknown>) => Promise<RawImage>;
+type ImageToImagePipeline = (
+  input: RawImage,
+  options?: Record<string, unknown>
+) => Promise<RawImage>;
 let upscaler: ImageToImagePipeline | null = null;
 
 export type UpscaleWorkerResult = {
@@ -39,30 +42,38 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!upscaler) {
-    configureTransformersEnv();
-      upscaler = (await (pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>)(
-        "image-to-image",
-        MODEL_ID,
-        {
-          progress_callback: (event: TransformersProgressEvent) => {
-            if (event.status === "progress" || event.status === "download") {
-              const msg: WorkerMsg<UpscaleWorkerResult> = {
-                type: "progress",
-                loaded: event.loaded ?? 0,
-                total: event.total ?? 1,
-                status: event.status,
-              };
-              self.postMessage(msg);
-            } else if (event.status === "initiate") {
-              const msg: WorkerMsg<UpscaleWorkerResult> = { type: "progress", loaded: 0, total: 1, status: "initiate" };
-              self.postMessage(msg);
-            } else if (event.status === "done") {
-              const msg: WorkerMsg<UpscaleWorkerResult> = { type: "progress", loaded: 1, total: 1, status: "done" };
-              self.postMessage(msg);
-            }
-          },
-        }
-      )) as ImageToImagePipeline;
+      configureTransformersEnv();
+      upscaler = (await (
+        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+      )("image-to-image", MODEL_ID, {
+        progress_callback: (event: TransformersProgressEvent) => {
+          if (event.status === "progress" || event.status === "download") {
+            const msg: WorkerMsg<UpscaleWorkerResult> = {
+              type: "progress",
+              loaded: event.loaded ?? 0,
+              total: event.total ?? 1,
+              status: event.status,
+            };
+            self.postMessage(msg);
+          } else if (event.status === "initiate") {
+            const msg: WorkerMsg<UpscaleWorkerResult> = {
+              type: "progress",
+              loaded: 0,
+              total: 1,
+              status: "initiate",
+            };
+            self.postMessage(msg);
+          } else if (event.status === "done") {
+            const msg: WorkerMsg<UpscaleWorkerResult> = {
+              type: "progress",
+              loaded: 1,
+              total: 1,
+              status: "done",
+            };
+            self.postMessage(msg);
+          }
+        },
+      })) as ImageToImagePipeline;
     }
 
     const srcUrl = URL.createObjectURL(file);
@@ -101,7 +112,13 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
     const msg: WorkerMsg<UpscaleWorkerResult> = {
       type: "result",
-      payload: { imageBytes, width: rawImage.width, height: rawImage.height, resultSize: resultBlob.size, format },
+      payload: {
+        imageBytes,
+        width: rawImage.width,
+        height: rawImage.height,
+        resultSize: resultBlob.size,
+        format,
+      },
     };
     self.postMessage(msg);
   } catch (err) {

@@ -3,7 +3,7 @@
  * The File object is cloned (structured clone) into the worker.
  * decodeAudioFile uses OfflineAudioContext which is available in workers.
  */
-import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
+import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
 import type { TranscriptionResult } from "./lib/transcription";
 import { isModelLoaded, loadModel, transcribeFile } from "./lib/transcription";
 
@@ -26,7 +26,12 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
     }
 
     // Signal that audio decode is starting (runs inside transcribeFile before inference)
-    self.postMessage({ type: "progress", loaded: 0, total: 1, status: "decoding" } as WorkerMsg<TranscriptionResult>);
+    self.postMessage({
+      type: "progress",
+      loaded: 0,
+      total: 1,
+      status: "decoding",
+    } as WorkerMsg<TranscriptionResult>);
 
     let chunksProcessed = 0;
     const result = await transcribeFile(

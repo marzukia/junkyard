@@ -19,17 +19,17 @@ export {
   normaliseNames,
   validateSinglePart,
   expandField,
-} from "./cronGrammar";
-export type { CronFields, FieldSpec } from "./cronGrammar";
+} from "@junkyardsh/ui";
+export type { CronFields, FieldSpec } from "@junkyardsh/ui";
 
 import {
   CRON_MACROS,
-  FIELD_SPECS,
   FIELD_ORDER,
-  validateSinglePart,
+  FIELD_SPECS,
   expandField,
-} from "./cronGrammar";
-import type { CronFields, FieldSpec } from "./cronGrammar";
+  validateSinglePart,
+} from "@junkyardsh/ui";
+import type { CronFields, FieldSpec } from "@junkyardsh/ui";
 
 // ─── @-macro expansion ────────────────────────────────────────────────────────
 
@@ -234,7 +234,7 @@ function describeRaw(raw: string, spec: FieldSpec): string {
  */
 function wallParts(
   d: Date,
-  tz?: string,
+  tz?: string
 ): { month: number; date: number; day: number; hour: number; minute: number } {
   if (!tz || tz === "local") {
     return {

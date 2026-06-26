@@ -1,7 +1,7 @@
+import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/ui";
+import { Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrandMark } from "./components/BrandMark";
-import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import {
   canvasToImageCoords,
   clamp,
@@ -531,7 +531,9 @@ export function App() {
   const [maskState, setMaskState] = useState<{ mask: Uint8Array; count: number } | null>(null);
   // Natural image dimensions (needed for eraseRegion)
   const [imgDims, setImgDims] = useState<{ w: number; h: number } | null>(null);
-  const [copyLabel, setCopyLabel] = useState<"Copy PNG" | "Copied!" | "Copy not supported, use Download">("Copy PNG");
+  const [copyLabel, setCopyLabel] = useState<
+    "Copy PNG" | "Copied!" | "Copy not supported, use Download"
+  >("Copy PNG");
 
   const busy = phase === "erasing";
 
