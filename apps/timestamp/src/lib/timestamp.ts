@@ -245,6 +245,26 @@ export function convertEpoch(epochMs: number, tz: string, nowMs: number): Conver
 // ── Date string to epoch ───────────────────────────────────────────────────────
 
 /**
+ * Check if a date string contains an explicit timezone offset (Z, +HH:MM, -HH:MM, UTC, GMT, etc.).
+ * TZ-less strings like "Jan 15 2024" are parsed in browser-local timezone.
+ */
+export function hasExplicitTimezone(dateString: string): boolean {
+  const lower = dateString.toLowerCase();
+  // Check for common indicators: Z, +HH:MM, -HH:MM, UTC, GMT, EST, etc.
+  return (
+    lower.includes("z") ||
+    lower.includes("utc") ||
+    lower.includes("gmt") ||
+    lower.includes("est") ||
+    lower.includes("edt") ||
+    lower.includes("pst") ||
+    lower.includes("pdt") ||
+    /[+-]\d{2}:\d{2}/.test(dateString) ||
+    /[+-]\d{4}$/.test(dateString.trim())
+  );
+}
+
+/**
  * Parse a human-readable date string and return epoch in s and ms.
  * Returns null if the string cannot be parsed to a valid date.
  */

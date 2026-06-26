@@ -12,6 +12,10 @@
       },
       "style": {
         "noNonNullAssertion": "warn"
+      },
+      "a11y": {
+        "useSemanticElements": "off",
+        "noSvgWithoutTitle": "off"
       }
     }
   },

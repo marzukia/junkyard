@@ -11,6 +11,15 @@ on:
       - "packages/**"
       - "kit/**"
       - ".github/workflows/deploy-pages.yml"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "hub/**"
+      - "apps/**"
+      - "scripts/**"
+      - "packages/**"
+      - "kit/**"
+      - ".github/workflows/deploy-pages.yml"
 
 permissions:
   contents: read
@@ -72,6 +81,7 @@ jobs:
         run: |
           bun scripts/gen-catalogue.ts
           git diff --exit-code hub/src/catalogue.generated.ts hub/public/catalogue.json
+
 
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
@@ -149,6 +159,7 @@ jobs:
           bun test
 
   build:
+    if: github.event_name == 'push'
     needs: verify
     runs-on: ubuntu-latest
     steps:
@@ -171,6 +182,7 @@ jobs:
           path: ./dist
 
   deploy:
+    if: github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
     environment:

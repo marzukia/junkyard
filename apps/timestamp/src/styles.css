@@ -497,6 +497,23 @@ body {
   color: #e87070;
 }
 
+.ts-tz-notice {
+  display: block;
+  padding: 0.4rem 0.75rem;
+  margin-top: 0.5rem;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: #856404;
+}
+
+[data-mantine-color-scheme="dark"] .ts-tz-notice {
+  background: #3b301d;
+  border-color: #ffb700;
+  color: #f0d98a;
+}
+
 .ts-unit-badge {
   font-family: var(--font-mono);
   font-size: 0.65rem;

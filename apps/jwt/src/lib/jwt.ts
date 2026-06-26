@@ -119,6 +119,9 @@ export function decodeJwt(raw: string): DecodeResult {
 /** Format a Unix timestamp (seconds) as a human-readable local datetime string. */
 export function formatUnixTimestamp(seconds: number): string {
   const d = new Date(seconds * 1000);
+  if (Number.isNaN(d.getTime())) {
+    return `Invalid timestamp: ${seconds}`;
+  }
   return d.toLocaleString(undefined, {
     year: "numeric",
     month: "short",
@@ -410,6 +413,10 @@ export async function signJwt(
  * Examples: "in 3 hours", "5 days ago", "2 years ago".
  */
 export function relativeTime(secondsEpoch: number): string {
+  // Guard: if Date would be invalid, don't compute relative time
+  if (Number.isNaN(new Date(secondsEpoch * 1000).getTime())) {
+    return "Invalid date";
+  }
   const diffSeconds = secondsEpoch - Math.floor(Date.now() / 1000);
   const abs = Math.abs(diffSeconds);
   const future = diffSeconds > 0;
