@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useCmdEnter } from "./components/useCmdEnter";
 import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
@@ -842,19 +843,13 @@ export function App() {
   const busy = phase === "model-loading" || phase === "processing";
 
   // Cmd/Ctrl+Enter opens the file picker from anywhere on the page
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-        if (phase === "idle" || phase === "error" || phase === "done") {
-          // Find the hidden file input inside the first dropzone
-          const input = document.querySelector<HTMLInputElement>(".bg-dropzone input[type=file]");
-          input?.click();
-        }
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [phase]);
+  useCmdEnter(() => {
+    if (phase === "idle" || phase === "error" || phase === "done") {
+      // Find the hidden file input inside the first dropzone
+      const input = document.querySelector<HTMLInputElement>(".bg-dropzone input[type=file]");
+      input?.click();
+    }
+  });
 
   const { run: runWorker, cancel: cancelWorker } = useWorkerTask<
     { file: File },

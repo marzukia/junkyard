@@ -6,6 +6,7 @@ import { CATEGORIES, convert, formatResultHuman, getCommonConversions } from "./
 import type { CategoryId } from "./lib/units";
 import { useUnitsStore } from "./store/unitsStore";
 import "./styles.css";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 // ── Brand glyph: ruler + arrows, flat, bg-less ────────────────────────────────
 
@@ -159,16 +160,11 @@ function ConverterCard() {
   const [copied, setCopied] = useState(false);
 
   // Cmd/Ctrl+Enter swaps units (primary action for a converter)
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         swap();
-      }
-    }
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [swap]);
+  });
 
   function handleCopy() {
     if (resultValue === "—") return;

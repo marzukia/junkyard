@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useCmdEnter } from "./components/useCmdEnter";
 import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
@@ -726,22 +727,17 @@ export function App() {
   }, [handleFile, setError]);
 
   // Cmd/Ctrl+Enter triggers the primary action
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (!(e.metaKey || e.ctrlKey) || e.key !== "Enter") return;
-      if (busy) return;
-      const target = e.target as HTMLElement;
-      // If focus is inside the URL input row, let the row's own keydown handle it
-      if (target.closest(".cap-url-wrap")) return;
-      if (phase === "idle" || phase === "error") {
-        if (uiMode === "url" && urlInput.trim()) {
-          handleUrlLoad();
-        }
+  useCmdEnter(() => {
+    if (busy) return;
+    const target = document.activeElement;
+    // If focus is inside the URL input row, let the row's own keydown handle it
+    if (target && target.closest(".cap-url-wrap")) return;
+    if (phase === "idle" || phase === "error") {
+      if (uiMode === "url" && urlInput.trim()) {
+        handleUrlLoad();
       }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [busy, phase, uiMode, urlInput, handleUrlLoad]);
+    }
+  });
 
   // Clean up blob URLs on unmount
   useEffect(() => {

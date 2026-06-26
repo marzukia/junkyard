@@ -1,5 +1,6 @@
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useCmdEnter } from "./components/useCmdEnter";
 import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
@@ -88,17 +89,11 @@ export function App() {
   }, [framesKey]);
 
   // Cmd/Ctrl+Enter triggers Build GIF
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-        e.preventDefault();
-        if (frames.length > 0 && !encoding) {
-          void onEncode();
-        }
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+  useCmdEnter(() => {
+    if (frames.length > 0 && !encoding) {
+      void onEncode();
+    }
+  });
   });
 
   const handleFiles = useCallback(

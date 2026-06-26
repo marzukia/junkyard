@@ -6,6 +6,7 @@ import { byteSize, formatBytes, repairJson } from "./lib/json";
 import type { IndentOption, TreeNode } from "./lib/json";
 import { useJsonStore } from "./store/jsonStore";
 import type { ViewMode } from "./store/jsonStore";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 // ── Sample JSON for the "Load sample" button ──────────────────────────────────
 
@@ -374,19 +375,13 @@ export function App() {
   }, [input, setInput]);
 
   // Cmd/Ctrl+Enter triggers format (primary action)
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         // Re-process the current input (triggers reformat)
         if (hasInput) {
           setViewMode(viewMode === "minified" ? "minified" : "formatted");
-        }
-      }
-    }
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [hasInput, viewMode, setViewMode]);
+  });
 
   return (
     <div className="app-root">

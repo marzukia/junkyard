@@ -8,6 +8,7 @@ import type { OutputFormat } from "./convert";
 import { processFile } from "./processor";
 import { useConverterStore } from "./store";
 import type { ConvertFile } from "./store";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 const FORMATS: OutputFormat[] = ["jpg", "png", "webp", "avif"];
 const ACCEPTED = ".jpg,.jpeg,.png,.webp,.heic,.heif,.avif,image/*";
@@ -166,16 +167,12 @@ export function App() {
   };
 
   // Cmd/Ctrl+Enter triggers convert — registered once, calls ref to avoid re-subscribing
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         convertAllRef.current();
-      }
     };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
+  });
 
   const pendingCount = files.filter((f) => f.status === "pending").length;
   const doneCount = files.filter((f) => f.status === "done").length;

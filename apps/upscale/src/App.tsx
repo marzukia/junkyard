@@ -30,6 +30,7 @@ type UpscaleWorkerResult = {
 import { useUpscaleStore } from "./store/upscaleStore";
 import "./styles/upscale.css";
 import { MobileWarning } from "./components/MobileWarning";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 // ── Brand mark glyph ──────────────────────────────────────────────────────────
 // Outer teal frame (upscaled), inner coral frame (original), amber corner
@@ -725,10 +726,7 @@ export function App() {
   }, [inputUrl, resultUrl, reset]);
 
   // Cmd/Ctrl+Enter: trigger primary action (upload dialog when idle)
-  useEffect(() => {
-    if (busy || pendingLarge) return;
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         if (phase === "idle") {
           // Open the file picker via the hidden input -- find it in the DOM
@@ -736,12 +734,9 @@ export function App() {
           input?.click();
         } else if (phase === "done" || phase === "error") {
           handleReset();
-        }
-      }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [busy, phase, pendingLarge, handleReset]);
+  });
 
   // Global paste handler: accept pasted images
   useEffect(() => {

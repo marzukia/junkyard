@@ -32,6 +32,7 @@ import type {
 } from "./lib/css";
 import { useCssStore } from "./store/cssStore";
 import type { Tab } from "./store/cssStore";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 // ── CSS brand glyph: bracket pair with center dot ─────────────────────────────
 
@@ -1910,16 +1911,12 @@ export function App() {
   const activeTabCss = useActiveTabCss();
 
   // Cmd/Ctrl+Enter copies the current tab's CSS
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         if (activeTabCss) navigator.clipboard.writeText(activeTabCss).catch(() => {});
-      }
     };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [activeTabCss]);
+  });
 
   return (
     <div className="app-root">

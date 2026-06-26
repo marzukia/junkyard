@@ -18,6 +18,7 @@ import {
   templateDefaultLayers,
 } from "./meme";
 import { useMemeStore } from "./store";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 const CANVAS_MAX = 800;
 
@@ -261,21 +262,16 @@ export function App() {
 
   // ─── Keyboard shortcut ───────────────────────────────────────────────────────
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         // Primary action: copy image if there's a meme, else trigger upload
         if (imageDataUrl) {
           handleCopyImage();
         } else {
           inputRef.current?.click();
-        }
-      }
     };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [imageDataUrl, handleCopyImage]);
+  });
 
   const hasImage = !!imageDataUrl;
   const canvasCursor = dragging ? "grabbing" : "crosshair";

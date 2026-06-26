@@ -10,6 +10,7 @@ import { Header } from "./components/Header";
 import { ASPECT_PRESETS, canvasPreviewSize } from "./lib/aspectRatios";
 import { LAYOUT_TEMPLATES } from "./lib/layouts";
 import { useCollageStore } from "./store/collageStore";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 // Preview canvas: the canvas children use these fixed pixel dimensions internally.
 // On narrow screens we scale the wrapper down via CSS transform rather than
@@ -142,16 +143,12 @@ export function App() {
   // Cmd/Ctrl+Enter triggers the primary action (export download).
   // ExportBar provides a stable ref to its triggerExport callback.
   const exportTriggerRef = useRef<(() => void) | null>(null);
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         exportTriggerRef.current?.();
-      }
     };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
+  });
 
   return (
     <div className="app-root">

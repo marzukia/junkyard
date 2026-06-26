@@ -66,6 +66,7 @@ function DepthBrandGlyph() {
 
 import type { ColourMap } from "./lib/depthEstimation";
 import { MobileWarning } from "./components/MobileWarning";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 const COLOURMAPS: { value: ColourMap; label: string; title: string }[] = [
   { value: "viridis", label: "Viridis", title: "Viridis: yellow = close, purple = far" },
@@ -537,20 +538,15 @@ export function App() {
   );
 
   // Cmd/Ctrl+Enter triggers upload when idle
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         // If idle, trigger the file dialog
         if (phase === "idle" || phase === "error") {
           const input = document.querySelector<HTMLInputElement>('input[type="file"]');
           input?.click();
-        }
-      }
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [phase]);
+  });
 
   const handleDownload = useCallback(() => {
     if (!resultUrl || !inputFile) return;

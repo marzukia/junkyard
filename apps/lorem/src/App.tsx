@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useCmdEnter } from "./components/useCmdEnter";
 import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
@@ -160,16 +161,9 @@ function LoremPanel() {
   }, [mode, count, listStyle, seed, wordBank, classicStart]);
 
   // Cmd/Ctrl+Enter regenerates
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-        e.preventDefault();
-        regenerate();
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [regenerate]);
+  useCmdEnter(() => {
+    regenerate();
+  });
 
   const countLabel =
     mode === "paragraphs"

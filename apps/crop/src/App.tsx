@@ -15,6 +15,7 @@ import {
 } from "./crop";
 import type { AspectPreset, CropRect, CropShape, ExportFormat } from "./crop";
 import { useCropStore } from "./store";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 const FORMATS: ExportFormat[] = ["png", "jpg", "webp"];
 const ACCEPTED =
@@ -34,27 +35,13 @@ export function App() {
   const [socialOpen, setSocialOpen] = useState(false);
 
   // Keyboard undo/redo and Cmd+Enter export
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const mod = e.ctrlKey || e.metaKey;
-      if (!mod) return;
-      if (e.key === "z" && !e.shiftKey) {
-        e.preventDefault();
-        store.undo();
-      } else if ((e.key === "z" && e.shiftKey) || e.key === "y") {
-        e.preventDefault();
-        store.redo();
-      } else if (e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         if (store.imageUrl && store.crop.w > 0 && !processing) {
           handleExport();
-        }
-      }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [store, processing]);
+  });
 
   const loadFile = useCallback(
     async (file: File) => {

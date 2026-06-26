@@ -24,6 +24,7 @@ const modelEverLoaded = { current: false };
 import { LANGUAGE_OPTIONS, useTranscribeStore } from "./store/transcribeStore";
 import "./styles/transcribe.css";
 import { MobileWarning } from "./components/MobileWarning";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 // ── Brand mark glyph, waveform for audio transcription ──────────────────────
 // Clean line-art: teal waveform bars + amber speech-to-text arrow + coral mic dot
@@ -686,16 +687,12 @@ export function App() {
 
   // Keyboard shortcut: Cmd/Ctrl+Enter triggers file upload (opens picker)
   const dropzoneInputRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && phase === "idle") {
+  useCmdEnter(() => {
         e.preventDefault();
         dropzoneInputRef.current?.click();
-      }
     };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [phase]);
+  });
 
   const isVideo = inputFile ? inputFile.type.startsWith("video/") : false;
 

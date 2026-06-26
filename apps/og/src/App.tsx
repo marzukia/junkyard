@@ -6,6 +6,7 @@ import { Header } from "./components/Header";
 import { MetaSnippet } from "./components/MetaSnippet";
 import { OgCanvas, exportToPng } from "./components/OgCanvas";
 import { useOgStore } from "./store";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 type CopyState = "idle" | "copying" | "copied" | "error";
 type DownloadState = "idle" | "downloading" | "error";
@@ -57,15 +58,10 @@ export function App() {
   }
 
   // Cmd/Ctrl+Enter triggers the primary action (Download PNG)
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         if (!downloading) handleDownload();
-      }
-    }
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
   });
 
   const copyLabel =

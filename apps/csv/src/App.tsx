@@ -4,6 +4,7 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import type { Delimiter, OutputFormat } from "./lib/csv";
 import { useCsvStore } from "./store/csvStore";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 // ── CSV brand glyph: grid of cells ───────────────────────────────────────────
 // Three rows of cells with teal/amber/coral accents, evokes a spreadsheet.
@@ -295,19 +296,14 @@ export function App() {
   // Cmd/Ctrl+Enter: load example if input is empty, otherwise a no-op
   // (conversion is reactive; this gives keyboard users a shortcut to seed data).
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         if (!input.trim()) {
           loadExample();
-        }
         // When there is input, conversion is already live; nothing extra to trigger.
-      }
     };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [input, loadExample]);
+  });
 
   const currentFormat =
     OUTPUT_FORMAT_OPTIONS.find((f) => f.value === outputFormat) ?? OUTPUT_FORMAT_OPTIONS[0];

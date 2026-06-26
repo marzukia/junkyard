@@ -21,6 +21,7 @@ import {
 import { useSummarizeStore } from "./store/summarizeStore";
 import "./styles/summarize.css";
 import { MobileWarning } from "./components/MobileWarning";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 const MIN_INPUT_WORDS = 30;
 
@@ -214,16 +215,12 @@ export function App() {
   ]);
 
   // Cmd/Ctrl+Enter triggers summarize
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         handleSummarize();
-      }
     };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [handleSummarize]);
+  });
 
   const handleCopy = useCallback(async () => {
     if (!summary) return;

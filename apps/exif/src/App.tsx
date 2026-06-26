@@ -17,6 +17,7 @@ import {
 } from "./exif-utils";
 import { useExifStore } from "./store";
 import { stripExif } from "./strip";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 /** Trigger a browser file download from a string payload. */
 function downloadText(content: string, filename: string, mimeType: string): void {
@@ -504,18 +505,13 @@ function DetailPane() {
   );
 
   // Cmd/Ctrl+Enter triggers strip on the selected image
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         if (entry && !entry.cleanUrl && !stripping) {
           handleStrip(entry.id);
-        }
-      }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [entry, handleStrip, stripping]);
+  });
 
   if (!entry) {
     return (

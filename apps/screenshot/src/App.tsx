@@ -7,6 +7,7 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { renderToBlob, renderToDataUrl } from "./renderer";
 import { useScreenshotStore } from "./store";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 const ACCEPTED = "image/*";
 
@@ -153,18 +154,12 @@ export function App() {
   }, [sourceUrl, settings]);
 
   // Cmd/Ctrl+Enter triggers copy (primary action) when an image is loaded
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-        if (sourceUrl && previewUrl && !isRendering && copyState === "idle") {
+  useCmdEnter(() => {
           e.preventDefault();
           void copyImage();
-        }
-      }
     };
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [sourceUrl, previewUrl, isRendering, copyState, copyImage]);
+  });
 
   return (
     <div className="app-root">

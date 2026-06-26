@@ -22,6 +22,7 @@ import {
 } from "./ocrUtils";
 import { useOcrStore } from "./store";
 import { shouldEmitOcrProgress } from "./lib/progressThrottle";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 // ── OCR glyph: scan-frame mark (teal corner brackets + amber scan line + coral text hints)
 function OcrGlyph() {
@@ -335,22 +336,15 @@ export function App() {
 
   // ── Keyboard shortcut: Cmd/Ctrl + Enter ──────────────────────────────────
 
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         if (hasImage && !isRunning && !batchRunning) {
           if (hasQueue) {
             runBatch();
           } else {
             runOcr();
-          }
-        }
-      }
-    }
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [hasImage, isRunning, batchRunning, hasQueue, runOcr, runBatch]);
+  });
 
   // ── Misc handlers ─────────────────────────────────────────────────────────
 

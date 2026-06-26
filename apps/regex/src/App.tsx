@@ -13,6 +13,7 @@ import {
 } from "./lib/regex";
 import type { CodeLang, RegexFlag } from "./lib/regex";
 import { useRegexStore } from "./store/regexStore";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 // ── Brand glyph: slash / dot . asterisk * in teal/amber/coral ────────────────
 
@@ -206,18 +207,12 @@ export function App() {
 
   // Cmd/Ctrl+Enter: copy match texts to clipboard (fleet-wide power-user shortcut)
   const patternInputRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+  useCmdEnter(() => {
         e.preventDefault();
         if (matches.length > 0) {
           void navigator.clipboard.writeText(formatMatchTextsForCopy(matches));
-        }
-      }
-    }
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [matches]);
+  });
 
   return (
     <div className="app-root">
