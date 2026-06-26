@@ -173,6 +173,13 @@ jobs:
       - name: Build consolidated site
         run: bash scripts/build-site.sh
 
+      - name: Check for bare import specifiers in built bundles
+        # Bare imports (e.g. import from "@pdf-lib/fontkit") that survive into
+        # production JS bundles cause browsers to throw "Failed to resolve module
+        # specifier" and render the app blank. This guard catches unresolved
+        # bare imports immediately after the build, before deployment.
+        run: node scripts/check-bare-imports.mjs
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

@@ -9,6 +9,7 @@ export default defineConfig({
       external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
     },
     target: "es2022",
+    noExternal: ["@pdf-lib/fontkit", "pako"],
   },
     worker: {
     rollupOptions: {
