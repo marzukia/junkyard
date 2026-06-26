@@ -6,7 +6,7 @@ export default defineConfig({
   base: "/",
   build: {
     rollupOptions: {
-      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+      external: ["@huggingface/transformers"],
     },
     target: "es2022",
     noExternal: ["@pdf-lib/fontkit", "pako"],
