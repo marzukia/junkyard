@@ -2,7 +2,7 @@
  * Shared hook: Cmd/Ctrl+Enter fires the callback.
  * Every junkyard app uses this instead of duplicating the keydown listener.
  */
-import { useEffect, useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 export function useCmdEnter(fn: () => void): void {
   const callback = useCallback(fn, [fn]);
