@@ -203,6 +203,13 @@ jobs:
           node scripts/vendor-cron-grammar.mjs
           git diff --exit-code -- kit/lib/cronGrammar.ts apps/cron/src/lib/cronGrammar.ts
 
+      - name: Check vendored useCmdEnter.ts copies are up to date
+        # Fails if kit/components/useCmdEnter.ts was changed without running vendor-cmdenter.mjs.
+        # useCmdEnter.ts is the canonical Cmd+Enter hook; all 47 app copies must match.
+        run: |
+          node scripts/vendor-cmdenter.mjs
+          git diff --exit-code -- kit/components/useCmdEnter.ts apps/*/src/components/useCmdEnter.ts
+
       - name: SEO domain guard - no stale per-app mrzk.io subdomains
         # Fails if any shipped HTML/sitemap/robots still contains a non-junkyard
         # *.mrzk.io subdomain (e.g. password.mrzk.io from old per-app deploys).
