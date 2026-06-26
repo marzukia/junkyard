@@ -1,4 +1,4 @@
-import { embedUnicodeFonts, sanitizeWinAnsi } from "@junkyardsh/ui";
+import { embedUnicodeFonts, sanitizeWinAnsi } from "../../../kit/lib/unicodeFont";
 import { PDFDocument, type PDFPage, rgb } from "pdf-lib";
 
 export interface SignaturePlacement {
