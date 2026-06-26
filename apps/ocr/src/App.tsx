@@ -337,13 +337,13 @@ export function App() {
   // ── Keyboard shortcut: Cmd/Ctrl + Enter ──────────────────────────────────
 
   useCmdEnter(() => {
-        e.preventDefault();
-        if (hasImage && !isRunning && !batchRunning) {
-          if (hasQueue) {
-            runBatch();
-          } else {
-            runOcr();
-    window.addEventListener("keydown", onKeyDown);
+    if (hasImage && !isRunning && !batchRunning) {
+      if (hasQueue) {
+        runBatch();
+      } else {
+        runOcr();
+      }
+    }
   });
 
   // ── Misc handlers ─────────────────────────────────────────────────────────

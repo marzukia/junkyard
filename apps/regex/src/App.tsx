@@ -206,12 +206,11 @@ export function App() {
   ];
 
   // Cmd/Ctrl+Enter: copy match texts to clipboard (fleet-wide power-user shortcut)
-  const patternInputRef = useRef<HTMLInputElement>(null);
+  // Cmd/Ctrl+Enter copies matched results
   useCmdEnter(() => {
-        e.preventDefault();
-        if (matches.length > 0) {
-          void navigator.clipboard.writeText(formatMatchTextsForCopy(matches));
-    window.addEventListener("keydown", onKeyDown);
+    if (matches.length > 0) {
+      void navigator.clipboard.writeText(formatMatchTextsForCopy(matches));
+    }
   });
 
   return (

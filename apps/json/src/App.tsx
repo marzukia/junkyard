@@ -376,11 +376,10 @@ export function App() {
 
   // Cmd/Ctrl+Enter triggers format (primary action)
   useCmdEnter(() => {
-        e.preventDefault();
-        // Re-process the current input (triggers reformat)
-        if (hasInput) {
-          setViewMode(viewMode === "minified" ? "minified" : "formatted");
-    window.addEventListener("keydown", onKeyDown);
+    // Re-process the current input (triggers reformat)
+    if (hasInput) {
+      setViewMode(viewMode === "minified" ? "minified" : "formatted");
+    }
   });
 
   return (

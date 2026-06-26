@@ -351,19 +351,18 @@ function BarcodeTab() {
 
   // Cmd/Ctrl+Enter: copy PNG (primary action when barcode is ready)
   useCmdEnter(() => {
-        e.preventDefault();
-        if (hasBarcode && svgRef.current) {
-          copyPngToClipboard(svgRef.current).then(
-            () => {
-              setCopyState("copied");
-              setTimeout(() => setCopyState("idle"), 2000);
-            },
-            () => {
-              setCopyState("error");
-              setTimeout(() => setCopyState("idle"), 2500);
-          );
-    };
-    window.addEventListener("keydown", handler);
+    if (hasBarcode && svgRef.current) {
+      copyPngToClipboard(svgRef.current).then(
+        () => {
+          setCopyState("copied");
+          setTimeout(() => setCopyState("idle"), 2000);
+        },
+        () => {
+          setCopyState("error");
+          setTimeout(() => setCopyState("idle"), 2500);
+        }
+      );
+    }
   });
 
   return (
