@@ -9,7 +9,6 @@ export {
   mobileWarningMessage,
 } from "../../../kit/components/MobileWarning";
 export { formatBytes } from "../../../kit/components/format";
-export { configureTransformersEnv } from "../../../kit/components/transformersEnv";
 export { useCmdEnter } from "./useCmdEnter";
 
 // ── Lib ─────────────────────────────────────────────────────────────────
@@ -40,11 +39,6 @@ export {
   type VCardPayloadFields,
   buildVCardPayload,
 } from "../../../kit/lib/qrContent";
-export {
-  type UnicodeFontSet,
-  embedUnicodeFonts,
-  sanitizeWinAnsi,
-} from "../../../kit/lib/unicodeFont";
 export {
   type CategoryId,
   type UnitDef,

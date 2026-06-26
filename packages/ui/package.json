@@ -1,6 +1,6 @@
 {
   "name": "@junkyardsh/ui",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
@@ -9,6 +9,14 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./ai": {
+      "import": "./dist/ai.js",
+      "types": "./dist/ai.d.ts"
+    },
+    "./pdf": {
+      "import": "./dist/pdf.js",
+      "types": "./dist/pdf.d.ts"
     },
     "./styles.css": "./dist/styles.css"
   },

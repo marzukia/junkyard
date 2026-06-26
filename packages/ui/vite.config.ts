@@ -1,13 +1,18 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [dts({ rollupTypes: true }), react()],
   build: {
     lib: {
-      entry: "src/index.ts",
+      entry: {
+        index: "src/index.ts",
+        ai: "src/ai.ts",
+        pdf: "src/pdf.ts",
+      },
       formats: ["es"],
-      fileName: "index",
+      fileName: "[name]",
       cssFileName: "styles",
     },
     rollupOptions: {
