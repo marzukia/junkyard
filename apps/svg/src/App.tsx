@@ -501,7 +501,10 @@ export function App() {
         {store.result && containsScripting(store.result) && (
           <div className="svg-warning" role="alert">
             <span className="svg-warning-icon">⚠</span>
-            <span>Optimized SVG contains &lt;script&gt; or event-handler attributes (on*). Safe in this preview (rendered as image), but dangerous if inlined into a host page.</span>
+            <span>
+              Optimized SVG contains &lt;script&gt; or event-handler attributes (on*). Safe in this
+              preview (rendered as image), but dangerous if inlined into a host page.
+            </span>
           </div>
         )}
 

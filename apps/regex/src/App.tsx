@@ -1,6 +1,7 @@
 import { BrandMark } from "@junkyardsh/ui";
 import { Footer } from "@junkyardsh/ui";
 import { Header } from "@junkyardsh/ui";
+import { useCmdEnter } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   COMMON_PATTERNS,
@@ -13,7 +14,6 @@ import {
 } from "./lib/regex";
 import type { CodeLang, RegexFlag } from "./lib/regex";
 import { useRegexStore } from "./store/regexStore";
-import { useCmdEnter } from "@junkyardsh/ui";
 
 // ── Brand glyph: slash / dot . asterisk * in teal/amber/coral ────────────────
 
