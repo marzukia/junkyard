@@ -10,7 +10,7 @@ export {
 } from "../../../kit/components/MobileWarning";
 export { formatBytes } from "../../../kit/components/format";
 export { configureTransformersEnv } from "../../../kit/components/transformersEnv";
-export { useCmdEnter } from "../../../kit/components/useCmdEnter";
+export { useCmdEnter } from "./useCmdEnter";
 
 // ── Lib ─────────────────────────────────────────────────────────────────
 export {
