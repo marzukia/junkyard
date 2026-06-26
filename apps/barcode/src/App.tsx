@@ -9,6 +9,7 @@ import { FORMAT_META, FORMAT_ORDER, ean8Autofix, ean13Autofix, upcaAutofix } fro
 import type { BarcodeFormat } from "./lib/barcode";
 import { useBarcodeStore } from "./store/barcodeStore";
 import "./styles/barcode.css";
+import { useCmdEnter } from "./components/useCmdEnter";
 
 // ── Mode switcher ─────────────────────────────────────────────────────────
 
@@ -349,27 +350,20 @@ function BarcodeTab() {
   }, [hasBarcode]);
 
   // Cmd/Ctrl+Enter: copy PNG (primary action when barcode is ready)
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-        e.preventDefault();
-        if (hasBarcode && svgRef.current) {
-          copyPngToClipboard(svgRef.current).then(
-            () => {
-              setCopyState("copied");
-              setTimeout(() => setCopyState("idle"), 2000);
-            },
-            () => {
-              setCopyState("error");
-              setTimeout(() => setCopyState("idle"), 2500);
-            }
-          );
+  useCmdEnter(() => {
+    if (hasBarcode && svgRef.current) {
+      copyPngToClipboard(svgRef.current).then(
+        () => {
+          setCopyState("copied");
+          setTimeout(() => setCopyState("idle"), 2000);
+        },
+        () => {
+          setCopyState("error");
+          setTimeout(() => setCopyState("idle"), 2500);
         }
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [hasBarcode]);
+      );
+    }
+  });
 
   return (
     <div className="bc-layout">

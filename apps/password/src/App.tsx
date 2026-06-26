@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useCmdEnter } from "./components/useCmdEnter";
 import { BrandMark } from "./components/BrandMark";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
@@ -375,16 +376,9 @@ export function App() {
   }, [generate, mode, hasAtLeastOne]);
 
   // Cmd/Ctrl+Enter regenerates.
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        if (!(mode === "random" && !hasAtLeastOne)) generate();
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [generate, mode, hasAtLeastOne]);
+  useCmdEnter(() => {
+    if (!(mode === "random" && !hasAtLeastOne)) generate();
+  });
 
   // Entropy for the current settings.
   const bits =
