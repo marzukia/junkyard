@@ -15,12 +15,12 @@
   "dependencies": {
     "@ffmpeg/ffmpeg": "0.12.15",
     "@ffmpeg/util": "^0.12.2",
-    "@mantine/core": "^7.17.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "@fontsource/roboto": "^5.2.10",
     "@fontsource/roboto-mono": "^5.2.9",
-    "@junkyardsh/ui": "^1.0.3"
+    "@junkyardsh/ui": "^1.0.4",
+    "@mantine/core": "^7.17.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

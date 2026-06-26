@@ -13,16 +13,16 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@fontsource/roboto": "^5.2.10",
+    "@fontsource/roboto-mono": "^5.2.9",
+    "@junkyardsh/ui": "^1.0.4",
     "@mantine/core": "^7.17.4",
     "jsbarcode": "^3.11.6",
     "jszip": "^3.10.1",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zustand": "^5.0.5",
-    "@fontsource/roboto": "^5.2.10",
-    "@fontsource/roboto-mono": "^5.2.9",
-    "@junkyardsh/ui": "^1.0.3"
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
