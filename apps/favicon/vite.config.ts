@@ -1,21 +1,3 @@
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineAppConfig } from "@junkyardsh/vite-config";
 
-export default defineConfig({
-  plugins: [react()],
-  base: "/",
-  build: {
-    rollupOptions: {
-      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
-    },
-    target: "es2022",
-  },
-    worker: {
-    rollupOptions: {
-      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
-    },
-  },
-  test: {
-    environment: "jsdom",
-  },
-});
+export default defineAppConfig();
