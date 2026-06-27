@@ -7,7 +7,7 @@
       "dependencies": {
         "@fontsource/roboto": "^5.2.10",
         "@fontsource/roboto-mono": "^5.2.9",
-        "@junkyardsh/ui": "file:../../packages/ui",
+        "@junkyardsh/ui": "^1.0.6",
         "@mantine/core": "^7.17.4",
         "@pdf-lib/fontkit": "^1.1.1",
         "pdf-lib": "^1.17.1",
@@ -190,7 +190,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@junkyardsh/ui": ["@junkyardsh/ui@file:../../packages/ui", { "dependencies": { "@mantine/core": "^7.17.4", "react": "^18.3.1", "react-dom": "^18.3.1" }, "devDependencies": { "@vitejs/plugin-react": "^4.5.2", "typescript": "^5.8.3", "vite": "^6.3.5", "vite-plugin-dts": "^5.0.3" } }],
+    "@junkyardsh/ui": ["@junkyardsh/ui@1.0.6", "", { "dependencies": { "@mantine/core": "^7.17.4", "react": "^18.3.1", "react-dom": "^18.3.1" } }, "sha512-1u/Bijr84MWp7ruuEgre7hPoT5FkysJxAQoGf805YdAvZZq0TVwz4H4zdcNM7NimEH8n1X0LPvMlZSTf01hV4g=="],
 
     "@junkyardsh/vite-config": ["@junkyardsh/vite-config@file:../../packages/vite-config", { "devDependencies": { "@vitejs/plugin-react": "^4.5.2", "vite": "^6.3.5", "vite-plugin-dts": "^5.0.3" } }],
 

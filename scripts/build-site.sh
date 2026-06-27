@@ -24,9 +24,6 @@ bun "$ROOT/scripts/gen-catalogue.ts"
 bunx vite build --outDir "$DIST" --emptyOutDir
 
 echo "==> Building local packages"
-cd "$ROOT/packages/ui"
-bun install --frozen-lockfile 2>/dev/null
-bun run build
 if [ -d "$ROOT/packages/vite-config" ]; then
   cd "$ROOT/packages/vite-config"
   bun install --frozen-lockfile 2>/dev/null
