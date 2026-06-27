@@ -444,3 +444,20 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
+
+
+[data-mantine-color-scheme="dark"] .drop-zone {
+  border-color: #3a4550;
+}
+
+[data-mantine-color-scheme="dark"] .mode-tab--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+
+[data-mantine-color-scheme="dark"] .format-btn--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+}

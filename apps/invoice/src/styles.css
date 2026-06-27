@@ -599,3 +599,4 @@
   background: linear-gradient(90deg, var(--accent) 0%, #e8b04b 60%, #d9594c 100%);
   border-radius: 2px;
 }
+\n\n[data-mantine-color-scheme="dark"] .btn-icon--danger:hover:not(:disabled) {\n  background: #3a1a1a;\n  color: #e57373;\n}\n\n[data-mantine-color-scheme="dark"] .btn-danger-subtle:hover {\n  color: #e57373;\n  border-color: #5a2a2a;\n  background: #2e1515;\n}\n\n[data-mantine-color-scheme="dark"] .field-hint--warn {\n  color: #fbbf24;\n}\n\n[data-mantine-color-scheme="dark"] .input--warn {\n  border-color: #fbbf24 !important;\n}\n

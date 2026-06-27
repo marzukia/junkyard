@@ -1010,3 +1010,4 @@
 /* Mobile Safari auto-zooms when a focused input's font-size is < 16px. The hex
    and contrast fields are 12–14px by design, so bump them to 16px on coarse
    (touch) pointers — stops the page zooming on tap without disabling pinch-zoom. */
+\n\n[data-mantine-color-scheme="dark"] .contrast-badge--fail {\n  background: color-mix(in srgb, #ef9a9a 12%, transparent);\n  color: #ef9a9a;\n}\n\n[data-mantine-color-scheme="dark"] .image-palette-drop--error {\n  background: color-mix(in srgb, #ef9a9a 8%, transparent);\n  border-color: #ef9a9a;\n}\n\n[data-mantine-color-scheme="dark"] .image-palette-drop--error .image-palette-label {\n  color: #ef9a9a;\n}\n

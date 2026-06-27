@@ -595,4 +595,4 @@
 .rx-seed-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
-}
+}\n\n[data-mantine-color-scheme="dark"] .rx-flag-btn--active {\n  background: var(--accent-soft);\n  color: var(--accent);\n}\n\n[data-mantine-color-scheme="dark"] .rx-error {\n  background: #2a1616;\n  border-color: #4a2020;\n  color: #e87070;\n}\n\n[data-mantine-color-scheme="dark"] .rx-highlight-root mark {\n  background: #7c6d1a;\n  color: #f5f0d0;\n}\n\n[data-mantine-color-scheme="dark"] .rx-match-0 {\n  background: #064e3b;\n  color: #d1fae5;\n}\n\n[data-mantine-color-scheme="dark"] .rx-match-1 {\n  background: #1e3a5f;\n  color: #dbeafe;\n}\n\n[data-mantine-color-scheme="dark"] .rx-match-2 {\n  background: #713f12;\n  color: #fef9c3;\n}\n\n[data-mantine-color-scheme="dark"] .rx-match-3 {\n  background: #500724;\n  color: #fce7f3;\n}\n\n[data-mantine-color-scheme="dark"] .rx-match-4 {\n  background: #2e1065;\n  color: #ede9fe;\n}\n

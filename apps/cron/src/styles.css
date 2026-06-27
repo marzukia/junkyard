@@ -420,4 +420,4 @@ details[open] .cron-cheatsheet-summary::before {
   font-size: 0.65rem;
   color: var(--ink-faint);
   text-align: center;
-}
+}\n\n[data-mantine-color-scheme="dark"] .cron-description--valid {\n  color: #41b6a6;\n}\n\n[data-mantine-color-scheme="dark"] .cron-description--error {\n  color: #e87070;\n  background: #2a1616;\n  border-color: #4a2020;\n}\n

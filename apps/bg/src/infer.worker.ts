@@ -11,7 +11,7 @@ import {
   loadPipeline,
   postResult,
   postError,
-} from "../../../../kit/lib/workerInference";
+} from "../../../kit/lib/workerInference";
 import { MAX_INFER_SIDE, MODEL_ID } from "./lib/bgConstants";
 
 let segmenter: ImageSegmentationPipeline | null = null;

@@ -495,3 +495,4 @@
     padding: 0.42rem 0.6rem;
   }
 }
+\n\n[data-mantine-color-scheme="dark"] .md-tab-btn--active {\n  background: var(--accent);\n  color: var(--accent-ink);\n  box-shadow: none;\n}\n

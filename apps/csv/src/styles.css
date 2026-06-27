@@ -298,4 +298,4 @@
   background-size: 16px 100%, 16px 100%, 10px 100%, 10px 100%;
   background-position: left, right, left, right;
   background-attachment: local, local, scroll, scroll;
-}
+}\n\n[data-mantine-color-scheme="dark"] .csv-error {\n  background: #2a1616;\n  border-color: #4a2020;\n  color: #e87070;\n}\n\n[data-mantine-color-scheme="dark"] .csv-valid {\n  color: #41b6a6;\n}\n\n[data-mantine-color-scheme="dark"] .csv-warn {\n  background: #221e0a;\n  border-color: #4a3a10;\n  color: #d4a83a;\n}\n

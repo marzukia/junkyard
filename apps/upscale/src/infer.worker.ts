@@ -14,7 +14,7 @@ import {
   loadPipeline,
   postResult,
   postError,
-} from "../../../../kit/lib/workerInference";
+} from "../../../kit/lib/workerInference";
 import type { OutputFormat } from "./lib/imageHelpers";
 import { outputMime } from "./lib/imageHelpers";
 import type { ScaleFactor } from "./lib/upscale";

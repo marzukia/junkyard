@@ -575,3 +575,4 @@
 .result-preview--circle {
   border-radius: 50%;
 }
+\n\n[data-mantine-color-scheme="dark"] .drop-zone {\n  border-color: #3a4550;\n}\n\n[data-mantine-color-scheme="dark"] .format-btn--active {\n  background: var(--accent);\n  color: var(--accent-ink);\n  box-shadow: none;\n}\n

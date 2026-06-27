@@ -12,7 +12,7 @@ import {
   loadPipeline,
   postResult,
   postError,
-} from "../../../../kit/lib/workerInference";
+} from "../../../kit/lib/workerInference";
 import type { ColourMap } from "./lib/depthEstimation";
 import { MODEL_ID, applyColourMap } from "./lib/depthEstimation";
 

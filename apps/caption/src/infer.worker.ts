@@ -10,7 +10,7 @@ import {
   loadPipeline,
   postResult,
   postError,
-} from "../../../../kit/lib/workerInference";
+} from "../../../kit/lib/workerInference";
 import type { CaptionResult } from "./lib/captioner";
 import { MODEL_ID } from "./lib/captioner";
 

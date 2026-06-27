@@ -474,3 +474,10 @@
   color: var(--ink-faint);
   text-align: center;
 }
+
+
+[data-mantine-color-scheme="dark"] .units-cat-btn--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}

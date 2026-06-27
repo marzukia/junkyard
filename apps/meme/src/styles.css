@@ -613,3 +613,4 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+\n\n[data-mantine-color-scheme="dark"] .drop-zone {\n  border-color: #3a4550;\n}\n\n[data-mantine-color-scheme="dark"] .format-btn--active {\n  background: var(--accent);\n  color: var(--accent-ink);\n  box-shadow: none;\n}\n\n[data-mantine-color-scheme="dark"] .btn-remove-layer:hover {\n  background: #3f1515;\n  color: #f87171;\n  border-color: #7f1d1d;\n}\n\n[data-mantine-color-scheme="dark"] .font-btn--active {\n  background: var(--accent);\n  color: var(--accent-ink);\n  box-shadow: none;\n}\n

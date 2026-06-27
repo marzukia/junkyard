@@ -446,3 +446,17 @@
 
 
 /* mono label utility */
+
+[data-mantine-color-scheme="dark"] .svg-error {
+  background: #2a1616;
+  border-color: #4a2020;
+  color: #e87070;
+}
+
+[data-mantine-color-scheme="dark"] .svg-saving-badge--good,
+
+[data-mantine-color-scheme="dark"] .svg-saving-badge--great {
+  background: #18302c;
+  color: #41b6a6;
+  border-color: #2c8073;
+}

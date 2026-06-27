@@ -619,3 +619,37 @@
   display: flex;
   flex-direction: column;
 }
+
+[data-mantine-color-scheme="dark"] .ts-input-error {
+  background: #2a1616;
+  border-color: #4a2020;
+  color: #e87070;
+}
+
+[data-mantine-color-scheme="dark"] .ts-tz-notice {
+  background: #3b301d;
+  border-color: #ffb700;
+  color: #f0d98a;
+}
+
+[data-mantine-color-scheme="dark"] .ts-unit-badge {
+  background: var(--accent-soft);
+  color: #41b6a6;
+}
+
+[data-mantine-color-scheme="dark"] .ts-row-value--amber {
+  color: #e8b04b;
+}
+
+[data-mantine-color-scheme="dark"] .ts-row-value--coral {
+  color: #e87070;
+}
+
+[data-mantine-color-scheme="dark"] .ts-batch-err-label {
+  color: #e87070;
+}
+
+[data-mantine-color-scheme="dark"] .ts-diff-direction--past {
+  background: #2a1616;
+  color: #e87070;
+}

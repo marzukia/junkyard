@@ -446,3 +446,4 @@
 }
 
 /* On mobile the kbd shortcut hint is just visual noise; hide it */
+\n\n[data-mantine-color-scheme="dark"] .export-bar {\n  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);\n}\n\n[data-mantine-color-scheme="dark"] .export-bar-btn--flash {\n  background: #3dbd6e;\n}\n
