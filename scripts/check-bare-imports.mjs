@@ -39,9 +39,16 @@ const DIST = new URL("../dist", import.meta.url).pathname;
 const SPECIFIER = /[a-zA-Z_@\d][a-zA-Z\d@_\-/%]*[a-zA-Z\d@_%]/;
 
 // Matches import statements where the specifier is a bare package name.
-// Handles both `from "pkg"` and `from"pkg"` (no space).
+// Handles all minified variants:
+//   import "pkg"                    — side-effect import
+//   import"pkg"                     — minified side-effect
+//   import X from "pkg"             — standard
+//   import X from"pkg"              — no space before quote
+//   import {x} from "pkg"           — named import
+//   import{X}from"pkg"              — fully minified
+// Does NOT match dynamic imports (import("pkg")) — those are intentionally bare.
 const BARE_STATIC_RE = new RegExp(
-  `import\\s+(?:[\\s\\S]*?)\\s+from\\s*["'](${SPECIFIER.source})["']`,
+  `import\\s*(?:(?:[^'"]*)\\s*from\\s*)?["'](${SPECIFIER.source})["']`,
   "g"
 );
 
