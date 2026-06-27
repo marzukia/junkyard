@@ -1,3 +1,6 @@
+// ── Styles ───────────────────────────────────────────────────────────────
+import "./styles.css";
+
 // ── Components ───────────────────────────────────────────────────────────
 export { Header } from "../../../kit/components/Header";
 export { Footer } from "../../../kit/components/Footer";
