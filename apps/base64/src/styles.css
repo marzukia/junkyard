@@ -41,11 +41,6 @@
   box-shadow: 0 1px 2px rgba(26, 37, 48, 0.12);
 }
 
-[data-mantine-color-scheme="dark"] .b64-tab-btn--active {
-  background: var(--accent);
-  color: var(--accent-ink);
-  box-shadow: none;
-}
 
 .b64-tab-btn:focus-visible {
   outline: 2px solid var(--accent);
@@ -304,13 +299,17 @@
 }
 
 /* iOS: prevent focus-zoom on textareas */
-@media (pointer: coarse) {
-  .b64-textarea {
-    font-size: 16px !important;
-  }
-}
 
 /* UX audit: ensure textarea/select dont zoom on iOS + larger toggle tap target */
+
+
+[data-mantine-color-scheme="dark"] .b64-tab-btn--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+
+
 @media (pointer: coarse) {
   input,
   textarea,
@@ -327,9 +326,7 @@
   }
 }
 
-/* iOS Safari auto-zooms when focusing a control with font-size < 16px. Force 16px on
-   iOS only (desktop sizing untouched, pinch-zoom preserved) so focus never triggers a
-   zoom. !important beats per-component class specificity (incl. Mantine + multi-class). */
+
 @supports (-webkit-touch-callout: none) {
   input,
   textarea,

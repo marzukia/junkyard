@@ -17,6 +17,12 @@ export { useCmdEnter } from "./useCmdEnter";
 
 // ── Lib ─────────────────────────────────────────────────────────────────
 export {
+  ACCEPTED_TYPES,
+  type AcceptedType,
+  isSupportedImage,
+  formatProgress,
+} from "../../../kit/lib/imageHelpers";
+export {
   encodeBase64Url,
   decodeBase64Url,
 } from "../../../kit/lib/base64url";

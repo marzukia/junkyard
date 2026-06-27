@@ -1,10 +1,15 @@
 /**
- * Pure image-manipulation helpers, no DOM side-effects, easily unit-tested.
+ * Image helpers for caption — app-specific extensions on the shared core.
+ * Shared core (ACCEPTED_TYPES, isSupportedImage, formatBytes, formatProgress)
+ * is imported from kit/lib/imageHelpers (source of truth).
  */
-
-/** Supported input image MIME types. */
-export const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"] as const;
-export type AcceptedType = (typeof ACCEPTED_TYPES)[number];
+export {
+  ACCEPTED_TYPES,
+  type AcceptedType,
+  isSupportedImage,
+  formatBytes,
+  formatProgress,
+} from "../../../../kit/lib/imageHelpers";
 
 // ── Batch export helpers ───────────────────────────────────────────────────────
 
@@ -15,7 +20,7 @@ export interface BatchCaptionRow {
 
 /** Serialise batch results to CSV (with header row, RFC 4180 quoting). */
 export function batchToCsv(rows: BatchCaptionRow[]): string {
-  const csvQuote = (v: string) => `"${v.replace(/"/g, '""')}"`;
+  const csvQuote = (v: string) => `"${v.replace(/\"/g, '""')}"`;
   const lines = [
     "filename,caption",
     ...rows.map((r) => `${csvQuote(r.filename)},${csvQuote(r.caption)}`),
@@ -41,14 +46,6 @@ export function downloadText(filename: string, content: string, mimeType: string
   a.click();
   URL.revokeObjectURL(url);
 }
-
-/** True if the file's MIME type is a supported raster image. */
-export function isSupportedImage(file: File): boolean {
-  return (ACCEPTED_TYPES as readonly string[]).includes(file.type);
-}
-
-export { formatBytes } from "@junkyardsh/ui";
-export { formatProgress } from "@junkyardsh/ui/ai";
 
 /**
  * Capitalise the first letter of a caption and ensure it ends with a period.

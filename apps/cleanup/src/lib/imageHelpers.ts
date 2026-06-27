@@ -1,17 +1,14 @@
 /**
- * Pure image-manipulation helpers - no DOM side-effects, easily unit-tested.
+ * Image helpers for cleanup/inpaint — app-specific extensions on the shared core.
+ * Shared core (ACCEPTED_TYPES, isSupportedImage, formatBytes)
+ * is imported from kit/lib/imageHelpers (source of truth).
  */
-
-/** Supported input image MIME types. */
-export const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"] as const;
-export type AcceptedType = (typeof ACCEPTED_TYPES)[number];
-
-/** True if the file's MIME type is a supported raster image. */
-export function isSupportedImage(file: File): boolean {
-  return (ACCEPTED_TYPES as readonly string[]).includes(file.type);
-}
-
-export { formatBytes } from "@junkyardsh/ui";
+export {
+  ACCEPTED_TYPES,
+  type AcceptedType,
+  isSupportedImage,
+  formatBytes,
+} from "../../../../kit/lib/imageHelpers";
 
 /** Clamp a number to [min, max]. */
 export function clamp(value: number, min: number, max: number): number {

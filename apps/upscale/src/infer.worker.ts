@@ -5,9 +5,16 @@ import { RawImage, pipeline } from "@huggingface/transformers";
  * Because blob URLs created in a worker are not accessible from the main thread,
  * this worker returns the raw image bytes as an ArrayBuffer instead of a URL.
  * The main thread creates the blob URL after receiving the result.
+ *
+ * Shared boilerplate (env config, progress posting, error/results posting)
+ * is handled via kit/lib/workerInference.ts.
  */
-import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
-import { configureTransformersEnv } from "@junkyardsh/ui/ai";
+import type { WorkerRequest } from "@junkyardsh/ui";
+import {
+  loadPipeline,
+  postResult,
+  postError,
+} from "../../../kit/lib/workerInference";
 import type { OutputFormat } from "./lib/imageHelpers";
 import { outputMime } from "./lib/imageHelpers";
 import type { ScaleFactor } from "./lib/upscale";
@@ -34,46 +41,21 @@ type Args = {
   quality: number;
 };
 
-type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
-
 self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
   if (e.data.type !== "run") return;
   const { file, scale, format, quality } = e.data.args;
 
   try {
     if (!upscaler) {
-      configureTransformersEnv();
-      upscaler = (await (
-        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-      )("image-to-image", MODEL_ID, {
-        progress_callback: (event: TransformersProgressEvent) => {
-          if (event.status === "progress" || event.status === "download") {
-            const msg: WorkerMsg<UpscaleWorkerResult> = {
-              type: "progress",
-              loaded: event.loaded ?? 0,
-              total: event.total ?? 1,
-              status: event.status,
-            };
-            self.postMessage(msg);
-          } else if (event.status === "initiate") {
-            const msg: WorkerMsg<UpscaleWorkerResult> = {
-              type: "progress",
-              loaded: 0,
-              total: 1,
-              status: "initiate",
-            };
-            self.postMessage(msg);
-          } else if (event.status === "done") {
-            const msg: WorkerMsg<UpscaleWorkerResult> = {
-              type: "progress",
-              loaded: 1,
-              total: 1,
-              status: "done",
-            };
-            self.postMessage(msg);
-          }
-        },
-      })) as ImageToImagePipeline;
+      upscaler = await loadPipeline<ImageToImagePipeline>(
+        async (progressCb) => {
+          return (await (
+            pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+          )("image-to-image", MODEL_ID, {
+            progress_callback: progressCb,
+          })) as ImageToImagePipeline;
+        }
+      );
     }
 
     const srcUrl = URL.createObjectURL(file);
@@ -110,20 +92,15 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
     const resultBlob = await canvas.convertToBlob(encodeOptions);
     const imageBytes = await resultBlob.arrayBuffer();
 
-    const msg: WorkerMsg<UpscaleWorkerResult> = {
-      type: "result",
-      payload: {
-        imageBytes,
-        width: rawImage.width,
-        height: rawImage.height,
-        resultSize: resultBlob.size,
-        format,
-      },
-    };
-    self.postMessage(msg);
+    postResult<UpscaleWorkerResult>({
+      imageBytes,
+      width: rawImage.width,
+      height: rawImage.height,
+      resultSize: resultBlob.size,
+      format,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error during upscaling.";
-    const msg: WorkerMsg<UpscaleWorkerResult> = { type: "error", message };
-    self.postMessage(msg);
+    postError(message);
   }
 };

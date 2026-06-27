@@ -3,7 +3,12 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  plugins: [dts({ rollupTypes: true }), react()],
+  plugins: [
+    // Skip dts generation when SKIP_DTS is set (CI build-site.sh context
+    // where the .d.ts files are not needed for the consolidated site build).
+    ...(process.env.SKIP_DTS ? [] : [dts({ rollupTypes: true })]),
+    react(),
+  ],
   build: {
     lib: {
       entry: {

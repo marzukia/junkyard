@@ -1,13 +1,18 @@
 /**
  * Web Worker for caption: runs model load + inference off the main thread.
+ *
+ * Shared boilerplate (env config, progress posting, error/results posting)
+ * is handled via kit/lib/workerInference.ts.
  */
 import { RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "@junkyardsh/ui/ai";
-import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
+import type { WorkerRequest } from "@junkyardsh/ui";
+import {
+  loadPipeline,
+  postResult,
+  postError,
+} from "../../../kit/lib/workerInference";
 import type { CaptionResult } from "./lib/captioner";
 import { MODEL_ID } from "./lib/captioner";
-
-type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
 
 type ImageToTextPipeline = (
   input: RawImage | string,
@@ -15,28 +20,6 @@ type ImageToTextPipeline = (
 ) => Promise<Array<{ generated_text: string }>>;
 
 let captioner: ImageToTextPipeline | null = null;
-
-async function loadModel(onProgress?: (loaded: number, total: number, status: string) => void): Promise<void> {
-  if (captioner) return;
-  await configureTransformersEnv();
-
-  const progressCb = (event: TransformersProgressEvent) => {
-    if (!onProgress) return;
-    if (event.status === "progress" || event.status === "download") {
-      onProgress(event.loaded ?? 0, event.total ?? 1, event.status);
-    } else if (event.status === "initiate") {
-      onProgress(0, 1, "initiate");
-    } else if (event.status === "done") {
-      onProgress(1, 1, "done");
-    }
-  };
-
-  captioner = (await (
-    pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-  )("image-to-text", MODEL_ID, {
-    progress_callback: progressCb,
-  })) as ImageToTextPipeline;
-}
 
 function isModelLoaded(): boolean {
   return captioner !== null;
@@ -91,18 +74,21 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!isModelLoaded()) {
-      await loadModel((loaded, total, status) => {
-        const msg: WorkerMsg<CaptionResult> = { type: "progress", loaded, total, status };
-        self.postMessage(msg);
-      });
+      captioner = await loadPipeline<ImageToTextPipeline>(
+        async (progressCb) => {
+          return (await (
+            pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+          )("image-to-text", MODEL_ID, {
+            progress_callback: progressCb,
+          })) as ImageToTextPipeline;
+        }
+      );
     }
 
     const result = await captionImage(file, numCaptions);
-    const msg: WorkerMsg<CaptionResult> = { type: "result", payload: result };
-    self.postMessage(msg);
+    postResult<CaptionResult>(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error during captioning.";
-    const msg: WorkerMsg<CaptionResult> = { type: "error", message };
-    self.postMessage(msg);
+    postError(message);
   }
 };

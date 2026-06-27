@@ -125,30 +125,18 @@
   color: #2f9d8d;
 }
 
-[data-mantine-color-scheme="dark"] .jwt-badge--valid {
-  background: #18302c;
-  color: #41b6a6;
-}
 
 .jwt-badge--expired {
   background: #fdecea;
   color: #d9594c;
 }
 
-[data-mantine-color-scheme="dark"] .jwt-badge--expired {
-  background: #2e1616;
-  color: #e07060;
-}
 
 .jwt-badge--not-yet-valid {
   background: #fef8ec;
   color: #b8882a;
 }
 
-[data-mantine-color-scheme="dark"] .jwt-badge--not-yet-valid {
-  background: #2e2512;
-  color: #e8b04b;
-}
 
 .jwt-badge--no-expiry {
   background: var(--surface-sunken);
@@ -254,20 +242,12 @@
   color: #2f9d8d;
 }
 
-[data-mantine-color-scheme="dark"] .jwt-verify-result--valid {
-  background: #18302c;
-  color: #41b6a6;
-}
 
 .jwt-verify-result--invalid {
   background: #fdecea;
   color: #d9594c;
 }
 
-[data-mantine-color-scheme="dark"] .jwt-verify-result--invalid {
-  background: #2e1616;
-  color: #e07060;
-}
 
 .jwt-verify-result--error,
 .jwt-verify-result--unsupported {
@@ -277,21 +257,6 @@
 
 /* Mobile adjustments */
 
-@media (max-width: 640px) {
-  .jwt-claim-row {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .jwt-claim-key {
-    min-width: unset;
-  }
-
-  .jwt-verify-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
 
 /* Tab switcher */
 
@@ -309,11 +274,6 @@
   align-items: start;
 }
 
-@media (max-width: 640px) {
-  .jwt-encode-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* Textarea error state */
 
@@ -346,6 +306,34 @@
 }
 
 /* UX audit: ensure textarea/select dont zoom on iOS + larger toggle tap target */
+
+
+[data-mantine-color-scheme="dark"] .jwt-badge--valid {
+  background: #18302c;
+  color: #41b6a6;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-badge--expired {
+  background: #2e1616;
+  color: #e07060;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-badge--not-yet-valid {
+  background: #2e2512;
+  color: #e8b04b;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-verify-result--valid {
+  background: #18302c;
+  color: #41b6a6;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-verify-result--invalid {
+  background: #2e1616;
+  color: #e07060;
+}
+
+
 @media (pointer: coarse) {
   input,
   textarea,
@@ -357,9 +345,7 @@
   }
 }
 
-/* iOS Safari auto-zooms when focusing a control with font-size < 16px. Force 16px on
-   iOS only (desktop sizing untouched, pinch-zoom preserved) so focus never triggers a
-   zoom. !important beats per-component class specificity (incl. Mantine + multi-class). */
+
 @supports (-webkit-touch-callout: none) {
   input,
   textarea,
