@@ -14,7 +14,7 @@ export interface AppConfigOptions {
   extra?: Record<string, any>;
   /** Rollup external list (default: ["@huggingface/transformers", "@pdf-lib/fontkit"]) */
   rollupExternal?: string[];
-  /** Worker rollup external list (default: ["@huggingface/transformers", "@pdf-lib/fontkit"]) */
+  /** Worker rollup external list (default: [] — bundle everything into workers) */
   workerExternal?: string[];
   /** Whether to include the worker block (default: true if rollupExternal or workerExternal is set) */
   hasWorker?: boolean;
@@ -34,12 +34,14 @@ export function defineAppConfig(options: AppConfigOptions = {}): Record<string, 
     extraPlugins,
     extra,
     rollupExternal = ["@huggingface/transformers", "@pdf-lib/fontkit"],
-    workerExternal = ["@huggingface/transformers", "@pdf-lib/fontkit"],
-    hasWorker = rollupExternal.length > 0 || workerExternal.length > 0,
+    workerExternal: workerExternalOpt,
+    hasWorker = rollupExternal.length > 0 || (workerExternalOpt?.length ?? 0) > 0,
     base = "/",
     target = "es2022",
     testEnvironment = "jsdom",
   } = options;
+
+  const workerExternal = workerExternalOpt ?? [];
 
   const config: Record<string, any> = {
     plugins: [react()],
