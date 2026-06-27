@@ -78,9 +78,16 @@ export function defineAppConfig(options: AppConfigOptions = {}): Record<string, 
     config.plugins = [react(), ...(Array.isArray(extraPlugins) ? extraPlugins : [extraPlugins])];
   }
 
-  // Merge extra config
+  // Deep-merge extra config — preserve defaults for nested objects
   if (extra) {
-    Object.assign(config, extra);
+    for (const [key, val] of Object.entries(extra)) {
+      const existing = config[key];
+      if (existing && typeof existing === "object" && typeof val === "object" && !Array.isArray(val)) {
+        config[key] = { ...existing, ...val };
+      } else {
+        config[key] = val;
+      }
+    }
   }
 
   // Handle noExternal in build

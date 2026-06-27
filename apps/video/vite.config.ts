@@ -29,6 +29,9 @@ function ffmpegClassicWorkerPlugin(): Plugin {
       if (!id.includes("@ffmpeg/ffmpeg") || !id.includes("classes")) {
         return null;
       }
+      // Simple string replacement for both Worker instantiation sites.
+      // The source uses multiline object literals so we match the exact
+      // string segments that appear in @ffmpeg/ffmpeg@0.12.15 classes.js.
       const patched = code
         .split('new Worker(new URL(classWorkerURL, import.meta.url), {\n                    type: "module",\n                })')
         .join('new Worker(new URL(classWorkerURL, import.meta.url), { type: "classic" })')
@@ -36,10 +39,15 @@ function ffmpegClassicWorkerPlugin(): Plugin {
         .join('new Worker(new URL("./worker.js", import.meta.url), { type: "classic" })');
 
       if (patched === code) {
+        // Fallback: use regex with dotAll flag in case whitespace differs
         const patched2 = code
           .replace(
-            /type:\s*["']module["']\s*}\s*\)\s*;?\s*$[\s\S]*?import\.meta\.url\)\s*\)/m,
-            '{ type: "classic" })',
+            /new Worker\(new URL\(classWorkerURL, import\.meta\.url\),\s*\{\s*type:\s*"module",?\s*\}\)/s,
+            'new Worker(new URL(classWorkerURL, import.meta.url), { type: "classic" })'
+          )
+          .replace(
+            /new Worker\(new URL\("\.\/worker\.js", import\.meta\.url\),\s*\{\s*type:\s*"module",?\s*\}\)/s,
+            'new Worker(new URL("./worker.js", import.meta.url), { type: "classic" })'
           );
         if (patched2 === code) {
           throw new Error(
@@ -47,9 +55,11 @@ function ffmpegClassicWorkerPlugin(): Plugin {
               "@ffmpeg/ffmpeg internals changed (pinned 0.12.15); update the patch."
           );
         }
+        console.log("[ffmpeg-classic-worker] patched (regex fallback) Worker type to classic in", id);
         return { code: patched2, map: null };
       }
 
+      console.log("[ffmpeg-classic-worker] patched Worker type to classic in", id);
       return { code: patched, map: null };
     },
   };
