@@ -480,4 +480,10 @@
   background: var(--accent);
   border-radius: var(--radius-sm);
   will-change: transform;
-}\n\n[data-mantine-color-scheme="dark"] .gradient-stop-remove:hover {\n  background: #2a1616;\n  color: #e87070;\n  border-color: #4a2020;\n}\n
+}
+
+[data-mantine-color-scheme="dark"] .gradient-stop-remove:hover {
+  background: #2a1616;
+  color: #e87070;
+  border-color: #4a2020;
+}

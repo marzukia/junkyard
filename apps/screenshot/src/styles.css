@@ -426,4 +426,18 @@
     grid-template-columns: repeat(8, 1fr);
   }
 }
-\n\n[data-mantine-color-scheme="dark"] .drop-zone {\n  border-color: #3a4550;\n}\n\n[data-mantine-color-scheme="dark"] .format-btn--active {\n  background: var(--accent);\n  color: var(--accent-ink);\n  box-shadow: none;\n}\n\n[data-mantine-color-scheme="dark"] .btn-secondary--danger:hover {\n  background: #2a1212;\n}\n
+
+
+[data-mantine-color-scheme="dark"] .drop-zone {
+  border-color: #3a4550;
+}
+
+[data-mantine-color-scheme="dark"] .format-btn--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+
+[data-mantine-color-scheme="dark"] .btn-secondary--danger:hover {
+  background: #2a1212;
+}

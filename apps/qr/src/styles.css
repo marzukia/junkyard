@@ -534,4 +534,22 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-\n\n[data-mantine-color-scheme="dark"] .qr-type-tab--active {\n  background: var(--accent);\n  color: var(--accent-ink);\n  box-shadow: none;\n}\n\n[data-mantine-color-scheme="dark"] .qr-contrast-banner--warn {\n  background: #2a2010;\n  color: #e8c66e;\n  border-color: #4a3a10;\n}\n\n[data-mantine-color-scheme="dark"] .qr-contrast-banner--fail {\n  background: #2a1212;\n  color: #f5948a;\n  border-color: #4a1a1a;\n}\n
+
+
+[data-mantine-color-scheme="dark"] .qr-type-tab--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+
+[data-mantine-color-scheme="dark"] .qr-contrast-banner--warn {
+  background: #2a2010;
+  color: #e8c66e;
+  border-color: #4a3a10;
+}
+
+[data-mantine-color-scheme="dark"] .qr-contrast-banner--fail {
+  background: #2a1212;
+  color: #f5948a;
+  border-color: #4a1a1a;
+}

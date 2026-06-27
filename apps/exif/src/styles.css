@@ -834,4 +834,18 @@
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
-\n\n[data-mantine-color-scheme="dark"] .privacy-banner--high {\n  background: #2a1614;\n  color: #f4b3ad;\n}\n\n[data-mantine-color-scheme="dark"] .privacy-banner--medium {\n  background: #271e0e;\n  color: #f5c77e;\n}\n\n[data-mantine-color-scheme="dark"] .exif-group-label--sensitive {\n  color: #f4b3ad;\n}\n
+
+
+[data-mantine-color-scheme="dark"] .privacy-banner--high {
+  background: #2a1614;
+  color: #f4b3ad;
+}
+
+[data-mantine-color-scheme="dark"] .privacy-banner--medium {
+  background: #271e0e;
+  color: #f5c77e;
+}
+
+[data-mantine-color-scheme="dark"] .exif-group-label--sensitive {
+  color: #f4b3ad;
+}

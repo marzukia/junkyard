@@ -301,4 +301,10 @@
 /* iOS: prevent focus-zoom on textareas */
 
 /* UX audit: ensure textarea/select dont zoom on iOS + larger toggle tap target */
-\n\n[data-mantine-color-scheme="dark"] .b64-tab-btn--active {\n  background: var(--accent);\n  color: var(--accent-ink);\n  box-shadow: none;\n}\n
+
+
+[data-mantine-color-scheme="dark"] .b64-tab-btn--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+}

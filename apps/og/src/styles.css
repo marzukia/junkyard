@@ -557,4 +557,21 @@
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
-\n\n[data-mantine-color-scheme="dark"] .og-copy-btn--err {\n  background: rgba(217, 89, 76, 0.15);\n}\n\n[data-mantine-color-scheme="dark"] .og-field-warn {\n  color: #e8b04b;\n}\n\n[data-mantine-color-scheme="dark"] .og-bg-btn--active {\n  background: var(--accent);\n  color: var(--accent-ink);\n}\n\n[data-mantine-color-scheme="dark"] .og-char-count--warn {\n  color: #e8b04b;\n}\n
+
+
+[data-mantine-color-scheme="dark"] .og-copy-btn--err {
+  background: rgba(217, 89, 76, 0.15);
+}
+
+[data-mantine-color-scheme="dark"] .og-field-warn {
+  color: #e8b04b;
+}
+
+[data-mantine-color-scheme="dark"] .og-bg-btn--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+[data-mantine-color-scheme="dark"] .og-char-count--warn {
+  color: #e8b04b;
+}

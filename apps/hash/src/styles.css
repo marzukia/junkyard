@@ -492,4 +492,37 @@
 
   /* HMAC algo toggle wraps on mobile */
 }
-\n\n[data-mantine-color-scheme="dark"] .hash-match--ok {\n  background: #133226;\n  color: #5dd49d;\n}\n\n[data-mantine-color-scheme="dark"] .hash-match--fail {\n  background: #2f1210;\n  color: #f08070;\n}\n\n[data-mantine-color-scheme="dark"] .hash-copy-btn--copied {\n  color: #5dd49d !important;\n  background: #133226 !important;\n}\n\n[data-mantine-color-scheme="dark"] .hash-verify-badge--ok {\n  background: #133226;\n  color: #5dd49d;\n}\n\n[data-mantine-color-scheme="dark"] .hash-verify-badge--fail {\n  background: #2f1210;\n  color: #f08070;\n}\n\n[data-mantine-color-scheme="dark"] .hash-expected-input--ok {\n  border-color: #5dd49d !important;\n}\n\n[data-mantine-color-scheme="dark"] .hash-expected-input--fail {\n  border-color: #f08070 !important;\n}\n
+
+
+[data-mantine-color-scheme="dark"] .hash-match--ok {
+  background: #133226;
+  color: #5dd49d;
+}
+
+[data-mantine-color-scheme="dark"] .hash-match--fail {
+  background: #2f1210;
+  color: #f08070;
+}
+
+[data-mantine-color-scheme="dark"] .hash-copy-btn--copied {
+  color: #5dd49d !important;
+  background: #133226 !important;
+}
+
+[data-mantine-color-scheme="dark"] .hash-verify-badge--ok {
+  background: #133226;
+  color: #5dd49d;
+}
+
+[data-mantine-color-scheme="dark"] .hash-verify-badge--fail {
+  background: #2f1210;
+  color: #f08070;
+}
+
+[data-mantine-color-scheme="dark"] .hash-expected-input--ok {
+  border-color: #5dd49d !important;
+}
+
+[data-mantine-color-scheme="dark"] .hash-expected-input--fail {
+  border-color: #f08070 !important;
+}

@@ -341,4 +341,30 @@
   font-size: 0.7rem;
   color: var(--ink-faint);
   padding: 0.25rem 0;
-}\n\n[data-mantine-color-scheme="dark"] .json-error {\n  background: #2a1616;\n  border-color: #4a2020;\n  color: #e87070;\n}\n\n[data-mantine-color-scheme="dark"] .json-valid {\n  color: #41b6a6;\n}\n\n[data-mantine-color-scheme="dark"] .json-tree-key {\n  color: #7eb8f7;\n}\n\n[data-mantine-color-scheme="dark"] .json-tree-val--string {\n  color: #6fcf97;\n}\n\n[data-mantine-color-scheme="dark"] .json-tree-val--number {\n  color: #f0a070;\n}\n\n[data-mantine-color-scheme="dark"] .json-tree-val--boolean {\n  color: #c79bf7;\n}\n
+}
+
+[data-mantine-color-scheme="dark"] .json-error {
+  background: #2a1616;
+  border-color: #4a2020;
+  color: #e87070;
+}
+
+[data-mantine-color-scheme="dark"] .json-valid {
+  color: #41b6a6;
+}
+
+[data-mantine-color-scheme="dark"] .json-tree-key {
+  color: #7eb8f7;
+}
+
+[data-mantine-color-scheme="dark"] .json-tree-val--string {
+  color: #6fcf97;
+}
+
+[data-mantine-color-scheme="dark"] .json-tree-val--number {
+  color: #f0a070;
+}
+
+[data-mantine-color-scheme="dark"] .json-tree-val--boolean {
+  color: #c79bf7;
+}

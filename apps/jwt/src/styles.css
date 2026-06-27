@@ -306,4 +306,29 @@
 }
 
 /* UX audit: ensure textarea/select dont zoom on iOS + larger toggle tap target */
-\n\n[data-mantine-color-scheme="dark"] .jwt-badge--valid {\n  background: #18302c;\n  color: #41b6a6;\n}\n\n[data-mantine-color-scheme="dark"] .jwt-badge--expired {\n  background: #2e1616;\n  color: #e07060;\n}\n\n[data-mantine-color-scheme="dark"] .jwt-badge--not-yet-valid {\n  background: #2e2512;\n  color: #e8b04b;\n}\n\n[data-mantine-color-scheme="dark"] .jwt-verify-result--valid {\n  background: #18302c;\n  color: #41b6a6;\n}\n\n[data-mantine-color-scheme="dark"] .jwt-verify-result--invalid {\n  background: #2e1616;\n  color: #e07060;\n}\n
+
+
+[data-mantine-color-scheme="dark"] .jwt-badge--valid {
+  background: #18302c;
+  color: #41b6a6;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-badge--expired {
+  background: #2e1616;
+  color: #e07060;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-badge--not-yet-valid {
+  background: #2e2512;
+  color: #e8b04b;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-verify-result--valid {
+  background: #18302c;
+  color: #41b6a6;
+}
+
+[data-mantine-color-scheme="dark"] .jwt-verify-result--invalid {
+  background: #2e1616;
+  color: #e07060;
+}

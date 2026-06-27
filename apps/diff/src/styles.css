@@ -478,4 +478,22 @@
     min-width: 3rem;
   }
 }
-\n\n[data-mantine-color-scheme="dark"] .diff-stat--added {\n  background: rgba(65, 182, 166, 0.15);\n  color: #41b6a6;\n}\n\n[data-mantine-color-scheme="dark"] .diff-row--added {\n  background: rgba(65, 182, 166, 0.1);\n}\n\n[data-mantine-color-scheme="dark"] .diff-word--added {\n  background: rgba(65, 182, 166, 0.3);\n}\n\n[data-mantine-color-scheme="dark"] .diff-identical-banner {\n  background: rgba(65, 182, 166, 0.08);\n  border-color: rgba(65, 182, 166, 0.2);\n}\n
+
+
+[data-mantine-color-scheme="dark"] .diff-stat--added {
+  background: rgba(65, 182, 166, 0.15);
+  color: #41b6a6;
+}
+
+[data-mantine-color-scheme="dark"] .diff-row--added {
+  background: rgba(65, 182, 166, 0.1);
+}
+
+[data-mantine-color-scheme="dark"] .diff-word--added {
+  background: rgba(65, 182, 166, 0.3);
+}
+
+[data-mantine-color-scheme="dark"] .diff-identical-banner {
+  background: rgba(65, 182, 166, 0.08);
+  border-color: rgba(65, 182, 166, 0.2);
+}

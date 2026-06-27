@@ -497,4 +497,18 @@
   letter-spacing: 0.03em;
   margin-top: 0.25rem;
 }
-\n\n[data-mantine-color-scheme="dark"] .icon-btn--danger:hover:not(:disabled) {\n  background: rgba(217, 89, 76, 0.15);\n}\n\n[data-mantine-color-scheme="dark"] .frame-count-nudge {\n  color: #d4a84b;\n  background: rgba(212, 168, 75, 0.1);\n  border-color: rgba(212, 168, 75, 0.25);\n}\n\n[data-mantine-color-scheme="dark"] .frames-nudge {\n  color: #d4a84b;\n}\n
+
+
+[data-mantine-color-scheme="dark"] .icon-btn--danger:hover:not(:disabled) {
+  background: rgba(217, 89, 76, 0.15);
+}
+
+[data-mantine-color-scheme="dark"] .frame-count-nudge {
+  color: #d4a84b;
+  background: rgba(212, 168, 75, 0.1);
+  border-color: rgba(212, 168, 75, 0.25);
+}
+
+[data-mantine-color-scheme="dark"] .frames-nudge {
+  color: #d4a84b;
+}
