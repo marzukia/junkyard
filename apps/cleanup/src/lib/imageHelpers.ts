@@ -1,14 +1,14 @@
 /**
  * Image helpers for cleanup/inpaint — app-specific extensions on the shared core.
  * Shared core (ACCEPTED_TYPES, isSupportedImage, formatBytes)
- * is imported from @junkyardsh/ui.
+ * is imported from kit/lib/imageHelpers (source of truth).
  */
 export {
   ACCEPTED_TYPES,
   type AcceptedType,
   isSupportedImage,
   formatBytes,
-} from "@junkyardsh/ui";
+} from "../../../../kit/lib/imageHelpers";
 
 /** Clamp a number to [min, max]. */
 export function clamp(value: number, min: number, max: number): number {

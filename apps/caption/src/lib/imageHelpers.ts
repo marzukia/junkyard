@@ -1,7 +1,7 @@
 /**
  * Image helpers for caption — app-specific extensions on the shared core.
  * Shared core (ACCEPTED_TYPES, isSupportedImage, formatBytes, formatProgress)
- * is imported from @junkyardsh/ui.
+ * is imported from kit/lib/imageHelpers (source of truth).
  */
 export {
   ACCEPTED_TYPES,
@@ -9,7 +9,7 @@ export {
   isSupportedImage,
   formatBytes,
   formatProgress,
-} from "@junkyardsh/ui";
+} from "../../../../kit/lib/imageHelpers";
 
 // ── Batch export helpers ───────────────────────────────────────────────────────
 
@@ -20,7 +20,7 @@ export interface BatchCaptionRow {
 
 /** Serialise batch results to CSV (with header row, RFC 4180 quoting). */
 export function batchToCsv(rows: BatchCaptionRow[]): string {
-  const csvQuote = (v: string) => `"${v.replace(/"/g, '""')}"`;
+  const csvQuote = (v: string) => `"${v.replace(/\"/g, '""')}"`;
   const lines = [
     "filename,caption",
     ...rows.map((r) => `${csvQuote(r.filename)},${csvQuote(r.caption)}`),

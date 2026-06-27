@@ -1,16 +1,19 @@
 /**
  * Image helpers for upscale — app-specific extensions on the shared core.
  * Shared core (ACCEPTED_TYPES, isSupportedImage, formatBytes, formatProgress)
- * is imported from @junkyardsh/ui.
+ * is imported from kit/lib/imageHelpers (source of truth).
  */
 
-export {
-  ACCEPTED_TYPES,
-  type AcceptedType,
-  isSupportedImage,
-  formatBytes,
-  formatProgress,
-} from "@junkyardsh/ui";
+// Upscale does NOT support GIF files (animated inputs can't be upscaled).
+// Override the shared ACCEPTED_TYPES to exclude "image/gif".
+export const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+export type AcceptedType = (typeof ACCEPTED_TYPES)[number];
+
+export function isSupportedImage(file: File): boolean {
+  return (ACCEPTED_TYPES as readonly string[]).includes(file.type);
+}
+
+export { formatBytes, formatProgress } from "../../../../kit/lib/imageHelpers";
 
 export const ACCEPTED_EXTENSIONS = ".jpg,.jpeg,.png,.webp";
 

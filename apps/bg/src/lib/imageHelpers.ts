@@ -1,7 +1,7 @@
 /**
  * Image helpers for bg removal — app-specific extensions on the shared core.
  * Shared core (ACCEPTED_TYPES, isSupportedImage, formatBytes, formatProgress)
- * is imported from @junkyardsh/ui.
+ * is imported from kit/lib/imageHelpers (source of truth).
  */
 export {
   ACCEPTED_TYPES,
@@ -9,7 +9,7 @@ export {
   isSupportedImage,
   formatBytes,
   formatProgress,
-} from "@junkyardsh/ui";
+} from "../../../../kit/lib/imageHelpers";
 
 /** Produce a safe download filename for the processed image. */
 export function outputFilename(inputName: string): string {
