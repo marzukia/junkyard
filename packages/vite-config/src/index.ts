@@ -1,5 +1,5 @@
 import react from "@vitejs/plugin-react";
-import { defineConfig, type UserConfig } from "vite";
+import { defineConfig } from "vite";
 
 export interface AppConfigOptions {
   /** Per-app globals for test (default: true) */
@@ -9,9 +9,9 @@ export interface AppConfigOptions {
   /** Per-app test include patterns (default: none) */
   include?: string[];
   /** Extra plugins to add after react() (default: none) */
-  extraPlugins?: UserConfig["plugins"];
+  extraPlugins?: any[];
   /** Extra config to merge (optimizeDeps, test.environment, etc.) */
-  extra?: UserConfig;
+  extra?: Record<string, any>;
   /** Rollup external list (default: ["@huggingface/transformers", "@pdf-lib/fontkit"]) */
   rollupExternal?: string[];
   /** Worker rollup external list (default: ["@huggingface/transformers", "@pdf-lib/fontkit"]) */
@@ -26,7 +26,7 @@ export interface AppConfigOptions {
   testEnvironment?: string;
 }
 
-export function defineAppConfig(options: AppConfigOptions = {}): UserConfig {
+export function defineAppConfig(options: AppConfigOptions = {}): Record<string, any> {
   const {
     globals = true,
     noExternal,
@@ -41,7 +41,7 @@ export function defineAppConfig(options: AppConfigOptions = {}): UserConfig {
     testEnvironment = "jsdom",
   } = options;
 
-  const config: UserConfig = {
+  const config: Record<string, any> = {
     plugins: [react()],
     base,
     build: {
@@ -81,6 +81,14 @@ export function defineAppConfig(options: AppConfigOptions = {}): UserConfig {
   // Merge extra config
   if (extra) {
     Object.assign(config, extra);
+  }
+
+  // Handle noExternal in build
+  if (noExternal) {
+    config.build = {
+      ...config.build,
+      noExternal,
+    };
   }
 
   return defineConfig(config);
