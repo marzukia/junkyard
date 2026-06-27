@@ -2,6 +2,7 @@
 import "./styles.css";
 
 // ── Components ───────────────────────────────────────────────────────────
+export { DropZone } from "./DropZone";
 export { Header } from "../../../kit/components/Header";
 export { Footer } from "../../../kit/components/Footer";
 export { BrandMark } from "../../../kit/components/BrandMark";
