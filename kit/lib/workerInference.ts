@@ -12,7 +12,7 @@
  * infer.worker.ts.
  */
 
-import { configureTransformersEnv } from "@junkyardsh/ui/ai";
+import { configureTransformersEnv } from "../components/transformersEnv";
 import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
 
 /** Shape of the progress event emitted by @huggingface/transformers pipeline(). */
