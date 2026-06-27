@@ -1,252 +1,14 @@
-/* ─── Theme variables — light (default) ─────────────────────────────────── */
-
-:root,
-[data-mantine-color-scheme="light"] {
-  --canvas: #fafafa;
-  --surface: #ffffff;
-  --surface-sunken: #f4f5f6;
-  --ink: #1a2530;
-  --ink-mid: #5b6671;
-  --ink-faint: #6b747d;
-  --rule: #e8eaed;
-  --accent: #2f9d8d;
-  --accent-ink: #ffffff;
-  --accent-soft: #eaf6f3;
-  --shadow-card: 0 1px 2px rgba(26, 37, 48, 0.04), 0 8px 28px rgba(26, 37, 48, 0.06);
-  --shadow-pop: 0 6px 28px rgba(26, 37, 48, 0.14);
-  --font-text: "Roboto", system-ui, -apple-system, sans-serif;
-  --font-mono: "Roboto Mono", "Courier New", monospace;
-  --radius: 16px;
-  --radius-sm: 10px;
-}
-
-/* ─── Theme variables — dark ────────────────────────────────────────────── */
-
-[data-mantine-color-scheme="dark"] {
-  --canvas: #13171a;
-  --surface: #1b2126;
-  --surface-sunken: #161b1f;
-  --ink: #e9eef1;
-  --ink-mid: #9aa6b0;
-  --ink-faint: #7e8f99;
-  --rule: #283037;
-  --accent: #41b6a6;
-  --accent-ink: #0e1518;
-  --accent-soft: #18302c;
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
-  --shadow-pop: 0 6px 28px rgba(0, 0, 0, 0.5);
-}
-
-html {
-  font-size: 16px;
-  background: var(--canvas);
-  color: var(--ink);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  font-family: var(--font-text);
-  background: var(--canvas);
-  min-height: 100vh;
-  line-height: 1.5;
-}
-
-/* ─── Load animation ────────────────────────────────────────────────────── */
-
-@keyframes fadeRise {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.app-root {
-  animation: fadeRise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* ─── Utility bar (top-right; theme toggle lives here, not in workflow header) */
-
-.utility-bar {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0.5rem 2rem 0;
-}
-
 /* Scale down the pill slightly so it reads as secondary chrome, not a workflow
    control competing with the title. The space-toggle / space-btn classes are
    reused unchanged; overrides are scoped to this container only. */
-.utility-bar .space-toggle-wrapper {
-  /* no extra label in this context */
-}
-
-.utility-bar .space-toggle {
-  /* make buttons a touch smaller */
-}
-
-.utility-bar .space-btn {
-  font-size: 0.7rem;
-  padding: 0.22rem 0.65rem;
-}
-
-@media (max-width: 480px) {
-  .utility-bar {
-    padding: 0.4rem 1rem 0;
-  }
-}
-
-/* ─── Site Header ───────────────────────────────────────────────────────── */
-
-.site-header {
-  padding: 0 2rem;
-}
-
-.site-header-inner {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 2.25rem 0 0.5rem;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
 
 /* Title block: site-title-row (mark + wordmark) stacked above subtitle */
-.site-title {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
 
 /* Inline row: brand mark centred on the "Colours" wordmark */
-.site-title-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.7rem;
-}
 
 /* Brand mark: sized to the cap-height of the "Colours" wordmark.
    Title is clamp(2rem, 4vw, 3rem) weight-800; cap-height ≈ 0.72×.
    clamp(1.44rem, 2.88vw, 2.16rem) tracks that proportionally across breakpoints. */
-.brand-mark {
-  width: clamp(1.44rem, 2.88vw, 2.16rem);
-  height: clamp(1.44rem, 2.88vw, 2.16rem);
-  flex-shrink: 0;
-}
-
-.site-title-main {
-  font-family: var(--font-text);
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1;
-  color: var(--ink);
-}
-
-.site-title-sub {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--ink-mid);
-}
-
-.header-controls {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  flex-wrap: wrap;
-}
-
-/* ─── Segmented pill toggle (interpolation space + harmony) ─────────────── */
-
-.space-toggle-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.space-toggle-label {
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  white-space: nowrap;
-}
-
-.space-toggle {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px;
-  padding: 3px;
-  background: var(--surface-sunken);
-  border-radius: 999px;
-}
-
-.space-btn {
-  font-family: var(--font-text);
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  padding: 0.32rem 0.8rem;
-  border: none;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink-mid);
-  cursor: pointer;
-  transition: background 0.14s, color 0.14s;
-  line-height: 1.2;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.space-btn:hover {
-  color: var(--ink);
-}
-
-.space-btn--active {
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: 0 1px 2px rgba(26, 37, 48, 0.12);
-}
-
-[data-mantine-color-scheme="dark"] .space-btn--active {
-  background: var(--accent);
-  color: var(--accent-ink);
-  box-shadow: none;
-}
-
-.space-btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-}
-
-/* ─── Main Content ──────────────────────────────────────────────────────── */
-
-.site-main {
-  flex: 1;
-  width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 1.5rem 2rem 3rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* ─── Card shell ────────────────────────────────────────────────────────── */
 
 .palette-section-wrapper {
   display: contents;
@@ -431,18 +193,7 @@ body {
 }
 
 /* The colour block itself — full-bleed, tall, rounded */
-.palette-swatch-body {
-  position: relative;
-  height: 360px;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  width: 100%;
-  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
-}
 
-.palette-swatch-body:hover {
-  transform: translateY(-3px);
-}
 
 /* ─── In-swatch overlay ─────────────────────────────────────────────────── */
 
@@ -462,14 +213,8 @@ body {
 }
 
 /* Reveal overlay on swatch hover */
-.palette-swatch-body:hover .palette-swatch-overlay {
-  opacity: 1;
-}
 
 /* Reveal overlay when any in-swatch control receives keyboard focus */
-.palette-swatch-body:focus-within .palette-swatch-overlay {
-  opacity: 1;
-}
 
 /* Lock button — small pill in the overlay */
 .swatch-overlay-lock {
@@ -597,82 +342,6 @@ body {
 
 /* ─── Mobile: vertical stack ────────────────────────────────────────────── */
 
-@media (max-width: 640px) {
-  /* When space-toggle wraps to multiple rows it becomes blobby stadium; switch to a
-     clean block radius so the wrapped group reads as a unified rounded rectangle. */
-  .space-toggle {
-    border-radius: var(--radius-sm);
-  }
-
-  .palette-swatches {
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .palette-swatch-col {
-    flex: none;
-    width: 100%;
-  }
-
-  /* Mobile rows are shorter — horizontal layout, controls always visible */
-  .palette-swatch-body {
-    height: 80px;
-    border-radius: var(--radius-sm);
-    transform: none !important; /* disable vertical hover lift on mobile */
-  }
-
-  .palette-swatch-body:hover {
-    transform: none;
-  }
-
-  /* Always visible on mobile (no hover) */
-  .palette-swatch-overlay {
-    opacity: 1;
-    flex-direction: row;
-    justify-content: center;
-    gap: 1rem;
-    padding: 0 1rem;
-  }
-
-  /* Larger tap targets on mobile */
-  .swatch-overlay-lock,
-  .swatch-overlay-copy {
-    width: 36px;
-    height: 36px;
-    opacity: 1;
-  }
-
-  .swatch-overlay-hex {
-    font-size: 0.92rem;
-    letter-spacing: 0.05em;
-  }
-
-  .swatch-overlay-edit {
-    font-size: 0.92rem;
-    width: 5.5rem;
-  }
-
-  /* Reduce card padding so copy-actions row has more room */
-  .palette-section {
-    padding: 1.25rem;
-  }
-
-  /* Stack hint above copy-actions on very narrow screens */
-  .palette-footer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  /* Copy buttons: 2-per-row grid on mobile, min-width 0 to allow shrinking */
-  .copy-actions {
-    width: 100%;
-  }
-
-  .copy-btn {
-    flex: 0 0 auto;
-    text-align: center;
-  }
-}
 
 /* ─── Palette footer ────────────────────────────────────────────────────── */
 
@@ -957,11 +626,6 @@ body {
 
 /* ─── Copy Actions ──────────────────────────────────────────────────────── */
 
-.copy-actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
 
 .copy-btn {
   flex: 0 0 auto;
@@ -1074,16 +738,8 @@ body {
 
 /* ─── Vision toggle row (below site-header-inner) ───────────────────────── */
 
-.site-header-vision {
-  padding-bottom: 0.75rem;
-}
 
 /* Wrap the VisionToggle so it scrolls horizontally on very narrow viewports */
-.site-header-vision .site-header-inner {
-  padding-top: 0;
-  padding-bottom: 0;
-  overflow-x: auto;
-}
 
 /* ─── Contrast checker panel ────────────────────────────────────────────── */
 
@@ -1092,11 +748,6 @@ body {
   padding: 1.75rem;
 }
 
-.contrast-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
 
 .contrast-inputs {
   /* reuses .color-inputs-row */
@@ -1195,10 +846,6 @@ body {
   color: #c62828;
 }
 
-[data-mantine-color-scheme="dark"] .contrast-badge--fail {
-  background: color-mix(in srgb, #ef9a9a 12%, transparent);
-  color: #ef9a9a;
-}
 
 @media (max-width: 520px) {
   .contrast-results {
@@ -1209,46 +856,6 @@ body {
     width: 3rem;
     height: 3rem;
   }
-}
-
-/* ─── Footer ────────────────────────────────────────────────────────────── */
-
-.site-footer {
-  padding: 2rem;
-  font-family: var(--font-mono);
-  font-size: 0.66rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  color: var(--ink-faint);
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6em;
-  flex-wrap: wrap;
-}
-
-.site-footer-sep {
-  opacity: 0.5;
-}
-
-.site-footer-link {
-  color: var(--ink-mid);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-color: var(--rule);
-  transition: color 0.14s, text-decoration-color 0.14s;
-}
-
-.site-footer-link:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
-}
-
-.site-footer-disclaimer {
-  width: 100%;
-  text-align: center;
-  opacity: 0.6;
 }
 
 /* ─── Undo button (icon-only, beside Generate) ──────────────────────────── */
@@ -1363,10 +970,6 @@ body {
   background: color-mix(in srgb, #e53935 8%, transparent);
 }
 
-[data-mantine-color-scheme="dark"] .image-palette-drop--error {
-  background: color-mix(in srgb, #ef9a9a 8%, transparent);
-  border-color: #ef9a9a;
-}
 
 .image-palette-icon {
   color: var(--ink-faint);
@@ -1387,9 +990,6 @@ body {
   color: #c62828;
 }
 
-[data-mantine-color-scheme="dark"] .image-palette-drop--error .image-palette-label {
-  color: #ef9a9a;
-}
 
 .image-palette-file-input {
   position: absolute;
@@ -1407,24 +1007,6 @@ body {
   flex-shrink: 0;
 }
 
-/* ─── iOS / touch: prevent focus-zoom ───────────────────────────────────── */
 /* Mobile Safari auto-zooms when a focused input's font-size is < 16px. The hex
    and contrast fields are 12–14px by design, so bump them to 16px on coarse
    (touch) pointers — stops the page zooming on tap without disabling pinch-zoom. */
-@media (pointer: coarse) {
-  .color-hex-input input,
-  .swatch-overlay-edit {
-    font-size: 16px !important;
-  }
-}
-
-/* iOS Safari auto-zooms when focusing a control with font-size < 16px. Force 16px on
-   iOS only (desktop sizing untouched, pinch-zoom preserved) so focus never triggers a
-   zoom. !important beats per-component class specificity (incl. Mantine + multi-class). */
-@supports (-webkit-touch-callout: none) {
-  input,
-  textarea,
-  select {
-    font-size: 16px !important;
-  }
-}

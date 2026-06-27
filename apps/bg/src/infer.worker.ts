@@ -2,12 +2,17 @@ import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface
 /**
  * Web Worker for bg (background removal): runs model load + inference off the main thread.
  * Returns image bytes as ArrayBuffer (blob URLs don't cross worker boundaries).
+ *
+ * Shared boilerplate (env config, progress posting, error/results posting)
+ * is handled via kit/lib/workerInference.ts.
  */
-import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
-import { configureTransformersEnv } from "@junkyardsh/ui/ai";
+import type { WorkerRequest } from "@junkyardsh/ui";
+import {
+  loadPipeline,
+  postResult,
+  postError,
+} from "../../../../kit/lib/workerInference";
 import { MAX_INFER_SIDE, MODEL_ID } from "./lib/bgConstants";
-
-type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
 
 let segmenter: ImageSegmentationPipeline | null = null;
 
@@ -27,36 +32,15 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!segmenter) {
-      await configureTransformersEnv();
-      segmenter = (await (
-        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-      )("image-segmentation", MODEL_ID, {
-        progress_callback: (event: TransformersProgressEvent) => {
-          if (event.status === "progress" || event.status === "download") {
-            const msg: WorkerMsg<BgWorkerResult> = {
-              type: "progress",
-              loaded: event.loaded ?? 0,
-              total: event.total ?? 1,
-              status: event.status,
-            };
-            self.postMessage(msg);
-          } else if (event.status === "initiate") {
-            self.postMessage({
-              type: "progress",
-              loaded: 0,
-              total: 1,
-              status: "initiate",
-            } as WorkerMsg<BgWorkerResult>);
-          } else if (event.status === "done") {
-            self.postMessage({
-              type: "progress",
-              loaded: 1,
-              total: 1,
-              status: "done",
-            } as WorkerMsg<BgWorkerResult>);
-          }
-        },
-      })) as ImageSegmentationPipeline;
+      segmenter = await loadPipeline<ImageSegmentationPipeline>(
+        async (progressCb) => {
+          return (await (
+            pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+          )("image-segmentation", MODEL_ID, {
+            progress_callback: progressCb,
+          })) as ImageSegmentationPipeline;
+        }
+      );
     }
 
     const bitmap = await createImageBitmap(file);
@@ -115,14 +99,9 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
     const resultBlob = await outCanvas.convertToBlob({ type: "image/png" });
     const imageBytes = await resultBlob.arrayBuffer();
 
-    const msg: WorkerMsg<BgWorkerResult> = {
-      type: "result",
-      payload: { imageBytes, width: origW, height: origH },
-    };
-    self.postMessage(msg);
+    postResult<BgWorkerResult>({ imageBytes, width: origW, height: origH });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error during background removal.";
-    const msg: WorkerMsg<BgWorkerResult> = { type: "error", message };
-    self.postMessage(msg);
+    postError(message);
   }
 };

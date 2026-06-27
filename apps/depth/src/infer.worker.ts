@@ -3,13 +3,18 @@ import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/t
  * Web Worker for depth: runs model load + inference off the main thread.
  * Returns image bytes (ArrayBuffer) instead of blob URL (not cross-context).
  * Also returns the raw depth cache data for colourmap re-renders without re-inference.
+ *
+ * Shared boilerplate (env config, progress posting, error/results posting)
+ * is handled via kit/lib/workerInference.ts.
  */
-import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
-import { configureTransformersEnv } from "@junkyardsh/ui/ai";
+import type { WorkerRequest } from "@junkyardsh/ui";
+import {
+  loadPipeline,
+  postResult,
+  postError,
+} from "../../../../kit/lib/workerInference";
 import type { ColourMap } from "./lib/depthEstimation";
 import { MODEL_ID, applyColourMap } from "./lib/depthEstimation";
-
-type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
 
 let estimator: DepthEstimationPipeline | null = null;
 
@@ -33,36 +38,15 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!estimator) {
-      await configureTransformersEnv();
-      estimator = (await (
-        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-      )("depth-estimation", MODEL_ID, {
-        progress_callback: (event: TransformersProgressEvent) => {
-          if (event.status === "progress" || event.status === "download") {
-            const msg: WorkerMsg<DepthWorkerResult> = {
-              type: "progress",
-              loaded: event.loaded ?? 0,
-              total: event.total ?? 1,
-              status: event.status,
-            };
-            self.postMessage(msg);
-          } else if (event.status === "initiate") {
-            self.postMessage({
-              type: "progress",
-              loaded: 0,
-              total: 1,
-              status: "initiate",
-            } as WorkerMsg<DepthWorkerResult>);
-          } else if (event.status === "done") {
-            self.postMessage({
-              type: "progress",
-              loaded: 1,
-              total: 1,
-              status: "done",
-            } as WorkerMsg<DepthWorkerResult>);
-          }
-        },
-      })) as DepthEstimationPipeline;
+      estimator = await loadPipeline<DepthEstimationPipeline>(
+        async (progressCb) => {
+          return (await (
+            pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+          )("depth-estimation", MODEL_ID, {
+            progress_callback: progressCb,
+          })) as DepthEstimationPipeline;
+        }
+      );
     }
 
     const bitmap = await createImageBitmap(file);
@@ -120,14 +104,9 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
     const blob = await outCanvas.convertToBlob({ type: "image/png" });
     const imageBytes = await blob.arrayBuffer();
 
-    const msg: WorkerMsg<DepthWorkerResult> = {
-      type: "result",
-      payload: { imageBytes, width: origW, height: origH, normalisedDepth: normalised },
-    };
-    self.postMessage(msg);
+    postResult<DepthWorkerResult>({ imageBytes, width: origW, height: origH, normalisedDepth: normalised });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error during depth estimation.";
-    const msg: WorkerMsg<DepthWorkerResult> = { type: "error", message };
-    self.postMessage(msg);
+    postError(message);
   }
 };
