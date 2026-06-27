@@ -60,7 +60,11 @@ echo "  App deps installed."
 
 # Symlink the local @junkyardsh/ui build into each app's node_modules so
 # they pick up subpath exports (./ai, ./pdf) not yet published to npm.
+# Also symlink at repo root for imports resolved from kit/ (e.g. workerInference.ts).
 echo "  Symlinking local @junkyardsh/ui into app node_modules..."
+mkdir -p "$ROOT/node_modules/@junkyardsh"
+rm -rf "$ROOT/node_modules/@junkyardsh/ui"
+ln -s "$ROOT/packages/ui" "$ROOT/node_modules/@junkyardsh/ui"
 for d in "$ROOT"/apps/*/; do
   target="$d/node_modules/@junkyardsh/ui"
   if [ -d "$target" ]; then
