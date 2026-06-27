@@ -23,6 +23,15 @@ echo "==> Generating catalogue from apps/*/junkyard.ts"
 bun "$ROOT/scripts/gen-catalogue.ts"
 bunx vite build --outDir "$DIST" --emptyOutDir
 
+echo "==> Building local packages"
+cd "$ROOT/packages/ui"
+bun install --frozen-lockfile 2>/dev/null
+bun run build
+cd "$ROOT/packages/vite-config"
+bun install --frozen-lockfile 2>/dev/null
+bun run build
+cd "$ROOT"
+
 echo "==> Installing app deps (parallel, max 4 jobs)"
 # Run bun install for all apps concurrently (bounded at 4) before the serial
 # vite build loop. This is safe because installs are independent; builds must
