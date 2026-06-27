@@ -73,9 +73,9 @@ export function defineAppConfig(options: AppConfigOptions = {}): Record<string, 
     };
   }
 
-  // Merge extra plugins
+  // Merge extra plugins — they go before react() so they can transform before react's transform
   if (extraPlugins) {
-    config.plugins = [react(), ...(Array.isArray(extraPlugins) ? extraPlugins : [extraPlugins])];
+    config.plugins = [...(Array.isArray(extraPlugins) ? extraPlugins : [extraPlugins]), react()];
   }
 
   // Deep-merge extra config — preserve defaults for nested objects
