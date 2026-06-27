@@ -443,3 +443,12 @@ details[open] .cron-cheatsheet-summary::before {
     min-height: 40px;
   }
 }
+
+
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}

@@ -257,3 +257,12 @@
   border-color: #5a2020;
   color: #f08080;
 }
+
+
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}

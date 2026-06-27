@@ -479,3 +479,124 @@
     min-height: 40px;
   }
 }
+
+
+.card-rotate-handle {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.card-rotate-handle:active {
+  cursor: grabbing;
+}
+
+
+.card-remove-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #d9594c;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.card-resize-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+
+.card-resize-handle[data-handle="nw"] {
+  top: -5px;
+  left: -5px;
+  cursor: nw-resize;
+}
+
+
+.card-resize-handle[data-handle="ne"] {
+  top: -5px;
+  right: -5px;
+  cursor: ne-resize;
+}
+
+
+.card-resize-handle[data-handle="sw"] {
+  bottom: -5px;
+  left: -5px;
+  cursor: sw-resize;
+}
+
+
+.card-resize-handle[data-handle="se"] {
+  bottom: -5px;
+  right: -5px;
+  cursor: se-resize;
+}
+
+
+.card-resize-handle[data-handle="n"] {
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: n-resize;
+}
+
+
+.card-resize-handle[data-handle="s"] {
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: s-resize;
+}
+
+
+.card-resize-handle[data-handle="e"] {
+  top: 50%;
+  right: -5px;
+  transform: translateY(-50%);
+  cursor: e-resize;
+}
+
+
+.card-resize-handle[data-handle="w"] {
+  top: 50%;
+  left: -5px;
+  transform: translateY(-50%);
+  cursor: w-resize;
+}
+
+
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
