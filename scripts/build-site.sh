@@ -27,7 +27,7 @@ echo "==> Building local packages"
 if [ -d "$ROOT/packages/ui" ]; then
   cd "$ROOT/packages/ui"
   bun install --frozen-lockfile
-  bun run build
+  SKIP_DTS=1 bun run build
 fi
 if [ -d "$ROOT/packages/vite-config" ]; then
   cd "$ROOT/packages/vite-config"
