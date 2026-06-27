@@ -28,6 +28,15 @@ if [ -d "$ROOT/packages/ui" ]; then
   cd "$ROOT/packages/ui"
   bun install --frozen-lockfile
   SKIP_DTS=1 bun run build
+  # Symlink the local build into each app's node_modules so they pick up
+  # subpath exports (./ai, ./pdf) that may not be published to npm yet.
+  for d in "$ROOT"/apps/*/; do
+    target="$d/node_modules/@junkyardsh/ui"
+    if [ -d "$target" ]; then
+      rm -rf "$target"
+      ln -s "$ROOT/packages/ui" "$target"
+    fi
+  done
 fi
 if [ -d "$ROOT/packages/vite-config" ]; then
   cd "$ROOT/packages/vite-config"
