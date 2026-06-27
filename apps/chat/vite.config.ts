@@ -1,26 +1,8 @@
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
-
-export default defineConfig({
-  plugins: [react()],
-  base: "/",
-  build: {
-    rollupOptions: {
-      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+import { defineAppConfig } from "@junkyardsh/vite-config";
+export default defineAppConfig({
+  extra: {
+    optimizeDeps: {
+      exclude: ["@mlc-ai/web-llm"],
     },
-    target: "es2022",
-  },
-  // Exclude WebLLM from pre-bundling — it uses dynamic imports internally
-  optimizeDeps: {
-    exclude: ["@mlc-ai/web-llm"],
-  },
-    worker: {
-    rollupOptions: {
-      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
-    },
-  },
-  test: {
-    environment: "jsdom",
-    globals: true,
   },
 });
