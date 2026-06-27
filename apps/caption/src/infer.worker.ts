@@ -1,9 +1,84 @@
 /**
  * Web Worker for caption: runs model load + inference off the main thread.
  */
+import { RawImage, pipeline } from "@huggingface/transformers";
+import { configureTransformersEnv } from "@junkyardsh/ui/ai";
 import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
 import type { CaptionResult } from "./lib/captioner";
-import { captionImage, isModelLoaded, loadModel } from "./lib/captioner";
+import { MODEL_ID } from "./lib/captioner";
+
+type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
+
+type ImageToTextPipeline = (
+  input: RawImage | string,
+  options?: Record<string, unknown>
+) => Promise<Array<{ generated_text: string }>>;
+
+let captioner: ImageToTextPipeline | null = null;
+
+async function loadModel(onProgress?: (loaded: number, total: number, status: string) => void): Promise<void> {
+  if (captioner) return;
+  await configureTransformersEnv();
+
+  const progressCb = (event: TransformersProgressEvent) => {
+    if (!onProgress) return;
+    if (event.status === "progress" || event.status === "download") {
+      onProgress(event.loaded ?? 0, event.total ?? 1, event.status);
+    } else if (event.status === "initiate") {
+      onProgress(0, 1, "initiate");
+    } else if (event.status === "done") {
+      onProgress(1, 1, "done");
+    }
+  };
+
+  captioner = (await (
+    pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+  )("image-to-text", MODEL_ID, {
+    progress_callback: progressCb,
+  })) as ImageToTextPipeline;
+}
+
+function isModelLoaded(): boolean {
+  return captioner !== null;
+}
+
+async function prepareRawImage(file: File): Promise<{ rawImage: RawImage; blobUrl: string }> {
+  const bitmap = await createImageBitmap(file);
+  const canvas = new OffscreenCanvas(224, 224);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("OffscreenCanvas 2d not available.");
+  ctx.drawImage(bitmap, 0, 0, 224, 224);
+  bitmap.close();
+  const blob = await canvas.convertToBlob({ type: "image/png" });
+  const blobUrl = URL.createObjectURL(blob);
+  const rawImage = await RawImage.fromURL(blobUrl);
+  return { rawImage, blobUrl };
+}
+
+async function captionImage(file: File, numCaptions = 1): Promise<CaptionResult> {
+  if (!captioner) throw new Error("Model not loaded, call loadModel() first.");
+  const { rawImage, blobUrl } = await prepareRawImage(file);
+  try {
+    const n = Math.max(1, Math.min(numCaptions, 5));
+    const options: Record<string, unknown> =
+      n === 1
+        ? { max_new_tokens: 50 }
+        : {
+            max_new_tokens: 50,
+            num_beams: n,
+            num_return_sequences: n,
+          };
+    const result = await captioner(rawImage, options);
+    const texts = (Array.isArray(result) ? result : [])
+      .map((r) => r.generated_text?.trim() ?? "")
+      .filter(Boolean);
+    if (texts.length === 0) throw new Error("Model returned an empty caption.");
+    const [primary, ...rest] = texts;
+    return { caption: primary, candidates: rest };
+  } finally {
+    URL.revokeObjectURL(blobUrl);
+  }
+}
 
 type Args = {
   file: File;

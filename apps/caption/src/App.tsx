@@ -4,7 +4,7 @@ import { Header } from "@junkyardsh/ui";
 import { useWorkerTask } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import InferWorker from "./infer.worker.ts?worker";
-import { captionImage, fetchImageFromUrl, isModelLoaded, loadModel } from "./lib/captioner";
+import { fetchImageFromUrl } from "./lib/captioner";
 import type { CaptionResult } from "./lib/captioner";
 import {
   type BatchCaptionRow,
@@ -401,18 +401,29 @@ function BatchPanel({ onStart, disabled, onSample }: BatchPanelProps) {
       if (cancelRef.current) break;
       setItems((prev) => prev.map((it, i) => (i === idx ? { ...it, status: "processing" } : it)));
       try {
-        if (!isModelLoaded()) {
-          await loadModel((loaded, total, status) => {
-            if (status !== "done") {
-              setBatchDownloadProgress({ loaded, total });
-            } else {
-              setBatchDownloadProgress(null);
+        const result = await new Promise<CaptionResult>((resolve, reject) => {
+          runWorker(
+            () => new InferWorker(),
+            { file: items[idx].file, numCaptions: 1 },
+            {
+              onProgress: (loaded, total, status) => {
+                if (status !== "done") {
+                  setBatchDownloadProgress({ loaded, total });
+                } else {
+                  setBatchDownloadProgress(null);
+                }
+              },
+              onResult: (r) => {
+                setBatchDownloadProgress(null);
+                resolve(r);
+              },
+              onError: (message) => {
+                reject(new Error(message));
+              },
             }
-          });
-          setBatchDownloadProgress(null);
-        }
-        const { caption } = await captionImage(items[idx].file, 1);
-        const formatted = formatCaption(caption);
+          );
+        });
+        const formatted = formatCaption(result.caption);
         setItems((prev) =>
           prev.map((it, i) => (i === idx ? { ...it, status: "done", caption: formatted } : it))
         );
@@ -425,7 +436,7 @@ function BatchPanel({ onStart, disabled, onSample }: BatchPanelProps) {
     }
     setRunning(false);
     setDone(true);
-  }, [items, onStart]);
+  }, [items, onStart, runWorker]);
 
   const exportRows: BatchCaptionRow[] = items
     .filter((it) => it.status === "done" && it.caption)

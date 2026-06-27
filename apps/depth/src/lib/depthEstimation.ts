@@ -7,53 +7,9 @@
  * and never touches SharedArrayBuffer. WebGPU is attempted first (no isolation
  * required for WebGPU); WASM single-thread is the fallback.
  */
-import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/transformers";
-import { configureTransformersEnv } from "@junkyardsh/ui/ai";
-
 export const MODEL_ID = "onnx-community/depth-anything-v2-small";
 
 export type ColourMap = "viridis" | "greyscale" | "magma" | "turbo" | "plasma";
-
-export type ProgressCallback = (loaded: number, total: number, status: string) => void;
-
-type TransformersProgressEvent = {
-  status: string;
-  loaded?: number;
-  total?: number;
-};
-
-let estimator: DepthEstimationPipeline | null = null;
-
-/** Load (or return cached) the depth-estimation pipeline. */
-export async function loadModel(onProgress?: ProgressCallback): Promise<void> {
-  if (estimator) return;
-  await configureTransformersEnv();
-
-  const progressCb = (event: TransformersProgressEvent) => {
-    if (!onProgress) return;
-    if (event.status === "progress" || event.status === "download") {
-      onProgress(event.loaded ?? 0, event.total ?? 1, event.status);
-    } else if (event.status === "initiate") {
-      onProgress(0, 1, "initiate");
-    } else if (event.status === "done") {
-      onProgress(1, 1, "done");
-    }
-  };
-
-  estimator = (await (
-    pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-  )("depth-estimation", MODEL_ID, {
-    progress_callback: progressCb,
-  })) as DepthEstimationPipeline;
-}
-
-export interface DepthResult {
-  /** Colourised depth map as a blob URL */
-  resultUrl: string;
-  /** Original image dimensions */
-  width: number;
-  height: number;
-}
 
 /** Cached raw depth data so colourmap changes don't re-run inference. */
 export interface RawDepthCache {
@@ -446,69 +402,7 @@ function crc32(data: Uint8Array): number {
   return (crc ^ 0xffffffff) >>> 0;
 }
 
-/** Run depth estimation and return a colourised depth map blob URL + raw cache. */
-export async function estimateDepth(
-  file: File,
-  colourMap: ColourMap,
-  invert: boolean
-): Promise<DepthResult & { cache: RawDepthCache }> {
-  if (!estimator) throw new Error("Model not loaded, call loadModel() first.");
-
-  const bitmap = await createImageBitmap(file);
-  const origW = bitmap.width;
-  const origH = bitmap.height;
-
-  // Build a RawImage from the file URL so transformers.js can decode it
-  const fileUrl = URL.createObjectURL(file);
-  const rawImage = await RawImage.fromURL(fileUrl);
-  URL.revokeObjectURL(fileUrl);
-
-  // Run depth estimation, returns { depth: RawImage, predicted_depth: Tensor }
-  const output = await estimator(rawImage);
-
-  // depth is a RawImage with single-channel float values (already normalised 0..1)
-  const depthMap = (output as { depth: RawImage }).depth;
-  if (!depthMap) throw new Error("Depth estimation returned no depth map.");
-
-  const depthData = depthMap.data as Float32Array | Uint8Array;
-  const depthH = depthMap.height;
-  const depthW = depthMap.width;
-
-  // Find min/max for normalisation (depth values may be raw floats)
-  let dMin = Number.POSITIVE_INFINITY;
-  let dMax = Number.NEGATIVE_INFINITY;
-  for (let i = 0; i < depthData.length; i++) {
-    const v = depthData[i];
-    if (v < dMin) dMin = v;
-    if (v > dMax) dMax = v;
-  }
-  const dRange = dMax - dMin || 1;
-
-  // Build normalised depth at original resolution (nearest-neighbour upscale)
-  const normalised = new Float32Array(origW * origH);
-  for (let py = 0; py < origH; py++) {
-    for (let px = 0; px < origW; px++) {
-      const dy = Math.min(Math.round((py / origH) * depthH), depthH - 1);
-      const dx = Math.min(Math.round((px / origW) * depthW), depthW - 1);
-      const raw = depthData[dy * depthW + dx];
-      normalised[py * origW + px] = (raw - dMin) / dRange;
-    }
-  }
-
-  bitmap.close();
-
-  const cache: RawDepthCache = { normalised, width: origW, height: origH };
-  const resultUrl = await renderDepthFromCache(cache, colourMap, invert);
-
-  return { resultUrl, width: origW, height: origH, cache };
-}
-
-/** Revoke a blob URL returned by estimateDepth(). */
+/** Revoke a blob URL returned by renderDepthFromCache() or exportRaw16bit(). */
 export function revokeResult(url: string): void {
   URL.revokeObjectURL(url);
-}
-
-/** True if the model is already loaded (cached). */
-export function isModelLoaded(): boolean {
-  return estimator !== null;
 }
