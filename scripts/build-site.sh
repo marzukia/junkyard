@@ -27,9 +27,11 @@ echo "==> Building local packages"
 cd "$ROOT/packages/ui"
 bun install --frozen-lockfile 2>/dev/null
 bun run build
-cd "$ROOT/packages/vite-config"
-bun install --frozen-lockfile 2>/dev/null
-bun run build
+if [ -d "$ROOT/packages/vite-config" ]; then
+  cd "$ROOT/packages/vite-config"
+  bun install --frozen-lockfile 2>/dev/null
+  bun run build
+fi
 cd "$ROOT"
 
 echo "==> Installing app deps (parallel, max 4 jobs)"
