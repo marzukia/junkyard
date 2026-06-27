@@ -1,6 +1,5 @@
-import react from "@vitejs/plugin-react";
 import type { Plugin } from "vite";
-import { defineConfig } from "vite";
+import { defineAppConfig } from "@junkyardsh/vite-config";
 
 /**
  * Patches @ffmpeg/ffmpeg ESM classes.js so Vite bundles the ffmpeg worker
@@ -51,11 +50,6 @@ function ffmpegClassicWorkerPlugin(): Plugin {
             'new Worker(new URL("./worker.js", import.meta.url), { type: "classic" })'
           );
         if (patched2 === code) {
-          // This module matched the ffmpeg/classes filter but neither the exact
-          // string replacement nor the regex fallback applied — the internals of
-          // @ffmpeg/ffmpeg changed from the pinned 0.12.15 source this patch was
-          // written against. Failing loudly here prevents shipping a build where
-          // the worker stays type:"module" and fails silently at runtime.
           throw new Error(
             `ffmpeg worker patch failed: expected string not found in ${id} — ` +
               "@ffmpeg/ffmpeg internals changed (pinned 0.12.15); update the patch."
@@ -71,22 +65,11 @@ function ffmpegClassicWorkerPlugin(): Plugin {
   };
 }
 
-export default defineConfig({
-  plugins: [ffmpegClassicWorkerPlugin(), react()],
-  optimizeDeps: {
-    // Exclude so the transform hook above can patch classes.js before
-    // esbuild pre-bundling hides it from Vite's plugin pipeline.
-    exclude: ["@ffmpeg/ffmpeg", "@ffmpeg/util"],
-  },
-  base: "/",
-  build: {
-    rollupOptions: {
-      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
+export default defineAppConfig({
+  extraPlugins: [ffmpegClassicWorkerPlugin()],
+  extra: {
+    optimizeDeps: {
+      exclude: ["@ffmpeg/ffmpeg", "@ffmpeg/util"],
     },
-    target: "es2022",
-  },
-  test: {
-    environment: "jsdom",
-    globals: true,
   },
 });

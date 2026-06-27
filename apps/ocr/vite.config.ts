@@ -1,24 +1,6 @@
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
-
-export default defineConfig({
-  plugins: [react()],
-  base: "/",
-  build: {
-    rollupOptions: {
-      external: ["@huggingface/transformers"],
-    },
-    target: "es2022",
-    noExternal: ["@pdf-lib/fontkit", "pako"],
-  },
-    worker: {
-    rollupOptions: {
-      external: ["@huggingface/transformers", "@pdf-lib/fontkit"],
-    },
-  },
-  test: {
-    environment: "jsdom",
-    globals: true,
-    include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
-  },
+import { defineAppConfig } from "@junkyardsh/vite-config";
+export default defineAppConfig({
+  rollupExternal: ["@huggingface/transformers"],
+  noExternal: ["@pdf-lib/fontkit", "pako"],
+  include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
 });
