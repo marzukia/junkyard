@@ -653,3 +653,33 @@
   background: #2a1616;
   color: #e87070;
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  /* Direction mode pills (Epoch to date / Date to epoch) */
+  .space-toggle button {
+    min-height: 40px;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+  }
+
+  /* Copy buttons in result rows and clock bar */
+  .ts-copy-btn {
+    min-height: 40px;
+    min-width: 56px;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.75rem;
+  }
+
+  /* Input field font size (belt-and-suspenders, the systemic rule covers most cases) */
+  .ts-input-field {
+    font-size: 16px;
+    padding: 0.65rem 0.9rem;
+  }
+}

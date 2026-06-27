@@ -512,3 +512,15 @@
 [data-mantine-color-scheme="dark"] .frames-nudge {
   color: #d4a84b;
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+}

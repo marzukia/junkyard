@@ -586,3 +586,23 @@
   color: var(--accent-ink);
   box-shadow: none;
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+  .btn-icon {
+    width: 44px;
+    height: 44px;
+  }
+  .format-btn {
+    padding: 0.5rem 0.9rem;
+    min-height: 36px;
+  }
+}

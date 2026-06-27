@@ -455,3 +455,27 @@
 [data-mantine-color-scheme="dark"] .export-bar-btn--flash {
   background: #3dbd6e;
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+  /* Layout and pill buttons: ensure minimum tap target */
+  .layout-btn {
+    min-height: 40px;
+    padding: 8px 4px;
+  }
+  .pill-btn {
+    min-height: 40px;
+    padding: 0.45rem 0.9rem;
+  }
+  .shape-btn {
+    min-height: 40px;
+  }
+}

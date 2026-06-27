@@ -497,3 +497,20 @@
   background: rgba(65, 182, 166, 0.08);
   border-color: rgba(65, 182, 166, 0.2);
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+  /* Toolbar action buttons need adequate tap targets on touch */
+  .btn-secondary {
+    min-height: 40px;
+    padding: 0.6rem 1rem;
+  }
+}

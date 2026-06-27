@@ -575,3 +575,24 @@
 [data-mantine-color-scheme="dark"] .og-char-count--warn {
   color: #e8b04b;
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+  .og-template-chip,
+  .og-bg-btn {
+    min-height: 40px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .og-section-header {
+    min-height: 44px;
+  }
+}

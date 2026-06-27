@@ -1,1 +1,29 @@
 /* Shared styles imported via @junkyardsh/ui/styles.css */
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  /* Theme toggle: ensure each pill button meets 40px tap target */
+  .space-toggle .space-btn {
+    min-height: 40px;
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+
+  /* Footer links: larger tap area without changing visual size */
+  .site-footer-link {
+    padding: 0.6rem 0.25rem;
+    margin: -0.6rem -0.25rem;
+  }
+
+  /* Result action buttons already inherit btn-primary/secondary; nudge min-height */
+  .btn-primary,
+  .btn-secondary {
+    min-height: 40px;
+  }
+}

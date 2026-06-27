@@ -308,3 +308,20 @@
   color: var(--accent-ink);
   box-shadow: none;
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  /* Pill toggles + copy/clear/example buttons: min 40px tap target */
+  .space-toggle button,
+  .b64-copy-btn,
+  .b64-tab-btn {
+    min-height: 40px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

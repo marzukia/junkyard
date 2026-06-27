@@ -460,3 +460,15 @@
   color: #41b6a6;
   border-color: #2c8073;
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+}

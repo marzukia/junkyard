@@ -368,3 +368,25 @@
 [data-mantine-color-scheme="dark"] .json-tree-val--boolean {
   color: #c79bf7;
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  /* All pill buttons (mode/indent/theme) get a minimum 40px touch target */
+  .space-toggle button,
+  .space-btn {
+    min-height: 40px;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+  }
+  /* Secondary action buttons (Copy, Download, Clear, Load sample) */
+  .btn-secondary {
+    min-height: 40px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

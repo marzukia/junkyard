@@ -302,3 +302,14 @@ kbd {
   padding: 0.05rem 0.3rem;
   color: var(--ink-mid);
 }
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+}

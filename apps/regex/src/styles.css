@@ -637,3 +637,18 @@
   background: #2e1065;
   color: #ede9fe;
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button,
+  .rx-tabs .space-btn {
+    min-height: 40px;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+  }
+}

@@ -849,3 +849,21 @@
 [data-mantine-color-scheme="dark"] .exif-group-label--sensitive {
   color: #f4b3ad;
 }
+
+
+@media (pointer: coarse) {
+  input[type="file"] {
+    font-size: 16px !important;
+  }
+}
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+}

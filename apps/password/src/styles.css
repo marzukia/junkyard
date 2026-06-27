@@ -507,3 +507,15 @@
 .pw-min-input:focus {
   border-color: var(--accent);
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+}

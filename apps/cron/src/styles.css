@@ -431,3 +431,15 @@ details[open] .cron-cheatsheet-summary::before {
   background: #2a1616;
   border-color: #4a2020;
 }
+
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  .space-toggle button {
+    min-height: 40px;
+  }
+}
