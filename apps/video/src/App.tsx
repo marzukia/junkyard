@@ -643,7 +643,7 @@ function GifPanel({
   duration: number;
 }) {
   const height = Math.round(width * 0.75); // approximate 4:3
-  const frameCount = Math.round(duration * fps);
+  const frameCount = Math.max(1, Math.round(duration * fps));
   const estimatedBytes = width * height * frameCount * 0.5; // rough palette compression
   const estimatedMB = estimatedBytes / (1024 * 1024);
 
@@ -686,9 +686,9 @@ function GifPanel({
           <div className="slider-wrap">
             <Slider
               id="gif-width"
-              min={120}
-              max={960}
-              step={40}
+              min={100}
+              max={1920}
+              step={20}
               value={width}
               onChange={onWidth}
               aria-label="GIF output width in pixels"
@@ -726,13 +726,13 @@ function GifPanel({
           id="gif-width-input"
           className="time-input"
           type="number"
-          min={120}
-          max={960}
+          min={100}
+          max={1920}
           step={10}
           value={width}
           onChange={(e) => {
             const v = Number(e.target.value);
-            if (!Number.isNaN(v) && v >= 120 && v <= 960) onWidth(Math.round(v));
+            if (!Number.isNaN(v) && v >= 100 && v <= 1920) onWidth(Math.round(v));
           }}
           aria-label="Exact GIF output width"
         />
