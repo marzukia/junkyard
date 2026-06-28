@@ -910,7 +910,6 @@ function GifPanel({
   onWidth: (v: number) => void;
   duration: number;
 }) {
-  const height = Math.round(width * 0.75); // approximate 4:3
   const frameCount = Math.max(1, Math.round(duration * fps));
   const safeDur = Math.max(0, duration);
 
