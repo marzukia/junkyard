@@ -263,6 +263,116 @@
   border-color: var(--accent);
 }
 
+/* ── Trim timeline ─────────────────────────────────────────────────────── */
+
+.trim-timeline-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trim-timeline {
+  position: relative;
+  width: 100%;
+  height: 32px;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.trim-timeline-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--rule);
+  border-radius: 999px;
+  transform: translateY(-50%);
+}
+
+.trim-timeline-range {
+  position: absolute;
+  top: 50%;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 999px;
+  transform: translateY(-50%);
+}
+
+.trim-handle {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--surface);
+  border: 3px solid var(--accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  touch-action: none;
+  z-index: 2;
+  transition: box-shadow 0.1s;
+}
+
+.trim-handle:hover,
+.trim-handle--active {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.trim-handle--start {
+  border-color: #e8b04b;
+}
+
+.trim-handle--end {
+  border-color: #d9594c;
+}
+
+.trim-handle:hover,
+.trim-handle--active {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.trim-timeline-time {
+  position: absolute;
+  top: calc(50% + 16px);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.trim-timeline-time--start {
+  color: #e8b04b;
+}
+
+.trim-timeline-time--end {
+  color: #d9594c;
+}
+
+.trim-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.trim-slider-row .slider-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.trim-slider-value {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 4rem;
+  text-align: right;
+  color: var(--ink-mid);
+}
+
 /* ── Format toggle pill ──────────────────────────────────────────────────── */
 
 .format-toggle {

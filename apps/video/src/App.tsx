@@ -358,6 +358,7 @@ export function App() {
                   end={trimEnd}
                   onStart={setTrimStart}
                   onEnd={setTrimEnd}
+                  videoRef={videoRef}
                 />
               )}
               {mode === "convert" && (
@@ -478,56 +479,280 @@ function TrimPanel({
   end,
   onStart,
   onEnd,
+  videoRef,
 }: {
   duration: number;
   start: string;
   end: string;
   onStart: (v: string) => void;
   onEnd: (v: string) => void;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
 }) {
   const startSec = parseTime(start);
   const endSec = parseTime(end);
+  const [startSlider, setStartSlider] = useState(0);
+  const [endSlider, setEndSlider] = useState(duration > 0 ? duration : 0);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<"start" | "end" | null>(null);
+
+  // Sync sliders from text inputs when duration is known
+  useEffect(() => {
+    if (duration > 0) {
+      setStartSlider(startSec);
+      setEndSlider(endSec);
+    }
+  }, [duration]); // only re-sync when duration changes (first load)
+
+  // Keep sliders in sync when text input changes
+  useEffect(() => {
+    if (duration > 0) {
+      setStartSlider(startSec);
+      setEndSlider(endSec);
+    }
+  }, [start, end, duration]);
+
+  const seekVideo = useCallback(
+    (sec: number) => {
+      if (videoRef?.current) {
+        videoRef.current.currentTime = Math.max(0, Math.min(sec, duration));
+      }
+    },
+    [videoRef, duration]
+  );
+
+  const handleTimelineClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (duration <= 0) return;
+      const rect = timelineRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      const clickSec = pct * duration;
+
+      // Determine which handle is closer
+      const dStart = Math.abs(clickSec - startSec);
+      const dEnd = Math.abs(clickSec - endSec);
+
+      if (dStart <= dEnd) {
+        // Move start handle
+        const clamped = Math.max(0, Math.min(clickSec, endSec - 1));
+        onStart(formatTime(clamped));
+        seekVideo(clamped);
+      } else {
+        // Move end handle
+        const clamped = Math.max(startSec + 1, Math.min(clickSec, duration));
+        onEnd(formatTime(clamped));
+        seekVideo(clamped);
+      }
+    },
+    [duration, startSec, endSec, onStart, onEnd, seekVideo]
+  );
+
+  const handleDragStart = useCallback(
+    (handle: "start" | "end") => (e: React.MouseEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      dragRef.current = handle;
+      const onMouseMove = (ev: MouseEvent) => {
+        if (duration <= 0) return;
+        const rect = timelineRef.current?.getBoundingClientRect();
+        if (!rect) return;
+        const pct = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width));
+        const sec = pct * duration;
+
+        if (handle === "start") {
+          const clamped = Math.max(0, Math.min(sec, endSec - 1));
+          onStart(formatTime(clamped));
+          seekVideo(clamped);
+        } else {
+          const clamped = Math.max(startSec + 1, Math.min(sec, duration));
+          onEnd(formatTime(clamped));
+          seekVideo(clamped);
+        }
+      };
+
+      const onMouseUp = () => {
+        dragRef.current = null;
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+      };
+
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
+    },
+    [duration, startSec, endSec, onStart, onEnd, seekVideo]
+  );
+
+  const handleSliderStart = useCallback(
+    (v: number) => {
+      const clamped = Math.max(0, Math.min(Math.round(v), endSec - 1));
+      onStart(formatTime(clamped));
+      seekVideo(clamped);
+    },
+    [endSec, onStart, seekVideo]
+  );
+
+  const handleSliderEnd = useCallback(
+    (v: number) => {
+      const clamped = Math.max(startSec + 1, Math.min(Math.round(v), duration));
+      onEnd(formatTime(clamped));
+      seekVideo(clamped);
+    },
+    [startSec, duration, onEnd, seekVideo]
+  );
+
+  if (duration <= 0) {
+    return (
+      <div className="panel-grid">
+        <p className="panel-hint">Load a video to see trim controls.</p>
+      </div>
+    );
+  }
+
+  const startPct = (startSec / duration) * 100;
+  const endPct = (endSec / duration) * 100;
 
   return (
     <div className="panel-grid">
+      {/* Visual timeline scrubber */}
+      <div className="trim-timeline-wrap">
+        <div
+          ref={timelineRef}
+          className="trim-timeline"
+          onClick={handleTimelineClick}
+          role="slider"
+          aria-label="Trim timeline"
+          aria-valuemin={0}
+          aria-valuemax={duration}
+          aria-valuenow={startSec}
+        >
+          <div className="trim-timeline-track" />
+          <div
+            className="trim-timeline-range"
+            style={{ left: `${startPct}%`, width: `${endPct - startPct}%` }}
+          />
+          <div
+            className="trim-handle trim-handle--start"
+            style={{ left: `${startPct}%` }}
+            onMouseDown={handleDragStart("start")}
+            role="slider"
+            aria-label="Trim start"
+            aria-valuemin={0}
+            aria-valuemax={duration}
+            aria-valuenow={startSec}
+            tabIndex={0}
+          />
+          <div
+            className="trim-handle trim-handle--end"
+            style={{ left: `${endPct}%` }}
+            onMouseDown={handleDragStart("end")}
+            role="slider"
+            aria-label="Trim end"
+            aria-valuemin={0}
+            aria-valuemax={duration}
+            aria-valuenow={endSec}
+            tabIndex={0}
+          />
+          <span className="trim-timeline-time trim-timeline-time--start" style={{ left: `${startPct}%` }}>
+            {formatTime(startSec)}
+          </span>
+          <span className="trim-timeline-time trim-timeline-time--end" style={{ left: `${endPct}%` }}>
+            {formatTime(endSec)}
+          </span>
+        </div>
+      </div>
+
+      {/* Slider controls */}
+      <div className="control-group">
+        <label className="control-label" htmlFor="trim-start-slider">
+          Start
+          <span className="control-value">{formatTime(startSec)}</span>
+        </label>
+        <div className="trim-slider-row">
+          <div className="slider-wrap">
+            <Slider
+              id="trim-start-slider"
+              min={0}
+              max={Math.max(1, duration)}
+              step={1}
+              value={startSlider}
+              onChange={handleSliderStart}
+              aria-label="Trim start time slider"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="control-group">
+        <label className="control-label" htmlFor="trim-end-slider">
+          End
+          <span className="control-value">{formatTime(endSec)}</span>
+        </label>
+        <div className="trim-slider-row">
+          <div className="slider-wrap">
+            <Slider
+              id="trim-end-slider"
+              min={0}
+              max={Math.max(1, duration)}
+              step={1}
+              value={endSlider}
+              onChange={handleSliderEnd}
+              aria-label="Trim end time slider"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Exact text inputs */}
       <div className="control-group">
         <label className="control-label" htmlFor="trim-start">
-          Start time
+          Start time (exact)
         </label>
         <input
           id="trim-start"
           className="time-input"
           type="text"
           value={start}
-          onChange={(e) => onStart(e.target.value)}
+          onChange={(e) => {
+            onStart(e.target.value);
+            const parsed = parseTime(e.target.value);
+            if (!Number.isNaN(parsed) && parsed >= 0 && parsed <= duration) {
+              seekVideo(parsed);
+            }
+          }}
           placeholder="0:00"
           aria-label="Trim start time (MM:SS)"
         />
       </div>
       <div className="control-group">
         <label className="control-label" htmlFor="trim-end">
-          End time
+          End time (exact)
         </label>
         <input
           id="trim-end"
           className="time-input"
           type="text"
           value={end}
-          onChange={(e) => onEnd(e.target.value)}
+          onChange={(e) => {
+            onEnd(e.target.value);
+            const parsed = parseTime(e.target.value);
+            if (!Number.isNaN(parsed) && parsed >= 0 && parsed <= duration) {
+              seekVideo(parsed);
+            }
+          }}
           placeholder="0:00"
           aria-label="Trim end time (MM:SS)"
         />
       </div>
-      {duration > 0 && (
-        <div className="control-group">
-          <p className="control-label">
-            Clip length
-            <span className="control-value">
-              {formatTime(Math.max(0, endSec - startSec))} of {formatTime(duration)}
-            </span>
-          </p>
-        </div>
-      )}
+
+      {/* Clip length summary */}
+      <div className="control-group">
+        <p className="control-label">
+          Clip length
+          <span className="control-value">
+            {formatTime(Math.max(0, endSec - startSec))} of {formatTime(duration)}
+          </span>
+        </p>
+      </div>
+
       <p className="panel-hint">Output is exported as MP4 with stream copy (no re-encode).</p>
     </div>
   );
