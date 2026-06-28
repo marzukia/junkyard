@@ -13,6 +13,14 @@ export {
   mobileWarningMessage,
 } from "../../../kit/components/MobileWarning";
 export { formatBytes } from "../../../kit/components/format";
+export {
+  UploadIcon,
+  DownloadIcon,
+  CheckIcon,
+  ErrorIcon,
+  SpinnerIcon,
+  WarnIcon,
+} from "../../../kit/components/icons";
 export { useCmdEnter } from "./useCmdEnter";
 
 // ── Lib ─────────────────────────────────────────────────────────────────
@@ -21,6 +29,12 @@ export {
   type AcceptedType,
   isSupportedImage,
   formatProgress,
+  clamp,
+  outputFilename,
+  parseHexColor,
+  isValidHex,
+  formatTime,
+  parseTime,
 } from "../../../kit/lib/imageHelpers";
 export {
   encodeBase64Url,
