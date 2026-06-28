@@ -79,9 +79,12 @@ export function App() {
   const [microphone, setMicrophone] = useState(false);
   const [micLevel, setMicLevel] = useState(0);
   const [micTestActive, setMicTestActive] = useState(false);
+  const [micError, setMicError] = useState<string | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
   const micAnalyserRef = useRef<AnalyserNode | null>(null);
+  const micAudioCtxRef = useRef<AudioContext | null>(null);
   const micAnimRef = useRef<number>(0);
+  const micCancelledRef = useRef(false);
   const [downloadFeedback, setDownloadFeedback] = useState(false);
 
   const activeRef = useRef<ActiveRecording | null>(null);
@@ -123,7 +126,12 @@ export function App() {
   const startMicMonitor = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (micCancelledRef.current) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
       const ctx = new AudioContext();
+      micAudioCtxRef.current = ctx;
       const source = ctx.createMediaStreamSource(stream);
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 256;
@@ -149,18 +157,24 @@ export function App() {
     } catch {
       setMicLevel(0);
       setMicTestActive(false);
+      setMicError("Mic access denied or unavailable");
     }
   }, []);
 
   const stopMicMonitor = useCallback(() => {
+    micCancelledRef.current = true;
     if (micAnimRef.current) cancelAnimationFrame(micAnimRef.current);
+    micAudioCtxRef.current?.close();
     if (micStreamRef.current) {
       micStreamRef.current.getTracks().forEach((t) => t.stop());
     }
     micStreamRef.current = null;
     micAnalyserRef.current = null;
+    micAudioCtxRef.current = null;
     setMicLevel(0);
     setMicTestActive(false);
+    setMicError(null);
+    micCancelledRef.current = false;
   }, []);
 
   // Start/stop mic monitor when microphone toggle changes
@@ -343,9 +357,9 @@ export function App() {
                   </span>
                 </div>
               )}
-              {microphone && !micTestActive && (
+              {microphone && micError && (
                 <p className="rc-meter-label rc-meter-label--muted">
-                  Mic access denied or unavailable
+                  {micError}
                 </p>
               )}
               <label className="rc-toggle-row">
