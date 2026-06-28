@@ -60,7 +60,7 @@ export async function getFFmpeg(onLoad?: ProgressCallback): Promise<FFmpeg> {
 }
 
 export async function runFFmpeg(
-  inputFile: File,
+  inputFile: File | Blob,
   args: string[],
   outputName: string,
   onProgress?: ProgressCallback
