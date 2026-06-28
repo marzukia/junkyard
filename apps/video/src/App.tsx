@@ -644,6 +644,7 @@ function GifPanel({
 }) {
   const height = Math.round(width * 0.75); // approximate 4:3
   const frameCount = Math.max(1, Math.round(duration * fps));
+  const safeDur = Math.max(0, duration);
   const estimatedBytes = width * height * frameCount * 0.5; // rough palette compression
   const estimatedMB = estimatedBytes / (1024 * 1024);
 
@@ -715,6 +716,10 @@ function GifPanel({
             const v = Number(e.target.value);
             if (!Number.isNaN(v) && v >= 5 && v <= 30) onFps(Math.round(v));
           }}
+          onBlur={(e) => {
+            const v = Number(e.target.value);
+            if (Number.isNaN(v) || v < 5 || v > 30) onFps(fps);
+          }}
           aria-label="Exact GIF frame rate"
         />
       </div>
@@ -734,6 +739,10 @@ function GifPanel({
             const v = Number(e.target.value);
             if (!Number.isNaN(v) && v >= 100 && v <= 1920) onWidth(Math.round(v));
           }}
+          onBlur={(e) => {
+            const v = Number(e.target.value);
+            if (Number.isNaN(v) || v < 100 || v > 1920) onWidth(width);
+          }}
           aria-label="Exact GIF output width"
         />
       </div>
@@ -742,10 +751,13 @@ function GifPanel({
       {duration > 0 && (
         <div className="control-group">
           <p className="control-label">
-            Estimated output
+            Estimated output (approx)
             <span className="control-value">
-              {formatTime(frameCount > 0 ? duration : 0)} video, ~{formatEstimate(estimatedMB)}, {frameCount > 0 ? `${frameCount} frames` : "—"}
+              {formatTime(safeDur)} video, ~{formatEstimate(estimatedMB)}, {frameCount} frames
             </span>
+          </p>
+          <p className="panel-hint">
+            Size depends on content complexity. Actual result may vary.
           </p>
         </div>
       )}
