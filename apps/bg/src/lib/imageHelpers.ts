@@ -1,7 +1,7 @@
 /**
  * Image helpers for bg removal — app-specific extensions on the shared core.
- * Shared core (ACCEPTED_TYPES, isSupportedImage, formatBytes, formatProgress)
- * is imported from kit/lib/imageHelpers (source of truth).
+ * Shared core (ACCEPTED_TYPES, isSupportedImage, formatBytes, formatProgress,
+ * outputFilename, parseHexColor, clamp) is imported from kit/lib/imageHelpers.
  */
 export {
   ACCEPTED_TYPES,
@@ -9,37 +9,10 @@ export {
   isSupportedImage,
   formatBytes,
   formatProgress,
+  outputFilename,
+  parseHexColor,
+  clamp,
 } from "../../../../kit/lib/imageHelpers";
-
-/** Produce a safe download filename for the processed image. */
-export function outputFilename(inputName: string): string {
-  const base = inputName.replace(/\.[^.]+$/, "");
-  return `${base}-bg-removed.png`;
-}
-
-/**
- * Validate a 3- or 6-digit hex color string (with or without leading #).
- * Returns the normalised "#rrggbb" form, or null if invalid.
- */
-export function parseHexColor(raw: string): string | null {
-  const s = raw.trim().replace(/^#/, "");
-  if (/^[0-9a-fA-F]{3}$/.test(s)) {
-    const [r, g, b] = s.split("");
-    return `#${r}${r}${g}${g}${b}${b}`.toLowerCase();
-  }
-  if (/^[0-9a-fA-F]{6}$/.test(s)) {
-    return `#${s}`.toLowerCase();
-  }
-  return null;
-}
-
-/**
- * Clamp a number to [min, max].
- * Used for the compare-slider position (0-100).
- */
-export function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
-}
 
 /**
  * Compute cover-fit placement of a source image onto a destination canvas.
