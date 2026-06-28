@@ -7,6 +7,7 @@
 import { writeFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { z } from "zod";
 import type { JunkyardApp, McpTool, AppTag } from "./catalogue-schema.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -17,6 +18,32 @@ const OUT_JSON = join(ROOT, "hub", "public", "catalogue.json");
 const VALID_CATEGORIES = new Set<string>(["image", "text", "ai", "docs"]);
 const VALID_RUNTIMES = new Set<string>(["client", "client-ai"]);
 const VALID_TAGS = new Set<AppTag>(["webgpu", "on-device-ai", "large-download", "beta"]);
+
+// Zod schema for JunkyardApp — validates app exports at build time.
+// Runs alongside the manual checks below; zod catches type errors that
+// manual field checks miss (wrong types, unexpected nested shapes).
+const AppTagEnum = z.enum(["webgpu", "on-device-ai", "large-download", "beta"]);
+const McpToolSchema = z.object({
+  name: z.string().min(1),
+  summary: z.string().optional(),
+});
+const JunkyardAppSchema = z.object({
+  slug: z.string().min(1),
+  name: z.string().min(1),
+  category: z.enum(["image", "text", "ai", "docs"]),
+  order: z.number().int().positive(),
+  tagline: z.string().min(1),
+  description: z.string().min(1),
+  incumbent: z.string(),
+  path: z.string().min(1),
+  runtime: z.enum(["client", "client-ai"]),
+  mcp: z.object({
+    exposed: z.boolean(),
+    lib: z.string(),
+    tools: z.array(McpToolSchema),
+  }),
+  tags: z.array(AppTagEnum).optional(),
+});
 
 const REQUIRED_FIELDS: (keyof JunkyardApp)[] = [
   "slug",
@@ -102,6 +129,14 @@ async function main(): Promise<void> {
     if (!data || typeof data !== "object") {
       allErrors.push(`${tsPath}: export "app" is missing or not an object`);
       continue;
+    }
+
+    // Zod validation pass — catches type errors that manual checks miss
+    const zodResult = JunkyardAppSchema.safeParse(data);
+    if (!zodResult.success) {
+      for (const issue of zodResult.error.issues) {
+        allErrors.push(`${tsPath}: ${issue.path.join(".")} — ${issue.message}`);
+      }
     }
 
     // Per-app error list - collect ALL field errors before skipping this app
