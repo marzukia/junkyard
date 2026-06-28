@@ -958,6 +958,25 @@ function BezierTab() {
   const animFrameRef = useRef<number | null>(null);
   const animStartRef = useRef<number | null>(null);
 
+  // Local string state for bezier inputs — allows typing partial/in-progress
+  // values without clamping on every keystroke. Parsed and clamped on blur.
+  const [p1xStr, setP1xStr] = useState(() => bezier.x1.toFixed(3));
+  const [p1yStr, setP1yStr] = useState(() => bezier.y1.toFixed(3));
+  const [p2xStr, setP2xStr] = useState(() => bezier.x2.toFixed(3));
+  const [p2yStr, setP2yStr] = useState(() => bezier.y2.toFixed(3));
+  const focusedInputRef = useRef<string | null>(null);
+
+  // Sync string states from bezier when a non-input source changes the value
+  // (canvas drag, preset selection), but only if the input isn't focused.
+  useEffect(() => {
+    if (!focusedInputRef.current) {
+      setP1xStr(bezier.x1.toFixed(3));
+      setP1yStr(bezier.y1.toFixed(3));
+      setP2xStr(bezier.x2.toFixed(3));
+      setP2yStr(bezier.y2.toFixed(3));
+    }
+  }, [bezier]);
+
   const css = buildBezierRule(bezier);
   const bezierValue = buildBezierValue(bezier);
 
@@ -1218,6 +1237,114 @@ function BezierTab() {
             ))}
           </div>
         </div>
+        <div className="bezier-inputs">
+          <span className="css-control-label">Control points</span>
+          <div className="bezier-input-row">
+            <div className="bezier-input-group">
+              <label className="bezier-input-label" htmlFor="bezier-x1">P1 X</label>
+              <input
+                id="bezier-x1"
+                type="number"
+                step="0.01"
+                min={0}
+                max={1}
+                value={p1xStr}
+                onFocus={() => { focusedInputRef.current = "x1"; }}
+                onChange={(e) => setP1xStr(e.target.value)}
+                onBlur={() => {
+                  focusedInputRef.current = null;
+                  const v = parseFloat(p1xStr);
+                  if (!Number.isNaN(v)) {
+                    const clamped = clamp(v, 0, 1);
+                    setBezier({ x1: clamped });
+                    setP1xStr(clamped.toFixed(3));
+                  } else {
+                    setP1xStr(bezier.x1.toFixed(3));
+                  }
+                }}
+                className="bezier-num-input"
+              />
+            </div>
+            <div className="bezier-input-group">
+              <label className="bezier-input-label" htmlFor="bezier-y1">P1 Y</label>
+              <input
+                id="bezier-y1"
+                type="number"
+                step="0.01"
+                min={-1}
+                max={2}
+                value={p1yStr}
+                onFocus={() => { focusedInputRef.current = "y1"; }}
+                onChange={(e) => setP1yStr(e.target.value)}
+                onBlur={() => {
+                  focusedInputRef.current = null;
+                  const v = parseFloat(p1yStr);
+                  if (!Number.isNaN(v)) {
+                    const clamped = clamp(v, -1, 2);
+                    setBezier({ y1: clamped });
+                    setP1yStr(clamped.toFixed(3));
+                  } else {
+                    setP1yStr(bezier.y1.toFixed(3));
+                  }
+                }}
+                className="bezier-num-input"
+              />
+            </div>
+          </div>
+          <div className="bezier-input-row">
+            <div className="bezier-input-group">
+              <label className="bezier-input-label" htmlFor="bezier-x2">P2 X</label>
+              <input
+                id="bezier-x2"
+                type="number"
+                step="0.01"
+                min={0}
+                max={1}
+                value={p2xStr}
+                onFocus={() => { focusedInputRef.current = "x2"; }}
+                onChange={(e) => setP2xStr(e.target.value)}
+                onBlur={() => {
+                  focusedInputRef.current = null;
+                  const v = parseFloat(p2xStr);
+                  if (!Number.isNaN(v)) {
+                    const clamped = clamp(v, 0, 1);
+                    setBezier({ x2: clamped });
+                    setP2xStr(clamped.toFixed(3));
+                  } else {
+                    setP2xStr(bezier.x2.toFixed(3));
+                  }
+                }}
+                className="bezier-num-input"
+              />
+            </div>
+            <div className="bezier-input-group">
+              <label className="bezier-input-label" htmlFor="bezier-y2">P2 Y</label>
+              <input
+                id="bezier-y2"
+                type="number"
+                step="0.01"
+                min={-1}
+                max={2}
+                value={p2yStr}
+                onFocus={() => { focusedInputRef.current = "y2"; }}
+                onChange={(e) => setP2yStr(e.target.value)}
+                onBlur={() => {
+                  focusedInputRef.current = null;
+                  const v = parseFloat(p2yStr);
+                  if (!Number.isNaN(v)) {
+                    const clamped = clamp(v, -1, 2);
+                    setBezier({ y2: clamped });
+                    setP2yStr(clamped.toFixed(3));
+                  } else {
+                    setP2yStr(bezier.y2.toFixed(3));
+                  }
+                }}
+                className="bezier-num-input"
+              />
+            </div>
+          </div>
+        </div>
+
 
         <div className="css-output-wrap">
           <div className="css-output-header">
