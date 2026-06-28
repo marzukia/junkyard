@@ -330,11 +330,6 @@
   border-color: #d9594c;
 }
 
-.trim-handle:hover,
-.trim-handle--active {
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
-}
-
 .trim-timeline-time {
   position: absolute;
   top: calc(50% + 16px);

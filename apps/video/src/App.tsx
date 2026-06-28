@@ -495,21 +495,24 @@ function TrimPanel({
   const timelineRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<"start" | "end" | null>(null);
 
-  // Sync sliders from text inputs when duration is known
-  useEffect(() => {
-    if (duration > 0) {
-      setStartSlider(startSec);
-      setEndSlider(endSec);
-    }
-  }, [duration]); // only re-sync when duration changes (first load)
-
-  // Keep sliders in sync when text input changes
+  // Sync sliders with text input values whenever they change
   useEffect(() => {
     if (duration > 0) {
       setStartSlider(startSec);
       setEndSlider(endSec);
     }
   }, [start, end, duration]);
+
+  /** Returns true only when input matches a strictly valid time format (s, MM:SS, HH:MM:SS). */
+  const isValidTimeFormat = (input: string): boolean => {
+    const trimmed = input.trim();
+    if (/^\d+(\.\d+)?$/.test(trimmed)) return true;
+    const parts = trimmed.split(":").map(Number);
+    if (parts.some(Number.isNaN)) return false;
+    if (parts.length === 2 && parts[0] >= 0 && parts[1] >= 0 && parts[1] < 60) return true;
+    if (parts.length === 3 && parts[0] >= 0 && parts[1] >= 0 && parts[1] < 60 && parts[2] >= 0 && parts[2] < 60) return true;
+    return false;
+  };
 
   const seekVideo = useCallback(
     (sec: number) => {
@@ -548,10 +551,11 @@ function TrimPanel({
   );
 
   const handleDragStart = useCallback(
-    (handle: "start" | "end") => (e: React.MouseEvent<HTMLDivElement>) => {
+    (handle: "start" | "end") => (e: React.PointerEvent<HTMLDivElement>) => {
       e.preventDefault();
       dragRef.current = handle;
-      const onMouseMove = (ev: MouseEvent) => {
+      e.currentTarget.setPointerCapture(e.pointerId);
+      const onPointerMove = (ev: PointerEvent) => {
         if (duration <= 0) return;
         const rect = timelineRef.current?.getBoundingClientRect();
         if (!rect) return;
@@ -569,14 +573,14 @@ function TrimPanel({
         }
       };
 
-      const onMouseUp = () => {
+      const onPointerUp = () => {
         dragRef.current = null;
-        window.removeEventListener("mousemove", onMouseMove);
-        window.removeEventListener("mouseup", onMouseUp);
+        window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerup", onPointerUp);
       };
 
-      window.addEventListener("mousemove", onMouseMove);
-      window.addEventListener("mouseup", onMouseUp);
+      window.addEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerup", onPointerUp);
     },
     [duration, startSec, endSec, onStart, onEnd, seekVideo]
   );
@@ -627,12 +631,13 @@ function TrimPanel({
           <div className="trim-timeline-track" />
           <div
             className="trim-timeline-range"
-            style={{ left: `${startPct}%`, width: `${endPct - startPct}%` }}
+            style={{ left: `${startPct}%`, width: `${Math.max(0, endPct - startPct)}%` }}
           />
           <div
             className="trim-handle trim-handle--start"
             style={{ left: `${startPct}%` }}
-            onMouseDown={handleDragStart("start")}
+            onPointerDown={handleDragStart("start")}
+            onClick={(e) => e.stopPropagation()}
             role="slider"
             aria-label="Trim start"
             aria-valuemin={0}
@@ -643,7 +648,8 @@ function TrimPanel({
           <div
             className="trim-handle trim-handle--end"
             style={{ left: `${endPct}%` }}
-            onMouseDown={handleDragStart("end")}
+            onPointerDown={handleDragStart("end")}
+            onClick={(e) => e.stopPropagation()}
             role="slider"
             aria-label="Trim end"
             aria-valuemin={0}
@@ -713,9 +719,11 @@ function TrimPanel({
           value={start}
           onChange={(e) => {
             onStart(e.target.value);
-            const parsed = parseTime(e.target.value);
-            if (!Number.isNaN(parsed) && parsed >= 0 && parsed <= duration) {
-              seekVideo(parsed);
+            if (isValidTimeFormat(e.target.value)) {
+              const parsed = parseTime(e.target.value);
+              if (parsed >= 0 && parsed <= duration) {
+                seekVideo(parsed);
+              }
             }
           }}
           placeholder="0:00"
@@ -733,9 +741,11 @@ function TrimPanel({
           value={end}
           onChange={(e) => {
             onEnd(e.target.value);
-            const parsed = parseTime(e.target.value);
-            if (!Number.isNaN(parsed) && parsed >= 0 && parsed <= duration) {
-              seekVideo(parsed);
+            if (isValidTimeFormat(e.target.value)) {
+              const parsed = parseTime(e.target.value);
+              if (parsed >= 0 && parsed <= duration) {
+                seekVideo(parsed);
+              }
             }
           }}
           placeholder="0:00"
