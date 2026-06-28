@@ -1,20 +1,33 @@
 # junkyard — shared kit
 
-Vendored shared code for every tool at `junkyard.sh`. Not an npm package — copy the files
-and fill the placeholders. When `@junkyard/ui` is eventually extracted, this kit becomes
-the source of truth for that package.
+Canonical source for shared UI components, theme, and utilities across every tool at `junkyard.sh`.
+The kit is consumed via the `@junkyardsh/ui` npm package (`packages/ui/`), which re-exports
+from `kit/`. Apps import from `@junkyardsh/ui` — they do **not** copy kit files directly.
 
 ## Kit contents
 
 ```
 kit/
   theme.ts                  — Mantine createTheme (Roboto + Roboto Mono, teal primary)
-  styles.css                — Design-system CSS vars light+dark, card/pill/button/footer
+  styles.css                — Design-system CSS vars light+dark, site layout, touch zoom fixes
   components/
     BrandMark.tsx           — SVG glyph wrapper (pass glyph as children)
     Header.tsx              — Utility bar + ThemeToggle + title slot + optional controls
     Footer.tsx              — "Made by Andryo Marzuki" + colours cross-link
     ThemeToggle.tsx         — System/Light/Dark pill toggle
+    AppSwitcher.tsx         — Nav switcher, fetches /catalogue.json at runtime
+    MobileWarning.tsx       — Mobile warning overlay for heavy AI apps
+    format.ts               — formatBytes utility
+  lib/
+    base64url.ts            — Base64URL encode/decode
+    cronGrammar.ts          — Cron expression parser/validator
+    csvParse.ts             — CSV delimiter detection and row splitting
+    imageHelpers.ts         — Shared image helpers (ACCEPTED_TYPES, isSupportedImage, formatBytes, formatProgress)
+    qrContent.ts            — WiFi/VCARD QR payload builders
+    unicodeFont.ts          — Unicode font conversion
+    unitsData.ts            — Unit conversion data and logic
+    workerInference.ts      — Shared worker boilerplate (env config, progress posting, model caching)
+    workerTask.ts           — useWorkerTask React hook for worker communication
   seo/
     index-template.html     — Full <head>: SEO + OG + Twitter + JSON-LD + no-flash + Umami
   deploy/
@@ -22,107 +35,30 @@ kit/
   vite.config.ts            — Vite config (react plugin, base "/", es2022 target)
   tsconfig.json             — Strict TS, bundler resolution, react-jsx
   biome.json                — Biome lint + format config
-  package.json              — Baseline deps (rename "name" field)
+  package.json              — Baseline deps
 ```
 
-## How to consume the kit (per tool)
+## How to consume (per tool)
 
-> **NOTE (superseded):** the per-tool scaffold below describes the retired per-subdomain model (per-tool `git init`, `CNAME <slug>.mrzk.io`, per-tool `.github/workflows`, `__UMAMI_ID__` placeholder). For the current workflow see [CONTRIBUTING.md](../CONTRIBUTING.md) §Adding a new tool.
+Apps import from `@junkyardsh/ui`, not from `kit/` directly. See
+[CONTRIBUTING.md](../CONTRIBUTING.md) §Adding a new tool for the current workflow.
 
-### 1. Bootstrap the tool directory
-
-```bash
-mkdir /home/planky/projects/_fleet/tool-<slug>
-cd /home/planky/projects/_fleet/tool-<slug>
-git init
-git config user.name "Andryo Marzuki"
-git config user.email "42439397+marzukia@users.noreply.github.com"
-```
-
-### 2. Copy kit files
-
-```bash
-KIT=/home/planky/projects/_fleet/kit
-TOOL=/home/planky/projects/_fleet/tool-<slug>
-
-cp $KIT/vite.config.ts $TOOL/
-cp $KIT/tsconfig.json  $TOOL/
-cp $KIT/biome.json     $TOOL/
-cp $KIT/package.json   $TOOL/          # then edit "name" field
-
-mkdir -p $TOOL/src/kit/components $TOOL/.github/workflows $TOOL/public
-
-cp $KIT/theme.ts                        $TOOL/src/kit/
-cp $KIT/styles.css                      $TOOL/src/kit/
-cp $KIT/components/BrandMark.tsx        $TOOL/src/kit/components/
-cp $KIT/components/Header.tsx           $TOOL/src/kit/components/
-cp $KIT/components/Footer.tsx           $TOOL/src/kit/components/
-cp $KIT/components/ThemeToggle.tsx      $TOOL/src/kit/components/
-cp $KIT/seo/index-template.html         $TOOL/index.html
-cp $KIT/deploy/deploy-pages.yml         $TOOL/.github/workflows/deploy-pages.yml
-```
-
-### 3. Fill placeholders in index.html
-
-Open `index.html` and replace every `{{...}}` token:
-
-| Placeholder      | Example value                                                    |
-|------------------|------------------------------------------------------------------|
-| `{{TITLE}}`      | `Typecheck — Free Font Pairing Tool`                             |
-| `{{DESC}}`       | `Free font pairing tool. Preview Inter, DM Sans, ... no signup.` |
-| `{{KEYWORDS}}`   | `font pairing, google fonts alternative, ...`                    |
-| `{{SLUG}}`       | `typecheck`                                                      |
-| `{{APP_CAT}}`    | `DesignApplication`                                              |
-| `{{FEATURE_LIST}}`| `["Font preview", "Pairing suggestions", "Export CSS"]`         |
-
-Replace `__UMAMI_ID__` with the real Umami site ID after creating the site.
-
-### 4. Add public/ files
-
-```
-public/
-  CNAME        — one line: <slug>.mrzk.io
-  favicon.svg  — tool's unique glyph (32×32, brand palette)
-  og.png       — 1200×630 OG banner
-  robots.txt   — (see below)
-  sitemap.xml  — (see below)
-```
-
-**robots.txt**:
-```
-User-agent: *
-Allow: /
-Sitemap: https://<slug>.mrzk.io/sitemap.xml
-```
-
-**sitemap.xml**:
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://<slug>.mrzk.io/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>
-```
-
-### 5. Wire up main.tsx
+### main.tsx wiring
 
 ```tsx
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/500.css";
-import "@fontsource/inter/600.css";
-import "@fontsource/inter/800.css";
-import "@fontsource/jetbrains-mono/400.css";
-import "@fontsource/jetbrains-mono/500.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
+import "@fontsource/roboto-mono/400.css";
+import "@fontsource/roboto-mono/500.css";
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { fleetTheme } from "@junkyardsh/ui";
 import { App } from "./App";
-import "./kit/styles.css";
-import { fleetTheme } from "./kit/theme";
+import "@junkyardsh/ui/styles.css";
+import "./styles.css";
 
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("Root element not found");
@@ -136,19 +72,15 @@ createRoot(rootEl).render(
 );
 ```
 
-### 6. Wire up App.tsx
+### App.tsx wiring
 
 ```tsx
-import { BrandMark } from "./kit/components/BrandMark";
-import { Footer } from "./kit/components/Footer";
-import { Header } from "./kit/components/Header";
+import { BrandMark, Footer, Header } from "@junkyardsh/ui";
 
-// Define the tool's unique glyph inline — must fit a 32×32 viewBox.
 function ToolGlyph() {
   return (
     <>
       <rect x="2" y="2" width="28" height="28" rx="4" fill="#2f9d8d" />
-      {/* ... */}
     </>
   );
 }
@@ -160,7 +92,6 @@ export function App() {
         title="Tool Name"
         subtitle="One-line descriptor"
         brandMark={<BrandMark><ToolGlyph /></BrandMark>}
-        controls={/* optional tool controls */}
       />
       <main className="site-main">
         {/* tool UI here — wrap cards in <div className="card"> */}
@@ -170,29 +101,6 @@ export function App() {
   );
 }
 ```
-
-### 7. Validate before committing
-
-```bash
-npm ci
-npx biome ci src/          # must exit 0
-npx tsc --noEmit           # must exit 0
-npm run test               # must pass
-npm run build              # must succeed
-
-# Confirm dist/ contains:
-ls dist/CNAME dist/og.png dist/robots.txt dist/sitemap.xml dist/favicon.svg
-grep '<slug>.mrzk.io' dist/index.html     # canonical, og:url, JSON-LD
-```
-
-### 8. Initial commit
-
-```bash
-git add <specific files>
-git commit -m "feat: <slug> — <one-liner>"
-```
-
-Do NOT push — the orchestrator creates repos and deploys.
 
 ## Design tokens (quick reference)
 
@@ -211,9 +119,8 @@ Do NOT push — the orchestrator creates repos and deploys.
 
 Brand palette (use for glyphs/accents): teal `#2f9d8d`, amber `#e8b04b`, coral `#d9594c`.
 
-## Deferral note
+## Extraction note
 
-The kit is vendored (copy-paste) rather than published to npm so that parallel tool builds
-don't block on a package registry publish step. The next natural extraction point is after
-2–3 tools are live and the component API has stabilised — at that point, move `src/kit/`
-into a proper `@junkyard/ui` workspace package and update each tool's imports.
+The kit was originally vendored (copy-paste per app) and has since been extracted to the
+`@junkyardsh/ui` npm package (`packages/ui/`). All apps import from `@junkyardsh/ui`.
+The kit remains the source of truth — `packages/ui/src/index.ts` re-exports from `kit/`.

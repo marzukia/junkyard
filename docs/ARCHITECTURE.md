@@ -27,12 +27,12 @@ Each app is built independently with Vite's `--base` flag set to `/<slug>/`, so 
 
 `kit/` holds the canonical source for shared UI components and config. These are published as the `@junkyardsh/ui` npm package (`packages/ui/`):
 
-- `theme.ts` → `fleetTheme` - Mantine theme (Inter + JetBrains Mono, teal primary `#2f9d8d`)
-- `styles.css` - design-system CSS variables for light and dark modes
+- `theme.ts` → `fleetTheme` - Mantine theme (Roboto + Roboto Mono, teal primary `#2f9d8d`)
+- `styles.css` - design-system CSS variables for light and dark modes, site layout (header, footer, cards, buttons), and touch-screen zoom prevention
 - `components/AppSwitcher.tsx` + `AppSwitcher.css` - nav switcher, fetches `/catalogue.json` at runtime
 - `components/MobileWarning.tsx` + `MobileWarning.css` - mobile warning overlay for heavy AI apps
 - `components/BrandMark.tsx`, `Header.tsx`, `Footer.tsx`, `ThemeToggle.tsx` - shared UI shells
-- `lib/*` - shared utilities (`base64url`, `cronGrammar`, `csvParse`, `qrContent`, `unicodeFont`, `unitsData`, `workerTask`, `format`, `transformersEnv`)
+- `lib/*` - shared utilities (`base64url`, `cronGrammar`, `csvParse`, `imageHelpers`, `qrContent`, `unicodeFont`, `unitsData`, `workerInference`, `workerTask`, `format`)
 
 All 45 apps import from `@junkyardsh/ui` instead of vendoring copies. CI builds the package once in `packages/ui/` and lint checks all apps against it. The package is published to npm public registry under the `@junkyardsh` scope.
 
