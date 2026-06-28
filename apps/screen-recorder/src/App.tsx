@@ -77,6 +77,14 @@ export function App() {
 
   const [systemAudio, setSystemAudio] = useState(false);
   const [microphone, setMicrophone] = useState(false);
+  const [micLevel, setMicLevel] = useState(0);
+  const [micTestActive, setMicTestActive] = useState(false);
+  const [micError, setMicError] = useState<string | null>(null);
+  const micStreamRef = useRef<MediaStream | null>(null);
+  const micAnalyserRef = useRef<AnalyserNode | null>(null);
+  const micAudioCtxRef = useRef<AudioContext | null>(null);
+  const micAnimRef = useRef<number>(0);
+  const micCancelledRef = useRef(false);
   const [downloadFeedback, setDownloadFeedback] = useState(false);
 
   const activeRef = useRef<ActiveRecording | null>(null);
@@ -112,6 +120,72 @@ export function App() {
       activeRef.current?.stop();
     };
   }, [stopTimer]);
+
+  // ── Microphone level meter ─────────────────────────────────────────────────
+
+  const startMicMonitor = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (micCancelledRef.current) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
+      const ctx = new AudioContext();
+      micAudioCtxRef.current = ctx;
+      const source = ctx.createMediaStreamSource(stream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 256;
+      source.connect(analyser);
+      micStreamRef.current = stream;
+      micAnalyserRef.current = analyser;
+      setMicTestActive(true);
+
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      const tick = () => {
+        if (!micAnalyserRef.current) return;
+        micAnalyserRef.current.getByteTimeDomainData(data);
+        let sum = 0;
+        for (let i = 0; i < data.length; i++) {
+          const v = data[i] - 128;
+          sum += v * v;
+        }
+        const rms = Math.sqrt(sum / data.length);
+        setMicLevel(Math.min(1, rms / 128));
+        micAnimRef.current = requestAnimationFrame(tick);
+      };
+      tick();
+    } catch {
+      setMicLevel(0);
+      setMicTestActive(false);
+      setMicError("Mic access denied or unavailable");
+    }
+  }, []);
+
+  const stopMicMonitor = useCallback(() => {
+    micCancelledRef.current = true;
+    if (micAnimRef.current) cancelAnimationFrame(micAnimRef.current);
+    micAudioCtxRef.current?.close();
+    if (micStreamRef.current) {
+      micStreamRef.current.getTracks().forEach((t) => t.stop());
+    }
+    micStreamRef.current = null;
+    micAnalyserRef.current = null;
+    micAudioCtxRef.current = null;
+    setMicLevel(0);
+    setMicTestActive(false);
+    setMicError(null);
+    micCancelledRef.current = false;
+  }, []);
+
+  // Start/stop mic monitor when microphone toggle changes
+  useEffect(() => {
+    if (microphone && phase === "idle") {
+      startMicMonitor();
+    } else {
+      stopMicMonitor();
+    }
+    return () => stopMicMonitor();
+  }, [microphone, phase, startMicMonitor, stopMicMonitor]);
 
   // ── Finalize recording → build blob + object URL ─────────────────────────────
 
@@ -270,6 +344,24 @@ export function App() {
                 />
                 <span className="rc-toggle-label">Record microphone</span>
               </label>
+              {microphone && micTestActive && (
+                <div className="rc-meter-wrap">
+                  <div className="rc-meter-bar">
+                    <div
+                      className="rc-meter-fill"
+                      style={{ width: `${micLevel * 100}%` }}
+                    />
+                  </div>
+                  <span className="rc-meter-label">
+                    {micLevel > 0.01 ? `${Math.round(micLevel * 100)}%` : "awaiting signal..."}
+                  </span>
+                </div>
+              )}
+              {microphone && micError && (
+                <p className="rc-meter-label rc-meter-label--muted">
+                  {micError}
+                </p>
+              )}
               <label className="rc-toggle-row">
                 <input
                   type="checkbox"
