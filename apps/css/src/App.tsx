@@ -1218,6 +1218,82 @@ function BezierTab() {
             ))}
           </div>
         </div>
+        <div className="bezier-inputs">
+          <span className="css-control-label">Control points</span>
+          <div className="bezier-input-row">
+            <div className="bezier-input-group">
+              <label className="bezier-input-label" htmlFor="bezier-x1">P1 X</label>
+              <input
+                id="bezier-x1"
+                type="number"
+                step="0.01"
+                min={0}
+                max={1}
+                value={Number(bezier.x1.toFixed(3))}
+                onChange={(e) => {
+                  const v = parseFloat(e.target.value);
+                  if (!Number.isNaN(v)) setBezier({ x1: clamp(v, 0, 1) });
+                }}
+                className="bezier-num-input"
+                aria-label="Control point 1 X coordinate"
+              />
+            </div>
+            <div className="bezier-input-group">
+              <label className="bezier-input-label" htmlFor="bezier-y1">P1 Y</label>
+              <input
+                id="bezier-y1"
+                type="number"
+                step="0.01"
+                min={-1}
+                max={2}
+                value={Number(bezier.y1.toFixed(3))}
+                onChange={(e) => {
+                  const v = parseFloat(e.target.value);
+                  if (!Number.isNaN(v)) setBezier({ y1: clamp(v, -1, 2) });
+                }}
+                className="bezier-num-input"
+                aria-label="Control point 1 Y coordinate"
+              />
+            </div>
+          </div>
+          <div className="bezier-input-row">
+            <div className="bezier-input-group">
+              <label className="bezier-input-label" htmlFor="bezier-x2">P2 X</label>
+              <input
+                id="bezier-x2"
+                type="number"
+                step="0.01"
+                min={0}
+                max={1}
+                value={Number(bezier.x2.toFixed(3))}
+                onChange={(e) => {
+                  const v = parseFloat(e.target.value);
+                  if (!Number.isNaN(v)) setBezier({ x2: clamp(v, 0, 1) });
+                }}
+                className="bezier-num-input"
+                aria-label="Control point 2 X coordinate"
+              />
+            </div>
+            <div className="bezier-input-group">
+              <label className="bezier-input-label" htmlFor="bezier-y2">P2 Y</label>
+              <input
+                id="bezier-y2"
+                type="number"
+                step="0.01"
+                min={-1}
+                max={2}
+                value={Number(bezier.y2.toFixed(3))}
+                onChange={(e) => {
+                  const v = parseFloat(e.target.value);
+                  if (!Number.isNaN(v)) setBezier({ y2: clamp(v, -1, 2) });
+                }}
+                className="bezier-num-input"
+                aria-label="Control point 2 Y coordinate"
+              />
+            </div>
+          </div>
+        </div>
+
 
         <div className="css-output-wrap">
           <div className="css-output-header">
