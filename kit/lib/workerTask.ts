@@ -19,7 +19,7 @@
  *
  * The message protocol is typed generically so the hook works for any tool.
  */
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export type WorkerMsg<TResult> =
   | { type: "progress"; loaded: number; total: number; status: string }
@@ -81,6 +81,17 @@ export function shouldEmitProgress(
  */
 export function useWorkerTask<TArgs, TResult>() {
   const workerRef = useRef<Worker | null>(null);
+
+  // Terminate worker on unmount — prevents zombie workers surviving past
+  // component teardown (e.g. navigating away mid-inference).
+  useEffect(() => {
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.terminate();
+        workerRef.current = null;
+      }
+    };
+  }, []);
 
   const cancel = useCallback(() => {
     if (workerRef.current) {
