@@ -81,7 +81,8 @@ export async function runFFmpeg(
   if (handler) ff.on("progress", handler);
   ff.on("log", logHandler);
 
-  const inName = `input_${Date.now()}_${inputFile.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+  const inputName = inputFile instanceof File ? inputFile.name : "clip";
+  const inName = `input_${Date.now()}_${inputName.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
 
   let bytes: Uint8Array;
   try {
