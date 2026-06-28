@@ -4,7 +4,6 @@
  * resizes via canvas.
  */
 import imageCompression from "browser-image-compression";
-import heic2any from "heic2any";
 import {
   bitmapToBlob,
   computeOutputDimensions,
@@ -62,6 +61,7 @@ export async function processFile(
     // heic2any decodes HEIC → PNG/JPEG/WEBP Blob directly (no AVIF support)
     // For AVIF output from HEIC, decode to PNG first then re-encode via canvas
     const toType = format === "avif" ? "PNG" : format === "jpg" ? "JPEG" : format.toUpperCase();
+    const heic2any = (await import("heic2any")).default;
     const result = await heic2any({
       blob: file,
       toType,

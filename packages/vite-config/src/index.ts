@@ -1,5 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { resolve } from "path";
 
 export interface AppConfigOptions {
   /** Per-app globals for test (default: true) */
@@ -46,6 +47,28 @@ export function defineAppConfig(options: AppConfigOptions = {}): Record<string, 
   const config: Record<string, any> = {
     plugins: [react()],
     base,
+    resolve: {
+      // Force @mantine/core and react to resolve from the app's own
+      // node_modules. Without this, @junkyardsh/ui (symlinked from
+      // packages/ui/) brings its own node_modules copy of @mantine/core,
+      // causing Vite to bundle two instances → duplicate React contexts →
+      // "MantineProvider was not found in tree" crash.
+      alias: [
+        {
+          find: "@mantine/core",
+          replacement: resolve(process.cwd(), "node_modules/@mantine/core"),
+        },
+        {
+          find: "react",
+          replacement: resolve(process.cwd(), "node_modules/react"),
+        },
+        {
+          find: "react-dom",
+          replacement: resolve(process.cwd(), "node_modules/react-dom"),
+        },
+      ],
+      dedupe: ["react", "react-dom", "@mantine/core"],
+    },
     build: {
       rollupOptions: {
         external: rollupExternal,

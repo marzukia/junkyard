@@ -10,7 +10,7 @@ export default defineConfig({
       fileName: "index",
     },
     rollupOptions: {
-      external: ["vite", "@vitejs/plugin-react"],
+      external: ["vite", "@vitejs/plugin-react", "path", "process"],
     },
   },
 });
