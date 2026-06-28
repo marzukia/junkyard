@@ -72,6 +72,8 @@ export function App() {
         store.loadImage(file, url, img.naturalWidth, img.naturalHeight);
         setResizeWStr("");
         setResizeHStr("");
+        setResizeWSlider(0);
+        setResizeHSlider(0);
       } catch {
         URL.revokeObjectURL(url);
         setLoadError(`Could not load "${file.name}" as an image.`);
