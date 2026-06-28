@@ -1,4 +1,4 @@
-import { type ImageSegmentationPipeline, RawImage, pipeline } from "@huggingface/transformers";
+import { type ImageSegmentationPipeline, RawImage, pipeline, env } from "@huggingface/transformers";
 /**
  * Web Worker for bg (background removal): runs model load + inference off the main thread.
  * Returns image bytes as ArrayBuffer (blob URLs don't cross worker boundaries).
@@ -32,7 +32,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!segmenter) {
-      segmenter = await loadPipeline<ImageSegmentationPipeline>(
+      segmenter = await loadPipeline<ImageSegmentationPipeline>(env,
         async (progressCb) => {
           return (await (
             pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>

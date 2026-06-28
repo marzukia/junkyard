@@ -41,7 +41,7 @@ export function defineAppConfig(options: AppConfigOptions = {}): Record<string, 
     testEnvironment = "jsdom",
   } = options;
 
-  const workerExternal = workerExternalOpt ?? ["@huggingface/transformers"];
+  const workerExternal = workerExternalOpt ?? [];
 
   const config: Record<string, any> = {
     plugins: [react()],
