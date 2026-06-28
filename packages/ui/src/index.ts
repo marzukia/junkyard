@@ -13,6 +13,13 @@ export {
   mobileWarningMessage,
 } from "../../../kit/components/MobileWarning";
 export { formatBytes } from "../../../kit/components/format";
+export { clamp } from "../../../kit/lib/clamp";
+export { outputFilename } from "../../../kit/lib/outputFilename";
+export { parseHexColor, isValidHex } from "../../../kit/lib/hexColor";
+export { parseTime, formatTime } from "../../../kit/lib/timeFormat";
+export {
+  UploadIcon, DownloadIcon, CheckIcon, ErrorIcon, WarnIcon, SpinnerIcon,
+} from "../../../kit/components/icons";
 export { useCmdEnter } from "./useCmdEnter";
 
 // ── Lib ─────────────────────────────────────────────────────────────────
