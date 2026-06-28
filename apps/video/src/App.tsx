@@ -494,6 +494,7 @@ function TrimPanel({
   const [endSlider, setEndSlider] = useState(duration > 0 ? duration : 0);
   const timelineRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<"start" | "end" | null>(null);
+  const pointerMoveCleanup = useRef<(() => void) | null>(null);
 
   // Sync sliders with text input values whenever they change
   useEffect(() => {
@@ -501,7 +502,7 @@ function TrimPanel({
       setStartSlider(startSec);
       setEndSlider(endSec);
     }
-  }, [start, end, duration]);
+  }, [start, end, duration, startSec, endSec]);
 
   /** Returns true only when input matches a strictly valid time format (s, MM:SS, HH:MM:SS). */
   const isValidTimeFormat = (input: string): boolean => {
@@ -517,7 +518,8 @@ function TrimPanel({
   const seekVideo = useCallback(
     (sec: number) => {
       if (videoRef?.current) {
-        videoRef.current.currentTime = Math.max(0, Math.min(sec, duration));
+        const maxDur = videoRef.current.duration || duration;
+        videoRef.current.currentTime = Math.max(0, Math.min(sec, maxDur));
       }
     },
     [videoRef, duration]
@@ -555,6 +557,10 @@ function TrimPanel({
       e.preventDefault();
       dragRef.current = handle;
       e.currentTarget.setPointerCapture(e.pointerId);
+
+      // Clean up any lingering listeners before creating new ones
+      if (pointerMoveCleanup.current) pointerMoveCleanup.current();
+
       const onPointerMove = (ev: PointerEvent) => {
         if (duration <= 0) return;
         const rect = timelineRef.current?.getBoundingClientRect();
@@ -577,13 +583,25 @@ function TrimPanel({
         dragRef.current = null;
         window.removeEventListener("pointermove", onPointerMove);
         window.removeEventListener("pointerup", onPointerUp);
+        pointerMoveCleanup.current = null;
       };
 
       window.addEventListener("pointermove", onPointerMove);
       window.addEventListener("pointerup", onPointerUp);
+      pointerMoveCleanup.current = () => {
+        window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerup", onPointerUp);
+      };
     },
     [duration, startSec, endSec, onStart, onEnd, seekVideo]
   );
+
+  // Clean up drag listeners on unmount
+  useEffect(() => {
+    return () => {
+      if (pointerMoveCleanup.current) pointerMoveCleanup.current();
+    };
+  }, []);
 
   const handleSliderStart = useCallback(
     (v: number) => {
@@ -622,11 +640,8 @@ function TrimPanel({
           ref={timelineRef}
           className="trim-timeline"
           onClick={handleTimelineClick}
-          role="slider"
+          role="group"
           aria-label="Trim timeline"
-          aria-valuemin={0}
-          aria-valuemax={duration}
-          aria-valuenow={startSec}
         >
           <div className="trim-timeline-track" />
           <div
@@ -638,6 +653,14 @@ function TrimPanel({
             style={{ left: `${startPct}%` }}
             onPointerDown={handleDragStart("start")}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              const step = e.key === "ArrowLeft" ? -1 : e.key === "ArrowRight" ? 1 : 0;
+              if (step === 0) return;
+              e.preventDefault();
+              const clamped = Math.max(0, Math.min(startSec + step, endSec - 1));
+              onStart(formatTime(clamped));
+              seekVideo(clamped);
+            }}
             role="slider"
             aria-label="Trim start"
             aria-valuemin={0}
@@ -650,6 +673,14 @@ function TrimPanel({
             style={{ left: `${endPct}%` }}
             onPointerDown={handleDragStart("end")}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              const step = e.key === "ArrowLeft" ? -1 : e.key === "ArrowRight" ? 1 : 0;
+              if (step === 0) return;
+              e.preventDefault();
+              const clamped = Math.max(startSec + 1, Math.min(endSec + step, duration));
+              onEnd(formatTime(clamped));
+              seekVideo(clamped);
+            }}
             role="slider"
             aria-label="Trim end"
             aria-valuemin={0}
@@ -721,7 +752,8 @@ function TrimPanel({
             onStart(e.target.value);
             if (isValidTimeFormat(e.target.value)) {
               const parsed = parseTime(e.target.value);
-              if (parsed >= 0 && parsed <= duration) {
+              const maxDur = videoRef.current?.duration || duration;
+              if (parsed >= 0 && parsed <= maxDur && parsed < endSec) {
                 seekVideo(parsed);
               }
             }
@@ -743,7 +775,8 @@ function TrimPanel({
             onEnd(e.target.value);
             if (isValidTimeFormat(e.target.value)) {
               const parsed = parseTime(e.target.value);
-              if (parsed >= 0 && parsed <= duration) {
+              const maxDur = videoRef.current?.duration || duration;
+              if (parsed >= startSec && parsed <= maxDur) {
                 seekVideo(parsed);
               }
             }
