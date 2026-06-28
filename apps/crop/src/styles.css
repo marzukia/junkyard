@@ -279,6 +279,54 @@
   color: var(--ink-faint);
 }
 
+.resize-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.resize-slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.resize-slider-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.resize-slider-value {
+  font-size: 0.72rem;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+.resize-slider-row .mantine-Slider-track::before {
+  background-color: var(--rule) !important;
+}
+
+.resize-slider-row .mantine-Slider-bar {
+  background-color: var(--accent) !important;
+}
+
+.resize-slider-row .mantine-Slider-thumb {
+  border-color: var(--accent) !important;
+  background: var(--surface) !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-width: 3px !important;
+}
+
 /* Lock button */
 
 .lock-btn {

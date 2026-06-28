@@ -1,6 +1,7 @@
 import { BrandMark } from "@junkyardsh/ui";
 import { Footer } from "@junkyardsh/ui";
 import { Header } from "@junkyardsh/ui";
+import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CropCanvas } from "./components/CropCanvas";
 import {
@@ -31,6 +32,8 @@ export function App() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [resizeWStr, setResizeWStr] = useState("");
   const [resizeHStr, setResizeHStr] = useState("");
+  const [resizeWSlider, setResizeWSlider] = useState(0);
+  const [resizeHSlider, setResizeHSlider] = useState(0);
   const [socialOpen, setSocialOpen] = useState(false);
 
   // Keyboard undo/redo and Cmd+Enter export
@@ -134,10 +137,12 @@ export function App() {
     const n = Number.parseInt(val, 10);
     if (!Number.isNaN(n) && n > 0) {
       store.setResizeW(n);
+      setResizeWSlider(n);
       if (store.resizeLocked && store.crop.w > 0) {
         const h = proportionalHeight(store.crop.w, store.crop.h, n);
         store.setResizeH(h);
         setResizeHStr(String(h));
+        setResizeHSlider(h);
       }
     } else {
       store.setResizeW(0);
@@ -149,13 +154,39 @@ export function App() {
     const n = Number.parseInt(val, 10);
     if (!Number.isNaN(n) && n > 0) {
       store.setResizeH(n);
+      setResizeHSlider(n);
       if (store.resizeLocked && store.crop.h > 0) {
         const w = proportionalHeight(store.crop.h, store.crop.w, n);
         store.setResizeW(w);
         setResizeWStr(String(w));
+        setResizeWSlider(w);
       }
     } else {
       store.setResizeH(0);
+    }
+  };
+
+  const handleResizeWSlider = (val: number) => {
+    store.setResizeW(val);
+    setResizeWStr(String(val));
+    setResizeWSlider(val);
+    if (store.resizeLocked && store.crop.w > 0) {
+      const h = proportionalHeight(store.crop.w, store.crop.h, val);
+      store.setResizeH(h);
+      setResizeHStr(String(h));
+      setResizeHSlider(h);
+    }
+  };
+
+  const handleResizeHSlider = (val: number) => {
+    store.setResizeH(val);
+    setResizeHStr(String(val));
+    setResizeHSlider(val);
+    if (store.resizeLocked && store.crop.h > 0) {
+      const w = proportionalHeight(store.crop.h, store.crop.w, val);
+      store.setResizeW(w);
+      setResizeWStr(String(w));
+      setResizeWSlider(w);
     }
   };
 
@@ -638,6 +669,38 @@ export function App() {
                         onChange={(e) => handleResizeHChange(e.target.value)}
                         className="resize-input"
                         aria-label="Output height in pixels"
+                      />
+                    </div>
+                  </div>
+                  <div className="resize-sliders">
+                    <div className="resize-slider-row">
+                      <label className="resize-slider-label" htmlFor="resize-w-slider">
+                        Width
+                        <span className="resize-slider-value">{store.resizeW > 0 ? store.resizeW : "auto"}px</span>
+                      </label>
+                      <Slider
+                        id="resize-w-slider"
+                        min={1}
+                        max={Math.max(1, store.imageW)}
+                        step={1}
+                        value={resizeWSlider}
+                        onChange={handleResizeWSlider}
+                        aria-label="Resize width slider"
+                      />
+                    </div>
+                    <div className="resize-slider-row">
+                      <label className="resize-slider-label" htmlFor="resize-h-slider">
+                        Height
+                        <span className="resize-slider-value">{store.resizeH > 0 ? store.resizeH : "auto"}px</span>
+                      </label>
+                      <Slider
+                        id="resize-h-slider"
+                        min={1}
+                        max={Math.max(1, store.imageH)}
+                        step={1}
+                        value={resizeHSlider}
+                        onChange={handleResizeHSlider}
+                        aria-label="Resize height slider"
                       />
                     </div>
                   </div>
