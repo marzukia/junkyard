@@ -372,7 +372,7 @@ export function App() {
                 />
               )}
               {mode === "gif" && (
-                <GifPanel fps={gifFps} width={gifWidth} onFps={setGifFps} onWidth={setGifWidth} />
+                <GifPanel fps={gifFps} width={gifWidth} onFps={setGifFps} onWidth={setGifWidth} duration={duration} />
               )}
 
               {/* Core loading indicator */}
@@ -634,48 +634,122 @@ function GifPanel({
   width,
   onFps,
   onWidth,
+  duration,
 }: {
   fps: number;
   width: number;
   onFps: (v: number) => void;
   onWidth: (v: number) => void;
+  duration: number;
 }) {
+  const height = Math.round(width * 0.75); // approximate 4:3
+  const frameCount = Math.round(duration * fps);
+  const estimatedBytes = width * height * frameCount * 0.5; // rough palette compression
+  const estimatedMB = estimatedBytes / (1024 * 1024);
+
+  const formatEstimate = (mb: number): string => {
+    if (mb < 1) return `${Math.round(mb * 1024)} KB`;
+    if (mb < 100) return `${mb.toFixed(1)} MB`;
+    return `${Math.round(mb)} MB`;
+  };
+
   return (
     <div className="panel-grid">
+      {/* Slider controls */}
       <div className="control-group">
         <label className="control-label" htmlFor="gif-fps">
           Frame rate (fps)
           <span className="control-value">{fps}</span>
         </label>
-        <div className="slider-wrap">
-          <Slider
-            id="gif-fps"
-            min={5}
-            max={30}
-            step={1}
-            value={fps}
-            onChange={onFps}
-            aria-label="GIF frame rate"
-          />
+        <div className="trim-slider-row">
+          <div className="slider-wrap">
+            <Slider
+              id="gif-fps"
+              min={5}
+              max={30}
+              step={1}
+              value={fps}
+              onChange={onFps}
+              aria-label="GIF frame rate"
+            />
+          </div>
+          <span className="trim-slider-value">{fps} fps</span>
         </div>
       </div>
+
       <div className="control-group">
         <label className="control-label" htmlFor="gif-width">
           Width (px)
           <span className="control-value">{width}</span>
         </label>
-        <div className="slider-wrap">
-          <Slider
-            id="gif-width"
-            min={120}
-            max={960}
-            step={40}
-            value={width}
-            onChange={onWidth}
-            aria-label="GIF output width in pixels"
-          />
+        <div className="trim-slider-row">
+          <div className="slider-wrap">
+            <Slider
+              id="gif-width"
+              min={120}
+              max={960}
+              step={40}
+              value={width}
+              onChange={onWidth}
+              aria-label="GIF output width in pixels"
+            />
+          </div>
+          <span className="trim-slider-value">{width}px</span>
         </div>
       </div>
+
+      {/* Exact text inputs */}
+      <div className="control-group">
+        <label className="control-label" htmlFor="gif-fps-input">
+          FPS (exact)
+        </label>
+        <input
+          id="gif-fps-input"
+          className="time-input"
+          type="number"
+          min={5}
+          max={30}
+          step={1}
+          value={fps}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            if (!Number.isNaN(v) && v >= 5 && v <= 30) onFps(Math.round(v));
+          }}
+          aria-label="Exact GIF frame rate"
+        />
+      </div>
+      <div className="control-group">
+        <label className="control-label" htmlFor="gif-width-input">
+          Width (exact px)
+        </label>
+        <input
+          id="gif-width-input"
+          className="time-input"
+          type="number"
+          min={120}
+          max={960}
+          step={10}
+          value={width}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            if (!Number.isNaN(v) && v >= 120 && v <= 960) onWidth(Math.round(v));
+          }}
+          aria-label="Exact GIF output width"
+        />
+      </div>
+
+      {/* Estimated output stats */}
+      {duration > 0 && (
+        <div className="control-group">
+          <p className="control-label">
+            Estimated output
+            <span className="control-value">
+              {formatTime(frameCount > 0 ? duration : 0)} video, ~{formatEstimate(estimatedMB)}, {frameCount > 0 ? `${frameCount} frames` : "—"}
+            </span>
+          </p>
+        </div>
+      )}
+
       <p className="panel-hint">
         Uses palette optimization for best quality. Height scales proportionally.
       </p>
