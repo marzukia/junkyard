@@ -1,4 +1,4 @@
-import { RawImage, pipeline } from "@huggingface/transformers";
+import { RawImage, pipeline, env } from "@huggingface/transformers";
 /**
  * Web Worker for upscale: runs model load + inference off the main thread.
  *
@@ -47,7 +47,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!upscaler) {
-      upscaler = await loadPipeline<ImageToImagePipeline>(
+      upscaler = await loadPipeline<ImageToImagePipeline>(env,
         async (progressCb) => {
           return (await (
             pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>

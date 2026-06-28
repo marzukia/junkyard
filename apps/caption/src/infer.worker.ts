@@ -4,7 +4,7 @@
  * Shared boilerplate (env config, progress posting, error/results posting)
  * is handled via kit/lib/workerInference.ts.
  */
-import { RawImage, pipeline } from "@huggingface/transformers";
+import { RawImage, pipeline, env } from "@huggingface/transformers";
 import type { WorkerRequest } from "@junkyardsh/ui";
 import {
   loadPipeline,
@@ -74,7 +74,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!isModelLoaded()) {
-      captioner = await loadPipeline<ImageToTextPipeline>(
+      captioner = await loadPipeline<ImageToTextPipeline>(env,
         async (progressCb) => {
           return (await (
             pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>

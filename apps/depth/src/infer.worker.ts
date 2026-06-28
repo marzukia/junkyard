@@ -1,4 +1,4 @@
-import { type DepthEstimationPipeline, RawImage, pipeline } from "@huggingface/transformers";
+import { type DepthEstimationPipeline, RawImage, pipeline, env } from "@huggingface/transformers";
 /**
  * Web Worker for depth: runs model load + inference off the main thread.
  * Returns image bytes (ArrayBuffer) instead of blob URL (not cross-context).
@@ -38,7 +38,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!estimator) {
-      estimator = await loadPipeline<DepthEstimationPipeline>(
+      estimator = await loadPipeline<DepthEstimationPipeline>(env,
         async (progressCb) => {
           return (await (
             pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
