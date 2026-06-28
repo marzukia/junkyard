@@ -910,17 +910,8 @@ function GifPanel({
   onWidth: (v: number) => void;
   duration: number;
 }) {
-  const height = Math.round(width * 0.75); // approximate 4:3
   const frameCount = Math.max(1, Math.round(duration * fps));
   const safeDur = Math.max(0, duration);
-  const estimatedBytes = width * height * frameCount * 0.5; // rough palette compression
-  const estimatedMB = estimatedBytes / (1024 * 1024);
-
-  const formatEstimate = (mb: number): string => {
-    if (mb < 1) return `${Math.round(mb * 1024)} KB`;
-    if (mb < 100) return `${mb.toFixed(1)} MB`;
-    return `${Math.round(mb)} MB`;
-  };
 
   return (
     <div className="panel-grid">
@@ -1015,17 +1006,17 @@ function GifPanel({
         />
       </div>
 
-      {/* Estimated output stats */}
+      {/* Output info */}
       {duration > 0 && (
         <div className="control-group">
           <p className="control-label">
-            Estimated output (approx)
+            Output
             <span className="control-value">
-              {formatTime(safeDur)} video, ~{formatEstimate(estimatedMB)}, {frameCount} frames
+              {formatTime(safeDur)} video, {frameCount} frames
             </span>
           </p>
           <p className="panel-hint">
-            Size depends on content complexity. Actual result may vary.
+            Actual size shown after encoding completes.
           </p>
         </div>
       )}
