@@ -7,7 +7,7 @@ import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement> & { size?: number };
 
-function icon(size: number, viewBox: string, children: React.ReactNode) {
+function icon(size: number, viewBox: string, children: React.ReactElement) {
   return (
     <svg
       width={size}
@@ -18,11 +18,11 @@ function icon(size: number, viewBox: string, children: React.ReactNode) {
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      aria-hidden="true"
+      aria-hidden={true}
     >
       {children}
     </svg>
-  );
+  ) as React.ReactElement;
 }
 
 export function UploadIcon({ size = 28 }: IconProps) {
@@ -71,7 +71,7 @@ export function SpinnerIcon({ size = 14, className }: IconProps & { className?: 
       stroke="currentColor"
       strokeWidth="2.5"
       strokeLinecap="round"
-      aria-hidden="true"
+      aria-hidden={true}
       className={className ?? "spinner-icon"}
     >
       <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
