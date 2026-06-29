@@ -4,7 +4,7 @@
  * decodeAudioFile uses OfflineAudioContext which is available in workers.
  */
 import { env, pipeline } from "@huggingface/transformers";
-import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
+import type { WorkerRequest } from "@junkyardsh/ui";
 import { postResult, postError } from "../../../kit/lib/workerInference";
 import type { TranscriptionResult, TranscriptChunk } from "./lib/transcription";
 import { MODEL_ID } from "./lib/transcription";

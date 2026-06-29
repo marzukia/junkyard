@@ -1,7 +1,7 @@
 /**
  * Web Worker for translate: runs model load + inference off the main thread.
  */
-import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
+import type { WorkerRequest } from "@junkyardsh/ui";
 import { postResult, postError } from "../../../kit/lib/workerInference";
 import type { TranslationResult } from "./lib/translator";
 import { isTranslatorLoaded, loadTranslator, translateText } from "./lib/translator";
