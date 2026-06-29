@@ -31,6 +31,35 @@ export function canvasToImageCoords(
 }
 
 /**
+ * Paint a circular region of the mask to 255 (active).
+ */
+export function paintMaskCircle(
+  mask: Uint8Array,
+  cx: number,
+  cy: number,
+  radius: number,
+  imageWidth: number,
+  imageHeight: number
+): void {
+  const offsets = circleBrushOffsets(radius);
+  for (const [dx, dy] of offsets) {
+    const x = cx + dx;
+    const y = cy + dy;
+    if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight) continue;
+    mask[y * imageWidth + x] = 255;
+  }
+}
+
+/** Count how many pixels in a mask are marked (> 127). */
+export function maskPixelCount(mask: Uint8Array): number {
+  let count = 0;
+  for (let i = 0; i < mask.length; i++) {
+    if (mask[i] > 127) count++;
+  }
+  return count;
+}
+
+/**
  * Build a circle brush stamp: returns an array of [dx, dy] offsets
  * for all pixels within the given radius of (0,0).
  */
