@@ -46,14 +46,7 @@ export function formatReduction(inputWords: number, outputWords: number): string
   return `${pct}% shorter`;
 }
 
-/** Format a download progress fraction as a percentage string. */
-export function formatProgress(loaded: number, total: number): string {
-  if (total <= 0) return "0%";
-  const pct = Math.min(100, Math.round((loaded / total) * 100));
-  return `${pct}%`;
-}
-
-export { clamp } from "@junkyardsh/ui";
+export { formatProgress, clamp } from "@junkyardsh/ui";
 
 /**
  * Given a slider position (0–100), map to a max-word target.
