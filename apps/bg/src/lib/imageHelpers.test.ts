@@ -92,19 +92,19 @@ describe("formatProgress", () => {
 
 describe("outputFilename", () => {
   it("strips extension and appends -bg-removed.png", () => {
-    expect(outputFilename("photo.jpg")).toBe("photo-bg-removed.png");
+    expect(outputFilename("photo.jpg", "bg-removed")).toBe("photo-bg-removed.png");
   });
 
   it("handles PNG input", () => {
-    expect(outputFilename("portrait.png")).toBe("portrait-bg-removed.png");
+    expect(outputFilename("portrait.png", "bg-removed")).toBe("portrait-bg-removed.png");
   });
 
   it("handles dotted names", () => {
-    expect(outputFilename("my.photo.webp")).toBe("my.photo-bg-removed.png");
+    expect(outputFilename("my.photo.webp", "bg-removed")).toBe("my.photo-bg-removed.png");
   });
 
   it("handles name with no extension", () => {
-    expect(outputFilename("image")).toBe("image-bg-removed.png");
+    expect(outputFilename("image", "bg-removed")).toBe("image-bg-removed.png");
   });
 });
 
