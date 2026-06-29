@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { DEFAULT_TARGET, DETECT_CODE, findLanguage } from "../lib/languages";
+import { phaseTransition } from "../../../../kit/lib/phaseGuard";
 
 /** Read the last-used language pair from localStorage, falling back to defaults. */
 function readPersistedLangs(): { sourceLang: string; targetLang: string } {
@@ -123,7 +124,7 @@ export const useTranslateStore = create<TranslateState>((set, get) => ({
     persistLangs(get().sourceLang, code);
   },
   setPhase: (phase) =>
-    set((s) => (phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {})),
+    set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
   setChunkProgress: (done, total) => set({ chunkProgress: { done, total } }),
   setResult: (text, detectedLang) =>

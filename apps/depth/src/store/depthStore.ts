@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { phaseTransition } from "../../../../kit/lib/phaseGuard";
 import type { ColourMap, RawDepthCache } from "../lib/depthEstimation";
 
 export type Phase = "idle" | "model-loading" | "processing" | "done" | "error";
@@ -73,7 +74,7 @@ export const useDepthStore = create<DepthState>()(
       },
 
       setPhase: (phase) =>
-        set((s) => (phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {})),
+        set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
 
       setModelProgress: (loaded, total, status) =>
         set({ modelProgress: { loaded, total, status } }),
