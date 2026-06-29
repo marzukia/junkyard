@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { phaseTransition } from "../../../../kit/lib/phaseGuard";
 
 export type Phase = "idle" | "model-loading" | "processing" | "done" | "error";
 
@@ -97,7 +98,7 @@ export const useSummarizeStore = create<SummarizeState>((set) => ({
     set({ inputText: text, inputWords: wordCount, summary: null, errorMsg: null, phase: "idle" }),
 
   setPhase: (phase) =>
-    set((s) => (phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {})),
+    set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
 
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
 

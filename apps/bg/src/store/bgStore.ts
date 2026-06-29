@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { phaseTransition } from "../../../../kit/lib/phaseGuard";
 
 export type Phase = "idle" | "model-loading" | "processing" | "done" | "error";
 
@@ -69,12 +70,7 @@ export const useBgStore = create<BgState>((set, get) => ({
     set({ inputFile: file, inputUrl: url, resultUrl: null, errorMsg: null });
   },
 
-  setPhase: (phase) =>
-    set((s) =>
-      // idle is the cancel/reset sentinel — always allow it.
-      // All other transitions are monotonic: only advance, never regress.
-      phase === "idle" || PHASE_RANK[phase] >= PHASE_RANK[s.phase] ? { phase } : {}
-    ),
+  setPhase: (phase) => set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
 
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
 
