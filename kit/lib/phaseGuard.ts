@@ -28,7 +28,7 @@ export function phaseTransition<PhaseType extends string>(
   currentPhase: PhaseType,
   nextPhase: PhaseType,
   rank: Record<PhaseType, number>
-): Record<string, unknown> {
+): { phase: PhaseType } | {} {
   return nextPhase === "idle" || rank[nextPhase] >= rank[currentPhase]
     ? { phase: nextPhase }
     : {};
