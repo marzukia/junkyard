@@ -14,10 +14,7 @@ import type { LayoutTemplate } from "../lib/layouts";
 import { useCollageStore } from "../store/collageStore";
 import { ShapeClipWrapper } from "./ShapeClipWrapper";
 
-/** Clamp a value to [min, max]. */
-function clamp(v: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, v));
-}
+import { clamp } from "@junkyardsh/ui";
 
 interface Props {
   template: LayoutTemplate;

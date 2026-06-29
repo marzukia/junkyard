@@ -8,7 +8,7 @@
  * default constant.
  */
 
-export { formatBytes } from "@junkyardsh/ui";
+export { formatBytes, formatProgress } from "@junkyardsh/ui";
 
 /**
  * Estimate remaining download time as a human-readable string.
@@ -48,12 +48,6 @@ export function exportConversation(messages: ExportMessage[]): string {
     lines.push("");
   }
   return lines.join("\n").trimEnd();
-}
-
-/** Format a progress fraction as a percentage string. */
-export function formatProgress(loaded: number, total: number): string {
-  if (total <= 0) return "0%";
-  return `${Math.min(100, Math.round((loaded / total) * 100))}%`;
 }
 
 /**

@@ -22,6 +22,8 @@ export {
   type AcceptedType,
   isSupportedImage,
   formatProgress,
+  formatTime,
+  parseTime,
   clamp,
   outputFilename,
 } from "../../../kit/lib/imageHelpers";
