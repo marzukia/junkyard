@@ -2,6 +2,7 @@
  * Web Worker for translate: runs model load + inference off the main thread.
  */
 import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
+import { postResult, postError } from "../../../kit/lib/workerInference";
 import type { TranslationResult } from "./lib/translator";
 import { isTranslatorLoaded, loadTranslator, translateText } from "./lib/translator";
 
@@ -28,11 +29,9 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
       self.postMessage(msg);
     });
 
-    const msg: WorkerMsg<TranslationResult> = { type: "result", payload: result };
-    self.postMessage(msg);
+    postResult<TranslationResult>(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error during translation.";
-    const msg: WorkerMsg<TranslationResult> = { type: "error", message };
-    self.postMessage(msg);
+    postError<TranslationResult>(message);
   }
 };

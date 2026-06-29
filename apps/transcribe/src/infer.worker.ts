@@ -5,6 +5,7 @@
  */
 import { env, pipeline } from "@huggingface/transformers";
 import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
+import { postResult, postError } from "../../../kit/lib/workerInference";
 import type { TranscriptionResult, TranscriptChunk } from "./lib/transcription";
 import { MODEL_ID } from "./lib/transcription";
 
@@ -164,11 +165,9 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
       }
     );
 
-    const msg: WorkerMsg<TranscriptionResult> = { type: "result", payload: result };
-    self.postMessage(msg);
+    postResult<TranscriptionResult>(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error during transcription.";
-    const msg: WorkerMsg<TranscriptionResult> = { type: "error", message };
-    self.postMessage(msg);
+    postError<TranscriptionResult>(message);
   }
 };
