@@ -14,6 +14,7 @@ export {
 } from "../../../kit/components/MobileWarning";
 export { formatBytes } from "../../../kit/components/format";
 export { useCmdEnter } from "./useCmdEnter";
+export { useProgress } from "../../../kit/lib/useProgress";
 
 // ── Lib ─────────────────────────────────────────────────────────────────
 export {
