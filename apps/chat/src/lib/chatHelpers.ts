@@ -8,13 +8,7 @@
  * default constant.
  */
 
-/** Format download bytes as a human-readable string. */
-export function formatBytes(bytes: number): string {
-  if (bytes <= 0) return "0 B";
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
+export { formatBytes } from "@junkyardsh/ui";
 
 /**
  * Estimate remaining download time as a human-readable string.

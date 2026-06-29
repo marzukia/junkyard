@@ -122,10 +122,7 @@ export function resolveFontFamily(font: FontPreset): string {
   }
 }
 
-/** Clamp a number between min and max (inclusive) */
-export function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
+export { clamp } from "@junkyardsh/ui";
 
 /** Parse a hex string and return an rgb tuple, or null if invalid */
 export function parseHex(hex: string): [number, number, number] | null {
