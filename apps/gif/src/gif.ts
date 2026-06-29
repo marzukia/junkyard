@@ -3,10 +3,7 @@
  * This module is isolated so unit tests can import it without a DOM.
  */
 
-/** Clamp a value to [min, max]. */
-export function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value));
-}
+export { clamp } from "@junkyardsh/ui";
 
 /**
  * Estimate output GIF size in bytes for given dimensions, frame count, and delay.

@@ -21,6 +21,8 @@ export {
   type AcceptedType,
   isSupportedImage,
   formatProgress,
+  clamp,
+  outputFilename,
 } from "../../../kit/lib/imageHelpers";
 export {
   encodeBase64Url,

@@ -50,10 +50,7 @@ export interface CropRect {
   h: number;
 }
 
-/** Clamp a value between min and max. */
-export function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value));
-}
+export { clamp } from "@junkyardsh/ui";
 
 /**
  * Constrain a crop rect to fit within image bounds (imgW x imgH).

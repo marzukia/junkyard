@@ -144,10 +144,7 @@ export function angleToVector(deg: number): [number, number] {
   return [Math.cos(rad), Math.sin(rad)];
 }
 
-/** Clamp a number within [min, max]. */
-export function clamp(v: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, v));
-}
+export { clamp } from "@junkyardsh/ui";
 
 export type ExportFormat = "png" | "jpg" | "webp";
 

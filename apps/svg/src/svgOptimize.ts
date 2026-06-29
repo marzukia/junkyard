@@ -59,11 +59,7 @@ export function byteLength(s: string): number {
   return new TextEncoder().encode(s).length;
 }
 
-export function formatBytes(n: number): string {
-  if (n < 1024) return `${n} B`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
-  return `${(n / (1024 * 1024)).toFixed(2)} MB`;
-}
+export { formatBytes } from "@junkyardsh/ui";
 
 export function optimizeSvg(input: string, opts: OptimizeOptions): OptimizeResult {
   if (!input.trim()) throw new Error("Input is not an SVG: received empty string.");

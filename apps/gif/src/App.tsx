@@ -1,6 +1,4 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
+import { BrandMark, Footer, Header, formatBytes } from "@junkyardsh/ui";
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { encodeGif, estimateGifBytes, formatDuration, msToFpsLabel } from "./gif";
@@ -18,12 +16,6 @@ const DELAY_MARKS = [
   { value: 500, label: "" },
   { value: 2000, label: "" },
 ];
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
-}
 
 export function App() {
   const {
