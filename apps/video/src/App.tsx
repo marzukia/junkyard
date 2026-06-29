@@ -228,7 +228,7 @@ export function App() {
         setVideoUrl(url);
       }
       setWorkingBlob(blob);
-      setResult({ blob, name: built.outputName, url: url, size: blob.size });
+      setResult({ blob, name: built.outputName, url, size: blob.size });
     } catch (err) {
       const msg =
         err instanceof Error
