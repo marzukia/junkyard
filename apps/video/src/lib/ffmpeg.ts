@@ -63,7 +63,8 @@ export async function runFFmpeg(
   inputFile: File | Blob,
   args: string[],
   outputName: string,
-  onProgress?: ProgressCallback
+  onProgress?: ProgressCallback,
+  preArgs?: string[]
 ): Promise<Blob> {
   const ff = await getFFmpeg();
 
@@ -88,7 +89,8 @@ export async function runFFmpeg(
   try {
     await ff.writeFile(inName, await fetchFile(inputFile));
 
-    const ret = await ff.exec(["-i", inName, ...args, outputName]);
+    const cmd = preArgs ? [...preArgs, "-i", inName, ...args, outputName] : ["-i", inName, ...args, outputName];
+    const ret = await ff.exec(cmd);
     if (ret !== 0) {
       // Surface the last meaningful ffmpeg log line as the error message so
       // codec/format failures (e.g. unsupported encoder) are diagnosable.

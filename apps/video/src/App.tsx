@@ -118,7 +118,7 @@ export function App() {
     setTrimEnd(formatTime(dur));
   };
 
-  const buildArgs = (): { args: string[]; outputName: string } | null => {
+  const buildArgs = (): { args: string[]; outputName: string; preArgs?: string[] } | null => {
     if (!file) return null;
 
     const baseName = file.name.replace(/\.[^.]+$/, "");
@@ -132,7 +132,8 @@ export function App() {
         return null;
       }
       return {
-        args: ["-ss", String(start), "-t", String(dur), "-c", "copy"],
+        preArgs: ["-ss", String(start), "-t", String(dur)],
+        args: ["-c", "copy"],
         outputName: `${baseName}_trimmed.mp4`,
       };
     }
@@ -210,12 +211,18 @@ export function App() {
 
     try {
       const input = workingBlob || file;
-      const blob = await runFFmpeg(input, built.args, built.outputName, setProgress);
+      const blob = await runFFmpeg(input, built.args, built.outputName, setProgress, built.preArgs);
       const url = URL.createObjectURL(blob);
-      if (videoUrl) URL.revokeObjectURL(videoUrl);
-      setVideoUrl(url);
+      const isGif = built.outputName.endsWith(".gif");
+      if (isGif) {
+        // GIF output: don't replace the video preview — <video> can't decode GIFs.
+        URL.revokeObjectURL(url);
+      } else {
+        if (videoUrl) URL.revokeObjectURL(videoUrl);
+        setVideoUrl(url);
+      }
       setWorkingBlob(blob);
-      setResult({ blob, name: built.outputName, url, size: blob.size });
+      setResult({ blob, name: built.outputName, url: url, size: blob.size });
     } catch (err) {
       const msg =
         err instanceof Error
