@@ -21,6 +21,17 @@ export function isSupportedImage(file: File): boolean {
 /** Format a byte count as a human-readable string (B / KB / MB). */
 export { formatBytes } from "../components/format";
 
+/** Clamp a number to [min, max]. */
+export function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+/** Produce a safe download filename — strips extension, appends suffix. */
+export function outputFilename(inputName: string, suffix: string, ext: string = "png"): string {
+  const base = inputName.replace(/\.[^.]+$/, "");
+  return `${base}-${suffix}.${ext}`;
+}
+
 /** Format a download progress fraction (0–1) as a percentage string. */
 export function formatProgress(loaded: number, total: number): string {
   if (total <= 0) return "0%";
