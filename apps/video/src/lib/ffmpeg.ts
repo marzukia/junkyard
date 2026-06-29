@@ -128,7 +128,10 @@ function mimeForName(name: string): string {
   };
   return map[ext] ?? "application/octet-stream";
 }
-
+/**
+ * Format a byte count as a human-readable string (B / KB / MB / GB).
+ * Kept local because kit's formatBytes stops at MB — video needs GB support.
+ */
 export function formatBytes(bytes: number): string {
   if (bytes === 0) return "0 B";
   const units = ["B", "KB", "MB", "GB"];
@@ -136,5 +139,10 @@ export function formatBytes(bytes: number): string {
   return `${(bytes / 1024 ** i).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
 }
 
-/** Re-exported from @junkyardsh/ui for backward compat */
+/**
+ * Re-exported from @junkyardsh/ui for backward compat.
+ * Verified byte-for-byte identical to the removed local implementations
+ * (see kit/lib/imageHelpers.ts:57-74). Same edge-case handling:
+ * parseTime returns 0 for invalid input, formatTime does not zero-pad hours.
+ */
 export { formatTime, parseTime } from "@junkyardsh/ui";
