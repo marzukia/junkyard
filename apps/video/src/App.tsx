@@ -44,6 +44,7 @@ export function App() {
   const [progress, setProgress] = useState<number>(0);
   const [coreLoading, setCoreLoading] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
+  const [workingBlob, setWorkingBlob] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Trim state
@@ -58,8 +59,8 @@ export function App() {
   const [crf, setCrf] = useState(28);
 
   // GIF state
-  const [gifFps, setGifFps] = useState(10);
-  const [gifWidth, setGifWidth] = useState(480);
+  const [gifFps, setGifFps] = useState(15);
+  const [gifWidth, setGifWidth] = useState(640);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -78,6 +79,7 @@ export function App() {
       if (videoUrl) URL.revokeObjectURL(videoUrl);
       setFile(f);
       setResult(null);
+      setWorkingBlob(null);
       setError(null);
       setProgress(0);
       const url = URL.createObjectURL(f);
@@ -207,8 +209,12 @@ export function App() {
     setProgress(0);
 
     try {
-      const blob = await runFFmpeg(file, built.args, built.outputName, setProgress);
+      const input = workingBlob || file;
+      const blob = await runFFmpeg(input, built.args, built.outputName, setProgress);
       const url = URL.createObjectURL(blob);
+      if (videoUrl) URL.revokeObjectURL(videoUrl);
+      setVideoUrl(url);
+      setWorkingBlob(blob);
       setResult({ blob, name: built.outputName, url, size: blob.size });
     } catch (err) {
       const msg =
@@ -326,6 +332,16 @@ export function App() {
                 <button type="button" className="btn-ghost-sm" onClick={reset}>
                   Change file
                 </button>
+                {workingBlob && (
+                  <button type="button" className="btn-ghost-sm" onClick={() => {
+                    if (videoUrl) URL.revokeObjectURL(videoUrl);
+                    setWorkingBlob(null);
+                    setVideoUrl(URL.createObjectURL(file));
+                    setResult(null);
+                  }}>
+                    Reset chain
+                  </button>
+                )}
               </div>
             </div>
 
@@ -390,11 +406,11 @@ export function App() {
                   <div className="progress-bar-wrap">
                     <div
                       className="progress-bar-fill"
-                      style={{ width: `${Math.round(progress * 100)}%` }}
+                      style={{ width: `${Math.round(Math.min(progress, 0.95) * 100)}%` }}
                     />
                   </div>
                   <span className="progress-label">
-                    {Math.round(progress * 100)}% - processing in browser...
+                    {Math.round(Math.min(progress, 0.95) * 100)}% - processing in browser...
                   </span>
                 </div>
               )}
@@ -428,6 +444,11 @@ export function App() {
                     Download
                   </button>
                 </div>
+              )}
+              {workingBlob && (
+                <p className="panel-hint" style={{ marginTop: "0.5rem" }}>
+                  Result is now the working clip — switch tabs and run another operation on it.
+                </p>
               )}
 
               {/* Run button */}
