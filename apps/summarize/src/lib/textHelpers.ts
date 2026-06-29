@@ -53,12 +53,7 @@ export function formatProgress(loaded: number, total: number): string {
   return `${pct}%`;
 }
 
-/**
- * Clamp a number between min and max (inclusive).
- */
-export function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
-}
+export { clamp } from "@junkyardsh/ui";
 
 /**
  * Given a slider position (0–100), map to a max-word target.

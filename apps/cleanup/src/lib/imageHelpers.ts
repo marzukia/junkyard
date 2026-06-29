@@ -1,6 +1,6 @@
 /**
  * Image helpers for cleanup/inpaint — app-specific extensions on the shared core.
- * Shared core (ACCEPTED_TYPES, isSupportedImage, formatBytes)
+ * Shared core (ACCEPTED_TYPES, isSupportedImage, formatBytes, clamp, outputFilename)
  * is imported from kit/lib/imageHelpers (source of truth).
  */
 export {
@@ -8,18 +8,9 @@ export {
   type AcceptedType,
   isSupportedImage,
   formatBytes,
+  clamp,
+  outputFilename,
 } from "../../../../kit/lib/imageHelpers";
-
-/** Clamp a number to [min, max]. */
-export function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
-}
-
-/** Produce a safe download filename for the erased image. */
-export function outputFilename(inputName: string): string {
-  const base = inputName.replace(/\.[^.]+$/, "");
-  return `${base}-cleanup.png`;
-}
 
 /**
  * Convert canvas coordinates to image coordinates given display vs natural dimensions.
@@ -40,25 +31,7 @@ export function canvasToImageCoords(
 }
 
 /**
- * Build a circle brush stamp: returns an array of [dx, dy] offsets
- * for all pixels within the given radius of (0,0).
- */
-export function circleBrushOffsets(radius: number): Array<[number, number]> {
-  const offsets: Array<[number, number]> = [];
-  const r2 = radius * radius;
-  for (let dy = -radius; dy <= radius; dy++) {
-    for (let dx = -radius; dx <= radius; dx++) {
-      if (dx * dx + dy * dy <= r2) {
-        offsets.push([dx, dy]);
-      }
-    }
-  }
-  return offsets;
-}
-
-/**
- * Paint a circle of 255 into a mask buffer at (cx, cy) with the given radius.
- * Clips to image bounds. Mutates mask in-place.
+ * Paint a circular region of the mask to 255 (active).
  */
 export function paintMaskCircle(
   mask: Uint8Array,
@@ -84,4 +57,19 @@ export function maskPixelCount(mask: Uint8Array): number {
     if (mask[i] > 127) count++;
   }
   return count;
+}
+
+/**
+ * Build a circle brush stamp: returns an array of [dx, dy] offsets
+ * for all pixels within the given radius of (0,0).
+ */
+export function circleBrushOffsets(radius: number): Array<[number, number]> {
+  const offsets: Array<[number, number]> = [];
+  const r2 = radius * radius;
+  for (let dy = -radius; dy <= radius; dy++) {
+    for (let dx = -radius; dx <= radius; dx++) {
+      if (dx * dx + dy * dy <= r2) offsets.push([dx, dy]);
+    }
+  }
+  return offsets;
 }

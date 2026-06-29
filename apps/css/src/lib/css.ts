@@ -152,12 +152,7 @@ export function isValidHex(hex: string): boolean {
   return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex);
 }
 
-/**
- * Clamp a value between min and max (inclusive).
- */
-export function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
+export { clamp } from "@junkyardsh/ui";
 
 // ── Border Radius ─────────────────────────────────────────────────────────────
 
