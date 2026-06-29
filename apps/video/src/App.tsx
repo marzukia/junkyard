@@ -131,9 +131,15 @@ export function App() {
         setError("End time must be after start time.");
         return null;
       }
+      // When workingBlob is a GIF, -c copy would try to copy the paletted
+      // stream into an MP4 container — ffmpeg can't do that and aborts.
+      // Fall back to re-encoding so trim works after any GIF-producing op.
+      const isGifInput = workingBlob?.type === "image/gif";
       return {
         preArgs: ["-ss", String(start), "-t", String(dur)],
-        args: ["-c", "copy"],
+        args: isGifInput
+          ? ["-c:v", "libx264", "-crf", "23", "-preset", "fast", "-c:a", "aac"]
+          : ["-c", "copy"],
         outputName: `${baseName}_trimmed.mp4`,
       };
     }
