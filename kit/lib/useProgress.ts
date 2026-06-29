@@ -5,8 +5,7 @@ import { useState, useCallback } from "react";
  * so the bar doesn't hit 100% prematurely (e.g. ffmpeg multi-pass encoding,
  * GIF palettegen+paletteuse). Jumps to 100% only when processing completes.
  *
- * Returns [progress, setProgress, resetProgress] where setProgress accepts
- * values 0-1 and clamps display to 95%.
+ * Returns { progress, setProgress, resetProgress, display, label, complete, finish }.
  */
 export function useProgress() {
   const [progress, setProgress] = useState(0);
@@ -22,10 +21,7 @@ export function useProgress() {
     setComplete(false);
   }, []);
 
-  const display = complete ? 100 : Math.round(Math.min(progress, 0.95) * 100);
-  const label = complete
-    ? "100%"
-    : `${Math.round(Math.min(progress, 0.95) * 100)}%`;
+  const capped = complete ? 100 : Math.round(Math.min(progress, 0.95) * 100);
 
   return {
     /** Raw progress value (0-1). Pass to setProgress from ffmpeg or similar. */
@@ -33,9 +29,9 @@ export function useProgress() {
     setProgress: onProgress,
     resetProgress,
     /** Display percentage capped at 95% during processing, 100% when done. */
-    display,
+    display: capped,
     /** Formatted label string. */
-    label,
+    label: `${capped}%`,
     /** True when processing has reported 100%. */
     complete,
     /** Call when processing finishes to jump display to 100%. */
