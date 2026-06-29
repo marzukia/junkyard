@@ -28,7 +28,7 @@ export function clamp(value: number, min: number, max: number): number {
 
 /** Produce a safe download filename — strips extension, appends suffix. */
 export function outputFilename(inputName: string, suffix: string, ext: string = "png"): string {
-  const base = inputName.replace(/\.[^.]+$/, "");
+  const base = inputName.replace(/\.([^.]+)$/, "");
   return `${base}-${suffix}.${ext}`;
 }
 
