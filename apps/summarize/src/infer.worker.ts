@@ -6,7 +6,8 @@
  * Worker is terminated on cancel (no clean abort in transformers.js).
  * Re-creating the worker on next run uses the browser cache -- no re-download.
  */
-import type { WorkerMsg, WorkerRequest } from "@junkyardsh/ui";
+import type { WorkerRequest } from "@junkyardsh/ui";
+import { postResult, postError } from "../../../kit/lib/workerInference";
 import {
   type SummaryOptions,
   type SummaryResult,
@@ -43,11 +44,9 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
     };
 
     const result = await summarize(inputText, opts);
-    const msg: WorkerMsg<SummaryResult> = { type: "result", payload: result };
-    self.postMessage(msg);
+    postResult<SummaryResult>(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error during summarization.";
-    const msg: WorkerMsg<SummaryResult> = { type: "error", message };
-    self.postMessage(msg);
+    postError<SummaryResult>(message);
   }
 };
