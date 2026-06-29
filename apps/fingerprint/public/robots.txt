@@ -1,0 +1,5 @@
+# Allow all
+User-agent: *
+Allow: /
+
+Sitemap: https://junkyard.sh/fingerprint/sitemap.xml
