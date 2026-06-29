@@ -102,7 +102,7 @@ export function SpinnerIcon({ size = 14, className }) {
     strokeWidth: 2.5,
     strokeLinecap: "round",
     "aria-hidden": true,
-    className: className ?? "spinner-icon",
+    className: className ?? "",
   };
   return (
     <svg {...props}>
