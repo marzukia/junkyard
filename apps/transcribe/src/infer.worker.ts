@@ -5,18 +5,9 @@
  */
 import { env, pipeline } from "@huggingface/transformers";
 import type { WorkerRequest } from "@junkyardsh/ui";
-import { postResult, postError } from "../../../kit/lib/workerInference";
+import { loadPipeline, postResult, postError } from "../../../kit/lib/workerInference";
 import type { TranscriptionResult, TranscriptChunk } from "./lib/transcription";
 import { MODEL_ID } from "./lib/transcription";
-
-// ── Disable multi-threaded WASM (requires SharedArrayBuffer / COOP+COEP) ──────
-// Must be set BEFORE any InferenceSession is created.
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-
-// Use browser cache so subsequent visits skip the download.
-env.useBrowserCache = true;
-
-type TransformersProgressEvent = { status: string; loaded?: number; total?: number };
 
 // Whisper chunk result shape from transformers.js
 interface WhisperChunk {
@@ -36,25 +27,19 @@ type AutomaticSpeechRecognitionPipeline = (
 
 let asr: AutomaticSpeechRecognitionPipeline | null = null;
 
-async function loadModel(onProgress?: (loaded: number, total: number, status: string) => void): Promise<void> {
+async function loadModel(): Promise<void> {
   if (asr) return;
 
-  const progressCb = (event: TransformersProgressEvent) => {
-    if (!onProgress) return;
-    if (event.status === "progress" || event.status === "download") {
-      onProgress(event.loaded ?? 0, event.total ?? 1, event.status);
-    } else if (event.status === "initiate") {
-      onProgress(0, 1, "initiate");
-    } else if (event.status === "done") {
-      onProgress(1, 1, "done");
-    }
-  };
-
-  asr = (await (
-    pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-  )("automatic-speech-recognition", MODEL_ID, {
-    progress_callback: progressCb,
-  })) as AutomaticSpeechRecognitionPipeline;
+  asr = await loadPipeline<AutomaticSpeechRecognitionPipeline>(
+    env,
+    async (progressCb) => {
+      return (await (
+        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+      )("automatic-speech-recognition", MODEL_ID, {
+        progress_callback: progressCb,
+      })) as AutomaticSpeechRecognitionPipeline;
+    },
+  );
 }
 
 function isModelLoaded(): boolean {
@@ -132,10 +117,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!isModelLoaded()) {
-      await loadModel((loaded, total, status) => {
-        const msg: WorkerMsg<TranscriptionResult> = { type: "progress", loaded, total, status };
-        self.postMessage(msg);
-      });
+      await loadModel();
     }
 
     // Signal that audio decode is starting (runs inside transcribeFile before inference)

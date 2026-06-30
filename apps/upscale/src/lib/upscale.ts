@@ -11,7 +11,4 @@ export const MODEL_SIZE_MB = 50;
 
 export type ScaleFactor = 2 | 4;
 
-/** Revoke a blob URL returned by the worker. */
-export function revokeResult(url: string): void {
-  URL.revokeObjectURL(url);
-}
+export { revokeResult } from "../../../../kit/lib/imageHelpers";

@@ -5,7 +5,4 @@
  * This file only contains types and utilities used by the main thread.
  */
 
-/** Revoke a blob URL returned by the worker. */
-export function revokeResult(url: string): void {
-  URL.revokeObjectURL(url);
-}
+export { revokeResult } from "../../../../kit/lib/imageHelpers";

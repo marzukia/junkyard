@@ -28,10 +28,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!isModelLoaded()) {
-      await loadModel((loaded, total, status) => {
-        const msg: WorkerMsg<SummaryResult> = { type: "progress", loaded, total, status };
-        self.postMessage(msg);
-      });
+      await loadModel();
     }
 
     const opts: SummaryOptions = {

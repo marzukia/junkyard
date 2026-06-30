@@ -8,48 +8,27 @@
  * required); WASM single-thread is the fallback.
  */
 import { type SummarizationPipeline, env, pipeline } from "@huggingface/transformers";
+import { loadPipeline } from "../../../../kit/lib/workerInference";
 import { MODEL_MAX_WORDS, chunkText, countWords } from "./textHelpers";
 
-// ── Disable multi-threaded WASM (requires SharedArrayBuffer / COOP+COEP) ──────
-// Must be set BEFORE any InferenceSession is created.
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-
-// Use browser cache so subsequent visits skip the download.
-env.useBrowserCache = true;
-
 export const MODEL_ID = "Xenova/distilbart-cnn-6-6";
-
-export type ProgressCallback = (loaded: number, total: number, status: string) => void;
-
-type TransformersProgressEvent = {
-  status: string;
-  loaded?: number;
-  total?: number;
-};
 
 let summarizer: SummarizationPipeline | null = null;
 
 /** Load (or return cached) the summarization pipeline. */
-export async function loadModel(onProgress?: ProgressCallback): Promise<void> {
+export async function loadModel(): Promise<void> {
   if (summarizer) return;
 
-  const progressCb = (event: TransformersProgressEvent) => {
-    if (!onProgress) return;
-    if (event.status === "progress" || event.status === "download") {
-      onProgress(event.loaded ?? 0, event.total ?? 1, event.status);
-    } else if (event.status === "initiate") {
-      onProgress(0, 1, "initiate");
-    } else if (event.status === "done") {
-      onProgress(1, 1, "done");
-    }
-  };
-
-  // Cast via unknown, "summarization" always returns SummarizationPipeline.
-  summarizer = (await (
-    pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-  )("summarization", MODEL_ID, {
-    progress_callback: progressCb,
-  })) as SummarizationPipeline;
+  summarizer = await loadPipeline<SummarizationPipeline>(
+    env,
+    async (progressCb) => {
+      return (await (
+        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+      )("summarization", MODEL_ID, {
+        progress_callback: progressCb,
+      })) as SummarizationPipeline;
+    },
+  );
 }
 
 export interface SummaryOptions {

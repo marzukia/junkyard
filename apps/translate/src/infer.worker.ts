@@ -18,10 +18,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!isTranslatorLoaded()) {
-      await loadTranslator((loaded, total, status) => {
-        const msg: WorkerMsg<TranslationResult> = { type: "progress", loaded, total, status };
-        self.postMessage(msg);
-      });
+      await loadTranslator();
     }
 
     const result = await translateText(text, sourceLang, targetLang, (done, total) => {
