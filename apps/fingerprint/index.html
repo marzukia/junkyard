@@ -123,6 +123,22 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      window.onerror = function(msg, src, line, col, err) {
+        const t = document.getElementById("error-display") || document.body;
+        const el = document.createElement("div");
+        el.style.cssText = "position:fixed;bottom:0;left:0;right:0;padding:10px;background:#d9594c;color:#fff;font:12px monospace;z-index:9999;white-space:pre-wrap";
+        el.textContent = "RUNTIME ERROR: " + msg + (err ? "\\n" + err.stack : "");
+        t.appendChild(el);
+      };
+      window.onunhandledrejection = function(e) {
+        const t = document.getElementById("error-display") || document.body;
+        const el = document.createElement("div");
+        el.style.cssText = "position:fixed;bottom:0;left:0;right:0;padding:10px;background:#d9594c;color:#fff;font:12px monospace;z-index:9999;white-space:pre-wrap";
+        el.textContent = "PROMISE REJECTION: " + (e.reason ? e.reason.stack || e.reason : e.reason);
+        t.appendChild(el);
+      };
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

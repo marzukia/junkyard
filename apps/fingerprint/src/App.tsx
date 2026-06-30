@@ -1,11 +1,9 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
+import { BrandMark, Footer, Header } from "@junkyardsh/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
-type SignalStatus = "scanning" | "ok" | "blocked" | "warn" | "bad";
+type SignalStatus = "scanning" | "ok" | "blocked" | "warn" | "bad" | "good";
 
 interface SignalRow {
   label: string;
@@ -30,7 +28,7 @@ interface FingerprintData {
   botFlags: string[];
 }
 
-// ── SHA-256 helper (same as ghostprint) ─────────────────────────────────────
+// ── SHA-256 helper ─────────────────────────────────────────────────────────
 
 async function sha256(str: string): Promise<string> {
   const buf = await crypto.subtle.digest(
@@ -372,66 +370,74 @@ async function collectFingerprint(): Promise<FingerprintData> {
 
   {
     const rows: SignalRow[] = [];
-    const base = ["monospace", "sans-serif", "serif"];
-    const test = [
-      "Arial",
-      "Helvetica Neue",
-      "Times New Roman",
-      "Courier New",
-      "Georgia",
-      "Comic Sans MS",
-      "Impact",
-      "Tahoma",
-      "Verdana",
-      "Trebuchet MS",
-      "Calibri",
-      "Cambria",
-      "Consolas",
-      "Menlo",
-      "SF Pro",
-      "Segoe UI",
-      "Roboto",
-      "Ubuntu",
-      "Noto Sans",
-      "DejaVu Sans",
-      "Liberation Sans",
-      "JetBrains Mono",
-      "Fira Code",
-      "Andale Mono",
-    ];
-    const span = document.createElement("span");
-    span.style.cssText =
-      "position:absolute;left:-9999px;font-size:72px;white-space:nowrap";
-    span.textContent = "mmmmmmmmmlli 0123";
-    document.body.appendChild(span);
-    const baseW: Record<string, { w: number; h: number }> = {};
-    base.forEach((b) => {
-      span.style.fontFamily = b;
-      baseW[b] = { w: span.offsetWidth, h: span.offsetHeight };
-    });
-    const found: string[] = [];
-    test.forEach((f) => {
-      for (const b of base) {
-        span.style.fontFamily = `"${f}",${b}`;
-        if (
-          span.offsetWidth !== baseW[b].w ||
-          span.offsetHeight !== baseW[b].h
-        ) {
-          found.push(f);
-          break;
-        }
+    try {
+      const base = ["monospace", "sans-serif", "serif"];
+      const test = [
+        "Arial",
+        "Helvetica Neue",
+        "Times New Roman",
+        "Courier New",
+        "Georgia",
+        "Comic Sans MS",
+        "Impact",
+        "Tahoma",
+        "Verdana",
+        "Trebuchet MS",
+        "Calibri",
+        "Cambria",
+        "Consolas",
+        "Menlo",
+        "SF Pro",
+        "Segoe UI",
+        "Roboto",
+        "Ubuntu",
+        "Noto Sans",
+        "DejaVu Sans",
+        "Liberation Sans",
+        "JetBrains Mono",
+        "Fira Code",
+        "Andale Mono",
+      ];
+      const span = document.createElement("span");
+      span.style.cssText =
+        "position:absolute;left:-9999px;font-size:72px;white-space:nowrap";
+      span.textContent = "mmmmmmmmmlli 0123";
+      document.body.appendChild(span);
+      try {
+        const baseW: Record<string, { w: number; h: number }> = {};
+        base.forEach((b) => {
+          span.style.fontFamily = b;
+          baseW[b] = { w: span.offsetWidth, h: span.offsetHeight };
+        });
+        const found: string[] = [];
+        test.forEach((f) => {
+          for (const b of base) {
+            span.style.fontFamily = `"${f}",${b}`;
+            if (
+              span.offsetWidth !== baseW[b].w ||
+              span.offsetHeight !== baseW[b].h
+            ) {
+              found.push(f);
+              break;
+            }
+          }
+        });
+        data.fonts = found.join(",");
+        rows.push({
+          label: "Detected",
+          value: `${found.length} / ${test.length}`,
+        });
+        rows.push({
+          label: "List",
+          value: found.join(", ") || "none",
+        });
+      } finally {
+        document.body.removeChild(span);
       }
-    });
-    document.body.removeChild(span);
-    data.fonts = found.join(",");
-    rows.push({
-      label: "Detected",
-      value: `${found.length} / ${test.length}`,
-    });
-    rows.push({
-      label: "List",
-      value: found.join(", ") || "none",
-    });
+    } catch {
+      rows.push({ label: "Font probe", value: "blocked / unavailable", status: "warn" });
+      data.fonts = "";
+    }
     sections.push({
       title: "Installed Fonts (Probe)",
       entropy: "~12 bits",
@@ -443,7 +449,8 @@ async function collectFingerprint(): Promise<FingerprintData> {
 
   {
     const rows: SignalRow[] = [];
-    const wd = navigator.webdriver;
+    let wd: boolean | null | undefined = undefined;
+    try { wd = navigator.webdriver; } catch { /* not available */ }
     rows.push({
       label: "navigator.webdriver",
       value: wd != null ? String(wd) : "not supported",
@@ -459,7 +466,8 @@ async function collectFingerprint(): Promise<FingerprintData> {
     });
     if (headlessUA) botFlags.push("headless UA");
 
-    const chrome = !!window.chrome;
+    let chrome = false;
+    try { chrome = !!(window as any).chrome; } catch { /* not available */ }
     const isChromeUA =
       /chrome/i.test(navigator.userAgent) &&
       !/edg|opr/i.test(navigator.userAgent);
@@ -535,9 +543,10 @@ async function collectFingerprint(): Promise<FingerprintData> {
     verdictLabel = "LIKELY BOT";
   }
 
-  // Compute visitor ID from all collected signals
-  const allValues = Object.values(data).join("::");
-  const visitorId = await sha256(allValues);
+  // Compute visitor ID from all collected signals (deterministic key order)
+  const allValues = Object.keys(data).sort().map((k) => data[k]).join("::");
+  let visitorId = "";
+  try { visitorId = await sha256(allValues); } catch { visitorId = "sha256-fallback-" + Date.now().toString(16); }
 
   return {
     sections,
@@ -626,7 +635,9 @@ export function App() {
         setData(result);
         setScanning(false);
       })
-      .catch(() => {
+      .catch((e) => {
+        console.error("Fingerprint collection failed:", e);
+        setData(null);
         setScanning(false);
       });
   }, []);
@@ -640,7 +651,9 @@ export function App() {
         setData(result);
         setScanning(false);
       })
-      .catch(() => {
+      .catch((e) => {
+        console.error("Fingerprint collection failed:", e);
+        setData(null);
         setScanning(false);
       });
   }, []);
