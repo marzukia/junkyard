@@ -372,4 +372,12 @@ export const TOOLS: Tool[] = [
     incumbent: "Loom",
     mcpExposed: false,
   },
+  {
+    name: "Fingerprint",
+    slug: "fingerprint",
+    yard: "text",
+    tagline: "Browser fingerprint & bot detection scanner",
+    incumbent: "",
+    mcpExposed: false,
+  },
 ];
