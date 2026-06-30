@@ -56,12 +56,7 @@ function isSafeUri(uri: string): boolean {
 const safeRenderer = new Renderer();
 
 safeRenderer.html = ({ text }: { text: string }) => {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+  return escapeHtml(text);
 };
 
 safeRenderer.link = ({ href, title, text }: Tokens.Link) => {

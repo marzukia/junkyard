@@ -402,7 +402,4 @@ function crc32(data: Uint8Array): number {
   return (crc ^ 0xffffffff) >>> 0;
 }
 
-/** Revoke a blob URL returned by renderDepthFromCache() or exportRaw16bit(). */
-export function revokeResult(url: string): void {
-  URL.revokeObjectURL(url);
-}
+export { revokeResult } from "../../../../kit/lib/imageHelpers";

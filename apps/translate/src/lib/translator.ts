@@ -10,28 +10,13 @@
  * (no isolation required); single-thread WASM is the fallback.
  */
 import { pipeline, env } from "@huggingface/transformers";
+import { loadPipeline } from "../../../../kit/lib/workerInference";
 import { DETECT_CODE, splitIntoChunks } from "./languages";
-
-// ── Disable multi-threaded WASM (requires SharedArrayBuffer / COOP+COEP) ──────
-// Must be set BEFORE any InferenceSession is created.
-(env.backends as unknown as { onnx: { wasm: { numThreads: number } } }).onnx.wasm.numThreads = 1;
-
-// Use browser cache so subsequent visits skip the download.
-env.useBrowserCache = true;
 
 const MODEL_ID = "Xenova/nllb-200-distilled-600M";
 
-export type ProgressCallback = (loaded: number, total: number, status: string) => void;
-
 /** Called for each chunk during chunked translation: chunkIndex, totalChunks */
 export type ChunkProgressCallback = (done: number, total: number) => void;
-
-type TransformersProgressEvent = {
-  status: string;
-  loaded?: number;
-  total?: number;
-  file?: string;
-};
 
 // Internal pipeline type, the transformers.js type union is wide; we cast at
 // call time to avoid "any" propagating through callers.
@@ -43,26 +28,19 @@ type TranslationPipeline = (
 let translator: TranslationPipeline | null = null;
 
 /** Load (or return cached) the translation pipeline. */
-export async function loadTranslator(onProgress?: ProgressCallback): Promise<void> {
+export async function loadTranslator(): Promise<void> {
   if (translator) return;
 
-  const progressCb = (event: TransformersProgressEvent) => {
-    if (!onProgress) return;
-    if (event.status === "progress" || event.status === "download") {
-      onProgress(event.loaded ?? 0, event.total ?? 1, event.status);
-    } else if (event.status === "initiate") {
-      onProgress(0, 1, "initiate");
-    } else if (event.status === "done") {
-      onProgress(1, 1, "done");
-    }
-  };
-
-  // Cast via unknown, "translation" always returns a text2text pipeline.
-  translator = (await (
-    pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-  )("translation", MODEL_ID, {
-    progress_callback: progressCb,
-  })) as TranslationPipeline;
+  translator = await loadPipeline<TranslationPipeline>(
+    env,
+    async (progressCb) => {
+      return (await (
+        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+      )("translation", MODEL_ID, {
+        progress_callback: progressCb,
+      })) as TranslationPipeline;
+    },
+  );
 }
 
 export interface TranslationResult {

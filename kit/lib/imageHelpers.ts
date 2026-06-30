@@ -50,7 +50,7 @@ export function parseHexColor(raw: string): string | null {
 
 /** True if the string is a valid 3- or 6-digit hex color (with or without #). */
 export function isValidHex(hex: string): boolean {
-  return /^#?[0-9a-fA-F]{3,6}$/.test(hex);
+  return parseHexColor(hex) !== null;
 }
 
 /** Format seconds to "HH:MM:SS" or "M:SS". */
@@ -71,6 +71,12 @@ export function parseTime(input: string): number {
   if (parts.length === 2) return parts[0] * 60 + parts[1];
   if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
   return 0;
+}
+
+/** Revoke a blob URL safely (no-op for null/empty). */
+export function revokeResult(url: string | null | undefined): void {
+  if (!url) return;
+  URL.revokeObjectURL(url);
 }
 
 /** Format a download progress fraction (0–1) as a percentage string. */

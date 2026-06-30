@@ -10,14 +10,6 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./ai": {
-      "import": "./dist/ai.js",
-      "types": "./dist/ai.d.ts"
-    },
-    "./pdf": {
-      "import": "./dist/pdf.js",
-      "types": "./dist/pdf.d.ts"
-    },
     "./styles.css": "./dist/styles.css"
   },
   "scripts": {

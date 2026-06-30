@@ -13,8 +13,6 @@ export default defineConfig({
     lib: {
       entry: {
         index: "src/index.ts",
-        ai: "src/ai.ts",
-        pdf: "src/pdf.ts",
       },
       formats: ["es"],
       fileName: "[name]",

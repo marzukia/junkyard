@@ -18,6 +18,10 @@ export { useProgress } from "../../../kit/lib/useProgress";
 
 // ── Lib ─────────────────────────────────────────────────────────────────
 export {
+  embedUnicodeFonts,
+  sanitizeWinAnsi,
+} from "../../../kit/lib/unicodeFont";
+export {
   ACCEPTED_TYPES,
   type AcceptedType,
   isSupportedImage,
