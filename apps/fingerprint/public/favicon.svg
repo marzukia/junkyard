@@ -1,9 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke-width="1.8">
-  <!-- Fingerprint whorl in the junkyard tricolour: concentric loops offset
-       down-right so they nest like a real print core (teal -> amber -> coral). -->
-  <ellipse cx="16" cy="14.5" rx="10.6" ry="12.6" stroke="#2f9d8d"/>
-  <ellipse cx="16.4" cy="15.1" rx="8" ry="9.8" stroke="#2f9d8d"/>
-  <ellipse cx="16.8" cy="15.7" rx="5.6" ry="7.2" stroke="#e8b04b"/>
-  <ellipse cx="17.1" cy="16.3" rx="3.3" ry="4.6" stroke="#e8b04b"/>
-  <ellipse cx="17.4" cy="16.9" rx="1.5" ry="2.3" stroke="#d9594c"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect x="2" y="2" width="28" height="28" rx="4" fill="#2f9d8d" />
+  <circle cx="16" cy="14" r="6" fill="none" stroke="#e8b04b" stroke-width="2" />
+  <line x1="16" y1="20" x2="16" y2="26" stroke="#e8b04b" stroke-width="2" stroke-linecap="round" />
+  <line x1="16" y1="26" x2="10" y2="28" stroke="#d9594c" stroke-width="2" stroke-linecap="round" />
+  <line x1="16" y1="26" x2="22" y2="28" stroke="#d9594c" stroke-width="2" stroke-linecap="round" />
+  <circle cx="16" cy="14" r="2" fill="#fafafa" />
 </svg>
