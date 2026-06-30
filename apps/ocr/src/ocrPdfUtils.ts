@@ -30,7 +30,7 @@
  * detection, extract ocrFontUtils.ts at that point.
  */
 
-import fontkit from "@pdf-lib/fontkit";
+import type { PDFFont } from "pdf-lib";
 import { PDFDocument, rgb } from "pdf-lib";
 
 // ── Public types ──────────────────────────────────────────────────────────────
@@ -265,6 +265,7 @@ export async function buildSearchablePdf(
   const imageBytes = await fetchImageBytes(imageUrl);
 
   const pdfDoc = await PDFDocument.create();
+  const { default: fontkit } = await import("@pdf-lib/fontkit");
   pdfDoc.registerFontkit(fontkit);
 
   // Detect script and load font (lazy, one fetch per export call).
@@ -337,6 +338,7 @@ export async function buildMultiPageSearchablePdf(
   }>
 ): Promise<Uint8Array<ArrayBuffer>> {
   const pdfDoc = await PDFDocument.create();
+  const { default: fontkit } = await import("@pdf-lib/fontkit");
   pdfDoc.registerFontkit(fontkit);
 
   // Detect script across all pages, load font once.
