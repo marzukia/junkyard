@@ -31,13 +31,8 @@ interface FingerprintData {
 // ── SHA-256 helper ─────────────────────────────────────────────────────────
 
 async function sha256(str: string): Promise<string> {
-  const buf = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(str),
-  );
-  return [...new Uint8Array(buf)]
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 // ── Data collection ──────────────────────────────────────────────────────────
@@ -218,8 +213,7 @@ async function collectFingerprint(): Promise<FingerprintData> {
     const rows: SignalRow[] = [];
     try {
       const c = document.createElement("canvas");
-      const gl =
-        c.getContext("webgl") || c.getContext("experimental-webgl");
+      const gl = c.getContext("webgl") || c.getContext("experimental-webgl");
       if (gl) {
         const dbg = gl.getExtension("WEBGL_debug_renderer_info");
         const vendor = dbg
@@ -239,8 +233,7 @@ async function collectFingerprint(): Promise<FingerprintData> {
           .map((p) => gl.getParameter(p))
           .join(",");
         const exts = (gl.getSupportedExtensions() || []).join(",");
-        data.webgl =
-          `${vendor}|${renderer}|${params}|${await sha256(exts)}`;
+        data.webgl = `${vendor}|${renderer}|${params}|${await sha256(exts)}`;
         rows.push({ label: "Param set", value: params });
         rows.push({
           label: "Extensions",
@@ -320,12 +313,14 @@ async function collectFingerprint(): Promise<FingerprintData> {
     const rows: SignalRow[] = [];
     try {
       const Ctx =
-        (window as unknown as Window &
-          typeof globalThis & { OfflineAudioContext?: typeof OfflineAudioContext })
-            .OfflineAudioContext ||
-        (window as unknown as Window &
-          typeof globalThis & { webkitOfflineAudioContext?: typeof OfflineAudioContext })
-            .webkitOfflineAudioContext;
+        (
+          window as unknown as Window &
+            typeof globalThis & { OfflineAudioContext?: typeof OfflineAudioContext }
+        ).OfflineAudioContext ||
+        (
+          window as unknown as Window &
+            typeof globalThis & { webkitOfflineAudioContext?: typeof OfflineAudioContext }
+        ).webkitOfflineAudioContext;
       if (Ctx) {
         const ac = new Ctx(1, 5000, 44100);
         const osc = ac.createOscillator();
@@ -399,8 +394,7 @@ async function collectFingerprint(): Promise<FingerprintData> {
         "Andale Mono",
       ];
       const span = document.createElement("span");
-      span.style.cssText =
-        "position:absolute;left:-9999px;font-size:72px;white-space:nowrap";
+      span.style.cssText = "position:absolute;left:-9999px;font-size:72px;white-space:nowrap";
       span.textContent = "mmmmmmmmmlli 0123";
       document.body.appendChild(span);
       try {
@@ -413,10 +407,7 @@ async function collectFingerprint(): Promise<FingerprintData> {
         test.forEach((f) => {
           for (const b of base) {
             span.style.fontFamily = `"${f}",${b}`;
-            if (
-              span.offsetWidth !== baseW[b].w ||
-              span.offsetHeight !== baseW[b].h
-            ) {
+            if (span.offsetWidth !== baseW[b].w || span.offsetHeight !== baseW[b].h) {
               found.push(f);
               break;
             }
@@ -450,7 +441,11 @@ async function collectFingerprint(): Promise<FingerprintData> {
   {
     const rows: SignalRow[] = [];
     let wd: boolean | null | undefined = undefined;
-    try { wd = navigator.webdriver; } catch { /* not available */ }
+    try {
+      wd = navigator.webdriver;
+    } catch {
+      /* not available */
+    }
     rows.push({
       label: "navigator.webdriver",
       value: wd != null ? String(wd) : "not supported",
@@ -467,10 +462,12 @@ async function collectFingerprint(): Promise<FingerprintData> {
     if (headlessUA) botFlags.push("headless UA");
 
     let chrome = false;
-    try { chrome = !!(window as any).chrome; } catch { /* not available */ }
-    const isChromeUA =
-      /chrome/i.test(navigator.userAgent) &&
-      !/edg|opr/i.test(navigator.userAgent);
+    try {
+      chrome = !!(window as any).chrome;
+    } catch {
+      /* not available */
+    }
+    const isChromeUA = /chrome/i.test(navigator.userAgent) && !/edg|opr/i.test(navigator.userAgent);
     if (isChromeUA) {
       rows.push({
         label: "window.chrome present",
@@ -544,9 +541,16 @@ async function collectFingerprint(): Promise<FingerprintData> {
   }
 
   // Compute visitor ID from all collected signals (deterministic key order)
-  const allValues = Object.keys(data).sort().map((k) => data[k]).join("::");
+  const allValues = Object.keys(data)
+    .sort()
+    .map((k) => data[k])
+    .join("::");
   let visitorId = "";
-  try { visitorId = await sha256(allValues); } catch { visitorId = "sha256-fallback-" + Date.now().toString(16); }
+  try {
+    visitorId = await sha256(allValues);
+  } catch {
+    visitorId = "sha256-fallback-" + Date.now().toString(16);
+  }
 
   return {
     sections,
@@ -570,8 +574,24 @@ function FingerprintBrandGlyph() {
         stroke="#e8b04b"
         strokeWidth="1.8"
       />
-      <line x1="10" y1="12" x2="22" y2="12" stroke="#2f9d8d" strokeWidth="2" strokeLinecap="round" />
-      <line x1="10" y1="18" x2="18" y2="18" stroke="#d9594c" strokeWidth="2" strokeLinecap="round" />
+      <line
+        x1="10"
+        y1="12"
+        x2="22"
+        y2="12"
+        stroke="#2f9d8d"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <line
+        x1="10"
+        y1="18"
+        x2="18"
+        y2="18"
+        stroke="#d9594c"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
       <circle cx="16" cy="14" r="2" fill="#fafafa" />
     </>
   );
@@ -591,12 +611,7 @@ function SectionCard({
 
   return (
     <div className="fp-section">
-      <button
-        type="button"
-        className="fp-section-header"
-        onClick={toggle}
-        aria-expanded={open}
-      >
+      <button type="button" className="fp-section-header" onClick={toggle} aria-expanded={open}>
         <span className="fp-section-title">{section.title}</span>
         <span className="fp-section-entropy">{section.entropy}</span>
         <span className="fp-section-chevron" aria-hidden="true">
@@ -693,10 +708,7 @@ export function App() {
             <>
               <div className="fp-verdict-header">
                 <span className="fp-verdict-label">DETECTOR VERDICT</span>
-                <span
-                  className="fp-verdict-score"
-                  style={{ color: verdictColor }}
-                >
+                <span className="fp-verdict-score" style={{ color: verdictColor }}>
                   {data.riskScore}% bot · {data.verdictLabel}
                 </span>
               </div>
@@ -713,9 +725,7 @@ export function App() {
               </div>
               <div className="fp-verdict-id">
                 <span className="fp-verdict-id-label">Visitor ID</span>
-                <code className="fp-verdict-id-value">
-                  {data.visitorId.slice(0, 40)}…
-                </code>
+                <code className="fp-verdict-id-value">{data.visitorId.slice(0, 40)}…</code>
                 <button
                   type="button"
                   className="fp-verdict-id-copy"
@@ -733,39 +743,28 @@ export function App() {
 
         {/* Rescan button */}
         <div className="fp-actions">
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={handleRescan}
-            disabled={scanning}
-          >
+          <button type="button" className="btn-primary" onClick={handleRescan} disabled={scanning}>
             {scanning ? "Scanning…" : "Rescan"}
           </button>
         </div>
 
         {/* Fingerprint sections */}
         {data ? (
-          data.sections.map((section, i) => (
-            <SectionCard key={i} section={section} index={i} />
-          ))
+          data.sections.map((section, i) => <SectionCard key={i} section={section} index={i} />)
         ) : scanning ? (
           <div className="card">
-            <div className="fp-scanning-detail">
-              Collecting canvas fingerprint…
-            </div>
+            <div className="fp-scanning-detail">Collecting canvas fingerprint…</div>
           </div>
         ) : (
           <div className="card">
-            <div className="fp-scanning-detail">
-              Failed to collect fingerprint data.
-            </div>
+            <div className="fp-scanning-detail">Failed to collect fingerprint data.</div>
           </div>
         )}
 
         {/* Privacy note */}
         <p className="fp-privacy-note">
-          All fingerprinting runs locally in your browser. Nothing is sent
-          anywhere. No upload, no tracking, no account needed.
+          All fingerprinting runs locally in your browser. Nothing is sent anywhere. No upload, no
+          tracking, no account needed.
         </p>
       </main>
 

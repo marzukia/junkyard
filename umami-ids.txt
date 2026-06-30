@@ -48,3 +48,4 @@ sign b29cce1a-4460-4228-95dd-22f8de593d92
 video 4a9c58e6-02c2-4271-8f22-8d3fdff72c39
 cleanup e1c85deb-a1fd-4ba6-9e23-7178a4fa3031
 screen-recorder df7e8777-8327-48ae-bf24-ab637c725a4f
+fingerprint 8a3b9c10-d4e5-4f6a-8b7c-9d0e1f2a3b4c

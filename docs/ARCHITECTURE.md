@@ -4,7 +4,7 @@
 
 Each tool declares itself in a single file: `apps/<slug>/junkyard.ts`. This file exports a typed `JunkyardApp` object (schema in `scripts/catalogue-schema.ts`) containing the tool's metadata, category, runtime type, and MCP exposure information.
 
-`scripts/gen-catalogue.ts` reads all 45 of these files, validates them, and emits two artifacts:
+`scripts/gen-catalogue.ts` reads all 46 of these files, validates them, and emits two artifacts:
 
 - `hub/src/catalogue.generated.ts` - a typed `TOOLS` array imported by the hub React app
 - `hub/public/catalogue.json` - the full catalogue served at `/catalogue.json`, consumed by the AppSwitcher nav component at runtime
@@ -34,7 +34,7 @@ Each app is built independently with Vite's `--base` flag set to `/<slug>/`, so 
 - `components/BrandMark.tsx`, `Header.tsx`, `Footer.tsx`, `ThemeToggle.tsx` - shared UI shells
 - `lib/*` - shared utilities (`base64url`, `cronGrammar`, `csvParse`, `imageHelpers`, `qrContent`, `unicodeFont`, `unitsData`, `workerInference`, `workerTask`, `format`)
 
-All 45 apps import from `@junkyardsh/ui` instead of vendoring copies. CI builds the package once in `packages/ui/` and lint checks all apps against it. The package is published to npm public registry under the `@junkyardsh` scope.
+All 46 apps import from `@junkyardsh/ui` instead of vendoring copies. CI builds the package once in `packages/ui/` and lint checks all apps against it. The package is published to npm public registry under the `@junkyardsh` scope.
 
 Previously the kit was vendored via 17 `scripts/vendor-*.mjs` scripts with CI drift checks. The extraction to `@junkyardsh/ui` eliminates this maintenance overhead.
 
@@ -50,7 +50,7 @@ Each is exported as a `ToolDef` with a `slug`, a description, and an array of `T
 
 ## Client-only tools
 
-The remaining 28 tools are browser-only and cannot be made headless:
+The remaining 29 tools are browser-only and cannot be made headless:
 
 - **Browser API tools** (file reading, Canvas, Blob URLs, screen capture): `convert, crop, exif, favicon, gif, meme, ocr, og, pdf, screenshot, screen-recorder, sign, svg`
 - **In-browser AI** (transformers.js WASM, WebLLM/WebGPU): `bg, caption, chat, cleanup, depth, summarize, transcribe, translate, upscale`
@@ -62,7 +62,7 @@ These are catalogued with `runtime: "client"` or `runtime: "client-ai"` and `mcp
 
 junkyard deliberately has **no root `package.json` / monorepo workspace**. Each `apps/<slug>` is a fully standalone Vite app with its own `package.json` + `bun.lock`, installed and built independently. This is intentional:
 
-- The 45 apps have divergent, sometimes conflicting dependency versions (different transformers.js / pdf-lib / ffmpeg pins). A single hoisted workspace `node_modules` risks cross-app version bleed and breaking individual vite builds.
+- The 46 apps have divergent, sometimes conflicting dependency versions (different transformers.js / pdf-lib / ffmpeg pins). A single hoisted workspace `node_modules` risks cross-app version bleed and breaking individual vite builds.
 - Each app stays portable (can be lifted out or deployed on its own).
 - `scripts/build-site.sh` already parallelizes the per-app `bun install` phase, so there is no single `bun install` for everything but the install cost is bounded.
 
