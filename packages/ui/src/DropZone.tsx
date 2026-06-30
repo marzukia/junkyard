@@ -17,6 +17,8 @@ interface DropZoneProps {
   children?: React.ReactNode;
   /** Render as <label> instead of <button> (some apps wrap hidden input differently) */
   asLabel?: boolean;
+  /** Custom keydown handler. Default: Enter/Space opens file picker. */
+  onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
 export function DropZone({
@@ -29,6 +31,7 @@ export function DropZone({
   icon,
   children,
   asLabel = false,
+  onKeyDown: customKeyDown,
 }: DropZoneProps) {
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,7 +57,11 @@ export function DropZone({
   const dragHandlers = {
     onClick: () => inputRef.current?.click(),
     onKeyDown: (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" || e.key === " ") inputRef.current?.click();
+      if (customKeyDown) {
+        customKeyDown(e);
+      } else if (e.key === "Enter" || e.key === " ") {
+        inputRef.current?.click();
+      }
     },
     onDragOver: (e: React.DragEvent) => {
       e.preventDefault();
