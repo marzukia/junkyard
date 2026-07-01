@@ -1,4 +1,4 @@
-import { z } from "zod/v3";
+import { z } from "zod";
 
 export type Category = "image" | "text" | "ai" | "docs";
 export type Runtime = "client" | "client-ai";
