@@ -90,7 +90,9 @@ export async function runFFmpeg(
   try {
     await ff.writeFile(inName, await fetchFile(inputFile));
 
-    const cmd = preArgs ? [...preArgs, "-i", inName, ...args, outputName] : ["-i", inName, ...args, outputName];
+    const cmd = preArgs
+      ? [...preArgs, "-i", inName, ...args, outputName]
+      : ["-i", inName, ...args, outputName];
     const ret = await ff.exec(cmd);
     if (ret !== 0) {
       // Surface the last meaningful ffmpeg log line as the error message so

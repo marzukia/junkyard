@@ -311,7 +311,6 @@
   flex-shrink: 0;
 }
 
-
 /* Numeric length input beside the slider header */
 .pw-length-num {
   font-family: var(--font-mono);
@@ -411,7 +410,6 @@
   color: #d9594c;
 }
 
-
 .pw-footer-note {
   font-family: var(--font-mono);
   font-size: 0.65rem;
@@ -508,7 +506,6 @@
   border-color: var(--accent);
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -519,7 +516,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

@@ -73,8 +73,7 @@ export const useDepthStore = create<DepthState>()(
         set({ inputFile: file, inputUrl: url, resultUrl: null, errorMsg: null, depthCache: null });
       },
 
-      setPhase: (phase) =>
-        set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
+      setPhase: (phase) => set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
 
       setModelProgress: (loaded, total, status) =>
         set({ modelProgress: { loaded, total, status } }),

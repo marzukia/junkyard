@@ -281,7 +281,6 @@
 
 /* ─── Word bank toggle wrapping ─────────────────────────────────────────── */
 
-
 /* ─── Kbd hint ──────────────────────────────────────────────────────────── */
 
 .lorem-kbd-hint {
@@ -313,7 +312,6 @@ kbd {
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

@@ -347,10 +347,7 @@ export function App() {
               {microphone && micTestActive && (
                 <div className="rc-meter-wrap">
                   <div className="rc-meter-bar">
-                    <div
-                      className="rc-meter-fill"
-                      style={{ width: `${micLevel * 100}%` }}
-                    />
+                    <div className="rc-meter-fill" style={{ width: `${micLevel * 100}%` }} />
                   </div>
                   <span className="rc-meter-label">
                     {micLevel > 0.01 ? `${Math.round(micLevel * 100)}%` : "awaiting signal..."}
@@ -358,9 +355,7 @@ export function App() {
                 </div>
               )}
               {microphone && micError && (
-                <p className="rc-meter-label rc-meter-label--muted">
-                  {micError}
-                </p>
+                <p className="rc-meter-label rc-meter-label--muted">{micError}</p>
               )}
               <label className="rc-toggle-row">
                 <input

@@ -678,7 +678,9 @@ export function App() {
                     <div className="resize-slider-row">
                       <label className="resize-slider-label" htmlFor="resize-w-slider">
                         Width
-                        <span className="resize-slider-value">{store.resizeW > 0 ? store.resizeW : "auto"}px</span>
+                        <span className="resize-slider-value">
+                          {store.resizeW > 0 ? store.resizeW : "auto"}px
+                        </span>
                       </label>
                       <Slider
                         id="resize-w-slider"
@@ -693,7 +695,9 @@ export function App() {
                     <div className="resize-slider-row">
                       <label className="resize-slider-label" htmlFor="resize-h-slider">
                         Height
-                        <span className="resize-slider-value">{store.resizeH > 0 ? store.resizeH : "auto"}px</span>
+                        <span className="resize-slider-value">
+                          {store.resizeH > 0 ? store.resizeH : "auto"}px
+                        </span>
                       </label>
                       <Slider
                         id="resize-h-slider"

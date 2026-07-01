@@ -1,4 +1,4 @@
-import { type DepthEstimationPipeline, RawImage, pipeline, env } from "@huggingface/transformers";
+import { type DepthEstimationPipeline, RawImage, env, pipeline } from "@huggingface/transformers";
 /**
  * Web Worker for depth: runs model load + inference off the main thread.
  * Returns image bytes (ArrayBuffer) instead of blob URL (not cross-context).
@@ -8,11 +8,7 @@ import { type DepthEstimationPipeline, RawImage, pipeline, env } from "@huggingf
  * is handled via kit/lib/workerInference.ts.
  */
 import type { WorkerRequest } from "@junkyardsh/kit";
-import {
-  loadPipeline,
-  postResult,
-  postError,
-} from "../../../kit/lib/workerInference";
+import { loadPipeline, postError, postResult } from "../../../kit/lib/workerInference";
 import type { ColourMap } from "./lib/depthEstimation";
 import { MODEL_ID, applyColourMap } from "./lib/depthEstimation";
 
@@ -38,15 +34,17 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!estimator) {
-      estimator = await loadPipeline<DepthEstimationPipeline>(env,
-        async (progressCb) => {
-          return (await (
-            pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-          )("depth-estimation", MODEL_ID, {
-            progress_callback: progressCb,
-          })) as DepthEstimationPipeline;
-        }
-      );
+      estimator = await loadPipeline<DepthEstimationPipeline>(env, async (progressCb) => {
+        return (await (
+          pipeline as (
+            task: string,
+            model: string,
+            opts: Record<string, unknown>
+          ) => Promise<unknown>
+        )("depth-estimation", MODEL_ID, {
+          progress_callback: progressCb,
+        })) as DepthEstimationPipeline;
+      });
     }
 
     const bitmap = await createImageBitmap(file);
@@ -104,7 +102,12 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
     const blob = await outCanvas.convertToBlob({ type: "image/png" });
     const imageBytes = await blob.arrayBuffer();
 
-    postResult<DepthWorkerResult>({ imageBytes, width: origW, height: origH, normalisedDepth: normalised });
+    postResult<DepthWorkerResult>({
+      imageBytes,
+      width: origW,
+      height: origH,
+      normalisedDepth: normalised,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error during depth estimation.";
     postError(message);

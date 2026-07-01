@@ -1,4 +1,4 @@
-import { RawImage, pipeline, env } from "@huggingface/transformers";
+import { RawImage, env, pipeline } from "@huggingface/transformers";
 /**
  * Web Worker for upscale: runs model load + inference off the main thread.
  *
@@ -10,11 +10,7 @@ import { RawImage, pipeline, env } from "@huggingface/transformers";
  * is handled via kit/lib/workerInference.ts.
  */
 import type { WorkerRequest } from "@junkyardsh/kit";
-import {
-  loadPipeline,
-  postResult,
-  postError,
-} from "../../../kit/lib/workerInference";
+import { loadPipeline, postError, postResult } from "../../../kit/lib/workerInference";
 import type { OutputFormat } from "./lib/imageHelpers";
 import { outputMime } from "./lib/imageHelpers";
 import type { ScaleFactor } from "./lib/upscale";
@@ -47,15 +43,17 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!upscaler) {
-      upscaler = await loadPipeline<ImageToImagePipeline>(env,
-        async (progressCb) => {
-          return (await (
-            pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-          )("image-to-image", MODEL_ID, {
-            progress_callback: progressCb,
-          })) as ImageToImagePipeline;
-        }
-      );
+      upscaler = await loadPipeline<ImageToImagePipeline>(env, async (progressCb) => {
+        return (await (
+          pipeline as (
+            task: string,
+            model: string,
+            opts: Record<string, unknown>
+          ) => Promise<unknown>
+        )("image-to-image", MODEL_ID, {
+          progress_callback: progressCb,
+        })) as ImageToImagePipeline;
+      });
     }
 
     const srcUrl = URL.createObjectURL(file);

@@ -448,7 +448,6 @@
   outline-offset: 1px;
 }
 
-
 .panel__desc {
   font-family: var(--font-mono);
   font-size: 0.68rem;
@@ -554,7 +553,6 @@
   text-align: center;
 }
 
-
 /* ─── Active secondary button ─────────────────────────────────────────────── */
 
 /* ─── Drop zone error state ───────────────────────────────────────────────── */
@@ -578,7 +576,6 @@
 /* ─── Responsive ──────────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
-
   .cue-list__header {
     display: none;
   }
@@ -603,7 +600,6 @@
   }
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -614,7 +610,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

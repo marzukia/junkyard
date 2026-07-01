@@ -97,8 +97,7 @@ export const useSummarizeStore = create<SummarizeState>((set) => ({
   setInputText: (text, wordCount) =>
     set({ inputText: text, inputWords: wordCount, summary: null, errorMsg: null, phase: "idle" }),
 
-  setPhase: (phase) =>
-    set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
+  setPhase: (phase) => set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
 
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
 

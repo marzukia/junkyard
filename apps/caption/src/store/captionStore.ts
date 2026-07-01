@@ -111,8 +111,7 @@ export const useCaptionStore = create<CaptionState>((set, get) => ({
 
   setUrlInput: (urlInput) => set({ urlInput }),
 
-  setPhase: (phase) =>
-    set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
+  setPhase: (phase) => set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
 
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
 

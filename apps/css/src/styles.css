@@ -223,7 +223,6 @@
   align-items: start;
 }
 
-
 .bezier-canvas-wrap {
   flex-shrink: 0;
   position: relative;
@@ -406,7 +405,6 @@
   border-color: #f5c2be;
 }
 
-
 .add-stop-btn {
   font-family: var(--font-text);
   font-size: 0.72rem;
@@ -443,7 +441,6 @@
 }
 
 /* ─── Mobile: tab and button tap targets ─────────────────────────────────── */
-
 
 /* ─── Mobile: preview card order ─────────────────────────────────────────── */
 
@@ -535,7 +532,6 @@
   border-color: #4a2020;
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -564,7 +560,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

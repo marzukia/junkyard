@@ -42,8 +42,8 @@ jobs:
           bun-version: latest
 
       # ── Build package ──────────────────────────────────────────────────
-      - name: Build @junkyardsh/ui package
-        run: cd packages/ui && bun install --frozen-lockfile && bun run build
+      - name: Build @junkyardsh/kit package
+        run: cd packages/kit && bun install --frozen-lockfile && bun run build
 
       # ── Lint ────────────────────────────────────────────────────────────
       # Biome CI on hub, kit, and all 47 apps. Runs in parallel per app.

@@ -1,8 +1,6 @@
 /* Main content */
 
-
 /* Card */
-
 
 /* Primary button */
 
@@ -41,7 +39,6 @@
   background: #fce8e8;
   color: #c0392b;
 }
-
 
 .btn-icon:focus-visible {
   outline: 2px solid var(--accent);
@@ -462,7 +459,6 @@
 
 /* Import button done state */
 
-
 /* Resume entry link (projects) */
 
 .resume-entry-link {
@@ -559,7 +555,6 @@
   text-underline-offset: 2px;
 }
 
-
 [data-mantine-color-scheme="dark"] .btn-icon--danger:hover:not(:disabled) {
   background: #3a1a1a;
   color: #e57373;
@@ -575,7 +570,6 @@
   border-color: #e57373;
   color: #e57373;
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

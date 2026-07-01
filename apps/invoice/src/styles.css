@@ -1,8 +1,6 @@
 /* Main content */
 
-
 /* Card */
-
 
 /* Primary button */
 
@@ -41,7 +39,6 @@
   background: #fce8e8;
   color: #c0392b;
 }
-
 
 .btn-icon:focus-visible {
   outline: 2px solid var(--accent);
@@ -411,7 +408,6 @@
   color: var(--ink);
 }
 
-
 /* Invoice totals */
 
 .invoice-totals {
@@ -527,7 +523,6 @@
   background: #fce8e8;
 }
 
-
 /* Inline field hints */
 
 .line-item-group {
@@ -549,11 +544,9 @@
   color: #b45309;
 }
 
-
 .input--warn {
   border-color: #b45309 !important;
 }
-
 
 /* Logo upload */
 
@@ -600,7 +593,6 @@
   border-radius: 2px;
 }
 
-
 [data-mantine-color-scheme="dark"] .btn-icon--danger:hover:not(:disabled) {
   background: #3a1a1a;
   color: #e57373;
@@ -619,7 +611,6 @@
 [data-mantine-color-scheme="dark"] .input--warn {
   border-color: #fbbf24 !important;
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

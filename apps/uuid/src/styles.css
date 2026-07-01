@@ -210,7 +210,6 @@
 
 /* ─── Small space-btn variant ────────────────────────────────────────────── */
 
-
 /* ─── Name-based input ───────────────────────────────────────────────────── */
 
 .uuid-namebased-row {
@@ -353,7 +352,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

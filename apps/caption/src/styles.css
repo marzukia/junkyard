@@ -1,5 +1,4 @@
-/* Shared styles imported via @junkyardsh/ui/styles.css */
-
+/* Shared styles imported via @junkyardsh/kit/styles.css */
 
 @media (pointer: coarse) {
   input,
@@ -17,7 +16,6 @@
     padding: 0 0.25rem;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

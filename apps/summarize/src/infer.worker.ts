@@ -7,7 +7,7 @@
  * Re-creating the worker on next run uses the browser cache -- no re-download.
  */
 import type { WorkerRequest } from "@junkyardsh/kit";
-import { postResult, postError } from "../../../kit/lib/workerInference";
+import { postError, postResult } from "../../../kit/lib/workerInference";
 import {
   type SummaryOptions,
   type SummaryResult,
