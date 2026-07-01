@@ -132,7 +132,10 @@ jobs:
         # Fails if the tool count stated in README.md, CONTRIBUTING.md, or
         # docs/ARCHITECTURE.md diverges from the real apps/ directory count.
         # Prevents silent "44" drift when a new tool is added without updating docs.
-        run: bun scripts/check-doc-counts.mjs
+        # Installs @junkyard/core deps first — the script imports core's source.
+        run: |
+          cd packages/core && bun install --frozen-lockfile && cd ../..
+          bun scripts/check-doc-counts.mjs
 
       - name: Core TOOLS vs exposed apps guard
         # Fails if the set of apps with mcp.exposed:true diverges from the

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Reads apps/*/junkyard.ts, validates, sorts by order, and emits:
+// Reads apps/*/junkyard.ts, validates with zod, sorts by order, and emits:
 //   hub/src/catalogue.generated.ts  - typed TOOLS array for the hub
 //   hub/public/catalogue.json       - full catalogue for nav switcher and MCP server
 // Run via: npx tsx scripts/gen-catalogue.ts
@@ -7,66 +7,21 @@
 import { writeFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import type { JunkyardApp, McpTool, AppTag } from "./catalogue-schema.ts";
+import { JunkyardAppSchema, type JunkyardApp } from "./catalogue-schema.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const APPS_DIR = join(ROOT, "apps");
 const OUT_TS = join(ROOT, "hub", "src", "catalogue.generated.ts");
 const OUT_JSON = join(ROOT, "hub", "public", "catalogue.json");
 
-const VALID_CATEGORIES = new Set<string>(["image", "text", "ai", "docs"]);
-const VALID_RUNTIMES = new Set<string>(["client", "client-ai"]);
-const VALID_TAGS = new Set<AppTag>(["webgpu", "on-device-ai", "large-download", "beta"]);
-
-const REQUIRED_FIELDS: (keyof JunkyardApp)[] = [
-  "slug",
-  "name",
-  "category",
-  "order",
-  "tagline",
-  "description",
-  "incumbent",
-  "path",
-  "runtime",
-  "mcp",
-];
-
-const DESC_MIN_LENGTH = 40;
 const DESC_TERMINAL_RE = /[.!?]$/;
 
-function validateDescription(desc: string, tsPath: string): string[] {
+function validateDescription(desc: string, slug: string): string[] {
   const errs: string[] = [];
-  if (desc.length < DESC_MIN_LENGTH) {
-    errs.push(
-      `${tsPath}: description too short (${desc.length} chars, min ${DESC_MIN_LENGTH}) - "${desc}"`,
-    );
+  if (desc.length < 40) {
+    errs.push(`[${slug}] description too short (${desc.length} chars, min 40) - "${desc}"`);
   } else if (!DESC_TERMINAL_RE.test(desc)) {
-    errs.push(
-      `${tsPath}: description does not end with sentence-ending punctuation (.!?) - "${desc}"`,
-    );
-  }
-  return errs;
-}
-
-function validateMcpTools(tools: unknown, tsPath: string): string[] {
-  const errs: string[] = [];
-  if (!Array.isArray(tools)) {
-    errs.push(`${tsPath}: mcp.tools must be an array`);
-    return errs;
-  }
-  for (let i = 0; i < tools.length; i++) {
-    const entry = tools[i];
-    if (!entry || typeof entry !== "object") {
-      errs.push(`${tsPath}: mcp.tools[${i}] must be an object`);
-      continue;
-    }
-    const t = entry as Record<string, unknown>;
-    if (typeof t.name !== "string" || t.name.trim() === "") {
-      errs.push(`${tsPath}: mcp.tools[${i}].name must be a non-empty string`);
-    }
-    if ("summary" in t && typeof t.summary !== "string") {
-      errs.push(`${tsPath}: mcp.tools[${i}].summary must be a string if present`);
-    }
+    errs.push(`[${slug}] description does not end with sentence-ending punctuation (.!?) - "${desc}"`);
   }
   return errs;
 }
@@ -87,7 +42,7 @@ async function main(): Promise<void> {
 
   for (const dir of appDirs) {
     const tsPath = join(APPS_DIR, dir, "junkyard.ts");
-    let mod: { app: JunkyardApp };
+    let mod: { app: Record<string, unknown> };
 
     try {
       mod = await import(pathToFileURL(tsPath).href);
@@ -104,82 +59,37 @@ async function main(): Promise<void> {
       continue;
     }
 
-    // Per-app error list - collect ALL field errors before skipping this app
-    const appErrors: string[] = [];
-
-    // Required fields
-    for (const field of REQUIRED_FIELDS) {
-      if (data[field] === undefined || data[field] === null) {
-        appErrors.push(`${tsPath}: missing required field "${field}"`);
+    // Zod schema validation — reports all field errors at once
+    const result = JunkyardAppSchema.safeParse(data);
+    if (!result.success) {
+      for (const issue of result.error.issues) {
+        const pathStr = issue.path.join(".");
+        allErrors.push(`[${dir}] ${pathStr}: ${issue.message}`);
       }
+      continue;
     }
 
-    // Only run deeper validation when required fields are present
-    if (appErrors.length === 0) {
-      // Category validation
-      if (!VALID_CATEGORIES.has(data.category)) {
-        appErrors.push(
-          `${tsPath}: category "${data.category}" not in [image, text, ai, docs]`,
-        );
-      }
+    const app = result.data;
 
-      // Runtime validation
-      if (!VALID_RUNTIMES.has(data.runtime)) {
-        appErrors.push(
-          `${tsPath}: runtime "${data.runtime}" not in [client, client-ai]`,
-        );
-      }
-
-      // Slug must match directory name
-      if (data.slug !== dir) {
-        appErrors.push(
-          `${tsPath}: slug "${data.slug}" does not match directory name "${dir}"`,
-        );
-      }
-
-      // Path must be the canonical derivative of slug: "/<slug>/"
-      // Guards against fat-fingered paths and stale paths after a slug rename.
-      const expectedPath = `/${data.slug}/`;
-      if (data.path !== expectedPath) {
-        appErrors.push(
-          `${tsPath}: path "${data.path}" must be "${expectedPath}"`,
-        );
-      }
-
-      // Order must be a positive integer
-      if (!Number.isInteger(data.order) || data.order < 1) {
-        appErrors.push(
-          `${tsPath}: order must be a positive integer, got ${JSON.stringify(data.order)}`,
-        );
-      }
-
-      // Description quality: min length and terminal punctuation
-      appErrors.push(...validateDescription(data.description, tsPath));
-
-      // mcp.tools shape validation
-      appErrors.push(...validateMcpTools(data.mcp?.tools, tsPath));
-
-      // tags validation (optional field, but each value must be a known AppTag)
-      if (data.tags !== undefined) {
-        if (!Array.isArray(data.tags)) {
-          appErrors.push(`${tsPath}: tags must be an array if present`);
-        } else {
-          for (const tag of data.tags) {
-            if (!VALID_TAGS.has(tag as AppTag)) {
-              appErrors.push(
-                `${tsPath}: unknown tag "${tag}" - valid tags are [${[...VALID_TAGS].join(", ")}]`,
-              );
-            }
-          }
-        }
-      }
+    // Slug must match directory name (zod doesn't have access to the dir name)
+    if (app.slug !== dir) {
+      allErrors.push(`[${dir}] slug "${app.slug}" does not match directory name "${dir}"`);
+      continue;
     }
 
-    if (appErrors.length > 0) {
-      allErrors.push(...appErrors);
-    } else {
-      tools.push(data);
+    // Path must be the canonical derivative of slug: "/<slug>/"
+    const expectedPath = `/${app.slug}/`;
+    if (app.path !== expectedPath) {
+      allErrors.push(`[${dir}] path "${app.path}" must be "${expectedPath}"`);
+      continue;
     }
+
+    // Description quality: min length (zod checks >= 40) and terminal punctuation
+    const descErrors = validateDescription(app.description, dir);
+    allErrors.push(...descErrors);
+    if (descErrors.length > 0) continue;
+
+    tools.push(app);
   }
 
   if (allErrors.length > 0) {
