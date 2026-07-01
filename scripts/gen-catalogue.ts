@@ -85,12 +85,9 @@ async function main(): Promise<void> {
     }
 
     // Description quality: min length (zod checks >= 40) and terminal punctuation
-    allErrors.push(...validateDescription(app.description, dir));
-
-    if (allErrors.length > 0 && allErrors.some((e) => e.startsWith(`[${dir}]`))) {
-      // Don't push partial data — skip this app entirely
-      continue;
-    }
+    const descErrors = validateDescription(app.description, dir);
+    allErrors.push(...descErrors);
+    if (descErrors.length > 0) continue;
 
     tools.push(app);
   }
