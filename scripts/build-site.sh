@@ -24,8 +24,8 @@ bun "$ROOT/scripts/gen-catalogue.ts"
 bunx vite build --outDir "$DIST" --emptyOutDir
 
 echo "==> Building local packages"
-if [ -d "$ROOT/packages/ui" ]; then
-  cd "$ROOT/packages/ui"
+if [ -d "$ROOT/packages/kit" ]; then
+  cd "$ROOT/packages/kit"
   bun install --frozen-lockfile
   SKIP_DTS=1 bun run build
 fi
@@ -58,18 +58,18 @@ for pid in "${pids[@]}"; do
 done
 echo "  App deps installed."
 
-# Symlink the local @junkyardsh/ui build into each app's node_modules so
-# they pick up subpath exports (./ai, ./pdf) not yet published to npm.
+# Symlink the local @junkyardsh/kit build into each app's node_modules so
+# they pick up subpath exports not yet published to npm.
 # Also symlink at repo root for imports resolved from kit/ (e.g. workerInference.ts).
-echo "  Symlinking local @junkyardsh/ui into app node_modules..."
+echo "  Symlinking local @junkyardsh/kit into app node_modules..."
 mkdir -p "$ROOT/node_modules/@junkyardsh"
-rm -rf "$ROOT/node_modules/@junkyardsh/ui"
-ln -s "$ROOT/packages/ui" "$ROOT/node_modules/@junkyardsh/ui"
+rm -rf "$ROOT/node_modules/@junkyardsh/kit"
+ln -s "$ROOT/packages/kit" "$ROOT/node_modules/@junkyardsh/kit"
 for d in "$ROOT"/apps/*/; do
-  target="$d/node_modules/@junkyardsh/ui"
+  target="$d/node_modules/@junkyardsh/kit"
   if [ -d "$target" ]; then
     rm -rf "$target"
-    ln -s "$ROOT/packages/ui" "$target"
+    ln -s "$ROOT/packages/kit" "$ROOT/node_modules/@junkyardsh/kit"
   fi
 done
 
