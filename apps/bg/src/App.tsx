@@ -126,6 +126,7 @@ function DropZone({ onFile, disabled, onSample, onKeyDown }: DropZoneProps) {
           <span className="bg-sample-divider">or</span>
           <button type="button" className="btn-secondary" onClick={onSample}>
             Try sample image
+          </button>
         </div>
       )}
     </div>
