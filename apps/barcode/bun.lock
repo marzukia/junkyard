@@ -7,7 +7,7 @@
       "dependencies": {
         "@fontsource/roboto": "^5.2.10",
         "@fontsource/roboto-mono": "^5.2.9",
-        "@junkyardsh/ui": "^1.0.5",
+        "@junkyardsh/kit": "^1.0.5",
         "@mantine/core": "^7.17.4",
         "jsbarcode": "^3.11.6",
         "jszip": "^3.10.1",
@@ -192,7 +192,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@junkyardsh/ui": ["@junkyardsh/ui@1.0.5", "", { "dependencies": { "@mantine/core": "^7.17.4", "react": "^18.3.1", "react-dom": "^18.3.1" } }, "sha512-UB2rnmQIBX2apajg8Q61jTeTWMmO0Tm9FKxV7xqkd7r1ziX7YQfAR8qbtzkS3ARtFYA566AerbamRY37V2Pd8g=="],
+    "@junkyardsh/kit": ["@junkyardsh/kit@1.0.6", "", { "dependencies": { "@mantine/core": "^7.17.4", "react": "^18.3.1", "react-dom": "^18.3.1" } }, "sha512-GA16RP4KnAF54jXta0akbOgqkPflg/aEEFu6A+1Mfqgk5jNOOjz11lFOOXoX8doJLlQQFMJviR4bXBL5FUI/fw=="],
 
     "@junkyardsh/vite-config": ["@junkyardsh/vite-config@file:../../packages/vite-config", { "devDependencies": { "@vitejs/plugin-react": "^4.5.2", "vite": "^6.3.5", "vite-plugin-dts": "^5.0.3" } }],
 
