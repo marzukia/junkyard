@@ -1,6 +1,6 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   FIELD_ORDER,

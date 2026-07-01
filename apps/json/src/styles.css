@@ -103,7 +103,6 @@
   color: #b03030;
 }
 
-
 .json-error-icon {
   flex-shrink: 0;
   font-weight: 700;
@@ -128,7 +127,6 @@
   color: #2a8a6e;
   padding: 0.3rem 0;
 }
-
 
 .json-valid-icon {
   font-weight: 700;
@@ -196,7 +194,6 @@
   color: #2563ab;
 }
 
-
 .json-tree-colon {
   color: var(--ink-faint);
   margin-right: 0.15rem;
@@ -217,16 +214,13 @@
   color: #16763a;
 }
 
-
 .json-tree-val--number {
   color: #c05010;
 }
 
-
 .json-tree-val--boolean {
   color: #7c3ab5;
 }
-
 
 .json-tree-val--null {
   color: var(--ink-faint);
@@ -369,7 +363,6 @@
   color: #c79bf7;
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -390,7 +383,6 @@
     padding-bottom: 0.5rem;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

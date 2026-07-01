@@ -19,16 +19,13 @@ let summarizer: SummarizationPipeline | null = null;
 export async function loadModel(): Promise<void> {
   if (summarizer) return;
 
-  summarizer = await loadPipeline<SummarizationPipeline>(
-    env,
-    async (progressCb) => {
-      return (await (
-        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-      )("summarization", MODEL_ID, {
-        progress_callback: progressCb,
-      })) as SummarizationPipeline;
-    },
-  );
+  summarizer = await loadPipeline<SummarizationPipeline>(env, async (progressCb) => {
+    return (await (
+      pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+    )("summarization", MODEL_ID, {
+      progress_callback: progressCb,
+    })) as SummarizationPipeline;
+  });
 }
 
 export interface SummaryOptions {

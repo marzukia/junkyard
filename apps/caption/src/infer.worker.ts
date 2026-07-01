@@ -4,13 +4,9 @@
  * Shared boilerplate (env config, progress posting, error/results posting)
  * is handled via kit/lib/workerInference.ts.
  */
-import { RawImage, pipeline, env } from "@huggingface/transformers";
-import type { WorkerRequest } from "@junkyardsh/ui";
-import {
-  loadPipeline,
-  postResult,
-  postError,
-} from "../../../kit/lib/workerInference";
+import { RawImage, env, pipeline } from "@huggingface/transformers";
+import type { WorkerRequest } from "@junkyardsh/kit";
+import { loadPipeline, postError, postResult } from "../../../kit/lib/workerInference";
 import type { CaptionResult } from "./lib/captioner";
 import { MODEL_ID } from "./lib/captioner";
 
@@ -74,15 +70,17 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!isModelLoaded()) {
-      captioner = await loadPipeline<ImageToTextPipeline>(env,
-        async (progressCb) => {
-          return (await (
-            pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-          )("image-to-text", MODEL_ID, {
-            progress_callback: progressCb,
-          })) as ImageToTextPipeline;
-        }
-      );
+      captioner = await loadPipeline<ImageToTextPipeline>(env, async (progressCb) => {
+        return (await (
+          pipeline as (
+            task: string,
+            model: string,
+            opts: Record<string, unknown>
+          ) => Promise<unknown>
+        )("image-to-text", MODEL_ID, {
+          progress_callback: progressCb,
+        })) as ImageToTextPipeline;
+      });
     }
 
     const result = await captionImage(file, numCaptions);

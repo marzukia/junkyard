@@ -716,7 +716,6 @@
 
 /* ─── Mobile: image-thumb remove button always visible on touch ──────────── */
 
-
 /* ─── Privacy verdict banner ────────────────────────────────────────────────── */
 
 .privacy-banner {
@@ -736,13 +735,11 @@
   color: #7a2820;
 }
 
-
 .privacy-banner--medium {
   background: #fffbeb;
   border-left: 3px solid #d97706;
   color: #78450a;
 }
-
 
 .privacy-banner-icon {
   font-size: 0.9rem;
@@ -774,7 +771,6 @@
 .exif-group-label--sensitive {
   color: #d9594c;
 }
-
 
 .exif-row--sensitive .exif-key {
   color: var(--ink);
@@ -835,7 +831,6 @@
   outline-offset: 1px;
 }
 
-
 [data-mantine-color-scheme="dark"] .privacy-banner--high {
   background: #2a1614;
   color: #f4b3ad;
@@ -849,7 +844,6 @@
 [data-mantine-color-scheme="dark"] .exif-group-label--sensitive {
   color: #f4b3ad;
 }
-
 
 @media (pointer: coarse) {
   input[type="file"] {
@@ -867,7 +861,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

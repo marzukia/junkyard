@@ -50,7 +50,7 @@ export interface CropRect {
   h: number;
 }
 
-export { clamp } from "@junkyardsh/ui";
+export { clamp } from "@junkyardsh/kit";
 
 /**
  * Constrain a crop rect to fit within image bounds (imgW x imgH).

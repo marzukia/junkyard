@@ -6,7 +6,6 @@
 
 /* ── Main content ────────────────────────────────────────────────────────── */
 
-
 /* ── Card ────────────────────────────────────────────────────────────────── */
 
 /* ── Buttons ─────────────────────────────────────────────────────────────── */
@@ -80,7 +79,6 @@
   transition: border-color 0.15s, background 0.15s;
   text-align: center;
 }
-
 
 .drop-zone:hover,
 .drop-zone--active {
@@ -174,7 +172,6 @@
   color: var(--ink);
   box-shadow: 0 1px 2px rgba(26, 37, 48, 0.12);
 }
-
 
 .mode-tab:focus-visible {
   outline: 2px solid var(--accent);
@@ -405,7 +402,6 @@
   box-shadow: 0 1px 2px rgba(26, 37, 48, 0.12);
 }
 
-
 .format-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
@@ -550,7 +546,6 @@
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 
-
 [data-mantine-color-scheme="dark"] .drop-zone {
   border-color: #3a4550;
 }
@@ -567,7 +562,6 @@
   box-shadow: none;
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -579,7 +573,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

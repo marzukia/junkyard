@@ -177,12 +177,10 @@
   color: #1a7a50;
 }
 
-
 .hash-match--fail {
   background: #fdecea;
   color: #b02a1e;
 }
-
 
 .hash-value-wrap {
   display: flex;
@@ -349,7 +347,6 @@
   background: #e6f9f2 !important;
 }
 
-
 .hash-copy-label {
   font-family: var(--font-mono);
   font-size: 0.6rem;
@@ -386,12 +383,10 @@
   color: #1a7a50;
 }
 
-
 .hash-verify-badge--fail {
   background: #fdecea;
   color: #b02a1e;
 }
-
 
 .hash-verify-badge--hint {
   background: var(--surface-sunken);
@@ -404,18 +399,15 @@
   border-color: #1a7a50 !important;
 }
 
-
 .hash-expected-input--fail {
   border-color: #b02a1e !important;
 }
-
 
 /* ─── Highlighted row (auto-detected algo candidate) ────────────────────────── */
 
 .hash-row--highlighted .hash-value-wrap {
   border-color: var(--accent);
 }
-
 
 /* ─── Header controls: stack encoding + case toggles ────────────────────────── */
 
@@ -493,7 +485,6 @@
   /* HMAC algo toggle wraps on mobile */
 }
 
-
 [data-mantine-color-scheme="dark"] .hash-match--ok {
   background: #133226;
   color: #5dd49d;
@@ -527,7 +518,6 @@
   border-color: #f08070 !important;
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -538,7 +528,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

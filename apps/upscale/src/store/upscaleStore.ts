@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { phaseTransition } from "../../../../kit/lib/phaseGuard";
 import type { OutputFormat } from "../lib/imageHelpers";
 import type { ScaleFactor } from "../lib/upscale";
-import { phaseTransition } from "../../../../kit/lib/phaseGuard";
 
 export type Phase = "idle" | "model-loading" | "processing" | "done" | "error";
 
@@ -107,8 +107,7 @@ export const useUpscaleStore = create<UpscaleState>()(
 
       setOutputFormat: (format) => set({ outputFormat: format }),
 
-      setPhase: (phase) =>
-        set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
+      setPhase: (phase) => set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
 
       setModelProgress: (loaded, total, status) =>
         set({ modelProgress: { loaded, total, status } }),

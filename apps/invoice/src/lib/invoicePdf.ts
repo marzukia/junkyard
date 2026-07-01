@@ -1,4 +1,4 @@
-import { embedUnicodeFonts, sanitizeWinAnsi } from "@junkyardsh/ui";
+import { embedUnicodeFonts, sanitizeWinAnsi } from "@junkyardsh/kit";
 import { PDFDocument, type PDFFont, type PDFPage, StandardFonts, rgb } from "pdf-lib";
 import type { DocType, LineItem } from "../store/useInvoiceStore";
 import { calcTotals, formatMoney } from "./invoiceCalc";

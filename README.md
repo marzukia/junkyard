@@ -45,7 +45,7 @@ bun install
 bun run dev
 ```
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for adding tools, shared UI components (`@junkyardsh/ui`), running tests, and lint conventions. Source is at **https://github.com/marzukia/junkyard**.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for adding tools, shared UI components (`@junkyardsh/kit`), running tests, and lint conventions. Source is at **https://github.com/marzukia/junkyard**.
 
 ## Deploy
 

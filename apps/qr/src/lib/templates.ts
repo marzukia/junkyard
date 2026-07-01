@@ -46,7 +46,7 @@ export {
   buildVCardPayload,
   buildWifiPayload,
   escapeWifiField,
-} from "@junkyardsh/ui";
+} from "@junkyardsh/kit";
 
 /** Assembles a mailto: URI for email QR codes. */
 export function buildEmailPayload(fields: EmailFields): string {

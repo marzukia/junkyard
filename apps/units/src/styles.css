@@ -46,7 +46,6 @@
   border-color: var(--ink);
 }
 
-
 .units-cat-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
@@ -475,13 +474,11 @@
   text-align: center;
 }
 
-
 [data-mantine-color-scheme="dark"] .units-cat-btn--active {
   background: var(--accent);
   color: var(--accent-ink);
   border-color: var(--accent);
 }
-
 
 @media (pointer: coarse) {
   input,
@@ -493,7 +490,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

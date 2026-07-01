@@ -9,7 +9,7 @@
  * any SharedArrayBuffer requirement. WebGPU is preferred when available
  * (no isolation required); single-thread WASM is the fallback.
  */
-import { pipeline, env } from "@huggingface/transformers";
+import { env, pipeline } from "@huggingface/transformers";
 import { loadPipeline } from "../../../../kit/lib/workerInference";
 import { DETECT_CODE, splitIntoChunks } from "./languages";
 
@@ -31,16 +31,13 @@ let translator: TranslationPipeline | null = null;
 export async function loadTranslator(): Promise<void> {
   if (translator) return;
 
-  translator = await loadPipeline<TranslationPipeline>(
-    env,
-    async (progressCb) => {
-      return (await (
-        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-      )("translation", MODEL_ID, {
-        progress_callback: progressCb,
-      })) as TranslationPipeline;
-    },
-  );
+  translator = await loadPipeline<TranslationPipeline>(env, async (progressCb) => {
+    return (await (
+      pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+    )("translation", MODEL_ID, {
+      progress_callback: progressCb,
+    })) as TranslationPipeline;
+  });
 }
 
 export interface TranslationResult {

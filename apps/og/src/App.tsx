@@ -1,6 +1,6 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
 import { useEffect, useState } from "react";
 import { Controls } from "./components/Controls";
 import { MetaSnippet } from "./components/MetaSnippet";

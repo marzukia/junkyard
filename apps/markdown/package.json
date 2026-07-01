@@ -15,7 +15,7 @@
   "dependencies": {
     "@fontsource/roboto": "^5.2.10",
     "@fontsource/roboto-mono": "^5.2.9",
-    "@junkyardsh/ui": "^1.0.5",
+    "@junkyardsh/kit": "^1.0.5",
     "@mantine/core": "^7.17.4",
     "dompurify": "^3.2.4",
     "marked": "^15.0.12",

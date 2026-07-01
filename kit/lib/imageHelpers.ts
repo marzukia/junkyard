@@ -1,7 +1,7 @@
 /**
  * Shared image helpers — pure, no DOM side-effects, easily unit-tested.
  * Source of truth: kit/lib/imageHelpers.ts
- * Re-exported via @junkyardsh/ui so apps can import directly.
+ * Re-exported via @junkyardsh/kit so apps can import directly.
  */
 
 /** Supported input image MIME types. */

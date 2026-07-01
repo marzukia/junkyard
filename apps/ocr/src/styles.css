@@ -166,7 +166,6 @@
   outline-offset: 2px;
 }
 
-
 /* ─── Controls section ───────────────────────────────────────────────────── */
 
 .ocr-controls-section {
@@ -223,7 +222,6 @@
   min-height: 40px;
 }
 
-
 .ocr-run-group {
   display: flex;
   flex-direction: column;
@@ -279,7 +277,6 @@
   padding: 0.6rem 0.85rem;
 }
 
-
 /* ─── Result section ─────────────────────────────────────────────────────── */
 
 .ocr-result-section {
@@ -322,12 +319,10 @@
   color: #9a6a00;
 }
 
-
 .ocr-confidence--low {
   background: color-mix(in srgb, #d9594c 12%, transparent);
   color: #c62828;
 }
-
 
 .ocr-result-actions {
   display: flex;
@@ -543,7 +538,6 @@
   opacity: 1;
 }
 
-
 /* ─── Run button row (batch mode) ────────────────────────────────────────── */
 
 .ocr-btn-row {
@@ -642,13 +636,11 @@
   background: color-mix(in srgb, #e8b04b 10%, transparent);
 }
 
-
 .ocr-highlight-toggle--on {
   border-color: #e8b04b;
   color: #9a6a00;
   background: color-mix(in srgb, #e8b04b 10%, transparent);
 }
-
 
 .ocr-highlight-toggle:focus-visible {
   outline: 2px solid var(--accent);
@@ -692,9 +684,7 @@
   padding: 0 1px;
 }
 
-
 /* ─── Mobile: queue strip touch targets ──────────────────────────────────── */
-
 
 @media (pointer: coarse) {
   input,
@@ -706,7 +696,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

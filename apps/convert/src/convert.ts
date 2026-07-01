@@ -166,7 +166,7 @@ export async function validateImageFile(file: File): Promise<string | null> {
   }
 }
 
-export { formatBytes } from "@junkyardsh/ui";
+export { formatBytes } from "@junkyardsh/kit";
 
 /**
  * Build a ZIP archive (store, no compression) from an array of named blobs.

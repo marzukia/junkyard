@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { TranscriptChunk } from "../lib/transcription";
 import { phaseTransition } from "../../../../kit/lib/phaseGuard";
+import type { TranscriptChunk } from "../lib/transcription";
 
 export type Phase = "idle" | "model-loading" | "decoding" | "transcribing" | "done" | "error";
 
@@ -140,8 +140,7 @@ export const useTranscribeStore = create<TranscribeState>((set) => ({
 
   setInputFile: (file) => set({ inputFile: file, transcript: "", chunks: [], errorMsg: null }),
 
-  setPhase: (phase) =>
-    set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
+  setPhase: (phase) => set((s) => phaseTransition(s.phase, phase, PHASE_RANK)),
 
   setModelProgress: (loaded, total, status) => set({ modelProgress: { loaded, total, status } }),
 

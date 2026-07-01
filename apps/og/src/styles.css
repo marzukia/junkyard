@@ -23,7 +23,6 @@
   border-color: #d9594c;
 }
 
-
 /* ─── OG Tool layout ────────────────────────────────────────────────────── */
 
 .og-layout {
@@ -91,7 +90,6 @@
   flex-shrink: 0;
 }
 
-
 /* ─── Hint text beneath sections ────────────────────────────────────────── */
 
 .og-hint {
@@ -117,7 +115,6 @@
   color: #c97d0a;
   margin-top: 0.15rem;
 }
-
 
 .og-field {
   display: flex;
@@ -373,7 +370,6 @@
   box-shadow: 0 1px 2px rgba(26, 37, 48, 0.1);
 }
 
-
 .og-bg-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
@@ -444,7 +440,6 @@
 .og-char-count--warn {
   color: #c97d0a;
 }
-
 
 /* ─── Meta tag snippet panel ────────────────────────────────────────────── */
 
@@ -558,7 +553,6 @@
   outline-offset: 1px;
 }
 
-
 [data-mantine-color-scheme="dark"] .og-copy-btn--err {
   background: rgba(217, 89, 76, 0.15);
 }
@@ -575,7 +569,6 @@
 [data-mantine-color-scheme="dark"] .og-char-count--warn {
   color: #e8b04b;
 }
-
 
 @media (pointer: coarse) {
   input,
@@ -596,7 +589,6 @@
     min-height: 44px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

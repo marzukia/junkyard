@@ -1,6 +1,6 @@
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
-import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
+import { BrandMark } from "@junkyardsh/kit";
 import { CueList } from "./components/CueList";
 import { DropZone } from "./components/DropZone";
 import { Toolbar } from "./components/Toolbar";

@@ -78,7 +78,6 @@
   .collage-workspace {
     grid-template-columns: 1fr;
   }
-
 }
 
 .canvas-area {
@@ -312,7 +311,6 @@
   position: relative;
 }
 
-
 .bg-swatch:hover {
   transform: scale(1.12);
 }
@@ -380,7 +378,6 @@
 
 /* ─── Resize handles on freeform cards ─────────────────────────────────── */
 
-
 /* Corner handles */
 
 /* Edge handles */
@@ -417,7 +414,6 @@
   flex-wrap: wrap;
 }
 
-
 .export-bar-meta {
   margin-right: auto;
   flex-shrink: 0;
@@ -431,7 +427,6 @@
 .export-bar-btn--flash {
   background: #2f9d5a;
 }
-
 
 .export-bar-kbd {
   font-family: var(--font-mono);
@@ -447,7 +442,6 @@
 
 /* On mobile the kbd shortcut hint is just visual noise; hide it */
 
-
 [data-mantine-color-scheme="dark"] .export-bar {
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
 }
@@ -455,7 +449,6 @@
 [data-mantine-color-scheme="dark"] .export-bar-btn--flash {
   background: #3dbd6e;
 }
-
 
 @media (pointer: coarse) {
   input,
@@ -480,7 +473,6 @@
   }
 }
 
-
 .card-rotate-handle {
   position: absolute;
   top: -18px;
@@ -498,11 +490,9 @@
   justify-content: center;
 }
 
-
 .card-rotate-handle:active {
   cursor: grabbing;
 }
-
 
 .card-remove-btn {
   position: absolute;
@@ -520,7 +510,6 @@
   justify-content: center;
 }
 
-
 .card-resize-handle {
   position: absolute;
   width: 10px;
@@ -532,13 +521,11 @@
   z-index: 10;
 }
 
-
 .card-resize-handle[data-handle="nw"] {
   top: -5px;
   left: -5px;
   cursor: nw-resize;
 }
-
 
 .card-resize-handle[data-handle="ne"] {
   top: -5px;
@@ -546,20 +533,17 @@
   cursor: ne-resize;
 }
 
-
 .card-resize-handle[data-handle="sw"] {
   bottom: -5px;
   left: -5px;
   cursor: sw-resize;
 }
 
-
 .card-resize-handle[data-handle="se"] {
   bottom: -5px;
   right: -5px;
   cursor: se-resize;
 }
-
 
 .card-resize-handle[data-handle="n"] {
   top: -5px;
@@ -568,14 +552,12 @@
   cursor: n-resize;
 }
 
-
 .card-resize-handle[data-handle="s"] {
   bottom: -5px;
   left: 50%;
   transform: translateX(-50%);
   cursor: s-resize;
 }
-
 
 .card-resize-handle[data-handle="e"] {
   top: 50%;
@@ -584,14 +566,12 @@
   cursor: e-resize;
 }
 
-
 .card-resize-handle[data-handle="w"] {
   top: 50%;
   left: -5px;
   transform: translateY(-50%);
   cursor: w-resize;
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

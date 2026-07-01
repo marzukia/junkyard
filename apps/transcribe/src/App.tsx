@@ -1,7 +1,7 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
-import { useWorkerTask } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
+import { useWorkerTask } from "@junkyardsh/kit";
 import { type MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import InferWorker from "./infer.worker.ts?worker";
 import {
@@ -23,7 +23,7 @@ import type { TranscriptionResult } from "./lib/transcription";
 const modelEverLoaded = { current: false };
 import { LANGUAGE_OPTIONS, useTranscribeStore } from "./store/transcribeStore";
 import "./styles/transcribe.css";
-import { MobileWarning } from "@junkyardsh/ui";
+import { MobileWarning } from "@junkyardsh/kit";
 
 // ── Brand mark glyph, waveform for audio transcription ──────────────────────
 // Clean line-art: teal waveform bars + amber speech-to-text arrow + coral mic dot

@@ -46,7 +46,7 @@ export function formatReduction(inputWords: number, outputWords: number): string
   return `${pct}% shorter`;
 }
 
-export { formatProgress, clamp } from "@junkyardsh/ui";
+export { formatProgress, clamp } from "@junkyardsh/kit";
 
 /**
  * Given a slider position (0–100), map to a max-word target.

@@ -1,4 +1,4 @@
-import { type ImageSegmentationPipeline, RawImage, pipeline, env } from "@huggingface/transformers";
+import { type ImageSegmentationPipeline, RawImage, env, pipeline } from "@huggingface/transformers";
 /**
  * Web Worker for bg (background removal): runs model load + inference off the main thread.
  * Returns image bytes as ArrayBuffer (blob URLs don't cross worker boundaries).
@@ -6,12 +6,8 @@ import { type ImageSegmentationPipeline, RawImage, pipeline, env } from "@huggin
  * Shared boilerplate (env config, progress posting, error/results posting)
  * is handled via kit/lib/workerInference.ts.
  */
-import type { WorkerRequest } from "@junkyardsh/ui";
-import {
-  loadPipeline,
-  postResult,
-  postError,
-} from "../../../kit/lib/workerInference";
+import type { WorkerRequest } from "@junkyardsh/kit";
+import { loadPipeline, postError, postResult } from "../../../kit/lib/workerInference";
 import { MAX_INFER_SIDE, MODEL_ID } from "./lib/bgConstants";
 
 let segmenter: ImageSegmentationPipeline | null = null;
@@ -32,15 +28,17 @@ self.onmessage = async (e: MessageEvent<WorkerRequest<Args>>) => {
 
   try {
     if (!segmenter) {
-      segmenter = await loadPipeline<ImageSegmentationPipeline>(env,
-        async (progressCb) => {
-          return (await (
-            pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-          )("image-segmentation", MODEL_ID, {
-            progress_callback: progressCb,
-          })) as ImageSegmentationPipeline;
-        }
-      );
+      segmenter = await loadPipeline<ImageSegmentationPipeline>(env, async (progressCb) => {
+        return (await (
+          pipeline as (
+            task: string,
+            model: string,
+            opts: Record<string, unknown>
+          ) => Promise<unknown>
+        )("image-segmentation", MODEL_ID, {
+          progress_callback: progressCb,
+        })) as ImageSegmentationPipeline;
+      });
     }
 
     const bitmap = await createImageBitmap(file);

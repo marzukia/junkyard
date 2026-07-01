@@ -1,6 +1,6 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
 import { ExportButton } from "./components/ExportButton";
 import { ImportButton } from "./components/ImportButton";
 import { LoadSampleButton } from "./components/LoadSampleButton";

@@ -194,7 +194,6 @@
 
 /* The colour block itself — full-bleed, tall, rounded */
 
-
 /* ─── In-swatch overlay ─────────────────────────────────────────────────── */
 
 /* Overlay sits over the colour, vertically centred, hidden until hover */
@@ -341,7 +340,6 @@
 }
 
 /* ─── Mobile: vertical stack ────────────────────────────────────────────── */
-
 
 /* ─── Palette footer ────────────────────────────────────────────────────── */
 
@@ -626,7 +624,6 @@
 
 /* ─── Copy Actions ──────────────────────────────────────────────────────── */
 
-
 .copy-btn {
   flex: 0 0 auto;
   white-space: nowrap;
@@ -738,7 +735,6 @@
 
 /* ─── Vision toggle row (below site-header-inner) ───────────────────────── */
 
-
 /* Wrap the VisionToggle so it scrolls horizontally on very narrow viewports */
 
 /* ─── Contrast checker panel ────────────────────────────────────────────── */
@@ -747,7 +743,6 @@
   /* Inherits .generator-panel card shell */
   padding: 1.75rem;
 }
-
 
 .contrast-inputs {
   /* reuses .color-inputs-row */
@@ -845,7 +840,6 @@
   background: color-mix(in srgb, #e53935 12%, transparent);
   color: #c62828;
 }
-
 
 @media (max-width: 520px) {
   .contrast-results {
@@ -970,7 +964,6 @@
   background: color-mix(in srgb, #e53935 8%, transparent);
 }
 
-
 .image-palette-icon {
   color: var(--ink-faint);
   display: flex;
@@ -989,7 +982,6 @@
 .image-palette-drop--error .image-palette-label {
   color: #c62828;
 }
-
 
 .image-palette-file-input {
   position: absolute;
@@ -1011,7 +1003,6 @@
    and contrast fields are 12–14px by design, so bump them to 16px on coarse
    (touch) pointers — stops the page zooming on tap without disabling pinch-zoom. */
 
-
 [data-mantine-color-scheme="dark"] .contrast-badge--fail {
   background: color-mix(in srgb, #ef9a9a 12%, transparent);
   color: #ef9a9a;
@@ -1026,14 +1017,12 @@
   color: #ef9a9a;
 }
 
-
 @media (pointer: coarse) {
   .color-hex-input input,
   .swatch-overlay-edit {
     font-size: 16px !important;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

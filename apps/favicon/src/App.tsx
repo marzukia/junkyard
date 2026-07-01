@@ -1,6 +1,6 @@
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
-import { BrandMark } from "@junkyardsh/ui";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
+import { BrandMark } from "@junkyardsh/kit";
 import { FaviconGenerator } from "./components/FaviconGenerator";
 
 function FaviconBrandGlyph() {

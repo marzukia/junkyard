@@ -1,6 +1,5 @@
 /* ─── Card ──────────────────────────────────────────────────────────────── */
 
-
 /* ─── Section label ─────────────────────────────────────────────────────── */
 
 .section-label {
@@ -76,7 +75,6 @@
   font-size: 0.82rem;
   line-height: 1.45;
 }
-
 
 /* ─── Empty hint ────────────────────────────────────────────────────────── */
 
@@ -284,20 +282,16 @@
 }
 
 @media (max-width: 540px) {
-
-
   .rc-elapsed {
     font-size: 1.1rem;
   }
 }
-
 
 [data-mantine-color-scheme="dark"] .error-banner {
   background: #2a1212;
   border-color: #5a2020;
   color: #f08080;
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

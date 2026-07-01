@@ -30,9 +30,9 @@ export function isSupportedAudio(file: File): boolean {
   return ["mp3", "mp4", "m4a", "ogg", "wav", "webm", "flac", "aac", "mov"].includes(ext);
 }
 
-export { formatBytes } from "@junkyardsh/ui";
+export { formatBytes } from "@junkyardsh/kit";
 
-export { formatProgress } from "@junkyardsh/ui";
+export { formatProgress } from "@junkyardsh/kit";
 
 /**
  * Format seconds as MM:SS or H:MM:SS.

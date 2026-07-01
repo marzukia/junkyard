@@ -1,7 +1,7 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
-import { MobileWarning } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
+import { MobileWarning } from "@junkyardsh/kit";
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isVideoFile } from "./lib/dropGuard";
@@ -346,12 +346,16 @@ export function App() {
                   Change file
                 </button>
                 {workingBlob && (
-                  <button type="button" className="btn-ghost-sm" onClick={() => {
-                    if (videoUrl) URL.revokeObjectURL(videoUrl);
-                    setWorkingBlob(null);
-                    setVideoUrl(URL.createObjectURL(file));
-                    setResult(null);
-                  }}>
+                  <button
+                    type="button"
+                    className="btn-ghost-sm"
+                    onClick={() => {
+                      if (videoUrl) URL.revokeObjectURL(videoUrl);
+                      setWorkingBlob(null);
+                      setVideoUrl(URL.createObjectURL(file));
+                      setResult(null);
+                    }}
+                  >
                     Reset chain
                   </button>
                 )}
@@ -402,7 +406,13 @@ export function App() {
                 />
               )}
               {mode === "gif" && (
-                <GifPanel fps={gifFps} width={gifWidth} onFps={setGifFps} onWidth={setGifWidth} duration={duration} />
+                <GifPanel
+                  fps={gifFps}
+                  width={gifWidth}
+                  onFps={setGifFps}
+                  onWidth={setGifWidth}
+                  duration={duration}
+                />
               )}
 
               {/* Core loading indicator */}
@@ -545,7 +555,15 @@ function TrimPanel({
     const parts = trimmed.split(":").map(Number);
     if (parts.some(Number.isNaN)) return false;
     if (parts.length === 2 && parts[0] >= 0 && parts[1] >= 0 && parts[1] < 60) return true;
-    if (parts.length === 3 && parts[0] >= 0 && parts[1] >= 0 && parts[1] < 60 && parts[2] >= 0 && parts[2] < 60) return true;
+    if (
+      parts.length === 3 &&
+      parts[0] >= 0 &&
+      parts[1] >= 0 &&
+      parts[1] < 60 &&
+      parts[2] >= 0 &&
+      parts[2] < 60
+    )
+      return true;
     return false;
   };
 
@@ -722,10 +740,16 @@ function TrimPanel({
             aria-valuenow={endSec}
             tabIndex={0}
           />
-          <span className="trim-timeline-time trim-timeline-time--start" style={{ left: `${startPct}%` }}>
+          <span
+            className="trim-timeline-time trim-timeline-time--start"
+            style={{ left: `${startPct}%` }}
+          >
             {formatTime(startSec)}
           </span>
-          <span className="trim-timeline-time trim-timeline-time--end" style={{ left: `${endPct}%` }}>
+          <span
+            className="trim-timeline-time trim-timeline-time--end"
+            style={{ left: `${endPct}%` }}
+          >
             {formatTime(endSec)}
           </span>
         </div>
@@ -1049,9 +1073,7 @@ function GifPanel({
               {formatTime(safeDur)} video, {frameCount} frames
             </span>
           </p>
-          <p className="panel-hint">
-            Actual size shown after encoding completes.
-          </p>
+          <p className="panel-hint">Actual size shown after encoding completes.</p>
         </div>
       )}
 

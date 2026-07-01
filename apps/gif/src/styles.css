@@ -304,7 +304,6 @@
   border-color: #d9594c;
 }
 
-
 .icon-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
@@ -356,7 +355,6 @@
 
 /* ─── Copy button "Copied!" state ───────────────────────────────────────── */
 
-
 /* ─── Spinner animation ─────────────────────────────────────────────────── */
 
 @keyframes spin {
@@ -391,7 +389,6 @@
   padding: 0.6rem 1rem;
 }
 
-
 /* ─── Frames header left cluster ────────────────────────────────────────── */
 
 .frames-header-left {
@@ -407,7 +404,6 @@
   color: #b07d2e;
   letter-spacing: 0.03em;
 }
-
 
 .frames-stats {
   font-family: var(--font-mono);
@@ -498,7 +494,6 @@
   margin-top: 0.25rem;
 }
 
-
 [data-mantine-color-scheme="dark"] .icon-btn--danger:hover:not(:disabled) {
   background: rgba(217, 89, 76, 0.15);
 }
@@ -513,7 +508,6 @@
   color: #d4a84b;
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -524,7 +518,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

@@ -43,7 +43,6 @@
   padding: 0.5rem 0.75rem;
 }
 
-
 output {
   display: block;
 }
@@ -56,7 +55,6 @@ output {
   border-radius: var(--radius-sm);
   padding: 0.5rem 0.75rem;
 }
-
 
 /* ─── Drop zone ─────────────────────────────────────────────────────────── */
 
@@ -76,7 +74,6 @@ output {
   user-select: none;
   width: 100%;
 }
-
 
 .dropzone:hover,
 .dropzone:focus-visible {
@@ -223,7 +220,6 @@ output {
   color: var(--ink);
   box-shadow: 0 1px 2px rgba(26, 37, 48, 0.1);
 }
-
 
 .sig-tab:focus-visible {
   outline: 2px solid var(--accent);
@@ -643,7 +639,6 @@ output {
   user-select: none;
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -654,7 +649,6 @@ output {
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

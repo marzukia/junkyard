@@ -3,7 +3,7 @@
  * This module is isolated so unit tests can import it without a DOM.
  */
 
-export { clamp } from "@junkyardsh/ui";
+export { clamp } from "@junkyardsh/kit";
 
 /**
  * Estimate output GIF size in bytes for given dimensions, frame count, and delay.

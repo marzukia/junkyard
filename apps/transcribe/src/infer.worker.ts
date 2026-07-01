@@ -4,9 +4,9 @@
  * decodeAudioFile uses OfflineAudioContext which is available in workers.
  */
 import { env, pipeline } from "@huggingface/transformers";
-import type { WorkerRequest } from "@junkyardsh/ui";
-import { loadPipeline, postResult, postError } from "../../../kit/lib/workerInference";
-import type { TranscriptionResult, TranscriptChunk } from "./lib/transcription";
+import type { WorkerRequest } from "@junkyardsh/kit";
+import { loadPipeline, postError, postResult } from "../../../kit/lib/workerInference";
+import type { TranscriptChunk, TranscriptionResult } from "./lib/transcription";
 import { MODEL_ID } from "./lib/transcription";
 
 // Whisper chunk result shape from transformers.js
@@ -30,16 +30,13 @@ let asr: AutomaticSpeechRecognitionPipeline | null = null;
 async function loadModel(): Promise<void> {
   if (asr) return;
 
-  asr = await loadPipeline<AutomaticSpeechRecognitionPipeline>(
-    env,
-    async (progressCb) => {
-      return (await (
-        pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
-      )("automatic-speech-recognition", MODEL_ID, {
-        progress_callback: progressCb,
-      })) as AutomaticSpeechRecognitionPipeline;
-    },
-  );
+  asr = await loadPipeline<AutomaticSpeechRecognitionPipeline>(env, async (progressCb) => {
+    return (await (
+      pipeline as (task: string, model: string, opts: Record<string, unknown>) => Promise<unknown>
+    )("automatic-speech-recognition", MODEL_ID, {
+      progress_callback: progressCb,
+    })) as AutomaticSpeechRecognitionPipeline;
+  });
 }
 
 function isModelLoaded(): boolean {

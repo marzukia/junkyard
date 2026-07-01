@@ -192,7 +192,6 @@
   color: #b03030;
 }
 
-
 .svg-error-icon {
   flex-shrink: 0;
   font-weight: 700;
@@ -284,7 +283,6 @@
   color: #1f6358;
   border-color: #2f9d8d;
 }
-
 
 .svg-result-actions {
   display: flex;
@@ -444,7 +442,6 @@
   color: var(--accent);
 }
 
-
 /* mono label utility */
 
 [data-mantine-color-scheme="dark"] .svg-error {
@@ -454,13 +451,11 @@
 }
 
 [data-mantine-color-scheme="dark"] .svg-saving-badge--good,
-
 [data-mantine-color-scheme="dark"] .svg-saving-badge--great {
   background: #18302c;
   color: #41b6a6;
   border-color: #2c8073;
 }
-
 
 @media (pointer: coarse) {
   input,
@@ -472,7 +467,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

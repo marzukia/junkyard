@@ -122,7 +122,7 @@ export function resolveFontFamily(font: FontPreset): string {
   }
 }
 
-export { clamp } from "@junkyardsh/ui";
+export { clamp } from "@junkyardsh/kit";
 
 /** Parse a hex string and return an rgb tuple, or null if invalid */
 export function parseHex(hex: string): [number, number, number] | null {
@@ -144,10 +144,7 @@ export function parseHex(hex: string): [number, number, number] | null {
   return null;
 }
 
-/** Return true if hex is a valid CSS hex color */
-export function isValidHex(hex: string): boolean {
-  return parseHex(hex) !== null;
-}
+export { isValidHex } from "@junkyardsh/kit";
 
 /** Apply a template patch onto a base config, returning a new config */
 export function applyTemplate(base: OgConfig, patch: Partial<OgConfig>): OgConfig {

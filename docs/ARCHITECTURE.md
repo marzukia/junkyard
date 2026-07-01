@@ -23,9 +23,9 @@ All tools are served under `junkyard.sh`:
 
 Each app is built independently with Vite's `--base` flag set to `/<slug>/`, so asset paths are self-contained within the subdirectory.
 
-## Shared UI package (`@junkyardsh/ui`)
+## Shared UI package (`@junkyardsh/kit`)
 
-`kit/` holds the canonical source for shared UI components and config. These are published as the `@junkyardsh/ui` npm package (`packages/ui/`):
+`kit/` holds the canonical source for shared UI components and config. These are published as the `@junkyardsh/kit` npm package (`packages/kit/`):
 
 - `theme.ts` → `fleetTheme` - Mantine theme (Roboto + Roboto Mono, teal primary `#2f9d8d`)
 - `styles.css` - design-system CSS variables for light and dark modes, site layout (header, footer, cards, buttons), and touch-screen zoom prevention
@@ -34,9 +34,9 @@ Each app is built independently with Vite's `--base` flag set to `/<slug>/`, so 
 - `components/BrandMark.tsx`, `Header.tsx`, `Footer.tsx`, `ThemeToggle.tsx` - shared UI shells
 - `lib/*` - shared utilities (`base64url`, `cronGrammar`, `csvParse`, `imageHelpers`, `qrContent`, `unicodeFont`, `unitsData`, `workerInference`, `workerTask`, `format`)
 
-All 46 apps import from `@junkyardsh/ui` instead of vendoring copies. CI builds the package once in `packages/ui/` and lint checks all apps against it. The package is published to npm public registry under the `@junkyardsh` scope.
+All 46 apps import from `@junkyardsh/kit` instead of vendoring copies. CI builds the package once in `packages/kit/` and lint checks all apps against it. The package is published to npm public registry under the `@junkyardsh` scope.
 
-Previously the kit was vendored via 17 `scripts/vendor-*.mjs` scripts with CI drift checks. The extraction to `@junkyardsh/ui` eliminates this maintenance overhead.
+Previously the kit was vendored via 17 `scripts/vendor-*.mjs` scripts with CI drift checks. The extraction to `@junkyardsh/kit` eliminates this maintenance overhead.
 
 ## @junkyard/core and the MCP server
 
@@ -66,4 +66,4 @@ junkyard deliberately has **no root `package.json` / monorepo workspace**. Each 
 - Each app stays portable (can be lifted out or deployed on its own).
 - `scripts/build-site.sh` already parallelizes the per-app `bun install` phase, so there is no single `bun install` for everything but the install cost is bounded.
 
-Trade-off: there is no one-shot `bun install` at the root, and shared code was previously vendored via `scripts/vendor-*.mjs`. This has been extracted to `@junkyardsh/ui` (`packages/ui/`) — all apps now import from the npm package. CI builds the package once and lint-checks all apps. The package is published separately; apps pin to `^1.0.1`.
+Trade-off: there is no one-shot `bun install` at the root, and shared code was previously vendored via `scripts/vendor-*.mjs`. This has been extracted to `@junkyardsh/kit` (`packages/kit/`) — all apps now import from the npm package. CI builds the package once and lint-checks all apps. The package is published separately; apps pin to `^1.0.1`.

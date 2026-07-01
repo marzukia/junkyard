@@ -60,13 +60,11 @@
   background: var(--accent-soft);
 }
 
-
 .cron-description--error {
   color: #b03030;
   background: #fff0ef;
   border: 1px solid #f5c2be;
 }
-
 
 .cron-expr-hint {
   font-family: var(--font-mono);
@@ -318,7 +316,6 @@ details[open] .cron-cheatsheet-summary::before {
   transform: rotate(90deg);
 }
 
-
 .cron-cheat-table {
   width: 100%;
   border-collapse: collapse;
@@ -432,7 +429,6 @@ details[open] .cron-cheatsheet-summary::before {
   border-color: #4a2020;
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -443,7 +439,6 @@ details[open] .cron-cheatsheet-summary::before {
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

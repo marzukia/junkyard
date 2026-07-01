@@ -1,6 +1,6 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { buildUnifiedPatch, computeDiff, wordLevelStats } from "./lib/diff";
 import type { InlineLine, SideBySideLine, WordChange } from "./lib/diff";

@@ -1,5 +1,5 @@
 {
-  "name": "@junkyardsh/ui",
+  "name": "@junkyardsh/kit",
   "version": "1.0.6",
   "license": "MIT",
   "type": "module",
@@ -27,10 +27,10 @@
     "vite": "^6.3.5",
     "vite-plugin-dts": "^5.0.3"
   },
-  "description": "Shared UI components and utilities for junkyard.sh tools",
+  "description": "Shared UI components, utilities, and helpers for junkyard.sh tools",
   "repository": {
     "type": "git",
     "url": "https://github.com/marzukia/junkyard.git",
-    "directory": "packages/ui"
+    "directory": "packages/kit"
   }
 }

@@ -77,7 +77,6 @@
   user-select: none;
 }
 
-
 .rx-flag-btn:hover {
   background: var(--surface);
   color: var(--ink);
@@ -87,7 +86,6 @@
   background: var(--accent-soft);
   color: var(--accent);
 }
-
 
 .rx-flag-btn:focus-visible {
   outline: 2px solid var(--accent);
@@ -107,7 +105,6 @@
   font-size: 0.7rem;
   color: #b03030;
 }
-
 
 /* Layout: two-column input+output */
 .rx-layout {
@@ -206,7 +203,6 @@
   padding: 0 1px;
 }
 
-
 /* Alternating match colours */
 .rx-match-0 {
   background: #d1fae5;
@@ -238,7 +234,6 @@
   border-radius: 2px;
   padding: 0 1px;
 }
-
 
 /* Tabs */
 .rx-tabs {
@@ -538,7 +533,6 @@
   outline-offset: 1px;
 }
 
-
 .rx-code-block {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -638,7 +632,6 @@
   color: #ede9fe;
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -652,7 +645,6 @@
     padding-bottom: 0.55rem;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

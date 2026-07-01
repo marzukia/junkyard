@@ -104,7 +104,6 @@
   color: #b03030;
 }
 
-
 .csv-error-icon {
   flex-shrink: 0;
   font-weight: 700;
@@ -123,7 +122,6 @@
   color: #2a8a6e;
   padding: 0.3rem 0;
 }
-
 
 .csv-valid-icon {
   font-weight: 700;
@@ -150,7 +148,6 @@
   font-size: 0.7rem;
   color: #92610a;
 }
-
 
 .csv-warn-icon {
   flex-shrink: 0;
@@ -316,7 +313,6 @@
   color: #d4a83a;
 }
 
-
 @media (pointer: coarse) {
   input,
   textarea,
@@ -327,7 +323,6 @@
     min-height: 40px;
   }
 }
-
 
 @supports (-webkit-touch-callout: none) {
   input,

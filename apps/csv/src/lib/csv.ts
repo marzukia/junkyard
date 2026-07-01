@@ -1,10 +1,10 @@
 // ── Parser (vendored from kit/lib/csvParse.ts) ────────────────────────────────
 // splitCsvRows and detectDelimiter are vendored via scripts/vendor-csvparse.mjs.
 // Do NOT edit csvParse.ts here — edit kit/lib/csvParse.ts and re-run the script.
-export { splitCsvRows, detectDelimiter } from "@junkyardsh/ui";
-export type { Delimiter } from "@junkyardsh/ui";
-import { detectDelimiter, splitCsvRows } from "@junkyardsh/ui";
-import type { Delimiter } from "@junkyardsh/ui";
+export { splitCsvRows, detectDelimiter } from "@junkyardsh/kit";
+export type { Delimiter } from "@junkyardsh/kit";
+import { detectDelimiter, splitCsvRows } from "@junkyardsh/kit";
+import type { Delimiter } from "@junkyardsh/kit";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export type ConvertMode = "csv-to-json" | "json-to-csv";
