@@ -9,7 +9,7 @@ import { RawImage, pipeline, env } from "@huggingface/transformers";
  * Shared boilerplate (env config, progress posting, error/results posting)
  * is handled via kit/lib/workerInference.ts.
  */
-import type { WorkerRequest } from "@junkyardsh/ui";
+import type { WorkerRequest } from "@junkyardsh/kit";
 import {
   loadPipeline,
   postResult,

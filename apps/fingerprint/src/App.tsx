@@ -1,4 +1,4 @@
-import { BrandMark, Footer, Header } from "@junkyardsh/ui";
+import { BrandMark, Footer, Header } from "@junkyardsh/kit";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // ── Types ───────────────────────────────────────────────────────────────────

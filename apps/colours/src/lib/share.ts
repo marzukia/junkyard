@@ -12,7 +12,7 @@
  * returns null; callers should fall back to store defaults.
  */
 
-import { decodeBase64Url, encodeBase64Url } from "@junkyardsh/ui";
+import { decodeBase64Url, encodeBase64Url } from "@junkyardsh/kit";
 import type { PaletteState, ThreePointState, TwoPointState } from "../store";
 import { COLOR_SPACES, normalizeHex } from "./color";
 import type { ColorSpace } from "./color";

@@ -1,6 +1,6 @@
-import { BrandMark, DropZone } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { buildZip, formatBytes } from "./convert";
@@ -41,9 +41,11 @@ export function App() {
     updateFile,
   } = useConverterStore();
 
+  const [dragging, setDragging] = useState(false);
   const [converting, setConverting] = useState(false);
   const [zipping, setZipping] = useState(false);
   const [batchSummary, setBatchSummary] = useState<BatchSummary | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   // Stable ref so the keyboard handler always calls the latest convertAll without re-subscribing
   const convertAllRef = useRef<() => void>(() => {});
 
@@ -51,6 +53,35 @@ export function App() {
   const [wInput, setWInput] = useState(exactWidth > 0 ? String(exactWidth) : "");
   const [hInput, setHInput] = useState(exactHeight > 0 ? String(exactHeight) : "");
   const [scaleInput, setScaleInput] = useState(scalePct > 0 ? String(scalePct) : "");
+
+  const handleFiles = useCallback(
+    (incoming: FileList | null) => {
+      if (!incoming) return;
+      addFiles(Array.from(incoming));
+    },
+    [addFiles]
+  );
+
+  const onDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragging(false);
+      handleFiles(e.dataTransfer.files);
+    },
+    [handleFiles]
+  );
+
+  const onDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(true);
+  };
+
+  const onDragLeave = () => setDragging(false);
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFiles(e.target.files);
+    e.target.value = "";
+  };
 
   const buildOpts = useCallback(() => {
     return {
@@ -168,20 +199,28 @@ export function App() {
       />
 
       <main className="site-main">
-        {/* Drop zone */}
-        <DropZone
-          accept={ACCEPTED}
-          multiple
-          onFiles={(files: File[]) => addFiles(files)}
-          label="Drop images here or click to select files"
-          className="drop-zone"
-          asLabel
+        {/* Drop zone, label wraps the hidden input for semantic correctness */}
+        <label
+          className={`drop-zone${dragging ? " drop-zone--active" : ""}`}
+          aria-label="Drop images here or click to select files"
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
         >
+          <UploadIcon />
           <span className="drop-zone-title">Drop images here or click to select</span>
           <span className="drop-zone-sub">
             HEIC · JPG · PNG · WebP · AVIF · batch supported · runs in your browser
           </span>
-        </DropZone>
+          <input
+            ref={inputRef}
+            type="file"
+            accept={ACCEPTED}
+            multiple
+            onChange={onInputChange}
+            style={{ display: "none" }}
+          />
+        </label>
 
         {/* Controls */}
         <div className="card">
@@ -498,6 +537,27 @@ function FileRow({ entry, onRemove }: { entry: ConvertFile; onRemove: () => void
         <CloseIcon />
       </button>
     </div>
+  );
+}
+
+function UploadIcon() {
+  return (
+    <svg
+      className="drop-zone-icon"
+      width="40"
+      height="40"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
   );
 }
 

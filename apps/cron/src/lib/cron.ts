@@ -19,8 +19,8 @@ export {
   normaliseNames,
   validateSinglePart,
   expandField,
-} from "@junkyardsh/ui";
-export type { CronFields, FieldSpec } from "@junkyardsh/ui";
+} from "@junkyardsh/kit";
+export type { CronFields, FieldSpec } from "@junkyardsh/kit";
 
 import {
   CRON_MACROS,
@@ -28,8 +28,8 @@ import {
   FIELD_SPECS,
   expandField,
   validateSinglePart,
-} from "@junkyardsh/ui";
-import type { CronFields, FieldSpec } from "@junkyardsh/ui";
+} from "@junkyardsh/kit";
+import type { CronFields, FieldSpec } from "@junkyardsh/kit";
 
 // ─── @-macro expansion ────────────────────────────────────────────────────────
 

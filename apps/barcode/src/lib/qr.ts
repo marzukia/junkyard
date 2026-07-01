@@ -9,7 +9,7 @@
  * (vendored as ./qrContent). Edit the canonical; run vendor-qrcontent.mjs.
  */
 
-import { buildVCardPayload, buildWifiPayload } from "@junkyardsh/ui";
+import { buildVCardPayload, buildWifiPayload } from "@junkyardsh/kit";
 
 export type QrPreset = "text" | "url" | "wifi" | "vcard";
 

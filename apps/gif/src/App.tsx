@@ -1,4 +1,4 @@
-import { BrandMark, Footer, Header, formatBytes } from "@junkyardsh/ui";
+import { BrandMark, Footer, Header, formatBytes } from "@junkyardsh/kit";
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { encodeGif, estimateGifBytes, formatDuration, msToFpsLabel } from "./gif";

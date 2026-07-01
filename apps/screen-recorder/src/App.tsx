@@ -1,7 +1,7 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
-import { MobileWarning } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
+import { MobileWarning } from "@junkyardsh/kit";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   assembleBlob,
@@ -11,7 +11,7 @@ import {
 } from "./lib/recorder";
 import type { ActiveRecording } from "./lib/recorder";
 import { useRecorderStore } from "./store";
-import "@junkyardsh/ui/styles.css";
+import "@junkyardsh/kit/styles.css";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 

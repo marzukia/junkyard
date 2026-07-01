@@ -8,7 +8,7 @@
  * default constant.
  */
 
-export { formatBytes, formatProgress } from "@junkyardsh/ui";
+export { formatBytes, formatProgress } from "@junkyardsh/kit";
 
 /**
  * Estimate remaining download time as a human-readable string.

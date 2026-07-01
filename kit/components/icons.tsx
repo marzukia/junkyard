@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * Shared SVG icon components — used across multiple junkyard apps.
- * Import from @junkyardsh/ui instead of redefining inline.
+ * Import from @junkyardsh/kit instead of redefining inline.
  *
  * NOTE: This file avoids importing from "react" directly because the kit
  * directory doesn't have React types in its tsconfig scope. The functions

@@ -1,11 +1,11 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
 import { useEffect, useRef, useState } from "react";
 import { CATEGORIES, convert, formatResultHuman, getCommonConversions } from "./lib/units";
 import type { CategoryId } from "./lib/units";
 import { useUnitsStore } from "./store/unitsStore";
-import "@junkyardsh/ui/styles.css";
+import "@junkyardsh/kit/styles.css";
 
 // ── Brand glyph: ruler + arrows, flat, bg-less ────────────────────────────────
 

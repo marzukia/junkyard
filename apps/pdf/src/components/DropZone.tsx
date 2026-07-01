@@ -1,1 +1,1 @@
-export { DropZone } from "@junkyardsh/ui";
+export { DropZone } from "@junkyardsh/kit";

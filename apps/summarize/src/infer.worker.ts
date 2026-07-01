@@ -6,7 +6,7 @@
  * Worker is terminated on cancel (no clean abort in transformers.js).
  * Re-creating the worker on next run uses the browser cache -- no re-download.
  */
-import type { WorkerRequest } from "@junkyardsh/ui";
+import type { WorkerRequest } from "@junkyardsh/kit";
 import { postResult, postError } from "../../../kit/lib/workerInference";
 import {
   type SummaryOptions,

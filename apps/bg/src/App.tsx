@@ -1,7 +1,7 @@
-import { BrandMark, DropZone } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
-import { useWorkerTask } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
+import { useWorkerTask } from "@junkyardsh/kit";
 import { useCallback, useEffect, useRef, useState } from "react";
 import InferWorker from "./infer.worker.ts?worker";
 import { revokeResult } from "./lib/bgRemoval";
@@ -17,7 +17,7 @@ import {
 } from "./lib/imageHelpers";
 import { useBgStore } from "./store/bgStore";
 import "./styles/bg.css";
-import { MobileWarning } from "@junkyardsh/ui";
+import { MobileWarning } from "@junkyardsh/kit";
 
 // ── Brand mark glyph ──────────────────────────────────────────────────────────
 // A clean flat scissors/cutout mark: foreground shape in teal, shadow in amber,
@@ -105,22 +105,68 @@ interface DropZoneProps {
 }
 
 function DropZone({ onFile, disabled, onSample, onKeyDown }: DropZoneProps) {
+  const [dragging, setDragging] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFiles = useCallback(
+    (files: FileList | null) => {
+      const file = files?.[0];
+      if (!file) return;
+      onFile(file);
+    },
+    [onFile]
+  );
+
   return (
     <div>
-      <DropZone
-        accept="image/png,image/jpeg,image/webp,image/gif"
-        onFiles={(files: File[]) => files[0] && onFile(files[0])}
-        label="Upload image, click or drag and drop"
-        className="bg-dropzone"
+      <button
+        type="button"
+        className={`bg-dropzone${dragging ? " bg-dropzone--drag" : ""}${disabled ? " bg-dropzone--disabled" : ""}`}
         disabled={disabled}
+        aria-label="Upload image, click or drag and drop"
+        onClick={() => inputRef.current?.click()}
         onKeyDown={onKeyDown}
+        onDragOver={(e) => {
+          e.preventDefault();
+          if (!disabled) setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          if (!disabled) handleFiles(e.dataTransfer.files);
+        }}
       >
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif"
+          style={{ display: "none" }}
+          onChange={(e) => handleFiles(e.target.files)}
+          aria-hidden="true"
+          tabIndex={-1}
+        />
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="var(--ink-faint)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
         <span className="bg-dropzone-label">Drop an image here, or click to upload</span>
         <span className="bg-dropzone-hint">PNG, JPG, WebP · up to any size</span>
         <span className="bg-dropzone-hint" style={{ opacity: 0.6 }}>
           Cmd/Ctrl+Enter to open file picker
         </span>
-      </DropZone>
+      </button>
       {onSample && !disabled && (
         <div className="bg-sample-row">
           <span className="bg-sample-divider">or</span>

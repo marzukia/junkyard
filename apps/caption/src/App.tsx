@@ -1,7 +1,7 @@
-import { BrandMark, DropZone } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
-import { useWorkerTask } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
+import { useWorkerTask } from "@junkyardsh/kit";
 import { useCallback, useEffect, useRef, useState } from "react";
 import InferWorker from "./infer.worker.ts?worker";
 import { fetchImageFromUrl } from "./lib/captioner";
@@ -18,7 +18,7 @@ import {
 } from "./lib/imageHelpers";
 import { useCaptionStore } from "./store/captionStore";
 import "./styles/caption.css";
-import { MobileWarning } from "@junkyardsh/ui";
+import { MobileWarning } from "@junkyardsh/kit";
 
 // ── Brand mark glyph ──────────────────────────────────────────────────────────
 // Speech bubble with an eye inside, "describe what you see"

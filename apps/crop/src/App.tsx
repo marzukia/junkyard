@@ -1,6 +1,6 @@
-import { BrandMark, DropZone } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CropCanvas } from "./components/CropCanvas";
@@ -24,6 +24,7 @@ const ACCEPTED =
 export function App() {
   const store = useCropStore();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [dragging, setDragging] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [copying, setCopying] = useState(false);
   const [copyFlash, setCopyFlash] = useState(false);
@@ -79,6 +80,21 @@ export function App() {
       }
     },
     [store]
+  );
+
+  const onDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        setLoadError("Drop an image file (JPEG, PNG, WebP, …).");
+        return;
+      }
+      loadFile(file);
+    },
+    [loadFile]
   );
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -340,18 +356,29 @@ export function App() {
       <main className="site-main">
         {/* Drop zone (shown when no image loaded) */}
         {!hasImage && (
-          <DropZone
-            accept={ACCEPTED}
-            onFiles={(files: File[]) => files[0] && loadFile(files[0])}
-            label="Drop an image here or click to select"
-            className="drop-zone"
-            asLabel
+          <label
+            className={`drop-zone${dragging ? " drop-zone--active" : ""}`}
+            aria-label="Drop an image here or click to select"
+            onDrop={onDrop}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
           >
+            <UploadIcon />
             <span className="drop-zone-title">Drop an image here or click to select</span>
             <span className="drop-zone-sub">
               JPG · PNG · WebP · GIF · BMP · runs in your browser
             </span>
-          </DropZone>
+            <input
+              ref={inputRef}
+              type="file"
+              accept={ACCEPTED}
+              onChange={onInputChange}
+              style={{ display: "none" }}
+            />
+          </label>
         )}
 
         {loadError && (
@@ -850,6 +877,27 @@ export function App() {
 }
 
 // Icons
+
+function UploadIcon() {
+  return (
+    <svg
+      className="drop-zone-icon"
+      width="40"
+      height="40"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  );
+}
 
 function DownloadIcon() {
   return (

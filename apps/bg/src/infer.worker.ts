@@ -6,7 +6,7 @@ import { type ImageSegmentationPipeline, RawImage, pipeline, env } from "@huggin
  * Shared boilerplate (env config, progress posting, error/results posting)
  * is handled via kit/lib/workerInference.ts.
  */
-import type { WorkerRequest } from "@junkyardsh/ui";
+import type { WorkerRequest } from "@junkyardsh/kit";
 import {
   loadPipeline,
   postResult,

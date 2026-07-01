@@ -1,7 +1,7 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
-import { useCmdEnter } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
+import { useCmdEnter } from "@junkyardsh/kit";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   COMMON_PATTERNS,

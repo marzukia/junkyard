@@ -30,6 +30,8 @@ export {
   parseTime,
   clamp,
   outputFilename,
+  isValidHex,
+  parseHexColor,
 } from "../../../kit/lib/imageHelpers";
 export {
   encodeBase64Url,

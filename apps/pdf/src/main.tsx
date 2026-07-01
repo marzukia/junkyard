@@ -8,9 +8,9 @@ import { MantineProvider } from "@mantine/core";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
-import "@junkyardsh/ui/styles.css";
+import "@junkyardsh/kit/styles.css";
 import "./styles.css";
-import { fleetTheme } from "@junkyardsh/ui";
+import { fleetTheme } from "@junkyardsh/kit";
 
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("Root element not found");

@@ -145,14 +145,7 @@ export function hexToRgba(hex: string, opacity: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-/**
- * Validate a CSS hex colour string. Returns true for #rgb and #rrggbb.
- */
-export function isValidHex(hex: string): boolean {
-  return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex);
-}
-
-export { clamp } from "@junkyardsh/ui";
+export { clamp, isValidHex } from "@junkyardsh/kit";
 
 // ── Border Radius ─────────────────────────────────────────────────────────────
 

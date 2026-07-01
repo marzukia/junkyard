@@ -59,7 +59,7 @@ export function byteLength(s: string): number {
   return new TextEncoder().encode(s).length;
 }
 
-export { formatBytes } from "@junkyardsh/ui";
+export { formatBytes } from "@junkyardsh/kit";
 
 export function optimizeSvg(input: string, opts: OptimizeOptions): OptimizeResult {
   if (!input.trim()) throw new Error("Input is not an SVG: received empty string.");

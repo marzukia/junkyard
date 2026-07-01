@@ -144,7 +144,7 @@ export function angleToVector(deg: number): [number, number] {
   return [Math.cos(rad), Math.sin(rad)];
 }
 
-export { clamp } from "@junkyardsh/ui";
+export { clamp } from "@junkyardsh/kit";
 
 export type ExportFormat = "png" | "jpg" | "webp";
 

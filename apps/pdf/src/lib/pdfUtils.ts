@@ -1,4 +1,4 @@
-import { sanitizeWinAnsi } from "@junkyardsh/ui";
+import { sanitizeWinAnsi } from "@junkyardsh/kit";
 import { PDFDocument, StandardFonts, degrees, rgb } from "pdf-lib";
 
 /**
@@ -235,7 +235,7 @@ export function downloadBytes(bytes: Uint8Array, filename: string): void {
 }
 
 /** Format bytes as a human-readable string. */
-export { formatBytes } from "@junkyardsh/ui";
+export { formatBytes } from "@junkyardsh/kit";
 
 /** Strip extension and clean a filename. */
 export function baseName(filename: string): string {

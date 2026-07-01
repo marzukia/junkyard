@@ -1,8 +1,8 @@
 # junkyard — shared kit
 
 Canonical source for shared UI components, theme, and utilities across every tool at `junkyard.sh`.
-The kit is consumed via the `@junkyardsh/ui` npm package (`packages/ui/`), which re-exports
-from `kit/`. Apps import from `@junkyardsh/ui` — they do **not** copy kit files directly.
+The kit is consumed via the `@junkyardsh/kit` npm package (`packages/kit/`), which re-exports
+from `kit/`. Apps import from `@junkyardsh/kit` — they do **not** copy kit files directly.
 
 ## Kit contents
 
@@ -40,7 +40,7 @@ kit/
 
 ## How to consume (per tool)
 
-Apps import from `@junkyardsh/ui`, not from `kit/` directly. See
+Apps import from `@junkyardsh/kit`, not from `kit/` directly. See
 [CONTRIBUTING.md](../CONTRIBUTING.md) §Adding a new tool for the current workflow.
 
 ### main.tsx wiring
@@ -55,9 +55,9 @@ import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { fleetTheme } from "@junkyardsh/ui";
+import { fleetTheme } from "@junkyardsh/kit";
 import { App } from "./App";
-import "@junkyardsh/ui/styles.css";
+import "@junkyardsh/kit/styles.css";
 import "./styles.css";
 
 const rootEl = document.getElementById("root");
@@ -75,7 +75,7 @@ createRoot(rootEl).render(
 ### App.tsx wiring
 
 ```tsx
-import { BrandMark, Footer, Header } from "@junkyardsh/ui";
+import { BrandMark, Footer, Header } from "@junkyardsh/kit";
 
 function ToolGlyph() {
   return (
@@ -122,5 +122,5 @@ Brand palette (use for glyphs/accents): teal `#2f9d8d`, amber `#e8b04b`, coral `
 ## Extraction note
 
 The kit was originally vendored (copy-paste per app) and has since been extracted to the
-`@junkyardsh/ui` npm package (`packages/ui/`). All apps import from `@junkyardsh/ui`.
-The kit remains the source of truth — `packages/ui/src/index.ts` re-exports from `kit/`.
+`@junkyardsh/kit` npm package (`packages/kit/`). All apps import from `@junkyardsh/kit`.
+The kit remains the source of truth — `packages/kit/src/index.ts` re-exports from `kit/`.

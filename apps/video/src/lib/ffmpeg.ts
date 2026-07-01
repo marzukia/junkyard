@@ -12,7 +12,7 @@
 
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
-import { formatTime, parseTime } from "@junkyardsh/ui";
+import { formatTime, parseTime } from "@junkyardsh/kit";
 
 // CDN base for @ffmpeg/core single-thread build.
 // VERSION PAIRING — do not align these independently:
@@ -140,9 +140,9 @@ export function formatBytes(bytes: number): string {
 }
 
 /**
- * Re-exported from @junkyardsh/ui for backward compat.
+ * Re-exported from @junkyardsh/kit for backward compat.
  * Verified byte-for-byte identical to the removed local implementations
  * (see kit/lib/imageHelpers.ts:57-74). Same edge-case handling:
  * parseTime returns 0 for invalid input, formatTime does not zero-pad hours.
  */
-export { formatTime, parseTime } from "@junkyardsh/ui";
+export { formatTime, parseTime } from "@junkyardsh/kit";

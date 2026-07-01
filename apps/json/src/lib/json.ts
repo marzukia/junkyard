@@ -550,4 +550,4 @@ export function byteSize(str: string): number {
   return new TextEncoder().encode(str).length;
 }
 
-export { formatBytes } from "@junkyardsh/ui";
+export { formatBytes } from "@junkyardsh/kit";

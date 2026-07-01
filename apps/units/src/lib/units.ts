@@ -11,11 +11,11 @@
 // it calls convert() and getCommonConversions() only.
 //
 
-export type { CategoryId, UnitDef, Category, ConvertOptions } from "@junkyardsh/ui";
-export { CATEGORIES, getCategoryById, findUnit, TEMP_UNITS, convert } from "@junkyardsh/ui";
+export type { CategoryId, UnitDef, Category, ConvertOptions } from "@junkyardsh/kit";
+export { CATEGORIES, getCategoryById, findUnit, TEMP_UNITS, convert } from "@junkyardsh/kit";
 
-import { CATEGORIES, convert, getCategoryById } from "@junkyardsh/ui";
-import type { CategoryId } from "@junkyardsh/ui";
+import { CATEGORIES, convert, getCategoryById } from "@junkyardsh/kit";
+import type { CategoryId } from "@junkyardsh/kit";
 
 // ── Common conversions (quick reference) ─────────────────────────────────────
 

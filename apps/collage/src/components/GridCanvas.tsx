@@ -14,7 +14,7 @@ import type { LayoutTemplate } from "../lib/layouts";
 import { useCollageStore } from "../store/collageStore";
 import { ShapeClipWrapper } from "./ShapeClipWrapper";
 
-import { clamp } from "@junkyardsh/ui";
+import { clamp } from "@junkyardsh/kit";
 
 interface Props {
   template: LayoutTemplate;

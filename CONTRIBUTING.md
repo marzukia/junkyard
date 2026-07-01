@@ -7,8 +7,8 @@ A monorepo of 46 free, client-side web tools served at `junkyard.sh/<slug>/`.
 ```
 junkyard/
   apps/<slug>/        # 46 standalone Vite apps, one per tool
-  kit/                # canonical source for @junkyardsh/ui package
-  packages/ui/        # @junkyardsh/ui — shared UI components published to npm
+  kit/                # canonical source for @junkyardsh/kit package
+  packages/kit/        # @junkyardsh/kit — shared UI components published to npm
   hub/                # landing page (Vite + React 18 + TS, built to dist root)
   packages/
     core/             # @junkyard/core - 17 pure-logic headless tools (Node/vitest)
@@ -17,7 +17,7 @@ junkyard/
     build-site.sh       # consolidated CI build
     gen-catalogue.ts    # reads apps/*/junkyard.ts, emits catalogue artifacts
     catalogue-schema.ts # JunkyardApp type + enums (Category, Runtime, AppTag)
-    (vendor-*.mjs removed — replaced by @junkyardsh/ui package)
+    (vendor-*.mjs removed — replaced by @junkyardsh/kit package)
     inject-umami.mjs    # injects Umami <script> into dist/<slug>/index.html
     umami.config.json   # { "host": "umami.junkyard.sh" }
   umami-ids.txt       # slug -> Umami website-id map (one line per tool)
@@ -143,14 +143,14 @@ This writes:
 
 CI runs this and fails with `git diff --exit-code` if the artifacts are stale. There is no way to bypass this gate.
 
-### 4. Shared UI components (`@junkyardsh/ui`)
+### 4. Shared UI components (`@junkyardsh/kit`)
 
-Shared UI components live in `kit/` and are published as `@junkyardsh/ui` from `packages/ui/`. All apps import from the npm package instead of vendoring copies.
+Shared UI components live in `kit/` and are published as `@junkyardsh/kit` from `packages/kit/`. All apps import from the npm package instead of vendoring copies.
 
 If you edit a shared component in `kit/`, rebuild the package and bump the version:
 
 ```bash
-cd packages/ui
+cd packages/kit
 bun run build
 npm publish --access public   # bump version in package.json first
 ```

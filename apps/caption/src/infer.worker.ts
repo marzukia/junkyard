@@ -5,7 +5,7 @@
  * is handled via kit/lib/workerInference.ts.
  */
 import { RawImage, pipeline, env } from "@huggingface/transformers";
-import type { WorkerRequest } from "@junkyardsh/ui";
+import type { WorkerRequest } from "@junkyardsh/kit";
 import {
   loadPipeline,
   postResult,

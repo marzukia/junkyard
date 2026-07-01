@@ -1,7 +1,7 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
-import { useWorkerTask } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
+import { useWorkerTask } from "@junkyardsh/kit";
 import { useCallback, useEffect, useRef, useState } from "react";
 import InferWorker from "./infer.worker.ts?worker";
 import { exportRaw16bit, renderDepthFromCache, revokeResult } from "./lib/depthEstimation";
@@ -60,7 +60,7 @@ function DepthBrandGlyph() {
 
 // ── Colourmap toggle ──────────────────────────────────────────────────────────
 
-import { MobileWarning } from "@junkyardsh/ui";
+import { MobileWarning } from "@junkyardsh/kit";
 import type { ColourMap } from "./lib/depthEstimation";
 
 const COLOURMAPS: { value: ColourMap; label: string; title: string }[] = [

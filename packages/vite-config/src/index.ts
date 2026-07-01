@@ -49,8 +49,8 @@ export function defineAppConfig(options: AppConfigOptions = {}): Record<string, 
     base,
     resolve: {
       // Force @mantine/core and react to resolve from the app's own
-      // node_modules. Without this, @junkyardsh/ui (symlinked from
-      // packages/ui/) brings its own node_modules copy of @mantine/core,
+      // node_modules. Without this, @junkyardsh/kit (symlinked from
+      // packages/kit/) brings its own node_modules copy of @mantine/core,
       // causing Vite to bundle two instances → duplicate React contexts →
       // "MantineProvider was not found in tree" crash.
       alias: [

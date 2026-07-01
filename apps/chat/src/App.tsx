@@ -1,6 +1,6 @@
-import { BrandMark } from "@junkyardsh/ui";
-import { Footer } from "@junkyardsh/ui";
-import { Header } from "@junkyardsh/ui";
+import { BrandMark } from "@junkyardsh/kit";
+import { Footer } from "@junkyardsh/kit";
+import { Header } from "@junkyardsh/kit";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   exportConversation,
@@ -19,7 +19,7 @@ import {
 import { renderMarkdown } from "./lib/renderMarkdown";
 import { DEFAULT_SYSTEM_PROMPT, useChatStore } from "./store/chatStore";
 import "./styles/chat.css";
-import { MobileWarning } from "@junkyardsh/ui";
+import { MobileWarning } from "@junkyardsh/kit";
 
 // ── Brand glyph: two overlapping chat bubbles, teal + amber ──────────────
 
