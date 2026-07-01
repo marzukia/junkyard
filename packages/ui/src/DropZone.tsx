@@ -4,16 +4,40 @@ interface DropZoneProps {
   accept: string;
   multiple?: boolean;
   onFiles: (files: File[]) => void;
+  /** aria-label for the drop zone button */
   label: string;
-  sublabel?: string;
+  /** Disable drop/file interactions */
+  disabled?: boolean;
+  /** Extra classes (appended to base .dropzone class) */
+  className?: string;
+  /** Custom icon node (default: upload arrow SVG) */
+  icon?: React.ReactNode;
+  /** Custom children to render inside the button/label after the icon.
+   *  If omitted, renders default label + optional sublabel. */
+  children?: React.ReactNode;
+  /** Render as <label> instead of <button> (some apps wrap hidden input differently) */
+  asLabel?: boolean;
+  /** Custom keydown handler. Default: Enter/Space opens file picker. */
+  onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
-export function DropZone({ accept, multiple = false, onFiles, label, sublabel }: DropZoneProps) {
+export function DropZone({
+  accept,
+  multiple = false,
+  onFiles,
+  label,
+  disabled = false,
+  className = "",
+  icon,
+  children,
+  asLabel = false,
+  onKeyDown: customKeyDown,
+}: DropZoneProps) {
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handle = (files: FileList | null) => {
-    if (!files) return;
+    if (!files || disabled) return;
     const arr = Array.from(files);
     const filtered = arr.filter((f) => {
       const mt = f.type;
@@ -28,40 +52,67 @@ export function DropZone({ accept, multiple = false, onFiles, label, sublabel }:
     if (filtered.length > 0 && first) onFiles(multiple ? filtered : [first]);
   };
 
+  const baseClass = `dropzone${dragging ? " dropzone--active" : ""}${disabled ? " dropzone--disabled" : ""}${className ? ` ${className}` : ""}`;
+
+  const dragHandlers = {
+    onClick: () => inputRef.current?.click(),
+    onKeyDown: (e: React.KeyboardEvent) => {
+      if (customKeyDown) {
+        customKeyDown(e);
+      } else if (e.key === "Enter" || e.key === " ") {
+        inputRef.current?.click();
+      }
+    },
+    onDragOver: (e: React.DragEvent) => {
+      e.preventDefault();
+      if (!disabled) setDragging(true);
+    },
+    onDragLeave: () => setDragging(false),
+    onDrop: (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragging(false);
+      if (!disabled) handle(e.dataTransfer.files);
+    },
+  };
+
+  const input = (
+    <input
+      ref={inputRef}
+      type="file"
+      accept={accept}
+      multiple={multiple}
+      tabIndex={-1}
+      style={{ display: "none" }}
+      onChange={(e) => handle(e.target.files)}
+      aria-hidden="true"
+    />
+  );
+
+  const defaultIcon = icon ?? <UploadIcon />;
+
+  if (asLabel) {
+    return (
+      <label className={baseClass} aria-label={label} {...dragHandlers}>
+        {input}
+        {defaultIcon}
+        {children ?? (
+          <>
+            <span className="dropzone-label">{label}</span>
+          </>
+        )}
+      </label>
+    );
+  }
+
   return (
-    <button
-      type="button"
-      className={`dropzone${dragging ? " dropzone--active" : ""}`}
-      aria-label={label}
-      onClick={() => inputRef.current?.click()}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") inputRef.current?.click();
-      }}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setDragging(true);
-      }}
-      onDragLeave={() => setDragging(false)}
-      onDrop={(e) => {
-        e.preventDefault();
-        setDragging(false);
-        handle(e.dataTransfer.files);
-      }}
-    >
-      <input
-        ref={inputRef}
-        type="file"
-        accept={accept}
-        multiple={multiple}
-        tabIndex={-1}
-        style={{ display: "none" }}
-        onChange={(e) => handle(e.target.files)}
-      />
-      <span className="dropzone-icon" aria-hidden="true">
-        <UploadIcon />
-      </span>
-      <span className="dropzone-label">{label}</span>
-      {sublabel && <span className="dropzone-sublabel">{sublabel}</span>}
+    <button type="button" className={baseClass} aria-label={label} {...dragHandlers}>
+      {input}
+      {defaultIcon}
+      {children ?? (
+        <>
+          <span className="dropzone-label">{label}</span>
+        </>
+      )}
     </button>
   );
 }

@@ -1,4 +1,4 @@
-import { BrandMark } from "@junkyardsh/ui";
+import { BrandMark, DropZone } from "@junkyardsh/ui";
 import { Footer } from "@junkyardsh/ui";
 import { Header } from "@junkyardsh/ui";
 import { useWorkerTask } from "@junkyardsh/ui";
