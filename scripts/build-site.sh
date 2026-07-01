@@ -62,14 +62,13 @@ echo "  App deps installed."
 # they pick up subpath exports not yet published to npm.
 # Also symlink at repo root for imports resolved from kit/ (e.g. workerInference.ts).
 echo "  Symlinking local @junkyardsh/kit into app node_modules..."
-mkdir -p "$ROOT/node_modules/@junkyardsh"
 rm -rf "$ROOT/node_modules/@junkyardsh/kit"
-ln -s "$ROOT/packages/kit" "$ROOT/node_modules/@junkyardsh/kit"
+ln -sf "$ROOT/packages/kit" "$ROOT/node_modules/@junkyardsh/kit"
 for d in "$ROOT"/apps/*/; do
   target="$d/node_modules/@junkyardsh/kit"
   if [ -d "$target" ]; then
     rm -rf "$target"
-    ln -s "$ROOT/packages/kit" "$ROOT/node_modules/@junkyardsh/kit"
+    ln -sf "$ROOT/packages/kit" "$target"
   fi
 done
 
