@@ -88,7 +88,14 @@ export async function runFFmpeg(
 
   let bytes: Uint8Array;
   try {
-    await ff.writeFile(inName, await fetchFile(inputFile));
+    // Use Blob.arrayBuffer() instead of @ffmpeg/util's fetchFile which relies
+    // on FileReader — FileReader can be GC'd mid-read in Chrome, producing
+    // a silent "File could not be read! Code=-1" error for Blob inputs.
+    const fileData =
+      inputFile instanceof Blob
+        ? new Uint8Array(await inputFile.arrayBuffer())
+        : await fetchFile(inputFile);
+    await ff.writeFile(inName, fileData);
 
     const cmd = preArgs
       ? [...preArgs, "-i", inName, ...args, outputName]
