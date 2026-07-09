@@ -11,6 +11,7 @@ import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import "@junkyardsh/kit/styles.css";
 import "./styles.css";
+import "./splice.css";
 
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("Root element not found");

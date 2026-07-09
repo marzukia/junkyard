@@ -5,12 +5,13 @@ import { MobileWarning } from "@junkyardsh/kit";
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isVideoFile } from "./lib/dropGuard";
-import { formatBytes, formatTime, getFFmpeg, parseTime, runFFmpeg } from "./lib/ffmpeg";
+import { formatBytes, formatTime, getFFmpeg, parseTime, runFFmpeg, spliceVideos } from "./lib/ffmpeg";
+import { Clip, SplicePanel } from "./lib/splice";
 
 // Warn when file exceeds this size
 const LARGE_FILE_THRESHOLD = 500 * 1024 * 1024; // 500 MB
 
-type Mode = "trim" | "convert" | "compress" | "gif";
+type Mode = "trim" | "convert" | "compress" | "gif" | "splice";
 type ConvertFormat = "mp4" | "mov" | "gif";
 type ScalePreset = "original" | "1080p" | "720p" | "480p" | "360p";
 
@@ -46,6 +47,7 @@ export function App() {
   const [result, setResult] = useState<Result | null>(null);
   const [workingBlob, setWorkingBlob] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [clips, setClips] = useState<Clip[]>([]);
 
   // Trim state
   const [trimStart, setTrimStart] = useState("0:00");
@@ -202,7 +204,50 @@ export function App() {
   }, [result]);
 
   const run = async () => {
-    if (!file || processing) return;
+    if (processing) return;
+    
+    // Handle splice mode separately
+    if (mode === "splice") {
+      if (clips.length < 2) {
+        setError("Add at least 2 clips to splice");
+        return;
+      }
+      
+      setResult((prev) => {
+        if (prev) URL.revokeObjectURL(prev.url);
+        return null;
+      });
+      setProcessing(true);
+      setError(null);
+      setProgress(0);
+      
+      try {
+        const clipFiles = clips.map((c) => c.file);
+        const blob = await spliceVideos(clipFiles, "combined.mp4", setProgress);
+        const url = URL.createObjectURL(blob);
+        const resultName = `combined_${Date.now()}.mp4`;
+        setResult({ blob, name: resultName, url, size: blob.size });
+        
+        // Clean up clip URLs
+        clips.forEach((c) => URL.revokeObjectURL(c.url));
+        setClips([]);
+      } catch (err) {
+        const msg =
+          err instanceof Error
+            ? err.message
+            : typeof err === "object" && err !== null && "message" in err
+              ? String((err as { message: unknown }).message)
+              : "Splicing failed";
+        setError(msg);
+      } finally {
+        setProcessing(false);
+        setProgress(0);
+      }
+      return;
+    }
+    
+    // Single-file modes
+    if (!file) return;
     const built = buildArgs();
     if (!built) return;
 
@@ -272,6 +317,7 @@ export function App() {
     { key: "convert", label: "Convert" },
     { key: "compress", label: "Compress" },
     { key: "gif", label: "To GIF" },
+    { key: "splice", label: "Splice" },
   ];
 
   return (
@@ -279,7 +325,7 @@ export function App() {
       <Header
         title="Video"
         subtitle="trim, convert, compress, gif - in your browser"
-        brandMark={<BrandMark />}
+        brandMark={<BrandMark><rect x="2" y="2" width="28" height="28" rx="4" fill="#2f9d8d" /></BrandMark>}
       />
 
       <main className="site-main">
@@ -414,6 +460,15 @@ export function App() {
                   duration={duration}
                 />
               )}
+              {mode === "splice" && (
+                <SplicePanel
+                  clips={clips}
+                  setClips={setClips}
+                  onSplice={run}
+                  processing={processing}
+                  setError={setError}
+                />
+              )}
 
               {/* Core loading indicator */}
               {coreLoading && (
@@ -512,7 +567,7 @@ export function App() {
 }
 
 function modeLabel(mode: Mode): string {
-  return { trim: "Trim clip", convert: "Convert", compress: "Compress", gif: "Export GIF" }[mode];
+  return { trim: "Trim clip", convert: "Convert", compress: "Compress", gif: "Export GIF", splice: "Splice clips" }[mode];
 }
 
 // Sub-panels

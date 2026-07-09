@@ -23,7 +23,6 @@ import { formatBytes, formatTime, parseTime } from "./ffmpeg";
 // so that WEBM cannot be silently re-introduced.
 
 const SUPPORTED_FORMATS = ["mp4", "mov", "gif"] as const;
-type SupportedFormat = (typeof SUPPORTED_FORMATS)[number];
 
 describe("video output format list (wave-3 bug #4 guard)", () => {
   it("does not include webm in the supported format list", () => {
