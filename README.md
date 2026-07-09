@@ -4,7 +4,7 @@
 
 Your favourite online tools, salvaged from behind paywalls.
 
-46 free, 100% client-side web tools. Everything runs in your browser: no server, no upload, no account. Tools that used to be paywalled, freemium, or just annoying are here, for free, forever. Live at **https://junkyard.sh**.
+47 free, 100% client-side web tools. Everything runs in your browser: no server, no upload, no account. Tools that used to be paywalled, freemium, or just annoying are here, for free, forever. Live at **https://junkyard.sh**.
 
 ## Tool catalogue
 
@@ -27,7 +27,7 @@ See [`packages/mcp-server/README.md`](packages/mcp-server/README.md) for setup, 
 
 ## Architecture
 
-Single GitHub Pages site built from a monorepo. Each of the 46 tools is a self-contained Vite + React app under `apps/<slug>/`. Shared UI lives in `kit/`. The hub landing page is in `hub/`. Headless tool logic lives in `packages/core` (`@junkyard/core`).
+Single GitHub Pages site built from a monorepo. Each of the 47 tools is a self-contained Vite + React app under `apps/<slug>/`. Shared UI lives in `kit/`. The hub landing page is in `hub/`. Headless tool logic lives in `packages/core` (`@junkyard/core`).
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full picture.
 
@@ -53,7 +53,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for adding tools, shared UI components 
 bash scripts/build-site.sh
 ```
 
-Builds all 46 apps + the hub into `dist/`, ready for GitHub Pages. See [`DEPLOY.md`](DEPLOY.md) for the full pipeline.
+Builds all 47 apps + the hub into `dist/`, ready for GitHub Pages. See [`DEPLOY.md`](DEPLOY.md) for the full pipeline.
 
 ## License
 
