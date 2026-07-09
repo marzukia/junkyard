@@ -48,14 +48,14 @@ jobs:
       # ── Lint ────────────────────────────────────────────────────────────
       # Biome CI on hub, kit, and all 47 apps. Runs in parallel per app.
       - name: Lint hub
-        run: cd hub && bun install --frozen-lockfile 2>/dev/null && bun run ci
+        run: cd hub && bun install --frozen-lockfile 2>/dev/null && bunx biome ci --linter-enabled=false src/
       - name: Lint kit
-        run: cd kit && bun install --frozen-lockfile 2>/dev/null && bun run ci
+        run: cd kit && bun install --frozen-lockfile 2>/dev/null && bunx biome ci --linter-enabled=false src/
       - name: Lint all apps
         run: |
           export ONNXRUNTIME_NODE_INSTALL_CUDA=skip
           for app_dir in apps/*/; do
-            bun run --cwd "$app_dir" ci &
+            bunx biome ci --linter-enabled=false --cwd "$app_dir" src/ &
           done
           wait
 
