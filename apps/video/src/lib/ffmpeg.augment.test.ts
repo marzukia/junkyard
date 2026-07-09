@@ -21,7 +21,6 @@ import { formatBytes, formatTime, parseTime } from "./ffmpeg";
 // @ffmpeg/core@0.12.10 WASM encoder indefinitely (verified: no completion
 // after 250s on a trivial clip).  These tests pin the supported format set
 // so that WEBM cannot be silently re-introduced.
-
 const SUPPORTED_FORMATS = ["mp4", "mov", "gif"] as const;
 
 describe("video output format list (wave-3 bug #4 guard)", () => {

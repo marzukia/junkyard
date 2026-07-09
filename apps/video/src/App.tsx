@@ -323,10 +323,10 @@ export function App() {
   return (
     <div className="app-root">
       <Header
-        title="Video"
-        subtitle="trim, convert, compress, gif - in your browser"
-        brandMark={<BrandMark><rect x="2" y="2" width="28" height="28" rx="4" fill="#2f9d8d" /></BrandMark>}
-      />
+              title="Video"
+              subtitle="trim, convert, compress, gif - in your browser"
+              brandMark={<BrandMark><rect x="2" y="2" width="28" height="28" rx="4" fill="#2f9d8d" /></BrandMark>}
+            />
 
       <main className="site-main">
         <MobileWarning />

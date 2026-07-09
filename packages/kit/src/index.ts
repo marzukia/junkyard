@@ -3,24 +3,24 @@ import "./styles.css";
 
 // ── Components ───────────────────────────────────────────────────────────
 export { DropZone } from "./DropZone";
-export { Header } from "../../../kit/components/Header";
-export { Footer } from "../../../kit/components/Footer";
-export { BrandMark } from "../../../kit/components/BrandMark";
-export { ThemeToggle } from "../../../kit/components/ThemeToggle";
-export { AppSwitcher } from "../../../kit/components/AppSwitcher";
+export { Header } from "./components/Header";
+export { Footer } from "./components/Footer";
+export { BrandMark } from "./components/BrandMark";
+export { ThemeToggle } from "./components/ThemeToggle";
+export { AppSwitcher } from "./components/AppSwitcher";
 export {
   MobileWarning,
   mobileWarningMessage,
-} from "../../../kit/components/MobileWarning";
-export { formatBytes } from "../../../kit/components/format";
+} from "./components/MobileWarning";
+export { formatBytes } from "./components/format";
 export { useCmdEnter } from "./useCmdEnter";
-export { useProgress } from "../../../kit/lib/useProgress";
+export { useProgress } from "./lib/useProgress";
 
 // ── Lib ─────────────────────────────────────────────────────────────────
 export {
   embedUnicodeFonts,
   sanitizeWinAnsi,
-} from "../../../kit/lib/unicodeFont";
+} from "./lib/unicodeFont";
 export {
   ACCEPTED_TYPES,
   type AcceptedType,
@@ -32,11 +32,11 @@ export {
   outputFilename,
   isValidHex,
   parseHexColor,
-} from "../../../kit/lib/imageHelpers";
+} from "./lib/imageHelpers";
 export {
   encodeBase64Url,
   decodeBase64Url,
-} from "../../../kit/lib/base64url";
+} from "./lib/base64url";
 export {
   CRON_MACROS,
   type CronFields,
@@ -47,19 +47,19 @@ export {
   normaliseNames,
   validateSinglePart,
   expandField,
-} from "../../../kit/lib/cronGrammar";
+} from "./lib/cronGrammar";
 export {
   type Delimiter,
   splitCsvRows,
   detectDelimiter,
-} from "../../../kit/lib/csvParse";
+} from "./lib/csvParse";
 export {
   type WifiPayloadFields,
   escapeWifiField,
   buildWifiPayload,
   type VCardPayloadFields,
   buildVCardPayload,
-} from "../../../kit/lib/qrContent";
+} from "./lib/qrContent";
 export {
   type CategoryId,
   type UnitDef,
@@ -70,14 +70,14 @@ export {
   findUnit,
   type ConvertOptions,
   convert,
-} from "../../../kit/lib/unitsData";
+} from "./lib/unitsData";
 export {
   type WorkerMsg,
   type WorkerRequest,
   type WorkerTaskHandlers,
   shouldEmitProgress,
   useWorkerTask,
-} from "../../../kit/lib/workerTask";
+} from "./lib/workerTask";
 
 // ── Config ──────────────────────────────────────────────────────────────
-export { fleetTheme } from "../../../kit/theme";
+export { fleetTheme } from "./theme";

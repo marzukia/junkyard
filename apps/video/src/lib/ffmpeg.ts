@@ -302,7 +302,7 @@ export async function spliceVideos(
 
 /**
  * formatTime and parseTime utilities.
- * Local copies to avoid @junkyardsh/kit import issues.
+ * Local copies to avoid @junkyardsh/kit import resolution issues.
  * Same implementation as kit/lib/imageHelpers.ts.
  */
 export function formatTime(seconds: number): string {
