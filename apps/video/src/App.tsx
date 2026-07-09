@@ -1,7 +1,7 @@
-import { BrandMark } from "@junkyardsh/kit";
-import { Footer } from "@junkyardsh/kit";
-import { Header } from "@junkyardsh/kit";
-import { MobileWarning } from "@junkyardsh/kit";
+import { BrandMark } from "./components/BrandMark";
+import { Footer } from "./components/Footer";
+import { Header } from "./components/Header";
+import { MobileWarning } from "./components/MobileWarning";
 import { Slider } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isVideoFile } from "./lib/dropGuard";
@@ -325,7 +325,7 @@ export function App() {
       <Header
         title="Video"
         subtitle="trim, convert, compress, gif - in your browser"
-        brandMark={<BrandMark />}
+        brandMark={<BrandMark><rect x="2" y="2" width="28" height="28" rx="4" fill="#2f9d8d" /></BrandMark>}
       />
 
       <main className="site-main">

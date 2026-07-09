@@ -301,9 +301,22 @@ export async function spliceVideos(
 }
 
 /**
- * Re-exported from @junkyardsh/kit for backward compat.
- * Verified byte-for-byte identical to the removed local implementations
- * (see kit/lib/imageHelpers.ts:57-74). Same edge-case handling:
- * parseTime returns 0 for invalid input, formatTime does not zero-pad hours.
+ * formatTime and parseTime utilities.
+ * Local copies to avoid @junkyardsh/kit import issues.
+ * Same implementation as kit/lib/imageHelpers.ts.
  */
-export { formatTime, parseTime } from "@junkyardsh/kit";
+export function formatTime(seconds: number): string {
+  if (!seconds || isNaN(seconds)) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+
+export function parseTime(timeStr: string): number {
+  const parts = timeStr.split(":").map(Number);
+  if (parts.some(Number.isNaN)) return 0;
+  if (parts.length === 1) return parts[0];
+  if (parts.length === 2) return parts[0] * 60 + parts[1];
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  return 0;
+}
