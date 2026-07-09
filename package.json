@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "@junkyardsh/kit": "1.0.6"
+    "@junkyardsh/kit": "1.0.6",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
   }
 }

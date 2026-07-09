@@ -380,4 +380,13 @@ export const TOOLS: Tool[] = [
     incumbent: "",
     mcpExposed: false,
   },
+  {
+    name: "Video Splicer",
+    slug: "splice",
+    yard: "image",
+    tagline: "Combine multiple videos in your browser",
+    incumbent: "clideo",
+    tags: ["large-download"],
+    mcpExposed: false,
+  },
 ];
