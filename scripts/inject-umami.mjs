@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 // inject-umami.mjs
-// Reads scripts/umami.config.json (host) and umami-ids.txt (slug -> uuid map),
+// Reads scripts/umami.config.json (host) and umami-ids.txt (single UUID),
 // then injects the Umami analytics script tag into each dist/<slug>/index.html.
-// Skips slugs with no id (warns), validates UUID format, and is idempotent.
+// Skips if no id (warns), validates UUID format, and is idempotent.
 
 import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { UUID_RE, parseUmamiIds } from "./umami-ids.mjs";
+import { UUID_RE, parseUmamiId } from "./umami-ids.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
@@ -18,18 +18,21 @@ const config = JSON.parse(
 );
 const { host } = config;
 
-// Parse umami-ids.txt
-// Format: <slug> <uuid>  (one per line; blank lines and # comments ignored)
+// Parse single UUID from umami-ids.txt
 const idsPath = join(ROOT, "umami-ids.txt");
 if (!existsSync(idsPath)) {
   console.error(
     "[umami] ERROR: umami-ids.txt not found at repo root.\n" +
-    "  Create it with one line per app: <slug> <uuid>\n" +
-    "  Run `bun scripts/check-umami-present.mjs` to validate coverage."
+    "  Add a single UUID to the file."
   );
   process.exit(1);
 }
-const slugMap = parseUmamiIds(readFileSync(idsPath, "utf8"));
+const uuid = parseUmamiId(readFileSync(idsPath, "utf8"));
+
+if (!uuid || !UUID_RE.test(uuid)) {
+  console.error("[umami] ERROR: no valid UUID found in umami-ids.txt");
+  process.exit(1);
+}
 
 const DIST = join(ROOT, "dist");
 if (!existsSync(DIST)) {
@@ -38,7 +41,6 @@ if (!existsSync(DIST)) {
 }
 
 let injected = 0;
-let skipped = 0;
 let alreadyPresent = 0;
 
 const slugDirs = readdirSync(DIST, { withFileTypes: true })
@@ -48,19 +50,6 @@ const slugDirs = readdirSync(DIST, { withFileTypes: true })
 for (const slug of slugDirs) {
   const htmlPath = join(DIST, slug, "index.html");
   if (!existsSync(htmlPath)) continue;
-
-  if (!slugMap.has(slug)) {
-    console.warn(`[umami] no website-id for ${slug}, skipping`);
-    skipped++;
-    continue;
-  }
-
-  const uuid = slugMap.get(slug);
-  if (!UUID_RE.test(uuid)) {
-    console.warn(`[umami] invalid UUID for ${slug} ("${uuid}"), skipping`);
-    skipped++;
-    continue;
-  }
 
   const html = readFileSync(htmlPath, "utf8");
 
@@ -75,7 +64,6 @@ for (const slug of slugDirs) {
 
   if (patched === html) {
     console.warn(`[umami] </head> not found in ${slug}/index.html, skipping`);
-    skipped++;
     continue;
   }
 
@@ -84,5 +72,5 @@ for (const slug of slugDirs) {
 }
 
 console.log(
-  `[umami] done: injected=${injected} already-present=${alreadyPresent} skipped=${skipped}`
+  `[umami] done: injected=${injected} already-present=${alreadyPresent} (${uuid})`
 );

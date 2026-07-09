@@ -1,54 +1,7 @@
 # umami-ids.txt
-# Format: <slug> <uuid>  (one entry per line; blank lines and # comments are ignored)
-# All apps share a single Umami website ID. Page-level analytics are tracked by URL path
-# (e.g. /video/, /convert/) so per-app breakdowns are still available in the Umami dashboard.
-# (CI gate: check-umami-present.mjs). Mint new ids in the Umami admin, then add the line here.
+# Single Umami website ID shared by all junkyard.sh apps.
+# Page-level analytics are tracked by URL path (/video/, /convert/, etc.)
+# so per-app breakdowns are still available in the Umami dashboard.
+# (CI gate: check-umami-present.mjs)
 #
-barcode 337c089f-0511-469b-afd0-8030fb0bdfd8
-base64 337c089f-0511-469b-afd0-8030fb0bdfd8
-bg 337c089f-0511-469b-afd0-8030fb0bdfd8
-caption 337c089f-0511-469b-afd0-8030fb0bdfd8
-chat 337c089f-0511-469b-afd0-8030fb0bdfd8
-cleanup 337c089f-0511-469b-afd0-8030fb0bdfd8
-collage 337c089f-0511-469b-afd0-8030fb0bdfd8
-colours 337c089f-0511-469b-afd0-8030fb0bdfd8
-convert 337c089f-0511-469b-afd0-8030fb0bdfd8
-cron 337c089f-0511-469b-afd0-8030fb0bdfd8
-crop 337c089f-0511-469b-afd0-8030fb0bdfd8
-css 337c089f-0511-469b-afd0-8030fb0bdfd8
-csv 337c089f-0511-469b-afd0-8030fb0bdfd8
-depth 337c089f-0511-469b-afd0-8030fb0bdfd8
-diff 337c089f-0511-469b-afd0-8030fb0bdfd8
-exif 337c089f-0511-469b-afd0-8030fb0bdfd8
-favicon 337c089f-0511-469b-afd0-8030fb0bdfd8
-fingerprint 337c089f-0511-469b-afd0-8030fb0bdfd8
-gif 337c089f-0511-469b-afd0-8030fb0bdfd8
-hash 337c089f-0511-469b-afd0-8030fb0bdfd8
-invoice 337c089f-0511-469b-afd0-8030fb0bdfd8
-json 337c089f-0511-469b-afd0-8030fb0bdfd8
-jwt 337c089f-0511-469b-afd0-8030fb0bdfd8
-lorem 337c089f-0511-469b-afd0-8030fb0bdfd8
-markdown 337c089f-0511-469b-afd0-8030fb0bdfd8
-meme 337c089f-0511-469b-afd0-8030fb0bdfd8
-ocr 337c089f-0511-469b-afd0-8030fb0bdfd8
-og 337c089f-0511-469b-afd0-8030fb0bdfd8
-password 337c089f-0511-469b-afd0-8030fb0bdfd8
-pdf 337c089f-0511-469b-afd0-8030fb0bdfd8
-qr 337c089f-0511-469b-afd0-8030fb0bdfd8
-regex 337c089f-0511-469b-afd0-8030fb0bdfd8
-resume 337c089f-0511-469b-afd0-8030fb0bdfd8
-screen-recorder 337c089f-0511-469b-afd0-8030fb0bdfd8
-screenshot 337c089f-0511-469b-afd0-8030fb0bdfd8
-sign 337c089f-0511-469b-afd0-8030fb0bdfd8
-splice 337c089f-0511-469b-afd0-8030fb0bdfd8
-subs 337c089f-0511-469b-afd0-8030fb0bdfd8
-summarize 337c089f-0511-469b-afd0-8030fb0bdfd8
-svg 337c089f-0511-469b-afd0-8030fb0bdfd8
-timestamp 337c089f-0511-469b-afd0-8030fb0bdfd8
-transcribe 337c089f-0511-469b-afd0-8030fb0bdfd8
-translate 337c089f-0511-469b-afd0-8030fb0bdfd8
-units 337c089f-0511-469b-afd0-8030fb0bdfd8
-upscale 337c089f-0511-469b-afd0-8030fb0bdfd8
-uuid 337c089f-0511-469b-afd0-8030fb0bdfd8
-video 337c089f-0511-469b-afd0-8030fb0bdfd8
-
+1abd8941-f70b-429e-9ef7-7b781a09d08d

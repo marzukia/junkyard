@@ -1,35 +1,23 @@
 #!/usr/bin/env bun
-// Guard: every app slug must appear in umami-ids.txt with a valid id.
-import { readdirSync, readFileSync } from "fs";
+// Guard: umami-ids.txt must contain a valid UUID.
+import { readFileSync } from "fs";
 import { join } from "path";
-import { UUID_RE, parseUmamiIds } from "./umami-ids.mjs";
+import { UUID_RE, parseUmamiId } from "./umami-ids.mjs";
 
 const root = new URL("../", import.meta.url).pathname;
-const appsDir = join(root, "apps");
-const umamiFile = join(root, "umami-ids.txt");
+const idsPath = join(root, "umami-ids.txt");
 
-// Parse umami-ids.txt -> Map<slug, uuid>
-const umamiMap = parseUmamiIds(readFileSync(umamiFile, "utf8"));
+const raw = readFileSync(idsPath, "utf8");
+const uuid = parseUmamiId(raw);
 
-const slugs = readdirSync(appsDir, { withFileTypes: true })
-  .filter((d) => d.isDirectory())
-  .map((d) => d.name);
-
-let errors = [];
-
-for (const slug of slugs) {
-  const uuid = umamiMap.get(slug);
-  if (!uuid) {
-    errors.push(`${slug}: missing from umami-ids.txt`);
-  } else if (!UUID_RE.test(uuid)) {
-    errors.push(`${slug}: invalid UUID "${uuid}"`);
-  }
-}
-
-if (errors.length > 0) {
-  console.error("umami-present FAILED:");
-  for (const e of errors) console.error("  " + e);
+if (!uuid) {
+  console.error("umami-present FAILED: no valid UUID found in umami-ids.txt");
   process.exit(1);
 }
 
-console.log(`umami-present OK (${slugs.length} apps checked)`);
+if (!UUID_RE.test(uuid)) {
+  console.error(`umami-present FAILED: invalid UUID "${uuid}"`);
+  process.exit(1);
+}
+
+console.log(`umami-present OK (website-id: ${uuid})`);
