@@ -55,7 +55,7 @@ jobs:
         run: |
           export ONNXRUNTIME_NODE_INSTALL_CUDA=skip
           for app_dir in apps/*/; do
-            bun run --cwd "$app_dir" ci &
+            (cd "$app_dir" && bun install --frozen-lockfile 2>/dev/null && bun run ci) &
           done
           wait
 

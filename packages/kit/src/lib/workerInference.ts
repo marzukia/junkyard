@@ -16,7 +16,7 @@
  * the kit/ directory during worker builds.
  */
 
-import type { WorkerMsg, WorkerRequest } from "@junkyardsh/kit";
+import type { WorkerMsg, WorkerRequest } from "./lib/workerTask";
 
 /** Minimal env shape we need from @huggingface/transformers. */
 interface TransformersEnv {

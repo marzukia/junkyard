@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary meta -->
+    <title>Splice Videos - Free In-Browser Video Combiner</title>
+    <meta name="description" content="Combine multiple videos into one - free, in your browser. No upload, no signup, no watermark. Powered by ffmpeg.wasm." />
+    <meta name="keywords" content="video splicer, video combiner, merge videos online, join videos, concatenate videos, browser video editor, ffmpeg wasm" />
+    <meta name="author" content="Andryo Marzuki" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://junkyard.sh/splice/" />
+    <link rel="author" href="https://mrzk.io" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Theme colour -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#13171a" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Video Splicer" />
+    <meta property="og:title" content="Splice Videos - Free In-Browser Video Combiner" />
+    <meta property="og:description" content="Combine multiple videos into one. Runs entirely in your browser - no upload, no signup, no watermark." />
+    <meta property="og:url" content="https://junkyard.sh/splice/" />
+    <meta property="og:image" content="https://junkyard.sh/splice/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Splice Videos - Free In-Browser Video Combiner" />
+    <meta name="twitter:description" content="Combine multiple videos in your browser. Powered by ffmpeg.wasm - no upload, no signup." />
+    <meta name="twitter:image" content="https://junkyard.sh/splice/og.png" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://mrzk.io/#person",
+            "name": "Andryo Marzuki",
+            "url": "https://mrzk.io",
+            "sameAs": [
+              "https://github.com/marzukia",
+              "https://www.linkedin.com/in/andryomarzuki/"
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Video Splicer",
+            "url": "https://junkyard.sh/splice/",
+            "description": "Free in-browser video splicer: combine multiple videos into one. Powered by ffmpeg.wasm - no upload, no signup, no watermark.",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Any",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Combine multiple video clips into one",
+              "Drag and drop to reorder clips",
+              "Runs entirely in browser, no upload"
+            ],
+            "author": { "@id": "https://mrzk.io/#person" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- ── No-flash dark-mode script ────────────────────────────────── -->
+    <!-- Reads the Mantine colour-scheme preference from localStorage before
+         React hydrates, sets data-mantine-color-scheme on <html> immediately
+         so there is zero flash of wrong background.
+         KEY COUPLING: "mantine-color-scheme-value" and the light/dark/auto
+         vocabulary are shared with ThemeToggle.tsx and Mantine's colour-scheme
+         manager. If either changes the key or values, this script must change
+         too (and vice-versa) — they cannot share a TS const. -->
+    <script>
+      try {
+        var _cs = window.localStorage.getItem("mantine-color-scheme-value");
+        var cs = _cs === "light" || _cs === "dark" || _cs === "auto" ? _cs : "auto";
+        var computed =
+          cs !== "auto"
+            ? cs
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-mantine-color-scheme", computed);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

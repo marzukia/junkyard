@@ -1,12 +1,12 @@
 # Contributing to junkyard
 
-A monorepo of 46 free, client-side web tools served at `junkyard.sh/<slug>/`.
+A monorepo of 47 free, client-side web tools served at `junkyard.sh/<slug>/`.
 
 ## Repo layout
 
 ```
 junkyard/
-  apps/<slug>/        # 46 standalone Vite apps, one per tool
+  apps/<slug>/        # 47 standalone Vite apps, one per tool
   kit/                # canonical source for @junkyardsh/kit package
   packages/kit/        # @junkyardsh/kit — shared UI components published to npm
   hub/                # landing page (Vite + React 18 + TS, built to dist root)
@@ -103,7 +103,7 @@ export const app: JunkyardApp = {
   slug: "mytool",          // must match directory name exactly
   name: "My Tool",
   category: "text",        // "image" | "text" | "ai" | "docs"
-  order: 46,               // unique positive integer, 1..N across ALL apps
+  order: 47,               // unique positive integer, 1..N across ALL apps
   tagline: "One short line",
   description: "A sentence of at least 40 chars ending with a period, exclamation, or question mark.",
   incumbent: "incumbentname",
