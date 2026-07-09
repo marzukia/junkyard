@@ -50,8 +50,18 @@ export function SplicePanel({
           clip.duration = video.duration;
           resolve();
         };
-        video.onerror = () => resolve();
+        video.onerror = () => {
+          clip.duration = 0;
+          resolve();
+        };
         video.src = clip.url;
+        // Timeout after 5s if metadata never loads
+        setTimeout(() => {
+          if (video.readyState === 0) {
+            clip.duration = 0;
+            resolve();
+          }
+        }, 5000);
       });
     });
 
@@ -83,7 +93,7 @@ export function SplicePanel({
     return () => {
       clips.forEach((clip) => URL.revokeObjectURL(clip.url));
     };
-  }, []);
+  }, [clips]);
 
   return (
     <div className="splice-panel">
@@ -149,7 +159,7 @@ export function SplicePanel({
                     className="btn-icon"
                     onClick={() => moveClip(index, Math.max(0, index - 1))}
                     disabled={index === 0}
-                    title="Move up"
+                    aria-label={`Move ${clip.file.name} up`}
                   >
                     ↑
                   </button>
@@ -158,7 +168,7 @@ export function SplicePanel({
                     className="btn-icon"
                     onClick={() => moveClip(index, Math.min(clips.length - 1, index + 1))}
                     disabled={index === clips.length - 1}
-                    title="Move down"
+                    aria-label={`Move ${clip.file.name} down`}
                   >
                     ↓
                   </button>
@@ -166,7 +176,7 @@ export function SplicePanel({
                     type="button"
                     className="btn-icon btn-icon--danger"
                     onClick={() => removeClip(clip.id)}
-                    title="Remove"
+                    aria-label={`Remove ${clip.file.name}`}
                   >
                     ✕
                   </button>
