@@ -12,24 +12,40 @@ export interface Clip {
   id: string;
 }
 
+// Max clips to prevent browser memory exhaustion
+const MAX_CLIPS = 20;
+
 export function SplicePanel({
   clips,
   setClips,
   onSplice,
   processing,
+  setError,
 }: {
   clips: Clip[];
   setClips: React.Dispatch<React.SetStateAction<Clip[]>>;
   onSplice: () => void;
   processing: boolean;
+  setError: (msg: string) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = useCallback((files: FileList) => {
+    // Check if we've hit the clip limit
+    if (clips.length >= MAX_CLIPS) {
+      setError?.(`Maximum ${MAX_CLIPS} clips reached`);
+      return;
+    }
+
     const newClips: Clip[] = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (!file.type.startsWith('video/')) continue;
+
+      // Skip if adding this clip would exceed the limit
+      if (clips.length + newClips.length >= MAX_CLIPS) {
+        break;
+      }
 
       const url = URL.createObjectURL(file);
       newClips.push({
@@ -73,10 +89,12 @@ export function SplicePanel({
   const removeClip = useCallback((id: string) => {
     setClips((prev) => {
       const clip = prev.find((c) => c.id === id);
-      if (clip) URL.revokeObjectURL(clip.url);
+      if (clip) {
+        URL.revokeObjectURL(clip.url);
+      }
       return prev.filter((c) => c.id !== id);
     });
-  }, [setClips]);
+  }, []);
 
   const moveClip = useCallback((fromIndex: number, toIndex: number) => {
     setClips((prev) => {
@@ -91,7 +109,14 @@ export function SplicePanel({
 
   useEffect(() => {
     return () => {
-      clips.forEach((clip) => URL.revokeObjectURL(clip.url));
+      // Only revoke URLs that haven't been revoked already
+      clips.forEach((clip) => {
+        try {
+          URL.revokeObjectURL(clip.url);
+        } catch {
+          // URL already revoked - ignore
+        }
+      });
     };
   }, [clips]);
 

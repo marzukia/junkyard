@@ -466,6 +466,7 @@ export function App() {
                   setClips={setClips}
                   onSplice={run}
                   processing={processing}
+                  setError={setError}
                 />
               )}
 
