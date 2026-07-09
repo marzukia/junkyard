@@ -11,7 +11,7 @@
  */
 
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { fetchFile, toBlobURL } from "@ffmpeg/util";
+import { toBlobURL } from "@ffmpeg/util";
 import { formatTime, parseTime } from "@junkyardsh/kit";
 
 // CDN base for @ffmpeg/core single-thread build.
@@ -91,10 +91,7 @@ export async function runFFmpeg(
     // Use Blob.arrayBuffer() instead of @ffmpeg/util's fetchFile which relies
     // on FileReader — FileReader can be GC'd mid-read in Chrome, producing
     // a silent "File could not be read! Code=-1" error for Blob inputs.
-    const fileData =
-      inputFile instanceof Blob
-        ? new Uint8Array(await inputFile.arrayBuffer())
-        : await fetchFile(inputFile);
+    const fileData = new Uint8Array(await inputFile.arrayBuffer());
     await ff.writeFile(inName, fileData);
 
     const cmd = preArgs
