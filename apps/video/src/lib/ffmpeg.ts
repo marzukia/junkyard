@@ -12,7 +12,6 @@
 
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { toBlobURL } from "@ffmpeg/util";
-import { formatTime, parseTime } from "@junkyardsh/kit";
 
 // CDN base for @ffmpeg/core single-thread build.
 // VERSION PAIRING — do not align these independently:
@@ -143,6 +142,162 @@ export function formatBytes(bytes: number): string {
   const units = ["B", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / 1024 ** i).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+}
+
+/**
+ * Splice multiple video clips into a single output.
+ * Uses FFmpeg concat demuxer for lossless concatenation (same codec/resolution).
+ * Falls back to re-encoding if clips have mismatched properties.
+ *
+ * @param clips - Array of File objects in desired output order
+ * @param outputName - Output filename (e.g. "combined.mp4")
+ * @param onProgress - Optional progress callback (0-1)
+ * @param forceReencode - Force re-encoding even if clips match (slower but compatible)
+ */
+export async function spliceVideos(
+  clips: File[],
+  outputName: string,
+  onProgress?: ProgressCallback,
+  forceReencode: boolean = false
+): Promise<Blob> {
+  if (clips.length === 0) {
+    throw new Error("No clips provided for splicing");
+  }
+  if (clips.length === 1) {
+    // Single clip — just return it as-is
+    return new Blob([await clips[0].arrayBuffer()], { type: mimeForName(outputName) });
+  }
+
+  const ff = await getFFmpeg();
+
+  const logLines: string[] = [];
+  const logHandler = ({ message }: { message: string }) => {
+    logLines.push(message);
+  };
+  ff.on("log", logHandler);
+
+  const handler = onProgress
+    ? ({ progress }: { progress: number }) => onProgress(Math.min(progress, 1))
+    : null;
+  if (handler) ff.on("progress", handler);
+
+  // Declare variables outside try block for finally access
+  const clipNames: string[] = [];
+  const concatListPath = "concat_list.txt";
+
+  try {
+    // Write all clips to FFmpeg's virtual FS
+    for (let i = 0; i < clips.length; i++) {
+      const clip = clips[i];
+      const name = `clip_${i}_${clip.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+      clipNames.push(name);
+      const data = new Uint8Array(await clip.arrayBuffer());
+      await ff.writeFile(name, data);
+    }
+
+    // Create concat list file
+    const concatContent = clipNames.map((name) => `file '${name}'`).join("\n");
+    await ff.writeFile(concatListPath, new TextEncoder().encode(concatContent));
+
+    // Detect if re-encoding is needed (different codecs/resolutions)
+    let needsReencode = forceReencode;
+    if (!needsReencode) {
+      try {
+        // Probe first clip to get baseline properties
+        await ff.exec(["-i", clipNames[0], "-f", "null", "-"]);
+        const probeLog = logLines.join("\n");
+        const firstResolution = probeLog.match(/Stream.*Video.*(\d+x\d+)/)?.[1];
+        const firstCodec = probeLog.match(/Video: (\w+)/)?.[1];
+
+        // Probe remaining clips
+        for (let i = 1; i < clipNames.length; i++) {
+          logLines.length = 0; // Clear logs for this probe
+          await ff.exec(["-i", clipNames[i], "-f", "null", "-"]);
+          const currentLog = logLines.join("\n");
+          const currentResolution = currentLog.match(/Stream.*Video.*(\d+x\d+)/)?.[1];
+          const currentCodec = currentLog.match(/Video: (\w+)/)?.[1];
+
+          if (
+            firstResolution !== currentResolution ||
+            firstCodec !== currentCodec
+          ) {
+            needsReencode = true;
+            break;
+          }
+        }
+      } catch {
+        // If probing fails, assume re-encode is needed
+        needsReencode = true;
+      }
+    }
+
+    let ret: number;
+    if (needsReencode) {
+      // Re-encode mode: use filter_complex concat
+      // Build filter_complex string: [0:v][0:a][1:v][1:a]...concat=n=2:v=1:a=1[outv][outa]
+      const filterParts: string[] = [];
+      for (let i = 0; i < clipNames.length; i++) {
+        filterParts.push(`[${i}:v]`);
+        filterParts.push(`[${i}:a]`);
+      }
+      const filterComplex = `${filterParts.join("")}concat=n=${clipNames.length}:v=1:a=1[outv][outa]`;
+
+      const args = [
+        ...clipNames.map(() => "-i"),
+        ...clipNames,
+        "-filter_complex",
+        filterComplex,
+        "-map",
+        "[outv]",
+        "-map",
+        "[outa]",
+        "-c:v",
+        "libx264",
+        "-c:a",
+        "aac",
+        outputName,
+      ];
+
+      ret = await ff.exec(args);
+    } else {
+      // Fast concat mode: lossless, no re-encoding
+      ret = await ff.exec([
+        "-f",
+        "concat",
+        "-safe",
+        "0",
+        "-i",
+        concatListPath,
+        "-c",
+        "copy",
+        outputName,
+      ]);
+    }
+
+    if (ret !== 0) {
+      const detail = logLines
+        .filter((l) => l.trim())
+        .slice(-3)
+        .join(" | ");
+      throw new Error(`ffmpeg splice failed with code ${ret}${detail ? `: ${detail}` : ""}`);
+    }
+
+    const data = await ff.readFile(outputName);
+    const bytes =
+      data instanceof Uint8Array ? new Uint8Array(data) : new TextEncoder().encode(data as string);
+
+    return new Blob([bytes.buffer as ArrayBuffer], { type: mimeForName(outputName) });
+  } finally {
+    // Cleanup: delete all clip files and concat list
+    for (const name of clipNames) {
+      await ff.deleteFile(name).catch(() => {});
+    }
+    await ff.deleteFile(concatListPath).catch(() => {});
+    await ff.deleteFile(outputName).catch(() => {});
+
+    if (handler) ff.off("progress", handler);
+    ff.off("log", logHandler);
+  }
 }
 
 /**
