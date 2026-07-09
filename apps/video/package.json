@@ -10,7 +10,8 @@
     "lint": "biome check src/",
     "format": "biome check --write src/",
     "ci": "biome ci --linter-enabled=false src/",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "0.12.15",
@@ -23,14 +24,16 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@junkyardsh/vite-config": "file:../../packages/vite-config",
     "@biomejs/biome": "^1.9.4",
+    "@junkyardsh/vite-config": "file:../../packages/vite-config",
+    "@playwright/test": "^1.61.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.2",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.5.2",
     "jsdom": "^29.1.1",
+    "playwright": "^1.61.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vitest": "^4.1.9"
