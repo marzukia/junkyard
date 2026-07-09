@@ -7,3 +7,4 @@ shots/
 _frank_debug/
 __pycache__/
 *.pyc
+apps/video/test-results/
