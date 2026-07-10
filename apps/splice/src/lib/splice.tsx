@@ -129,19 +129,20 @@ export function SplicePanel({
 	return (
 		<div className="splice-panel">
 			<div className="splice-upload-section">
-				<label
-					className="splice-drop-zone"
-					onDrop={(e) => {
-						e.preventDefault();
-						const files = e.dataTransfer.files;
-						if (files.length > 0) {
-							handleFileSelect(files);
-						}
-					}}
-					onDragOver={(e) => e.preventDefault()}
-				>
-					<span>Drop multiple videos here or click to select</span>
-				</label>
+						<label
+							className="splice-drop-zone"
+							onDrop={(e) => {
+								e.preventDefault();
+								const files = e.dataTransfer.files;
+								if (files.length > 0) {
+									handleFileSelect(files);
+								}
+							}}
+							onDragOver={(e) => e.preventDefault()}
+							onClick={() => fileInputRef.current?.click()}
+						>
+							<span>Drop multiple videos here or click to select</span>
+						</label>
 				<input
 					ref={fileInputRef}
 					type="file"
