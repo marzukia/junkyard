@@ -1,19 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <!-- CSV grid mark: outer frame teal, grid lines teal, header row accent teal, data accents amber+coral -->
-  <!-- Outer frame -->
-  <rect x="4" y="4" width="24" height="24" rx="3" stroke="#2f9d8d" stroke-width="2"/>
-  <!-- Vertical dividers -->
-  <line x1="13" y1="4" x2="13" y2="28" stroke="#2f9d8d" stroke-width="1.5"/>
-  <line x1="22" y1="4" x2="22" y2="28" stroke="#2f9d8d" stroke-width="1.5"/>
-  <!-- Horizontal dividers -->
-  <line x1="4" y1="12" x2="28" y2="12" stroke="#2f9d8d" stroke-width="1.5"/>
-  <line x1="4" y1="20" x2="28" y2="20" stroke="#2f9d8d" stroke-width="1.5"/>
-  <!-- Header cells — teal accent -->
-  <rect x="4.75" y="4.75" width="7.5" height="6.5" rx="1.5" fill="#2f9d8d" opacity="0.4"/>
-  <rect x="13.75" y="4.75" width="7.5" height="6.5" rx="1.5" fill="#2f9d8d" opacity="0.4"/>
-  <rect x="22.75" y="4.75" width="4.5" height="6.5" rx="1.5" fill="#2f9d8d" opacity="0.4"/>
-  <!-- Data accent — amber -->
-  <rect x="4.75" y="12.75" width="7.5" height="6.5" rx="1.5" fill="#e8b04b" opacity="0.45"/>
-  <!-- Data accent — coral -->
-  <rect x="13.75" y="20.75" width="7.5" height="6.5" rx="1.5" fill="#d9594c" opacity="0.45"/>
+  <g transform="rotate(-13 16 16)">
+    <clipPath id="jyTag"><path d="M14.2 4.6 L25 7.2 a1.6 1.6 0 0 1 1.2 1.2 L28.8 25 a1.8 1.8 0 0 1-1.5 2 L13 29.2 a1.8 1.8 0 0 1-2-1.5 L8.4 12 a1.8 1.8 0 0 1 .5-1.6 L13 6 Z"/></clipPath>
+    <g clip-path="url(#jyTag)">
+      <rect x="0" y="0" width="32" height="12.5" fill="#2f9d8d"/>
+      <rect x="0" y="12.5" width="32" height="9" fill="#e8b04b"/>
+      <rect x="0" y="21.5" width="32" height="11" fill="#d9594c"/>
+    </g>
+    <circle cx="13.2" cy="8.7" r="1.7" fill="#fff"/>
+    <path d="M16 14.5 l4 3.4 l-4 3.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>

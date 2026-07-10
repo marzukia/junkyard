@@ -1,14 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <!-- Waveform bars (teal, varying heights) -->
-  <line x1="4" y1="20" x2="4" y2="12" stroke="#2f9d8d" stroke-width="2.2" stroke-linecap="round"/>
-  <line x1="8" y1="22" x2="8" y2="8" stroke="#2f9d8d" stroke-width="2.2" stroke-linecap="round"/>
-  <line x1="12" y1="24" x2="12" y2="6" stroke="#2f9d8d" stroke-width="2.2" stroke-linecap="round"/>
-  <line x1="16" y1="21" x2="16" y2="10" stroke="#2f9d8d" stroke-width="2.2" stroke-linecap="round"/>
-  <line x1="20" y1="19" x2="20" y2="13" stroke="#2f9d8d" stroke-width="2.2" stroke-linecap="round"/>
-  <!-- Text lines suggesting transcript output (amber) -->
-  <line x1="24" y1="10" x2="29" y2="10" stroke="#e8b04b" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="24" y1="14" x2="29" y2="14" stroke="#e8b04b" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="24" y1="18" x2="27" y2="18" stroke="#e8b04b" stroke-width="1.8" stroke-linecap="round"/>
-  <!-- Coral accent dot — the transcription cursor -->
-  <circle cx="24" cy="24" r="2.2" fill="#d9594c"/>
+  <g transform="rotate(-13 16 16)">
+    <clipPath id="jyTag"><path d="M14.2 4.6 L25 7.2 a1.6 1.6 0 0 1 1.2 1.2 L28.8 25 a1.8 1.8 0 0 1-1.5 2 L13 29.2 a1.8 1.8 0 0 1-2-1.5 L8.4 12 a1.8 1.8 0 0 1 .5-1.6 L13 6 Z"/></clipPath>
+    <g clip-path="url(#jyTag)">
+      <rect x="0" y="0" width="32" height="12.5" fill="#2f9d8d"/>
+      <rect x="0" y="12.5" width="32" height="9" fill="#e8b04b"/>
+      <rect x="0" y="21.5" width="32" height="11" fill="#d9594c"/>
+    </g>
+    <circle cx="13.2" cy="8.7" r="1.7" fill="#fff"/>
+    <path d="M16 14.5 l4 3.4 l-4 3.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>
