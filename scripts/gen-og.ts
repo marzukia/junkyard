@@ -3,7 +3,7 @@
 // Uses SVG → PNG via @resvg/resvg-wasm (pure WASM, no native deps).
 // Run from repo root: bun scripts/gen-og.ts
 
-import { writeFileSync, readdirSync, statSync } from "node:fs";
+import { writeFileSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { initWasm, Resvg } from "@resvg/resvg-wasm";
@@ -93,23 +93,47 @@ function buildOgSvg(name: string, tagline: string, category: string): string {
 <rect x="0" y="0" width="8" height="630" fill="${accent}" opacity="0.8"/>
 <g transform="translate(100, 150)">
   <rect width="${badgeW}" height="32" rx="16" fill="${accent}" opacity="0.15"/>
-  <text x="16" y="22" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="${accent}">${esc(catLabel)}</text>
+  <text x="16" y="22" font-family="sans-serif" font-size="14" font-weight="500" fill="${accent}">${esc(catLabel)}</text>
 </g>
-<text y="${nameBlockTop}" font-family="system-ui, sans-serif" font-size="${nameFontSize}" font-weight="800" fill="#fff" letter-spacing="-0.02em">${nameTspans}</text>
-<text y="${nameBlockTop + nameBlockH + 36}" font-family="system-ui, sans-serif" font-size="22" font-weight="400" fill="#fff" opacity="0.6">${taglineTspans}</text>
+<text y="${nameBlockTop}" font-family="sans-serif" font-size="${nameFontSize}" font-weight="800" fill="#fff" letter-spacing="-0.02em">${nameTspans}</text>
+<text y="${nameBlockTop + nameBlockH + 36}" font-family="sans-serif" font-size="22" font-weight="400" fill="#fff" opacity="0.6">${taglineTspans}</text>
 <rect x="0" y="598" width="1200" height="32" fill="#0a0c0e" opacity="0.5"/>
-<text x="100" y="620" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="#fff" opacity="0.4">junkyard.sh</text>
+<text x="100" y="620" font-family="sans-serif" font-size="14" font-weight="500" fill="#fff" opacity="0.4">junkyard.sh</text>
 <circle cx="1120" cy="80" r="24" fill="#e8b04b" opacity="0.3"/>
 <circle cx="1090" cy="130" r="14" fill="#d9594c" opacity="0.25"/>
 <circle cx="1150" cy="120" r="8" fill="${accent}" opacity="0.4"/>
 </svg>`;
 }
 
-// ── Init WASM ─────────────────────────────────────────────────────────
+// ── Init WASM + load fonts ────────────────────────────────────────────
 const wasmPath = pathToFileURL(
   join(ROOT, "node_modules", "@resvg", "resvg-wasm", "index_bg.wasm"),
 ).href;
 await initWasm(wasmPath);
+
+// Load DejaVu Sans font (available on most Linux CI runners)
+const FONT_PATHS = [
+  "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+  "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+];
+
+const fontBuffers: Uint8Array[] = [];
+let fontFamily = "sans-serif";
+for (const fp of FONT_PATHS) {
+  try {
+    fontBuffers.push(new Uint8Array(readFileSync(fp)));
+    // Extract font name from path for family matching
+    if (fp.includes("DejaVu")) fontFamily = "DejaVu Sans";
+    else if (fp.includes("FreeSans")) fontFamily = "FreeSans";
+    break; // Use first available font
+  } catch {
+    // Font not found, try next
+  }
+}
+
+if (fontBuffers.length === 0) {
+  process.stderr.write("WARNING: No system fonts found — text may not render. Install dejavu-fonts or freefont.\n");
+}
 
 // ── Read apps ─────────────────────────────────────────────────────────
 const appDirs = readdirSync(APPS_DIR).filter((name) => {
@@ -152,7 +176,14 @@ for (const dir of appDirs) {
 
   try {
     const svg = buildOgSvg(name, tagline, category);
-    const resvg = new Resvg(svg, { fitTo: { mode: "width", value: 1200 } });
+    const resvg = new Resvg(svg, {
+      fitTo: { mode: "width", value: 1200 },
+      font: {
+        fontBuffers,
+        defaultFontFamily: fontFamily,
+        loadSystemFonts: false,
+      },
+    });
     const pngBuffer = resvg.render().asPng();
     writeFileSync(join(APPS_DIR, dir, "public", "og.png"), pngBuffer);
     generated++;
