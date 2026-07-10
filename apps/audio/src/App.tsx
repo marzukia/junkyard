@@ -229,8 +229,9 @@ function App() {
 					<>
 						<div className="controls">
 							<div className="control-group">
-								<label>Output Format</label>
+								<label htmlFor="output-format">Output Format</label>
 								<select
+									id="output-format"
 									value={format}
 									onChange={(e) => setFormat(e.target.value as typeof format)}
 									disabled={isProcessing}
@@ -246,8 +247,9 @@ function App() {
 							</div>
 
 							<div className="control-group">
-								<label>Quality</label>
+								<label htmlFor="quality">Quality</label>
 								<select
+									id="quality"
 									value={quality}
 									onChange={(e) => setQuality(e.target.value as QualityPreset)}
 									disabled={isProcessing || !formatDef.bitrateRange}
@@ -266,7 +268,7 @@ function App() {
 
 							{quality === "custom" && formatDef.bitrateRange && (
 								<div className="control-group">
-									<label>Bitrate: {customBitrate} kbps</label>
+									<label htmlFor="bitrate">Bitrate: {customBitrate} kbps</label>
 									<input
 										type="range"
 										min={formatDef.bitrateRange[0]}
@@ -279,8 +281,9 @@ function App() {
 							)}
 
 							<div className="control-group">
-								<label>Sample Rate</label>
+								<label htmlFor="sample-rate">Sample Rate</label>
 								<select
+									id="sample-rate"
 									value={sampleRate}
 									onChange={(e) =>
 										setSampleRate(e.target.value as typeof sampleRate)
@@ -299,8 +302,9 @@ function App() {
 							</div>
 
 							<div className="control-group">
-								<label>Channels</label>
+								<label htmlFor="channels">Channels</label>
 								<select
+									id="channels"
 									value={channelMode}
 									onChange={(e) =>
 										setChannelMode(e.target.value as typeof channelMode)
@@ -329,7 +333,11 @@ function App() {
 						{files.length > 0 && (
 							<div className="file-list">
 								<h2>Files ({files.length})</h2>
-								<button onClick={handleClearAll} disabled={isProcessing}>
+								<button
+									type="button"
+									onClick={handleClearAll}
+									disabled={isProcessing}
+								>
 									Clear All
 								</button>
 								{files.map((file) => (
@@ -349,7 +357,10 @@ function App() {
 											</div>
 										)}
 										{file.status === "done" && file.outputName && (
-											<button onClick={() => handleDownload(file)}>
+											<button
+												type="button"
+												onClick={() => handleDownload(file)}
+											>
 												Download {file.outputName}
 											</button>
 										)}
