@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <!-- JSON brace mark: left brace teal, right brace coral, colon dots amber -->
-  <!-- Left brace — teal -->
-  <path d="M12 3 C9.5 3 8 4.5 8 7 L8 13 C8 14.5 6.5 15.5 5 16 C6.5 16.5 8 17.5 8 19 L8 25 C8 27.5 9.5 29 12 29"
-    stroke="#2f9d8d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <!-- Right brace — coral -->
-  <path d="M20 3 C22.5 3 24 4.5 24 7 L24 13 C24 14.5 25.5 15.5 27 16 C25.5 16.5 24 17.5 24 19 L24 25 C24 27.5 22.5 29 20 29"
-    stroke="#d9594c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <!-- Colon dots — amber -->
-  <circle cx="16" cy="13" r="1.5" fill="#e8b04b"/>
-  <circle cx="16" cy="19" r="1.5" fill="#e8b04b"/>
+  <g transform="rotate(-13 16 16)">
+    <clipPath id="jyTag"><path d="M14.2 4.6 L25 7.2 a1.6 1.6 0 0 1 1.2 1.2 L28.8 25 a1.8 1.8 0 0 1-1.5 2 L13 29.2 a1.8 1.8 0 0 1-2-1.5 L8.4 12 a1.8 1.8 0 0 1 .5-1.6 L13 6 Z"/></clipPath>
+    <g clip-path="url(#jyTag)">
+      <rect x="0" y="0" width="32" height="12.5" fill="#2f9d8d"/>
+      <rect x="0" y="12.5" width="32" height="9" fill="#e8b04b"/>
+      <rect x="0" y="21.5" width="32" height="11" fill="#d9594c"/>
+    </g>
+    <circle cx="13.2" cy="8.7" r="1.7" fill="#fff"/>
+    <path d="M16 14.5 l4 3.4 l-4 3.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>
