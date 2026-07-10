@@ -12,7 +12,7 @@ export {
   MobileWarning,
   mobileWarningMessage,
 } from "./components/MobileWarning";
-export { formatBytes } from "./components/format";
+export { formatBytes, slugify } from "./components/format";
 export { useCmdEnter } from "./useCmdEnter";
 export { useProgress } from "./lib/useProgress";
 

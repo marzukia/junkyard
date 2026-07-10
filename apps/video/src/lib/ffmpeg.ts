@@ -133,16 +133,7 @@ function mimeForName(name: string): string {
   };
   return map[ext] ?? "application/octet-stream";
 }
-/**
- * Format a byte count as a human-readable string (B / KB / MB / GB).
- * Kept local because kit's formatBytes stops at MB — video needs GB support.
- */
-export function formatBytes(bytes: number): string {
-  if (bytes === 0) return "0 B";
-  const units = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${(bytes / 1024 ** i).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
-}
+export { formatBytes } from "@junkyardsh/kit";
 
 /**
  * Splice multiple video clips into a single output.

@@ -105,9 +105,4 @@ export async function spliceVideos(
 	return new Blob([buffer], { type: "video/mp4" });
 }
 
-export function formatBytes(bytes: number): string {
-	if (bytes === 0) return "0 B";
-	const units = ["B", "KB", "MB", "GB"];
-	const i = Math.floor(Math.log(bytes) / Math.log(1024));
-	return `${(bytes / 1024 ** i).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
-}
+export { formatBytes } from "@junkyardsh/kit";
