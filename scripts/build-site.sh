@@ -21,6 +21,8 @@ bun install --frozen-lockfile
 # hook does not fire - generate explicitly.
 echo "==> Generating catalogue from apps/*/junkyard.ts"
 bun "$ROOT/scripts/gen-catalogue.ts"
+echo "==> Generating OG images"
+bun "$ROOT/scripts/gen-og.ts"
 bunx vite build --outDir "$DIST" --emptyOutDir
 
 echo "==> Building local packages"
