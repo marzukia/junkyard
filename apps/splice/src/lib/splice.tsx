@@ -86,18 +86,21 @@ export function SplicePanel({
 				setClips((prev) => [...prev, ...newClips]);
 			});
 		},
-		[setClips],
+		[clips.length, setClips, setError],
 	);
 
-	const removeClip = useCallback((id: string) => {
-		setClips((prev) => {
-			const clip = prev.find((c) => c.id === id);
-			if (clip) {
-				URL.revokeObjectURL(clip.url);
-			}
-			return prev.filter((c) => c.id !== id);
-		});
-	}, []);
+	const removeClip = useCallback(
+		(id: string) => {
+			setClips((prev) => {
+				const clip = prev.find((c) => c.id === id);
+				if (clip) {
+					URL.revokeObjectURL(clip.url);
+				}
+				return prev.filter((c) => c.id !== id);
+			});
+		},
+		[setClips],
+	);
 
 	const moveClip = useCallback(
 		(fromIndex: number, toIndex: number) => {
@@ -116,34 +119,44 @@ export function SplicePanel({
 	useEffect(() => {
 		return () => {
 			// Only revoke URLs that haven't been revoked already
-			clips.forEach((clip) => {
+			for (const clip of clips) {
 				try {
 					URL.revokeObjectURL(clip.url);
 				} catch {
 					// URL already revoked - ignore
 				}
-			});
+			}
 		};
 	}, [clips]);
 
 	return (
 		<div className="splice-panel">
 			<div className="splice-upload-section">
-						<label
-							className="splice-drop-zone"
-							onDrop={(e) => {
-								e.preventDefault();
-								const files = e.dataTransfer.files;
-								if (files.length > 0) {
-									handleFileSelect(files);
-								}
-							}}
-							onDragOver={(e) => e.preventDefault()}
-							onClick={() => fileInputRef.current?.click()}
-						>
-							<span>Drop multiple videos here or click to select</span>
-						</label>
+				<label
+					htmlFor="splice-file-input"
+					className="splice-drop-zone"
+					onDrop={(e) => {
+						e.preventDefault();
+						const files = e.dataTransfer.files;
+						if (files.length > 0) {
+							handleFileSelect(files);
+						}
+					}}
+					onDragOver={(e) => e.preventDefault()}
+					onClick={() => fileInputRef.current?.click()}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" || e.key === " ") {
+							e.preventDefault();
+							fileInputRef.current?.click();
+						}
+					}}
+					tabIndex={0}
+					role="button"
+				>
+					<span>Drop multiple videos here or click to select</span>
+				</label>
 				<input
+					id="splice-file-input"
 					ref={fileInputRef}
 					type="file"
 					accept="video/*"
@@ -154,13 +167,6 @@ export function SplicePanel({
 					}}
 					style={{ display: "none" }}
 				/>
-				<button
-					type="button"
-					className="btn-ghost-sm"
-					onClick={() => fileInputRef.current?.click()}
-				>
-					Select Videos
-				</button>
 			</div>
 
 			{clips.length > 0 && (
@@ -174,13 +180,14 @@ export function SplicePanel({
 					<ul className="splice-clip-items">
 						{clips.map((clip, index) => (
 							<li key={clip.id} className="splice-clip-item">
-								<span className="splice-clip-order">{index + 1}</span>
-								<video
-									src={clip.url}
-									className="splice-clip-thumbnail"
-									controls={false}
-									preload="metadata"
-								/>
+												<span className="splice-clip-order">{index + 1}</span>
+												<video
+													src={clip.url}
+													className="splice-clip-thumbnail"
+													controls={false}
+													preload="metadata"
+													aria-label={`Preview of ${clip.file.name}`}
+												/>
 								<div className="splice-clip-info">
 									<span className="splice-clip-name">{clip.file.name}</span>
 									<span className="splice-clip-meta">
