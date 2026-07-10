@@ -41,11 +41,11 @@ export function App() {
 			setResult({ blob, name: resultName, url, size: blob.size });
 
 			// Clean up clip URLs
-			clips.forEach((c) => {
+			for (const c of clips) {
 				try {
 					URL.revokeObjectURL(c.url);
 				} catch {}
-			});
+			}
 			setClips([]);
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : "Splicing failed";
@@ -102,7 +102,10 @@ export function App() {
 							controls
 							className="video-preview"
 							style={{ maxWidth: "100%", marginTop: "1rem" }}
-						/>
+							aria-label="Spliced video preview"
+						>
+							<track kind="captions" />
+						</video>
 						<div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
 							<button type="button" className="btn-accent" onClick={download}>
 								Download
