@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Generates OG images (1200×630 PNG) for every app from catalogue data.
 // Uses SVG → PNG via @resvg/resvg-wasm (pure WASM, no native deps).
+// Fonts: Roboto (body) + Roboto Slab (title) via @fontsource woff2.
+// Icon: junkyard tag mark (shared favicon.svg).
 // Run from repo root: bun scripts/gen-og.ts
 
 import { writeFileSync, readFileSync, readdirSync, statSync } from "node:fs";
@@ -25,6 +27,21 @@ const CATEGORY_LABELS: Record<string, string> = {
   ai: "In-browser AI",
   docs: "Docs & Utility",
 };
+
+// ── Junkyard tag mark SVG (from hub/public/favicon.svg) ───────────────
+// Rendered at bottom-right of the banner.
+const TAG_MARK = `<g transform="translate(1080, 500) scale(2.5)" opacity="0.15">
+  <g transform="rotate(-13 16 16)">
+    <clipPath id="jyTag"><path d="M14.2 4.6 L25 7.2 a1.6 1.6 0 0 1 1.2 1.2 L28.8 25 a1.8 1.8 0 0 1-1.5 2 L13 29.2 a1.8 1.8 0 0 1-2-1.5 L8.4 12 a1.8 1.8 0 0 1 .5-1.6 L13 6 Z"/></clipPath>
+    <g clip-path="url(#jyTag)">
+      <rect x="0" y="0" width="32" height="12.5" fill="#2f9d8d"/>
+      <rect x="0" y="12.5" width="32" height="9" fill="#e8b04b"/>
+      <rect x="0" y="21.5" width="32" height="11" fill="#d9594c"/>
+    </g>
+    <circle cx="13.2" cy="8.7" r="1.7" fill="#fff"/>
+    <path d="M16 14.5 l4 3.4 l-4 3.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</g>`;
 
 // ── Text helpers ──────────────────────────────────────────────────────
 function wrapText(text: string, maxChars: number): string[] {
@@ -93,15 +110,13 @@ function buildOgSvg(name: string, tagline: string, category: string): string {
 <rect x="0" y="0" width="8" height="630" fill="${accent}" opacity="0.8"/>
 <g transform="translate(100, 150)">
   <rect width="${badgeW}" height="32" rx="16" fill="${accent}" opacity="0.15"/>
-  <text x="16" y="22" font-family="sans-serif" font-size="14" font-weight="500" fill="${accent}">${esc(catLabel)}</text>
+  <text x="16" y="22" font-family="Roboto" font-size="14" font-weight="500" fill="${accent}">${esc(catLabel)}</text>
 </g>
-<text y="${nameBlockTop}" font-family="sans-serif" font-size="${nameFontSize}" font-weight="800" fill="#fff" letter-spacing="-0.02em">${nameTspans}</text>
-<text y="${nameBlockTop + nameBlockH + 36}" font-family="sans-serif" font-size="22" font-weight="400" fill="#fff" opacity="0.6">${taglineTspans}</text>
+<text y="${nameBlockTop}" font-family="Roboto Slab" font-size="${nameFontSize}" font-weight="800" fill="#fff" letter-spacing="-0.02em">${nameTspans}</text>
+<text y="${nameBlockTop + nameBlockH + 36}" font-family="Roboto" font-size="22" font-weight="400" fill="#fff" opacity="0.6">${taglineTspans}</text>
 <rect x="0" y="598" width="1200" height="32" fill="#0a0c0e" opacity="0.5"/>
-<text x="100" y="620" font-family="sans-serif" font-size="14" font-weight="500" fill="#fff" opacity="0.4">junkyard.sh</text>
-<circle cx="1120" cy="80" r="24" fill="#e8b04b" opacity="0.3"/>
-<circle cx="1090" cy="130" r="14" fill="#d9594c" opacity="0.25"/>
-<circle cx="1150" cy="120" r="8" fill="${accent}" opacity="0.4"/>
+<text x="100" y="620" font-family="Roboto" font-size="14" font-weight="500" fill="#fff" opacity="0.4">junkyard.sh</text>
+${TAG_MARK}
 </svg>`;
 }
 
@@ -111,28 +126,25 @@ const wasmPath = pathToFileURL(
 ).href;
 await initWasm(wasmPath);
 
-// Load DejaVu Sans font (available on most Linux CI runners)
-const FONT_PATHS = [
-  "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-  "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
-];
-
+// Load Roboto + Roboto Slab woff2 fonts from @fontsource
 const fontBuffers: Uint8Array[] = [];
-let fontFamily = "sans-serif";
-for (const fp of FONT_PATHS) {
+const fontPaths = [
+  join(ROOT, "node_modules", "@fontsource", "roboto", "files", "roboto-latin-400-normal.woff2"),
+  join(ROOT, "node_modules", "@fontsource", "roboto", "files", "roboto-latin-700-normal.woff2"),
+  join(ROOT, "node_modules", "@fontsource", "roboto-slab", "files", "roboto-slab-latin-700-normal.woff2"),
+  join(ROOT, "node_modules", "@fontsource", "roboto-slab", "files", "roboto-slab-latin-800-normal.woff2"),
+];
+for (const fp of fontPaths) {
   try {
     fontBuffers.push(new Uint8Array(readFileSync(fp)));
-    // Extract font name from path for family matching
-    if (fp.includes("DejaVu")) fontFamily = "DejaVu Sans";
-    else if (fp.includes("FreeSans")) fontFamily = "FreeSans";
-    break; // Use first available font
   } catch {
-    // Font not found, try next
+    process.stderr.write(`WARNING: Font not found: ${fp}\n`);
   }
 }
 
 if (fontBuffers.length === 0) {
-  process.stderr.write("WARNING: No system fonts found — text may not render. Install dejavu-fonts or freefont.\n");
+  process.stderr.write("ERROR: No fonts found. Run: bun add @fontsource/roboto @fontsource/roboto-slab\n");
+  process.exit(1);
 }
 
 // ── Read apps ─────────────────────────────────────────────────────────
@@ -180,7 +192,7 @@ for (const dir of appDirs) {
       fitTo: { mode: "width", value: 1200 },
       font: {
         fontBuffers,
-        defaultFontFamily: fontFamily,
+        defaultFontFamily: "Roboto",
         loadSystemFonts: false,
       },
     });

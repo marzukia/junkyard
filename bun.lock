@@ -4,6 +4,8 @@
   "workspaces": {
     "": {
       "dependencies": {
+        "@fontsource/roboto": "^5.2.10",
+        "@fontsource/roboto-slab": "^5.2.8",
         "@junkyardsh/kit": "1.0.6",
         "@resvg/resvg-wasm": "^2.6.2",
         "zod": "^4.4.3",
@@ -25,6 +27,10 @@
     "@floating-ui/react-dom": ["@floating-ui/react-dom@2.1.8", "", { "dependencies": { "@floating-ui/dom": "^1.7.6" }, "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-cC52bHwM/n/CxS87FH0yWdngEZrjdtLW/qVruo68qg+prK7ZQ4YGdut2GyDVpoGeAYe/h899rVeOVm6Oi40k2A=="],
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.11", "", {}, "sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg=="],
+
+    "@fontsource/roboto": ["@fontsource/roboto@5.2.10", "", {}, "sha512-8HlA5FtSfz//oFSr2eL7GFXAiE7eIkcGOtx7tjsLKq+as702x9+GU7K95iDeWFapHC4M2hv9RrpXKRTGGBI8Zg=="],
+
+    "@fontsource/roboto-slab": ["@fontsource/roboto-slab@5.2.8", "", {}, "sha512-8+iMCsoUZsDwQUe5omwCp7JPNTVdyAgay5AdhmnFZPEVIVabujrmYaFkSuZ1+GUemPEWlzEQ6aQkg2mPL84SAA=="],
 
     "@junkyardsh/kit": ["@junkyardsh/kit@1.0.6", "", { "dependencies": { "@mantine/core": "^7.17.4", "react": "^18.3.1", "react-dom": "^18.3.1" } }, "sha512-GA16RP4KnAF54jXta0akbOgqkPflg/aEEFu6A+1Mfqgk5jNOOjz11lFOOXoX8doJLlQQFMJviR4bXBL5FUI/fw=="],
 
