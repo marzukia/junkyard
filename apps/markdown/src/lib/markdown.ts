@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import { Marked, marked } from "marked";
+import { Marked, marked, type Tokens } from "marked";
 import { slugify as kitSlugify } from "@junkyardsh/kit";
 
 // Configure the global marked instance for GFM + line breaks (used by parseInline helpers)
@@ -25,7 +25,7 @@ export function renderMarkdown(md: string): string {
   const localMarked = new Marked({ gfm: true, breaks: false });
   localMarked.use({
     renderer: {
-      heading({ tokens, depth }: { tokens: marked.Token[]; depth: number }): string {
+      heading({ tokens, depth }: { tokens: Tokens.Generic[]; depth: number }): string {
         // Reconstruct the raw heading text to derive the slug
         const rawText = tokens
           .map((t) => ("raw" in t && typeof t.raw === "string" ? t.raw : ""))
