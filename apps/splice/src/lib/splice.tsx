@@ -65,10 +65,12 @@ export function SplicePanel({
 					video.preload = "metadata";
 					video.onloadedmetadata = () => {
 						clip.duration = video.duration;
+						video.src = ""; // Release media resource
 						resolve();
 					};
 					video.onerror = () => {
 						clip.duration = 0;
+						video.src = ""; // Release media resource
 						resolve();
 					};
 					video.src = clip.url;
@@ -76,6 +78,7 @@ export function SplicePanel({
 					setTimeout(() => {
 						if (video.readyState === 0) {
 							clip.duration = 0;
+							video.src = ""; // Release media resource
 							resolve();
 						}
 					}, 5000);
@@ -150,8 +153,6 @@ export function SplicePanel({
 							fileInputRef.current?.click();
 						}
 					}}
-					tabIndex={0}
-					role="button"
 				>
 					<span>Drop multiple videos here or click to select</span>
 				</label>
@@ -180,14 +181,16 @@ export function SplicePanel({
 					<ul className="splice-clip-items">
 						{clips.map((clip, index) => (
 							<li key={clip.id} className="splice-clip-item">
-												<span className="splice-clip-order">{index + 1}</span>
-												<video
-													src={clip.url}
-													className="splice-clip-thumbnail"
-													controls={false}
-													preload="metadata"
-													aria-label={`Preview of ${clip.file.name}`}
-												/>
+								<span className="splice-clip-order">{index + 1}</span>
+								<video
+									src={clip.url}
+									className="splice-clip-thumbnail"
+									controls={false}
+									preload="metadata"
+									aria-label={`Preview of ${clip.file.name}`}
+								>
+									<track kind="captions" />
+								</video>
 								<div className="splice-clip-info">
 									<span className="splice-clip-name">{clip.file.name}</span>
 									<span className="splice-clip-meta">

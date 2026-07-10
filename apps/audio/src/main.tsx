@@ -1,10 +1,11 @@
-import { fleetTheme } from "@junkyardsh/kit";
-import { MantineProvider } from "@mantine/core";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { App } from "./App";
+import App from "./App";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
+import "@fontsource/roboto-mono/400.css";
 import "@junkyardsh/kit/styles.css";
-import "./splice.css";
 
 const rootEl = document.getElementById("root");
 if (!rootEl) {
@@ -12,8 +13,6 @@ if (!rootEl) {
 }
 ReactDOM.createRoot(rootEl).render(
 	<React.StrictMode>
-		<MantineProvider theme={fleetTheme} defaultColorScheme="auto">
-			<App />
-		</MantineProvider>
+		<App />
 	</React.StrictMode>,
 );
