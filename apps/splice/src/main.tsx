@@ -6,7 +6,11 @@ import { App } from "./App";
 import "@junkyardsh/kit/styles.css";
 import "./splice.css";
 
-ReactDOM.createRoot(document.getElementById("root") ?? document.body).render(
+const rootEl = document.getElementById("root");
+if (!rootEl) {
+	throw new Error("Missing #root element - cannot initialize React app");
+}
+ReactDOM.createRoot(rootEl).render(
 	<React.StrictMode>
 		<MantineProvider theme={fleetTheme} defaultColorScheme="auto">
 			<App />

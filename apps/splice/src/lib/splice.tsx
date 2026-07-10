@@ -65,10 +65,12 @@ export function SplicePanel({
 					video.preload = "metadata";
 					video.onloadedmetadata = () => {
 						clip.duration = video.duration;
+						video.src = ""; // Release media resource
 						resolve();
 					};
 					video.onerror = () => {
 						clip.duration = 0;
+						video.src = ""; // Release media resource
 						resolve();
 					};
 					video.src = clip.url;
@@ -76,6 +78,7 @@ export function SplicePanel({
 					setTimeout(() => {
 						if (video.readyState === 0) {
 							clip.duration = 0;
+							video.src = ""; // Release media resource
 							resolve();
 						}
 					}, 5000);

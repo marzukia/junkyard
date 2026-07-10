@@ -48,6 +48,12 @@ export function App() {
 			}
 			setClips([]);
 		} catch (err) {
+			// Clean up clip URLs on error
+			for (const c of clips) {
+				try {
+					URL.revokeObjectURL(c.url);
+				} catch {}
+			}
 			const msg = err instanceof Error ? err.message : "Splicing failed";
 			setError(msg);
 		} finally {
