@@ -45,8 +45,13 @@ function esc(s: string): string {
 }
 
 // ── Junkyard salvage tag icon (from favicon.svg) ─────────────────────
-// Positioned at x=86, y=246, 66×71px (teal top + coral bottom)
-const TAG_ICON = `<g transform="translate(86, 246) scale(2.03)">
+// ── Junkyard salvage tag icon (from favicon.svg) ─────────────────────
+// The scrap tag is a ~34×34 unit glyph (rotated -13°); it's rendered at an
+// arbitrary top-left (x,y) and pixel size so the layout can vertically
+// centre it against the title block. `size` is the on-canvas box in px.
+function tagIcon(x: number, y: number, size: number): string {
+  const scale = size / 34; // the glyph's design box is ~34 units square
+  return `<g transform="translate(${x.toFixed(1)}, ${y.toFixed(1)}) scale(${scale.toFixed(3)})">
   <g transform="rotate(-13 16 16)">
     <clipPath id="jyTag"><path d="M14.2 4.6 L25 7.2 a1.6 1.6 0 0 1 1.2 1.2 L28.8 25 a1.8 1.8 0 0 1-1.5 2 L13 29.2 a1.8 1.8 0 0 1-2-1.5 L8.4 12 a1.8 1.8 0 0 1 .5-1.6 L13 6 Z"/></clipPath>
     <g clip-path="url(#jyTag)">
@@ -58,33 +63,62 @@ const TAG_ICON = `<g transform="translate(86, 246) scale(2.03)">
     <path d="M16 14.5 l4 3.4 l-4 3.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 </g>`;
+}
 
-// ── SVG template — reference layout ──────────────────────────────────
+// ── SVG template ─────────────────────────────────────────────────────
+// Layout is computed from the content, then the whole {title, tagline,
+// badges} group is vertically centred in the canvas and the icon is
+// centred against the title — so 1- and 2-line names/taglines all sit on a
+// consistent optical baseline instead of drifting off fixed coordinates.
 function buildOgSvg(name: string, tagline: string, category: string, slug: string): string {
   const accent = CATEGORY_COLORS[category] ?? "#2f9d8d";
 
-  // Title: starts at x=217, y=255 (baseline)
-  const nameLines = wrapText(name, 18);
-  const nameFontSize = nameLines.length > 1 ? 48 : 60;
-  const nameLineH = nameFontSize * 1.15;
-  const titleBaseY = 305; // baseline of first line
+  const PAD_L = 80; // left margin (matches footer x)
+  const ICON = 78; // icon box px
+  const GAP_ICON_TEXT = 34; // space between icon and text column
+  const TEXT_X = PAD_L + ICON + GAP_ICON_TEXT; // text column left edge
 
+  // ── Type scale ──
+  // Wrap width tuned to the large title font; long names drop to 2 lines.
+  const nameLines = wrapText(name, 15);
+  const nameFont = nameLines.length > 1 ? 52 : 62;
+  const nameLH = Math.round(nameFont * 1.14);
+  const tagLines = wrapText(tagline, 50);
+  const tagFont = 22;
+  const tagLH = 30;
+  const GAP_TITLE_TAG = 26;
+
+  // ── Content group = icon + title + tagline, vertically centred ──
+  // (Feature badges + domain are pinned to the bottom row, matching the
+  // reference layout, so they don't move with content length.)
+  const titleH = nameLines.length * nameLH;
+  const tagH = tagLines.length * tagLH;
+  const groupH = titleH + GAP_TITLE_TAG + tagH;
+
+  const artTop = 14;
+  const artH = 630 - artTop;
+  const blockTop = artTop + Math.round((artH - groupH) / 2) - 14;
+
+  // Title baseline of line 1 (baseline ~0.80 of the font below the top).
+  const titleBaseY = blockTop + Math.round(nameFont * 0.8);
   const nameTspans = nameLines
-    .map((l, i) => `<tspan x="217" dy="${i === 0 ? 0 : nameLineH}">${esc(l)}</tspan>`)
+    .map((l, i) => `<tspan x="${TEXT_X}" dy="${i === 0 ? 0 : nameLH}">${esc(l)}</tspan>`)
     .join("");
 
-  // Tagline: below title
-  const taglineY = titleBaseY + nameLines.length * nameLineH + 30;
-  const taglineLines = wrapText(tagline, 55);
-  const taglineTspans = taglineLines
-    .map((l, i) => `<tspan x="217" dy="${i === 0 ? 0 : 28}">${esc(l)}</tspan>`)
+  const taglineBaseY = blockTop + titleH + GAP_TITLE_TAG + Math.round(tagFont * 0.8);
+  const taglineTspans = tagLines
+    .map((l, i) => `<tspan x="${TEXT_X}" dy="${i === 0 ? 0 : tagLH}">${esc(l)}</tspan>`)
     .join("");
 
-  // Feature badges: "FREE · IN BROWSER · NO UPLOAD"
-  const badgeY = taglineY + taglineLines.length * 28 + 24;
+  // Bottom row (fixed): badges bottom-left, domain bottom-right.
+  const bottomY = 566;
+
+  // Icon: vertically centred against the TITLE block, so it reads as paired
+  // with the name regardless of tagline length.
+  const iconY = blockTop + Math.round(titleH / 2 - ICON / 2);
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-<!-- Tricolor top border: teal (0-399), amber (400-799), coral (800-1199) -->
+<!-- Tricolor top border: teal / amber / coral -->
 <rect x="0" y="0" width="400" height="14" fill="#2f9d8d"/>
 <rect x="400" y="0" width="400" height="14" fill="#e8b04b"/>
 <rect x="800" y="0" width="400" height="14" fill="#d9594c"/>
@@ -92,20 +126,20 @@ function buildOgSvg(name: string, tagline: string, category: string, slug: strin
 <!-- Background -->
 <rect width="1200" height="630" y="14" fill="#fafafa"/>
 
-<!-- Tag icon at x=86, y=246 -->
-${TAG_ICON}
+<!-- Junkyard scrap-tag icon (all apps) -->
+${tagIcon(PAD_L, iconY, ICON)}
 
-<!-- Title: Roboto Slab, dark, x=217, y=305 baseline -->
-<text y="${titleBaseY}" font-family="Roboto Slab" font-size="${nameFontSize}" font-weight="700" fill="#1a2530">${nameTspans}</text>
+<!-- Title: Roboto Slab -->
+<text y="${titleBaseY}" font-family="Roboto Slab" font-size="${nameFont}" font-weight="700" fill="#1a2530">${nameTspans}</text>
 
-<!-- Tagline: Roboto, gray, x=217 -->
-<text y="${taglineY}" font-family="Roboto" font-size="20" font-weight="400" fill="#4a5568">${taglineTspans}</text>
+<!-- Tagline: Roboto -->
+<text y="${taglineBaseY}" font-family="Roboto" font-size="${tagFont}" font-weight="400" fill="#4a5568">${taglineTspans}</text>
 
-<!-- Feature badges: teal, small caps style -->
-<text y="${badgeY}" font-family="Roboto" font-size="14" font-weight="600" fill="${accent}" letter-spacing="1.5">FREE  ·  IN BROWSER  ·  NO UPLOAD</text>
+<!-- Bottom-left: feature badges -->
+<text x="${PAD_L}" y="${bottomY}" font-family="Roboto" font-size="14" font-weight="600" fill="${accent}" letter-spacing="1.5">FREE&#160;&#160;·&#160;&#160;IN BROWSER&#160;&#160;·&#160;&#160;NO UPLOAD</text>
 
-<!-- Footer: teal URL -->
-<text x="80" y="562" font-family="Roboto" font-size="15" font-weight="500" fill="${accent}">junkyard.sh/${esc(slug)}</text>
+<!-- Bottom-right: domain -->
+<text x="${1200 - PAD_L}" y="${bottomY}" text-anchor="end" font-family="Roboto" font-size="15" font-weight="500" fill="#8a9199">junkyard.sh/${esc(slug)}</text>
 </svg>`;
 }
 
