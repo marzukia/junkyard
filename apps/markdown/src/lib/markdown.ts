@@ -1,5 +1,6 @@
 import DOMPurify from "dompurify";
-import { Marked, marked } from "marked";
+import { Marked, marked, type Tokens } from "marked";
+import { slugify as kitSlugify } from "@junkyardsh/kit";
 
 // Configure the global marked instance for GFM + line breaks (used by parseInline helpers)
 marked.setOptions({
@@ -24,13 +25,13 @@ export function renderMarkdown(md: string): string {
   const localMarked = new Marked({ gfm: true, breaks: false });
   localMarked.use({
     renderer: {
-      heading({ tokens, depth }: { tokens: marked.Token[]; depth: number }): string {
+      heading({ tokens, depth }: { tokens: Tokens.Generic[]; depth: number }): string {
         // Reconstruct the raw heading text to derive the slug
         const rawText = tokens
           .map((t) => ("raw" in t && typeof t.raw === "string" ? t.raw : ""))
           .join("");
         const plainText = rawText.replace(/\*+|`/g, "");
-        const base = slugify(plainText);
+        const base = kitSlugify(plainText);
         const count = seenSlugs.get(base) ?? 0;
         seenSlugs.set(base, count + 1);
         const id = count === 0 ? base : `${base}-${count}`;
@@ -161,20 +162,12 @@ export interface TocEntry {
   slug: string;
 }
 
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
-}
-
 /**
  * Build a deduplicated slug using the same counter logic used by renderMarkdown's
  * heading renderer. Returns `slug`, `slug-1`, `slug-2`, ... for repeated headings.
  */
 function deduplicatedSlug(text: string, seen: Map<string, number>): string {
-  const base = slugify(text);
+  const base = kitSlugify(text);
   const count = seen.get(base) ?? 0;
   seen.set(base, count + 1);
   return count === 0 ? base : `${base}-${count}`;

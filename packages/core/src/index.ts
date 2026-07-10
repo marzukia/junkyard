@@ -20,6 +20,7 @@ import { makeRng, generateWords, generateSentences, generateParagraphs, loremToo
 import { toHtml, markdownTool } from "./markdown.js";
 import { type ErrorCorrectionLevel, validateSvgColor, type QrOptions, generateSvgString, qrTool } from "./qr.js";
 import { type BarcodeFormat, ean13CheckDigit, upcaCheckDigit, ean8CheckDigit, generateBarcodeSvg, barcodeTool } from "./barcode.js";
+import { BRAND, CATEGORY_COLORS, type BrandColor } from "./brand.js";
 
 import type { ToolDef } from "./types.js";
 
@@ -58,6 +59,8 @@ export {
   type ErrorCorrectionLevel, validateSvgColor, type QrOptions, generateSvgString, qrTool,
   // barcode
   type BarcodeFormat, ean13CheckDigit, upcaCheckDigit, ean8CheckDigit, generateBarcodeSvg, barcodeTool,
+  // brand palette
+  BRAND, CATEGORY_COLORS, type BrandColor,
 };
 
 export const TOOLS: ToolDef[] = [

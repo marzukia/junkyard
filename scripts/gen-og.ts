@@ -9,17 +9,10 @@ import { writeFileSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { initWasm, Resvg } from "@resvg/resvg-wasm";
+import { CATEGORY_COLORS } from "../packages/core/src/brand.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const APPS_DIR = join(ROOT, "apps");
-
-// ── Category accent colours ───────────────────────────────────────────
-const CATEGORY_COLORS: Record<string, string> = {
-  image: "#2f9d8d",
-  text: "#5b8def",
-  ai: "#a855f7",
-  docs: "#e8b04b",
-};
 
 // ── Text helpers ──────────────────────────────────────────────────────
 function wrapText(text: string, maxChars: number): string[] {

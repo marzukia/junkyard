@@ -1,19 +1,4 @@
-/**
- * Canonical base64url codec — RFC 4648 §5.
- *
- * This is the shared source of truth for base64url encoding/decoding across
- * all junkyard apps.  It is vendored (not imported) into each app via
- * scripts/vendor-base64url.mjs because apps are standalone Vite builds with
- * no workspace-level imports.
- *
- * Mirrors packages/core/src/base64.ts encodeBase64Url/decodeBase64Url but
- * uses browser APIs (TextEncoder/TextDecoder/btoa/atob) instead of Node
- * Buffer so the vendored copies work in SvelteKit/Vite browser builds.
- * core stays standalone by design and MUST NOT import from kit.
- *
- * Next-change note: if a 4th app needs base64url, add it to TARGETS in
- * scripts/vendor-base64url.mjs and re-run the script.
- */
+/**\n * Canonical base64url codec — RFC 4648 §5.\n *\n * Shared source of truth for base64url encoding/decoding. Imported by all\n * junkyard apps via `@junkyardsh/kit` (browser APIs: TextEncoder/btoa/atob).\n *\n * Mirrors packages/core/src/base64.ts encodeBase64Url/decodeBase64Url but\n * uses browser APIs instead of Node Buffer so it works in Vite browser builds.\n */
 
 /**
  * Encode a UTF-8 string to URL-safe Base64 (RFC 4648 §5).
