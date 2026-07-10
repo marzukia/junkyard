@@ -389,4 +389,12 @@ export const TOOLS: Tool[] = [
     tags: ["large-download"],
     mcpExposed: false,
   },
+  {
+    name: "Audio Converter",
+    slug: "audio",
+    yard: "docs",
+    tagline: "Convert between MP3, WAV, FLAC, M4A, OGG, OPUS, AIFF",
+    incumbent: "Auphonic",
+    mcpExposed: false,
+  },
 ];
