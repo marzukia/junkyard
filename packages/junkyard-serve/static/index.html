@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Junkyard - Salvaged Tools</title>
+    <style>
+        :root {
+            --bg: #0f0f11;
+            --text: #e0e0e0;
+            --muted: #888;
+            --accent: #00ff88;
+            --card-bg: #1a1a1d;
+            --border: #2a2a2e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            flex: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .quick-deploy {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .quick-deploy h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-block {
+            background: #0d0d10;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block code {
+            color: #a5d6ff;
+        }
+
+        .code-block .comment {
+            color: var(--muted);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--text);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .tool-card h3 {
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .tool-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .container { padding: 2rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗑️ Junkyard</h1>
+            <p class="tagline">Salvaged open-source tools, free forever.<br>No paywalls. No account walls. Just useful code.</p>
+        </header>
+
+        <section class="quick-deploy">
+            <h2>⚡ Quick Deploy</h2>
+            <div class="code-block">
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy', 2000)">Copy</button>
+                <code><span class="comment"># Install the package</span>
+uv add junkyard-serve
+
+<span class="comment"># Run locally (default port 8000)</span>
+junkyard-serve
+
+<span class="comment"># For Tailscale/remote access</span>
+junkyard-serve --host 0.0.0.0 --port 8000</code>
+            </div>
+        </section>
+
+        <section class="tools">
+            <div class="tool-card">
+                <h3>Flight Simulator</h3>
+                <p>A relaxing 3D flight simulator with endless procedural terrain, mountains, and clouds. Perfect for zoning out.</p>
+            </div>
+            <div class="tool-card">
+                <h3>API Wrappers</h3>
+                <p>Zero-dependency Python/TypeScript wrappers for common services, stripped of authentication bloat.</p>
+            </div>
+            <div class="tool-card">
+                <h3>CLI Utilities</h3>
+                <p>Command-line tools for developers: data converters, format transformers, and automation scripts.</p>
+            </div>
+            <div class="tool-card">
+                <h3>Coming Soon</h3>
+                <p>More salvaged tools being added regularly. Found a paywalled utility that could use some TLC? Submit a PR.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>Built with <a href="https://github.com/marzukia/junkyard" target="_blank">marzukia/junkyard</a> • <span class="badge">Open Source</span></p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem;">Free forever. No nonsense.</p>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

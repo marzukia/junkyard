@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "junkyard-serve"
+version = "0.1.0"
+description = "Salvaged open-source tools and utilities, free forever."
+authors = [
+    { name = "Andryo Marzuki", email = "andryo@mrzk.io" }
+]
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "starlette>=0.37.0",
+    "uvicorn>=0.29.0",
+]
+
+[project.scripts]
+junkyard = "junkyard.cli:main"
+
+[tool.hatch.build]
+include = ["junkyard/**/*", "static/**/*"]
+
+[tool.hatch.build.targets.wheel]
+include = ["junkyard", "static"]
+
+[project.urls]
+Homepage = "https://github.com/marzukia/junkyard"
+Documentation = "https://junkyard.sh"
