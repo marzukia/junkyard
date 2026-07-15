@@ -166,7 +166,17 @@ export function SplicePanel({
 						if (e.target.files) handleFileSelect(e.target.files);
 						e.target.value = "";
 					}}
-					style={{ display: "none" }}
+					style={{
+						position: "absolute",
+						opacity: 0,
+						width: "1px",
+						height: "1px",
+						padding: 0,
+						margin: "-1px",
+						overflow: "hidden",
+						clip: "rect(0, 0, 0, 0)",
+						border: 0,
+					}}
 				/>
 			</div>
 
