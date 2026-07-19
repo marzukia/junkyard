@@ -163,8 +163,16 @@ export function SplicePanel({
 					accept="video/*"
 					multiple
 					onChange={(e) => {
-						if (e.target.files) handleFileSelect(e.target.files);
-						e.target.value = "";
+						// iOS Safari fix: read files from DOM node after a microtask
+						// to ensure the native picker has populated the file list
+						const input = e.currentTarget;
+						requestAnimationFrame(() => {
+							if (input.files && input.files.length > 0) {
+								handleFileSelect(input.files);
+							}
+							// Reset input value to allow re-selecting the same files
+							input.value = "";
+						});
 					}}
 					style={{
 						position: "absolute",
