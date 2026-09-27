@@ -227,16 +227,17 @@ export function CropCanvas({
       const inH = (hcx: number, hcy: number) =>
         px >= hcx - half && px <= hcx + half && py >= hcy - half && py <= hcy + half;
 
-      // Drawn handle centres (in screen coords):
-      const ds = HANDLE_SIZE / 2;
-      if (inH(cx + ds, cy + ds)) return "tl";
-      if (inH(cx + cw / 2, cy + ds)) return "tc";
-      if (inH(cx + cw - ds, cy + ds)) return "tr";
-      if (inH(cx + ds, cy + ch / 2)) return "ml";
-      if (inH(cx + cw - ds, cy + ch / 2)) return "mr";
-      if (inH(cx + ds, cy + ch - ds)) return "bl";
-      if (inH(cx + cw / 2, cy + ch - ds)) return "bc";
-      if (inH(cx + cw - ds, cy + ch - ds)) return "br";
+      // Hit-test the actual drawn handle centres (the crop box corner/midpoints).
+      // The squares are drawn centred on these points, so a pointer on the visible
+      // corner must resolve to the corner handle (not fall into the "move" zone).
+      if (inH(cx, cy)) return "tl";
+      if (inH(cx + cw / 2, cy)) return "tc";
+      if (inH(cx + cw, cy)) return "tr";
+      if (inH(cx, cy + ch / 2)) return "ml";
+      if (inH(cx + cw, cy + ch / 2)) return "mr";
+      if (inH(cx, cy + ch)) return "bl";
+      if (inH(cx + cw / 2, cy + ch)) return "bc";
+      if (inH(cx + cw, cy + ch)) return "br";
       // Inside crop = move
       if (px >= cx && px <= cx + cw && py >= cy && py <= cy + ch) return "move";
       return null;
